@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elite Dangerous — Time Trial Leaderboards</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="page-wrapper">
+      <div class="inner">
+        <div class="site-logo">
+          Elite TT Leaderboards <span>/ Elite Dangerous Time Trials</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+
+    <section class="filter-bar" aria-label="Filters">
+      <div class="filter-group">
+        <label for="filter-commander">Commander</label>
+        <select id="filter-commander">
+          <option value="">All commanders</option>
+        </select>
+      </div>
+      <div class="filter-group" style="justify-content:flex-end">
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-active">
+          Active in last 7 days only
+        </label>
+      </div>
+    </section>
+
+    <div class="status-bar">
+      <div class="dot" id="status-dot"></div>
+      <span id="status-text">Loading…</span>
+      <span style="margin-left:auto" id="race-count"></span>
+    </div>
+
+    <div class="races-grid" id="races-grid">
+      <p class="loading-placeholder">Loading time trials…</p>
+    </div>
+
+  </main>
+
+  <script type="module" src="/static/js/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database (runtime data — not source)
+*.sqlite3
+
+# Environment / secrets
+.env
+
+# Editor / OS
+.DS_Store
+*.code-workspace

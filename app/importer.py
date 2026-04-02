@@ -1,0 +1,212 @@
+"""Fetch data from the Elite Dangerous Time Trials API and persist it."""
+
+from __future__ import annotations
+
+import json
+import logging
+from datetime import datetime, timezone
+from typing import Any
+
+import httpx
+import aiosqlite
+
+from .database import get_db
+
+log = logging.getLogger(__name__)
+
+BASE_URL = "https://razzserver.com/razapis"
+TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+
+# ---------------------------------------------------------------------------
+# Low-level HTTP helpers
+# ---------------------------------------------------------------------------
+
+async def _fetch(client: httpx.AsyncClient, url: str) -> Any:
+    response = await client.get(url, timeout=30)
+    response.raise_for_status()
+    return response.json()
+
+
+# ---------------------------------------------------------------------------
+# Parse helpers
+# ---------------------------------------------------------------------------
+
+def _normalise_version(raw: str) -> str:
+    v = raw.upper()
+    return "ODYSSEY" if v == "ODY" else v
+
+
+def _parse_location(row: list[str]) -> dict:
+    version = _normalise_version(row[7]) if len(row) > 7 else ""
+    global_value = row[12] if len(row) > 12 and row[12] else "1"
+    constraint_str = row[11] if len(row) > 11 else ""
+    constraints = _parse_constraints(row[0], constraint_str, global_value)
+
+    # Build a sort key: version + type + name
+    sort = f"{version}_{row[5].upper() if len(row) > 5 else ''}_{row[1]}"
+
+    return {
+        "key": row[0],
+        "name": row[1],
+        "system": row[2] if len(row) > 2 else "",
+        "station": row[3] if len(row) > 3 else "",
+        "type": row[5].upper() if len(row) > 5 else "",
+        "version": version,
+        "address": row[8] if len(row) > 8 else "",
+        "sort": sort,
+        "constraints": constraints,
+    }
+
+
+def _parse_constraints(location: str, constraint_str: str, global_value: str) -> list[dict]:
+    out: list[dict] = []
+    for pair in constraint_str.split("**"):
+        if "=" in pair:
+            k, _, v = pair.partition("=")
+        else:
+            k, v = pair, global_value
+        if k and v:
+            try:
+                out.append({"location": location, "key": k, "value": int(v)})
+            except ValueError:
+                pass
+    return out
+
+
+def _parse_last_updated(rows: list[list[str]]) -> dict[str, datetime]:
+    result: dict[str, datetime] = {}
+    for row in rows:
+        if len(row) < 2:
+            continue
+        try:
+            dt = datetime.strptime(row[1], TIME_FORMAT).replace(tzinfo=timezone.utc)
+            result[row[0]] = dt
+        except ValueError:
+            log.warning("Cannot parse last-updated datetime: %s", row[1])
+    return result
+
+
+def _parse_result(key: str, row: list[Any]) -> dict | None:
+    # Mixed types: index 4 is an integer (time in ms), rest are strings
+    try:
+        name = str(row[0])
+        updated = str(row[1])
+        ship = str(row[2])
+        shipname = str(row[3])
+        time_ms = int(row[4])
+        # Validate the datetime
+        datetime.strptime(updated, TIME_FORMAT)
+        return {
+            "name": name,
+            "ship": ship,
+            "shipname": shipname,
+            "location": key,
+            "time": time_ms,
+            "updated": updated,
+        }
+    except (IndexError, ValueError, TypeError) as exc:
+        log.warning("Skipping malformed result row for %s: %s — %s", key, row, exc)
+        return None
+
+
+# ---------------------------------------------------------------------------
+# Database write helpers
+# ---------------------------------------------------------------------------
+
+async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
+    await db.execute(
+        """
+        INSERT INTO locations (key, name, type, version, system, station, address, sort)
+        VALUES (:key, :name, :type, :version, :system, :station, :address, :sort)
+        ON CONFLICT(key) DO UPDATE SET
+            name    = excluded.name,
+            type    = excluded.type,
+            version = excluded.version,
+            system  = excluded.system,
+            station = excluded.station,
+            address = excluded.address,
+            sort    = excluded.sort
+        """,
+        loc,
+    )
+    # Rebuild constraints: delete then insert
+    await db.execute("DELETE FROM constraints WHERE location = ?", (loc["key"],))
+    if loc["constraints"]:
+        await db.executemany(
+            "INSERT OR REPLACE INTO constraints (location, key, value) VALUES (:location, :key, :value)",
+            loc["constraints"],
+        )
+
+
+async def _save_result(db: aiosqlite.Connection, result: dict) -> None:
+    """Insert result (ignore duplicates). Keep only latest 2 per commander per location."""
+    await db.execute(
+        """
+        INSERT OR IGNORE INTO results (name, ship, shipname, location, time, updated)
+        VALUES (:name, :ship, :shipname, :location, :time, :updated)
+        """,
+        result,
+    )
+    # Prune: keep only the 2 most recent entries for this name+location
+    await db.execute(
+        """
+        DELETE FROM results
+        WHERE id NOT IN (
+            SELECT id FROM results
+            WHERE name = ? AND location = ?
+            ORDER BY updated DESC
+            LIMIT 2
+        )
+        AND name = ? AND location = ?
+        """,
+        (result["name"], result["location"], result["name"], result["location"]),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Public import functions
+# ---------------------------------------------------------------------------
+
+async def fetch_and_store_locations() -> None:
+    """Fetch the TT list from the API and upsert into the database."""
+    async with httpx.AsyncClient() as client:
+        rows = await _fetch(client, f"{BASE_URL}/getTTList/LEADERBOARD")
+
+    locations = [_parse_location(r) for r in rows]
+    db = await get_db()
+    try:
+        for loc in locations:
+            await _upsert_location(db, loc)
+        await db.commit()
+        log.info("Upserted %d locations", len(locations))
+    finally:
+        await db.close()
+
+
+async def fetch_and_store_results(key: str) -> None:
+    """Fetch results for a single TT key and persist them."""
+    async with httpx.AsyncClient() as client:
+        rows = await _fetch(client, f"{BASE_URL}/getTTResults/LEADERBOARD<|>{key}")
+
+    if not isinstance(rows, list):
+        log.warning("Unexpected results payload for key %s", key)
+        return
+
+    results = [_parse_result(key, r) for r in rows]
+    results = [r for r in results if r is not None]
+
+    db = await get_db()
+    try:
+        for result in results:
+            await _save_result(db, result)
+        await db.commit()
+        log.info("Stored %d results for %s", len(results), key)
+    finally:
+        await db.close()
+
+
+async def fetch_last_updated() -> dict[str, datetime]:
+    """Return the API's last-updated map without touching the database."""
+    async with httpx.AsyncClient() as client:
+        rows = await _fetch(client, f"{BASE_URL}/getTTResultsLU/LEADERBOARD")
+    return _parse_last_updated(rows)

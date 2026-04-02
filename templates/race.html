@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Trial — Elite TT Leaderboards</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="page-wrapper">
+      <div class="inner">
+        <div class="site-logo">
+          Elite TT Leaderboards <span>/ Elite Dangerous Time Trials</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+
+    <div class="breadcrumb">
+      <a id="back-link" href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span id="race-breadcrumb">Loading…</span>
+    </div>
+
+    <div class="race-detail-header">
+      <h1 id="race-title">Loading…</h1>
+      <div class="meta" id="race-meta"></div>
+      <div class="constraints-list" id="race-constraints"></div>
+    </div>
+
+    <div class="status-bar">
+      <div class="dot" id="status-dot"></div>
+      <span id="status-text">Loading…</span>
+    </div>
+
+    <div id="results-layout" class="results-layout">
+      <p class="loading-placeholder">Loading results…</p>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script type="module" src="/static/js/race.js"></script>
+</body>
+</html>

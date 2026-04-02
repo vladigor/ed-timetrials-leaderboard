@@ -1,0 +1,410 @@
+/* ============================================================
+   Base / Reset
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #0d0f14;
+  --surface:    #181c26;
+  --surface2:   #1f2535;
+  --border:     #2a3048;
+  --accent:     #e8a020;
+  --accent-dim: #a06810;
+  --text:       #d4dbe8;
+  --text-muted: #6b7799;
+  --good:       #3fb97a;
+  --bad:        #d94f4f;
+  --rank1:      #ffd700;
+  --rank2:      #c0c0c0;
+  --rank3:      #cd7f32;
+  --font-mono:  'Courier New', Courier, monospace;
+
+  --bar-odyssey:    #1a6ebd;
+  --bar-horizons:   #7b3fa0;
+}
+
+html { font-size: 16px; }
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.page-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ============================================================
+   Header / Nav
+   ============================================================ */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.site-header .inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.site-logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.site-logo span { color: var(--text-muted); font-weight: 400; font-size: .85em; }
+
+/* ============================================================
+   Breadcrumb
+   ============================================================ */
+.breadcrumb {
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+.breadcrumb a { color: var(--text-muted); }
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb .sep { margin: 0 .4em; }
+
+/* ============================================================
+   Filter bar
+   ============================================================ */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: .75rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.filter-group { display: flex; flex-direction: column; gap: .3rem; }
+
+.filter-group label {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+}
+
+.filter-bar select,
+.filter-bar input[type="text"] {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: .35rem;
+  color: var(--text);
+  font-size: .9rem;
+  padding: .4rem .75rem;
+  min-width: 160px;
+  outline: none;
+  appearance: none;
+}
+
+.filter-bar select:focus,
+.filter-bar input[type="text"]:focus {
+  border-color: var(--accent-dim);
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .9rem;
+  cursor: pointer;
+  padding-bottom: .1rem;
+}
+
+.filter-toggle input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* ============================================================
+   Race grid (index page)
+   ============================================================ */
+.races-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.race-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  padding: 1.1rem 1.25rem;
+  transition: border-color .15s, background .15s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.race-card:hover {
+  border-color: var(--accent-dim);
+  background: var(--surface2);
+}
+
+.race-card-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.race-card-meta {
+  font-size: .8rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem .75rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  padding: .15rem .55rem;
+  border-radius: 1rem;
+  text-transform: uppercase;
+}
+
+.badge-odyssey  { background: rgba(26,110,189,.25); color: #5aabf0; border: 1px solid #1a6ebd; }
+.badge-horizons { background: rgba(123,63,160,.25); color: #c47eff; border: 1px solid #7b3fa0; }
+.badge-type     { background: rgba(232,160,32,.15); color: var(--accent); border: 1px solid var(--accent-dim); }
+
+.race-card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .8rem;
+  color: var(--text-muted);
+  padding-top: .5rem;
+  border-top: 1px solid var(--border);
+}
+
+.entry-count { font-weight: 600; color: var(--text); }
+
+/* ============================================================
+   Section heading
+   ============================================================ */
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+}
+
+/* ============================================================
+   Race detail page
+   ============================================================ */
+.race-detail-header {
+  margin-bottom: 1.5rem;
+}
+
+.race-detail-header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: .4rem;
+}
+
+.race-detail-header .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .85rem;
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+
+.constraints-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-top: .5rem;
+}
+
+.constraint-tag {
+  font-size: .75rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: .3rem;
+  padding: .15rem .55rem;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   Results layout: chart above table
+   ============================================================ */
+.results-layout {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  overflow: hidden;
+}
+
+/* ============================================================
+   ECharts container
+   ============================================================ */
+#race-chart {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: .75rem 1rem .5rem;
+  width: 100%;
+}
+
+/* ============================================================
+   Results table (right panel)
+   ============================================================ */
+.results-table-panel {
+  overflow-x: auto;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+
+.results-table thead tr {
+  background: var(--surface2);
+}
+
+.results-table th {
+  padding: .6rem 1rem;
+  text-align: left;
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.results-table td {
+  padding: .65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.results-table tbody tr:last-child td { border-bottom: none; }
+
+.results-table tbody tr:hover td { background: var(--surface2); }
+
+/* Podium row backgrounds */
+.results-table tbody tr.row-pos-1 td { background: rgba(255, 215,   0, .08); }
+.results-table tbody tr.row-pos-2 td { background: rgba(192, 192, 192, .07); }
+.results-table tbody tr.row-pos-3 td { background: rgba(205, 127,  50, .08); }
+.results-table tbody tr.row-pos-1:hover td { background: rgba(255, 215,   0, .15); }
+.results-table tbody tr.row-pos-2:hover td { background: rgba(192, 192, 192, .13); }
+.results-table tbody tr.row-pos-3:hover td { background: rgba(205, 127,  50, .14); }
+
+/* Selected commander highlight */
+.results-table tbody tr.row-cmdr td { background: rgba(232, 160, 32, .12); }
+.results-table tbody tr.row-cmdr:hover td { background: rgba(232, 160, 32, .2); }
+.results-table tbody tr.row-cmdr .cmdr-name {
+  color: var(--accent);
+}
+
+.pos {
+  font-weight: 700;
+  width: 2rem;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+
+.pos-1 { color: var(--rank1); }
+.pos-2 { color: var(--rank2); }
+.pos-3 { color: var(--rank3); }
+
+.cmdr-name { font-weight: 600; }
+
+.time-cell {
+  font-family: var(--font-mono);
+  font-size: .85rem;
+}
+
+.delta-cell {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+
+.improvement-cell {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+}
+
+.improvement-better { color: var(--good); }
+.improvement-worse  { color: var(--bad); }
+.improvement-none   { color: var(--text-muted); }
+
+/* ============================================================
+   Status / loading / empty states
+   ============================================================ */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: .8rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+}
+.dot.live    { background: var(--good); animation: pulse 2s infinite; }
+.dot.offline { background: var(--text-muted); }
+.dot.error   { background: var(--bad); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .3; }
+}
+
+.loading-placeholder {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .95rem;
+}
+
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 720px) {
+  .results-table th:nth-child(n+5),
+  .results-table td:nth-child(n+5) { display: none; }
+}
