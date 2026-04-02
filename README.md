@@ -1,6 +1,6 @@
-# Elite Dangerous Time Trial Leaderboard
+# Elite Dangerous Time Trials Leaderboard
 
-A web application that displays Elite Dangerous time trial leaderboards, pulling live data from the Razzafarag API and caching it in a local SQLite database.
+A web application that displays Elite Dangerous Time Trials Leaderboards, pulling live data from the Razzafarag API and caching it in a local SQLite database.
 
 ## Tech stack
 
@@ -32,19 +32,28 @@ A web application that displays Elite Dangerous time trial leaderboards, pulling
 ## Running locally
 
 ```bash
-cd tt-leaderboard
+cd timetrials-leaderboard
 bash run.sh
 ```
 
-Then open http://localhost:8080 in your browser.
+Then open http://localhost:8090 in your browser.
+
+### Offline mode
+
+To run without making any outbound API calls (serves from the local SQLite cache only):
+
+```bash
+OFFLINE=1 bash run.sh
+```
+
+Useful during development when you don't want to hit the live API. The status indicator in the UI will show "Offline — local data" instead of the live polling dot.
 
 ## Running as a systemd service (Proxmox LXC / VM)
 
 ```bash
-# Install dependencies once
-cd tt-leaderboard
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+# Install dependencies once (run.sh handles this automatically)
+cd timetrials-leaderboard
+bash run.sh
 
 # Copy and enable the service unit
 cp tt-leaderboard.service /etc/systemd/system/
