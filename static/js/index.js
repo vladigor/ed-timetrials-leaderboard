@@ -126,14 +126,10 @@ function renderGrid() {
   });
 }
 
-function versionBadge(version) {
-  const cls = version === 'ODYSSEY' ? 'badge-odyssey' : 'badge-horizons';
-  return `<span class="badge ${cls}">${esc(version)}</span>`;
-}
-
 function typeBadge(type) {
   if (!type) return '';
-  return `<span class="badge badge-type">${esc(type)}</span>`;
+  const cls = { SHIP: 'badge-ship', SRV: 'badge-srv', FIGHTER: 'badge-fighter', ONFOOT: 'badge-onfoot' }[type] ?? 'badge-onfoot';
+  return `<span class="badge ${cls}">${esc(type)}</span>`;
 }
 
 function raceCard(r) {
@@ -148,7 +144,6 @@ function raceCard(r) {
        onkeydown="if(event.key==='Enter')this.click()">
     <div class="race-card-name">${esc(r.name)}</div>
     <div class="race-card-meta">
-      ${versionBadge(r.version)}
       ${typeBadge(r.type)}
     </div>
     <div class="race-card-meta">

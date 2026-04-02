@@ -79,8 +79,7 @@ function renderRace() {
 
   const versionCls = race.version === 'ODYSSEY' ? 'badge-odyssey' : 'badge-horizons';
   metaEl.innerHTML = `
-    <span class="badge ${versionCls}">${esc(race.version)}</span>
-    ${race.type ? `<span class="badge badge-type">${esc(race.type)}</span>` : ''}
+    ${race.type ? `<span class="badge ${{ SHIP: 'badge-ship', SRV: 'badge-srv', FIGHTER: 'badge-fighter', ONFOOT: 'badge-onfoot' }[race.type] ?? 'badge-onfoot'}">${esc(race.type)}</span>` : ''}
     <span>${esc(race.system)}</span>
     ${race.station ? `<span>· ${esc(race.station)}</span>` : ''}
     ${race.address ? `<span>· ${esc(race.address)}</span>` : ''}

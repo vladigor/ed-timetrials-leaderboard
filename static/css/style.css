@@ -190,9 +190,13 @@ a:hover { text-decoration: underline; }
   text-transform: uppercase;
 }
 
-.badge-odyssey  { background: rgba(26,110,189,.25); color: #5aabf0; border: 1px solid #1a6ebd; }
-.badge-horizons { background: rgba(123,63,160,.25); color: #c47eff; border: 1px solid #7b3fa0; }
-.badge-type     { background: rgba(232,160,32,.15); color: var(--accent); border: 1px solid var(--accent-dim); }
+.badge-odyssey  { background: rgba(26,110,189,.25);  color: #5aabf0; border: 1px solid #1a6ebd; }
+.badge-horizons { background: rgba(123,63,160,.25);  color: #c47eff; border: 1px solid #7b3fa0; }
+/* Vehicle type badges */
+.badge-ship     { background: rgba(32,180,232,.15);  color: #39c0f0; border: 1px solid #1a7aad; }
+.badge-srv      { background: rgba(60,180,80,.15);   color: #5dd87a; border: 1px solid #2e8a42; }
+.badge-fighter  { background: rgba(232,80,60,.15);   color: #f07060; border: 1px solid #a03828; }
+.badge-onfoot   { background: rgba(232,160,32,.15);  color: var(--accent); border: 1px solid var(--accent-dim); }
 
 .race-card-footer {
   margin-top: auto;
