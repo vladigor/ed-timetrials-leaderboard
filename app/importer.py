@@ -42,8 +42,8 @@ def _parse_location(row: list[str]) -> dict:
     constraint_str = row[11] if len(row) > 11 else ""
     constraints = _parse_constraints(row[0], constraint_str, global_value)
 
-    # Build a sort key: version + type + name
-    sort = f"{version}_{row[5].upper() if len(row) > 5 else ''}_{row[1]}"
+    # Build a sort key: type + name
+    sort = f"{row[5].upper() if len(row) > 5 else ''}_{row[1]}"
 
     return {
         "key": row[0],
