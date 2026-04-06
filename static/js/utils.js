@@ -7,8 +7,13 @@
  * @param {number} ms
  * @returns {string}
  */
+export function ordinal(n) {
+  const s = ['th','st','nd','rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
 export function formatTime(ms) {
-  if (ms == null) return '—';
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;

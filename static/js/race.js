@@ -223,21 +223,6 @@ function _buildChartOption(results, isOdyssey) {
       axisLine: { lineStyle: { color: '#2a3048' } },
       axisTick: { lineStyle: { color: '#2a3048' } },
     },
-    dataZoom: [
-      {
-        type: 'slider',
-        xAxisIndex: 0,
-        bottom: 5,
-        height: 20,
-        borderColor: '#2a3048',
-        fillerColor: 'rgba(232,160,32,0.12)',
-        handleStyle: { color: '#e8a020' },
-        moveHandleStyle: { color: '#e8a020' },
-        textStyle: { color: '#6b7799', fontSize: 10 },
-        labelFormatter: (_, val) => formatTime(Math.round(val)),
-      },
-      { type: 'inside', xAxisIndex: 0 },
-    ],
     series: [{ type: 'bar', data: seriesData, barMaxWidth: 14 }],
   };
 }
@@ -251,7 +236,7 @@ function showError(msg) {
 
 function setStatus(state) {
   statusDot.className = 'dot';
-  if (state === 'live')    { statusDot.classList.add('live');    statusText.textContent = 'Live'; }
+  if (state === 'live')    { statusDot.classList.add('live');    statusText.textContent = 'Live (up to 1min delay)'; }
   if (state === 'offline') { statusDot.classList.add('offline'); statusText.textContent = 'Offline — local data'; }
   if (state === 'updating'){ statusText.textContent = 'Updating…'; }
   if (state === 'error')   { statusDot.classList.add('error');   statusText.textContent = 'Connection error'; }

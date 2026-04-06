@@ -1,4 +1,4 @@
-import { formatTime, relativeTime, esc } from './utils.js';
+import { formatTime, relativeTime, esc, ordinal } from './utils.js';
 import { ChangePoller } from './poller.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -117,13 +117,6 @@ function renderGrid() {
   }
 
   grid.innerHTML = races.map(r => raceCard(r)).join('');
-
-  // Attach click handlers
-  grid.querySelectorAll('.race-card').forEach(card => {
-    card.addEventListener('click', () => {
-      location.href = `/race/${encodeURIComponent(card.dataset.key)}`;
-    });
-  });
 }
 
 function typeBadge(type) {
@@ -137,11 +130,13 @@ function raceCard(r) {
   const activity = r.last_activity ? relativeTime(r.last_activity) : 'no entries';
   const leader = r.results?.[0];
   const leaderTime = (leader && leader.time_ms != null) ? formatTime(leader.time_ms) : '';
+  const positionLabel = (filterCmdr && r.cmdr_position != null)
+    ? `${ordinal(r.cmdr_position)} of ${entries}`
+    : `${entries}`;
 
   return `
-  <div class="race-card" data-key="${esc(r.key)}" role="button" tabindex="0"
-       aria-label="View ${esc(r.name)} leaderboard"
-       onkeydown="if(event.key==='Enter')this.click()">
+  <a class="race-card" href="/race/${encodeURIComponent(r.key)}"
+     aria-label="View ${esc(r.name)} leaderboard">
     <div class="race-card-name">${esc(r.name)}</div>
     <div class="race-card-meta">
       ${typeBadge(r.type)}
@@ -152,16 +147,16 @@ function raceCard(r) {
     </div>
     ${leaderTime ? `<div class="race-card-meta" style="color:var(--accent)">Best: ${leaderTime}</div>` : ''}
     <div class="race-card-footer">
-      <span class="entry-count">${entries} ${entries === 1 ? 'entry' : 'entries'}</span>
+      <span class="entry-count">${positionLabel}</span>
       <span>${activity}</span>
     </div>
-  </div>`;
+  </a>`;
 }
 
 // ── Status dot ─────────────────────────────────────────────────────────────
 function setStatus(state) {
   statusDot.className = 'dot';
-  if (state === 'live')    { statusDot.classList.add('live');    statusText.textContent = 'Live'; }
+  if (state === 'live')    { statusDot.classList.add('live');    statusText.textContent = 'Live (up to 1min delay)'; }
   if (state === 'offline') { statusDot.classList.add('offline'); statusText.textContent = 'Offline — local data'; }
   if (state === 'updating'){ statusText.textContent = 'Updating…'; }
   if (state === 'error')   { statusDot.classList.add('error');   statusText.textContent = 'Connection error'; }

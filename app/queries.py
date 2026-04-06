@@ -34,7 +34,26 @@ async def list_races(
         where_clauses: list[str] = []
         params: list[Any] = []
 
-        base_sql = """
+        cmdr_position_sql = ""
+        cmdr_position_params: list[Any] = []
+        if commander:
+            cmdr_position_sql = """,
+                (
+                    SELECT COUNT(*) + 1
+                    FROM (
+                        SELECT name, MIN(time) AS best
+                        FROM results
+                        WHERE location = l.key
+                        GROUP BY name
+                    ) t
+                    WHERE t.best < (
+                        SELECT MIN(time) FROM results
+                        WHERE location = l.key AND name = ?
+                    )
+                ) AS cmdr_position"""
+            cmdr_position_params = [commander]
+
+        base_sql = f"""
             SELECT
                 l.key,
                 l.name,
@@ -44,8 +63,10 @@ async def list_races(
                 l.station,
                 l.address,
                 l.sort,
-                COUNT(DISTINCT r.name)                          AS entry_count,
-                MAX(r.updated)                                  AS last_activity
+                (SELECT COUNT(DISTINCT name) FROM results
+                 WHERE location = l.key)          AS entry_count,
+                MAX(r.updated)                    AS last_activity
+                {cmdr_position_sql}
             FROM locations l
             LEFT JOIN (
                 SELECT name, location, MIN(time) AS time, MAX(updated) AS updated
@@ -53,6 +74,7 @@ async def list_races(
                 GROUP BY name, location
             ) r ON r.location = l.key
         """
+        params = cmdr_position_params[:]
 
         if active_days is not None:
             cutoff = (

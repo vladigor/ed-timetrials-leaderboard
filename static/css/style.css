@@ -159,6 +159,9 @@ a:hover { text-decoration: underline; }
   display: flex;
   flex-direction: column;
   gap: .5rem;
+  /* anchor reset */
+  color: inherit;
+  text-decoration: none;
 }
 
 .race-card:hover {
