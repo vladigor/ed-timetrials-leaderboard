@@ -621,6 +621,37 @@ a:hover { text-decoration: underline; }
 }
 .legend-swatch.highlight-opportunity { background: rgba(217, 79, 79, .3); border: 1px solid var(--bad); }
 
+/* Trophy case */
+.trophy-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.trophy-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: .6rem;
+  padding: 1.25rem 2rem;
+  min-width: 110px;
+  text-align: center;
+}
+.trophy-icon  { font-size: 2.2rem; line-height: 1; }
+.trophy-count { font-size: 1.8rem; font-weight: 700; line-height: 1.1; }
+.trophy-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
+
+.trophy-gold   { border-color: var(--rank1); background: rgba(255,215,0,.07); }
+.trophy-gold   .trophy-count { color: var(--rank1); }
+.trophy-silver { border-color: var(--rank2); background: rgba(192,192,192,.07); }
+.trophy-silver .trophy-count { color: var(--rank2); }
+.trophy-bronze { border-color: var(--rank3); background: rgba(205,127,50,.07); }
+.trophy-bronze .trophy-count { color: var(--rank3); }
+
 /* ============================================================
    Responsive
    ============================================================ */

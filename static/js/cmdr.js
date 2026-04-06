@@ -13,6 +13,7 @@ const title       = document.getElementById('cmdr-title');
 const summaryEl   = document.getElementById('cmdr-summary');
 const tablesEl    = document.getElementById('cmdr-tables');
 const legendEl    = document.getElementById('cmdr-legend');
+const trophyEl    = document.getElementById('trophy-case');
 const sortPctBtn  = document.getElementById('sort-pct');
 const sortRecBtn  = document.getElementById('sort-recent');
 const filterCheck = document.getElementById('filter-recent');
@@ -56,6 +57,7 @@ function setSort(s) {
 function render() {
   renderSummary();
   renderTables();
+  renderTrophyCase();
 }
 
 function renderSummary() {
@@ -132,7 +134,7 @@ function renderTables() {
         <tr class="${isOpportunity ? 'row-opportunity' : ''}">
           <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.race_name)}</a></td>
           <td class="num">${ordinal(r.position)} of ${r.total_entries}</td>
-          <td class="num ${percentileClass(r.percentile)}">top ${r.percentile}%</td>
+          <td class="num ${percentileClass(r.percentile)}">${r.position === 1 ? '#1 — top' : `top ${r.percentile}%`}</td>
           <td class="num ${imp ? imp.cls : ''}">${imp ? imp.text : '—'}</td>
           <td class="muted">${esc(shipLabel) || '—'}</td>
           <td class="muted">${r.last_competed ? relativeTime(r.last_competed) : '—'}</td>
@@ -174,6 +176,37 @@ function percentileClass(pct) {
   if (pct <= 25) return 'pct-good';
   if (pct <= 50) return 'pct-mid';
   return 'pct-low';
+}
+
+function renderTrophyCase() {
+  const gold   = stats.races.filter(r => r.position === 1).length;
+  const silver = stats.races.filter(r => r.position === 2).length;
+  const bronze = stats.races.filter(r => r.position === 3).length;
+
+  if (gold + silver + bronze === 0) {
+    trophyEl.style.display = 'none';
+    return;
+  }
+
+  const items = [
+    { count: gold,   cls: 'trophy-gold',   label: '1st place', emoji: '\uD83C\uDFC6' },
+    { count: silver, cls: 'trophy-silver', label: '2nd place', emoji: '\uD83E\uDD48' },
+    { count: bronze, cls: 'trophy-bronze', label: '3rd place', emoji: '\uD83E\uDD49' },
+  ]
+  .filter(t => t.count > 0)
+  .map(t => `
+    <div class="trophy-item ${t.cls}">
+      <span class="trophy-icon" aria-hidden="true">${t.emoji}</span>
+      <span class="trophy-count">${t.count}</span>
+      <span class="trophy-label">${t.label}</span>
+    </div>`)
+  .join('');
+
+  trophyEl.style.display = '';
+  trophyEl.innerHTML = `
+    <h2 class="cmdr-type-heading">Trophy Case</h2>
+    <div class="trophy-row">${items}</div>
+  `;
 }
 
 init();
