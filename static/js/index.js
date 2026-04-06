@@ -9,17 +9,21 @@ let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
 let poller        = null;
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
-const grid         = document.getElementById('races-grid');
-const statusDot    = document.getElementById('status-dot');
-const statusText   = document.getElementById('status-text');
-const checkActive  = document.getElementById('filter-active');
-const selectCmdr   = document.getElementById('filter-commander');
-const countLabel   = document.getElementById('race-count');
+const grid             = document.getElementById('races-grid');
+const statusDot        = document.getElementById('status-dot');
+const statusText       = document.getElementById('status-text');
+const checkActive      = document.getElementById('filter-active');
+const countLabel       = document.getElementById('race-count');
+const profileLabel     = document.getElementById('profile-label');
+const btnChangeProfile = document.getElementById('btn-change-profile');
+const profileOverlay   = document.getElementById('profile-overlay');
+const modalCmdrSelect  = document.getElementById('modal-cmdr-select');
+const modalConfirm     = document.getElementById('modal-confirm');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
-  // Restore persisted filter UI state before loading data
   checkActive.checked = filterActive;
+  updateProfileLabel();
 
   await Promise.all([loadRaces(), loadCommanders()]);
 
@@ -29,11 +33,20 @@ async function init() {
     loadRaces();
   });
 
-  selectCmdr.addEventListener('change', () => {
-    filterCmdr = selectCmdr.value;
+  modalConfirm.addEventListener('click', () => {
+    filterCmdr = modalCmdrSelect.value;
     localStorage.setItem('tt_filter_cmdr', filterCmdr);
+    localStorage.setItem('tt_profile_set', '1');
+    updateProfileLabel();
+    hideProfileModal();
     loadRaces();
   });
+
+  btnChangeProfile.addEventListener('click', showProfileModal);
+
+  if (localStorage.getItem('tt_profile_set') !== '1') {
+    showProfileModal();
+  }
 
   // Seed poller with current snapshot, reload races if anything changes
   poller = new ChangePoller(60_000, async () => {
@@ -76,22 +89,9 @@ async function loadCommanders() {
   try {
     const data = await fetch('/api/commanders').then(r => r.json());
     commanders = data;
-    // Populate commander select
-    const frag = document.createDocumentFragment();
-    const blank = document.createElement('option');
-    blank.value = ''; blank.textContent = 'All commanders';
-    frag.appendChild(blank);
-    for (const name of commanders) {
-      const opt = document.createElement('option');
-      opt.value = esc(name); opt.textContent = esc(name);
-      frag.appendChild(opt);
-    }
-    selectCmdr.innerHTML = '';
-    selectCmdr.appendChild(frag);
-    // Restore saved commander selection
-    if (filterCmdr) selectCmdr.value = filterCmdr;
+    populateModalSelect();
   } catch (_) {
-    // Non-fatal; filters will still work without the list
+    // Non-fatal
   }
 }
 
@@ -151,6 +151,42 @@ function raceCard(r) {
       <span>${activity}</span>
     </div>
   </a>`;
+}
+
+// ── Profile modal ───────────────────────────────────────────────────────────
+function updateProfileLabel() {
+  if (filterCmdr) {
+    profileLabel.textContent = `CMDR ${filterCmdr}`;
+    profileLabel.classList.remove('no-profile');
+  } else {
+    profileLabel.textContent = 'No profile selected';
+    profileLabel.classList.add('no-profile');
+  }
+}
+
+function populateModalSelect() {
+  const frag = document.createDocumentFragment();
+  const blank = document.createElement('option');
+  blank.value = ''; blank.textContent = "I haven't taken part in any time trials yet";
+  frag.appendChild(blank);
+  for (const name of commanders) {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    frag.appendChild(opt);
+  }
+  modalCmdrSelect.innerHTML = '';
+  modalCmdrSelect.appendChild(frag);
+  if (filterCmdr) modalCmdrSelect.value = filterCmdr;
+}
+
+function showProfileModal() {
+  populateModalSelect();
+  modalCmdrSelect.disabled = false;
+  profileOverlay.classList.add('visible');
+}
+
+function hideProfileModal() {
+  profileOverlay.classList.remove('visible');
 }
 
 // ── Status dot ─────────────────────────────────────────────────────────────

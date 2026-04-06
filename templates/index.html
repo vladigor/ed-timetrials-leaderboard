@@ -21,10 +21,11 @@
 
     <section class="filter-bar" aria-label="Filters">
       <div class="filter-group">
-        <label for="filter-commander">Commander</label>
-        <select id="filter-commander">
-          <option value="">All commanders</option>
-        </select>
+        <span class="filter-group-label">Commander</span>
+        <div class="profile-display-row">
+          <span id="profile-label" class="profile-name no-profile">No profile selected</span>
+          <button id="btn-change-profile" class="btn-chip">Change</button>
+        </div>
       </div>
       <div class="filter-group" style="justify-content:flex-end">
         <label class="filter-toggle">
@@ -45,6 +46,27 @@
     </div>
 
   </main>
+
+  <!-- Commander profile selection modal -->
+  <div class="profile-overlay" id="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <div class="profile-modal">
+      <h2 id="profile-title" class="profile-modal-title">Select Commander Profile</h2>
+      <p class="profile-modal-intro">
+        This site displays leaderboard results from Elite Dangerous time trials, recorded via
+        EDCoPilot. To see your ranking across all the races you've competed in, select your
+        commander below.
+      </p>
+      <div class="profile-modal-field" id="modal-cmdr-field">
+        <label for="modal-cmdr-select">Commander</label>
+        <select id="modal-cmdr-select">
+          <option value="">I haven't taken part in any time trials yet</option>
+        </select>
+      </div>
+      <div class="profile-modal-actions">
+        <button id="modal-confirm" class="btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="/static/js/index.js"></script>
 </body>
