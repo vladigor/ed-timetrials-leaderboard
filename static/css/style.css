@@ -516,6 +516,111 @@ a:hover { text-decoration: underline; }
 .profile-modal-field select:disabled { opacity: .4; }
 .profile-modal-actions   { display: flex; justify-content: flex-end; }
 
+/* Commander name links (in race table + profile label) */
+.cmdr-link          { color: var(--text); }
+.cmdr-link:hover    { color: var(--accent); text-decoration: none; }
+.profile-name .cmdr-link { color: var(--accent); }
+
+/* ============================================================
+   Commander page
+   ============================================================ */
+.cmdr-header {
+  margin-bottom: 1.5rem;
+}
+.cmdr-header h1 { margin-bottom: .75rem; }
+
+.cmdr-overall-pct {
+  font-size: 1.1rem;
+  margin-bottom: .6rem;
+}
+.cmdr-overall-pct strong { color: var(--accent); }
+
+.cmdr-type-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1.25rem;
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+.cmdr-type-stat strong { color: var(--text); }
+
+.cmdr-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  padding: .75rem 1.25rem;
+  margin-bottom: 1.75rem;
+}
+.cmdr-sort-group {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.btn-toggle-group { display: flex; gap: .35rem; }
+.btn-toggle {
+  background: var(--surface2);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: .35rem;
+  padding: .3rem .85rem;
+  font-size: .82rem;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn-toggle:hover        { border-color: var(--accent-dim); color: var(--text); }
+.btn-toggle.active       { background: rgba(232,160,32,.15); color: var(--accent); border-color: var(--accent-dim); }
+
+.cmdr-type-section { margin-bottom: 2.5rem; }
+.cmdr-type-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .75rem;
+  display: flex;
+  align-items: baseline;
+  gap: .75rem;
+}
+.cmdr-type-avg {
+  font-size: .78rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* Percentile colour coding */
+.pct-elite { color: var(--rank1);  font-weight: 600; }
+.pct-good  { color: var(--good);   }
+.pct-mid   { color: var(--text);   }
+.pct-low   { color: var(--text-muted); }
+
+/* Opportunity highlight row */
+.row-opportunity td {
+  background: rgba(217, 79, 79, .07);
+}
+
+/* Legend */
+.cmdr-legend {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: .82rem;
+  color: var(--text-muted);
+  margin-top: .5rem;
+  margin-bottom: 2rem;
+}
+.legend-swatch {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: .2rem;
+  flex-shrink: 0;
+}
+.legend-swatch.highlight-opportunity { background: rgba(217, 79, 79, .3); border: 1px solid var(--bad); }
+
 /* ============================================================
    Responsive
    ============================================================ */

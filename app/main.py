@@ -15,7 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from .config import OFFLINE
 from .database import init_db
 from .scheduler import full_refresh, get_last_updated_snapshot, start_scheduler
-from .queries import list_races, get_race, list_commanders
+from .queries import list_races, get_race, list_commanders, get_commander_stats
 
 logging.basicConfig(
     level=logging.INFO,
@@ -57,6 +57,11 @@ async def race_page(key: str):
     return FileResponse(TEMPLATES_DIR / "race.html")
 
 
+@app.get("/cmdr/{name}", response_class=HTMLResponse)
+async def cmdr_page(name: str):
+    return FileResponse(TEMPLATES_DIR / "cmdr.html")
+
+
 # ---------------------------------------------------------------------------
 # JSON API
 # ---------------------------------------------------------------------------
@@ -80,6 +85,14 @@ async def api_race(key: str):
 @app.get("/api/commanders")
 async def api_commanders():
     return await list_commanders()
+
+
+@app.get("/api/cmdr/{name}")
+async def api_cmdr(name: str):
+    stats = await get_commander_stats(name)
+    if stats is None:
+        raise HTTPException(status_code=404, detail="Commander not found")
+    return stats
 
 
 @app.get("/api/poll")

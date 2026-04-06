@@ -200,3 +200,124 @@ async def list_commanders() -> list[str]:
         return [row["name"] for row in rows]
     finally:
         await db.close()
+
+
+# ---------------------------------------------------------------------------
+# Commander stats page
+# ---------------------------------------------------------------------------
+
+async def get_commander_stats(commander: str) -> dict | None:
+    """
+    Return all races a commander has competed in, with per-race stats:
+      position, total_entries, percentile (position/total*100, lower=better),
+      improvement_ms, ship, shipname, last_competed.
+    Also returns aggregate percentiles (overall + per type).
+    """
+    db = await get_db()
+    try:
+        # Check the commander exists
+        async with db.execute(
+            "SELECT 1 FROM results WHERE name = ? LIMIT 1", (commander,)
+        ) as cur:
+            if not await cur.fetchone():
+                return None
+
+        # Fetch all locations the commander has a result in
+        async with db.execute(
+            """
+            SELECT l.key, l.name AS race_name, l.type, l.system, l.station
+            FROM locations l
+            WHERE l.key IN (SELECT DISTINCT location FROM results WHERE name = ?)
+            ORDER BY l.type, l.sort
+            """,
+            (commander,),
+        ) as cur:
+            locations = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        races = []
+        for loc in locations:
+            key = loc["key"]
+
+            # Commander's best and previous time for this race
+            async with db.execute(
+                """
+                SELECT time, updated, ship, shipname
+                FROM results
+                WHERE location = ? AND name = ?
+                ORDER BY updated DESC
+                """,
+                (key, commander),
+            ) as cur:
+                cmdr_rows = [_row_to_dict(r) for r in await cur.fetchall()]
+
+            if not cmdr_rows:
+                continue
+
+            best_row = min(cmdr_rows, key=lambda r: r["time"])
+            # previous = the one with the highest time (i.e. worst/older run)
+            prev_row = max(cmdr_rows, key=lambda r: r["time"]) if len(cmdr_rows) > 1 else None
+            improvement_ms: int | None = None
+            if prev_row and prev_row["time"] != best_row["time"]:
+                improvement_ms = prev_row["time"] - best_row["time"]
+
+            # Total distinct commanders in this race
+            async with db.execute(
+                "SELECT COUNT(DISTINCT name) AS total FROM results WHERE location = ?",
+                (key,),
+            ) as cur:
+                total_row = await cur.fetchone()
+            total: int = total_row["total"] if total_row else 1
+
+            # Commander's rank (1-based, by best time)
+            async with db.execute(
+                """
+                SELECT COUNT(DISTINCT name) + 1 AS pos
+                FROM (
+                    SELECT name, MIN(time) AS best FROM results
+                    WHERE location = ? GROUP BY name
+                ) t
+                WHERE t.best < ?
+                """,
+                (key, best_row["time"]),
+            ) as cur:
+                pos_row = await cur.fetchone()
+            position: int = pos_row["pos"] if pos_row else 1
+
+            percentile: float = round(position / total * 100, 1)
+
+            races.append({
+                "key": key,
+                "race_name": loc["race_name"],
+                "type": loc["type"],
+                "system": loc["system"],
+                "station": loc["station"],
+                "position": position,
+                "total_entries": total,
+                "percentile": percentile,
+                "improvement_ms": improvement_ms,
+                "time_ms": best_row["time"],
+                "ship": best_row["ship"],
+                "shipname": best_row["shipname"],
+                "last_competed": best_row["updated"],
+            })
+
+        if not races:
+            return None
+
+        # ── Aggregate percentiles ──────────────────────────────────────────
+        overall_pct = round(sum(r["percentile"] for r in races) / len(races), 1)
+
+        types = sorted({r["type"] for r in races})
+        by_type: dict[str, float] = {}
+        for t in types:
+            t_races = [r for r in races if r["type"] == t]
+            by_type[t] = round(sum(r["percentile"] for r in t_races) / len(t_races), 1)
+
+        return {
+            "commander": commander,
+            "overall_percentile": overall_pct,
+            "by_type_percentile": by_type,
+            "races": races,
+        }
+    finally:
+        await db.close()

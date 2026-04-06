@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commander — Elite TT Leaderboards</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="page-wrapper">
+      <div class="inner">
+        <div class="site-logo">
+          Elite TT Leaderboards <span>/ Elite Dangerous Time Trials</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span id="cmdr-breadcrumb">Loading…</span>
+    </div>
+
+    <div class="cmdr-header">
+      <h1 id="cmdr-title">Loading…</h1>
+      <div id="cmdr-summary" class="cmdr-summary"></div>
+    </div>
+
+    <div class="cmdr-controls">
+      <div class="cmdr-sort-group">
+        <span class="filter-group-label">Sort by</span>
+        <div class="btn-toggle-group">
+          <button id="sort-pct" class="btn-toggle active">Percentile</button>
+          <button id="sort-recent" class="btn-toggle">Most Recent</button>
+        </div>
+      </div>
+      <label class="filter-toggle">
+        <input type="checkbox" id="filter-recent">
+        Last 7 days only
+      </label>
+    </div>
+
+    <div id="cmdr-tables"></div>
+
+    <div class="cmdr-legend" id="cmdr-legend" style="display:none">
+      <span class="legend-swatch highlight-opportunity"></span>
+      Races where your percentile is below your average for that vehicle type — these are your best improvement opportunities.
+    </div>
+
+  </main>
+
+  <script type="module" src="/static/js/cmdr.js"></script>
+</body>
+</html>

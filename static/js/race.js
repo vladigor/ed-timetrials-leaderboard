@@ -114,7 +114,7 @@ function renderRace() {
     return `
       <tr${rowClasses ? ` class="${rowClasses}"` : ''}>
         <td class="pos${posCls}">${entry.position}</td>
-        <td class="cmdr-name">${esc(entry.name)}</td>
+        <td class="cmdr-name"><a href="/cmdr/${encodeURIComponent(entry.name)}" class="cmdr-link">${esc(entry.name)}</a></td>
         <td class="time-cell">${formatTime(entry.time_ms)}</td>
         <td class="delta-cell">${formatDelta(entry.delta_ms)}</td>
         <td class="improvement-cell ${imp.cls}">${imp.text}</td>

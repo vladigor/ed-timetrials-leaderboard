@@ -22,6 +22,18 @@ const modalConfirm     = document.getElementById('modal-confirm');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
+  // Sanity check — surface missing elements immediately
+  const missing = [grid, statusDot, statusText, checkActive, countLabel,
+    profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm]
+    .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-active',
+      'race-count','profile-label','btn-change-profile','profile-overlay',
+      'modal-cmdr-select','modal-confirm'][i])
+    .filter(Boolean);
+  if (missing.length) {
+    console.error('Missing DOM elements:', missing);
+    return;
+  }
+
   checkActive.checked = filterActive;
   updateProfileLabel();
 
@@ -156,7 +168,7 @@ function raceCard(r) {
 // ── Profile modal ───────────────────────────────────────────────────────────
 function updateProfileLabel() {
   if (filterCmdr) {
-    profileLabel.textContent = `CMDR ${filterCmdr}`;
+    profileLabel.innerHTML = `<a href="/cmdr/${encodeURIComponent(filterCmdr)}" class="cmdr-link">CMDR ${esc(filterCmdr)}</a>`;
     profileLabel.classList.remove('no-profile');
   } else {
     profileLabel.textContent = 'No profile selected';
@@ -182,11 +194,16 @@ function populateModalSelect() {
 function showProfileModal() {
   populateModalSelect();
   modalCmdrSelect.disabled = false;
-  profileOverlay.classList.add('visible');
+  profileOverlay.style.display = 'flex';
+  // Trigger transition on next frame
+  requestAnimationFrame(() => profileOverlay.classList.add('visible'));
 }
 
 function hideProfileModal() {
   profileOverlay.classList.remove('visible');
+  profileOverlay.addEventListener('transitionend', () => {
+    profileOverlay.style.display = 'none';
+  }, { once: true });
 }
 
 // ── Status dot ─────────────────────────────────────────────────────────────
