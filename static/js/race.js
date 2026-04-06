@@ -88,9 +88,10 @@ function renderRace() {
   `;
 
   if (race.constraints && race.constraints.length) {
-    constrEl.innerHTML = race.constraints.map(
-      c => `<span class="constraint-tag">${esc(c.key)}: ${esc(String(c.value))}</span>`
+    const tags = race.constraints.map(
+      c => `<span class="constraint-tag">${esc(camelToWords(c.key))}: ${esc(String(c.value))}</span>`
     ).join('');
+    constrEl.innerHTML = `<span class="constraints-label">Race constraints:</span> ${tags}`;
   } else {
     constrEl.innerHTML = '';
   }
@@ -102,7 +103,7 @@ function renderRace() {
   }
   if (race.multi_system) infoBadges.push('<span class="info-badge info-badge-accent">Multi-system</span>');
   if (race.multi_planet) infoBadges.push('<span class="info-badge info-badge-accent">Multi-planet</span>');
-  if (race.multi_vessel) infoBadges.push('<span class="info-badge info-badge-accent">Multi-vessel</span>');
+  if (race.multi_mode) infoBadges.push('<span class="info-badge info-badge-accent">Multi-mode</span>');
   infoEl.innerHTML = infoBadges.join('');
 
   if (race.description) {
@@ -171,6 +172,16 @@ function renderRace() {
 }
 
 // ── ECharts option builder ─────────────────────────────────────────────────
+function camelToWords(str) {
+  // Insert a space before sequences: uppercase after lowercase, uppercase before
+  // uppercase+lowercase (e.g. SRVPip → SRV Pip), digits adjacent to letters.
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1 $2')          // camelCase boundary
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')    // abbreviation boundary (SRVPip → SRV Pip)
+    .replace(/([a-zA-Z])([0-9])/g, '$1 $2')        // letter→digit
+    .replace(/([0-9])([a-zA-Z])/g, '$1 $2');       // digit→letter
+}
+
 function _buildChartOption(results, isOdyssey) {
   const medals      = ['🥇', '🥈', '🥉'];
   const defaultClr  = isOdyssey ? '#1a6ebd' : '#7b3fa0';

@@ -6,6 +6,7 @@ let allRaces      = [];
 let commanders    = [];
 let filterActive  = localStorage.getItem('tt_filter_active') === '1';
 let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
+let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // default on
 let poller        = null;
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
@@ -13,8 +14,11 @@ const grid             = document.getElementById('races-grid');
 const statusDot        = document.getElementById('status-dot');
 const statusText       = document.getElementById('status-text');
 const checkActive      = document.getElementById('filter-active');
+const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
+const cmdrRacesGroup   = document.getElementById('filter-cmdr-races-group');
 const countLabel       = document.getElementById('race-count');
 const profileLabel     = document.getElementById('profile-label');
+const btnViewProfile   = document.getElementById('btn-view-profile');
 const btnChangeProfile = document.getElementById('btn-change-profile');
 const profileOverlay   = document.getElementById('profile-overlay');
 const modalCmdrSelect  = document.getElementById('modal-cmdr-select');
@@ -23,18 +27,19 @@ const modalConfirm     = document.getElementById('modal-confirm');
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
   // Sanity check — surface missing elements immediately
-  const missing = [grid, statusDot, statusText, checkActive, countLabel,
-    profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm]
+  const missing = [grid, statusDot, statusText, checkActive, checkCmdrRaces, cmdrRacesGroup,
+    countLabel, profileLabel, btnViewProfile, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm]
     .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-active',
-      'race-count','profile-label','btn-change-profile','profile-overlay',
-      'modal-cmdr-select','modal-confirm'][i])
+      'filter-cmdr-races','filter-cmdr-races-group','race-count','profile-label',
+      'btn-view-profile','btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm'][i])
     .filter(Boolean);
   if (missing.length) {
     console.error('Missing DOM elements:', missing);
     return;
   }
 
-  checkActive.checked = filterActive;
+  checkActive.checked    = filterActive;
+  checkCmdrRaces.checked = filterCmdrRaces;
   updateProfileLabel();
 
   await Promise.all([loadRaces(), loadCommanders()]);
@@ -42,6 +47,12 @@ async function init() {
   checkActive.addEventListener('change', () => {
     filterActive = checkActive.checked;
     localStorage.setItem('tt_filter_active', filterActive ? '1' : '0');
+    loadRaces();
+  });
+
+  checkCmdrRaces.addEventListener('change', () => {
+    filterCmdrRaces = checkCmdrRaces.checked;
+    localStorage.setItem('tt_filter_cmdr_races', filterCmdrRaces ? '1' : '0');
     loadRaces();
   });
 
@@ -86,8 +97,9 @@ async function init() {
 async function loadRaces() {
   try {
     const url = new URL('/api/races', location.origin);
-    if (filterActive) url.searchParams.set('active_days', '7');
-    if (filterCmdr)   url.searchParams.set('commander', filterCmdr);
+    if (filterActive)                  url.searchParams.set('active_days', '7');
+    if (filterCmdr && filterCmdrRaces) url.searchParams.set('commander', filterCmdr);
+    else if (filterCmdr)               url.searchParams.set('commander_pos', filterCmdr);
     const data = await fetch(url).then(r => r.json());
     allRaces = data;
     renderGrid();
@@ -143,11 +155,11 @@ function raceCard(r) {
   const leader = r.results?.[0];
   const leaderTime = (leader && leader.time_ms != null) ? formatTime(leader.time_ms) : '';
   const positionLabel = (filterCmdr && r.cmdr_position != null)
-    ? `${ordinal(r.cmdr_position)} of ${entries}`
-    : `${entries}`;
+    ? `${ordinal(r.cmdr_position)} of ${entries} finisher${entries !== 1 ? 's' : ''}`
+    : `${entries} finisher${entries !== 1 ? 's' : ''}`;
 
   const infoBadges = [
-    r.multi_vessel ? `<span class="info-badge info-badge-accent">Multi-vessel</span>` : '',
+    r.multi_mode ? `<span class="info-badge info-badge-accent">Multi-mode</span>` : '',
     r.multi_planet ? `<span class="info-badge info-badge-accent">Multi-planet</span>` : '',
     r.multi_system ? `<span class="info-badge info-badge-accent">Multi-system</span>` : '',
   ].join('');
@@ -175,11 +187,17 @@ function raceCard(r) {
 // ── Profile modal ───────────────────────────────────────────────────────────
 function updateProfileLabel() {
   if (filterCmdr) {
-    profileLabel.innerHTML = `<a href="/cmdr/${encodeURIComponent(filterCmdr)}" class="cmdr-link">CMDR ${esc(filterCmdr)}</a>`;
+    profileLabel.textContent = `CMDR ${filterCmdr}`;
     profileLabel.classList.remove('no-profile');
+    btnViewProfile.href = `/cmdr/${encodeURIComponent(filterCmdr)}`;
+    btnViewProfile.style.display = '';
+    cmdrRacesGroup.style.display = '';
+    checkCmdrRaces.checked = filterCmdrRaces;
   } else {
     profileLabel.textContent = 'No profile selected';
     profileLabel.classList.add('no-profile');
+    btnViewProfile.style.display = 'none';
+    cmdrRacesGroup.style.display = 'none';
   }
 }
 

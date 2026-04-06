@@ -21,22 +21,27 @@ def _row_to_dict(row: aiosqlite.Row) -> dict:
 async def list_races(
     active_days: int | None = None,
     commander: str | None = None,
+    commander_pos: str | None = None,
 ) -> list[dict]:
     """
     Return locations with a summary (latest result timestamp, entry count).
 
-    active_days – if set, only return races with at least one result updated
-                  within the last N days.
-    commander   – if set, only return races the given commander has competed in.
+    active_days   – if set, only return races with at least one result updated
+                    within the last N days.
+    commander     – if set, only return races the given commander has competed in.
+    commander_pos – if set, annotate each race with that commander's position
+                    (without filtering the race list to their races). Ignored when
+                    commander is also set (commander implies commander_pos).
     """
     db = await get_db()
     try:
         where_clauses: list[str] = []
         params: list[Any] = []
 
+        pos_cmdr = commander or commander_pos
         cmdr_position_sql = ""
         cmdr_position_params: list[Any] = []
-        if commander:
+        if pos_cmdr:
             cmdr_position_sql = """,
                 (
                     SELECT COUNT(*) + 1
@@ -51,7 +56,7 @@ async def list_races(
                         WHERE location = l.key AND name = ?
                     )
                 ) AS cmdr_position"""
-            cmdr_position_params = [commander]
+            cmdr_position_params = [pos_cmdr]
 
         base_sql = f"""
             SELECT
@@ -63,7 +68,7 @@ async def list_races(
                 l.station,
                 l.address,
                 l.sort,
-                l.multi_vessel,
+                l.multi_mode,
                 l.multi_planet,
                 l.multi_system,
                 (SELECT COUNT(DISTINCT name) FROM results

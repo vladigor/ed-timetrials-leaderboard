@@ -261,6 +261,12 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
 }
 
+.constraints-label {
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin-right: .25rem;
+}
+
 .race-info-row {
   display: flex;
   flex-wrap: wrap;

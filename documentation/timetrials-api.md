@@ -142,7 +142,7 @@ TYPE:System~Station~Body~Lat,Lon~unknown~Range~Instruction~~TerseInstruction~Int
 | `num_checkpoints` | Count of ` `` `-delimited segments |
 | `multi_planet` | `true` if ≥2 distinct celestial body names appear across all checkpoints |
 | `multi_system` | `true` if ≥2 distinct system names appear across all checkpoints |
-| `multi_vessel` | `true` if ≥2 distinct *base* vehicle types appear across all checkpoints. Extract the type prefix before `:` in each segment's first field and normalise: `Ship`/`ShipFlyingStart`/`ShipPass` → `Ship`; `Fighter`/`FighterFlyingStart` → `Fighter`; `SRV` → `SRV`; `OnFoot` → `OnFoot`. Example: the Khazad-dum Biathlon has `ShipPass` checkpoints followed by `SRV` checkpoints → `multi_vessel = true`. **Do not use `getTTList` row[14] for this** — that field flags circuit/flying-start races, not multi-vessel races |
+| `multi_mode` | `true` if ≥2 distinct *base* vehicle types appear across all checkpoints. Extract the type prefix before `:` in each segment's first field and normalise: `Ship`/`ShipFlyingStart`/`ShipPass` → `Ship`; `Fighter`/`FighterFlyingStart` → `Fighter`; `SRV` → `SRV`; `OnFoot` → `OnFoot`. Example: the Khazad-dum Biathlon has `ShipPass` checkpoints followed by `SRV` checkpoints → `multi_mode = true`. **Do not use `getTTList` row[14] for this** — that field flags circuit/flying-start races, not multi-mode races |
 
 ---
 

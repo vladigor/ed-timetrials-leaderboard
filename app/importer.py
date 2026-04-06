@@ -80,10 +80,10 @@ def _base_vehicle(type_prefix: str) -> str | None:
 def _parse_ttdata(waypoints_str: str) -> tuple[int, bool, bool, bool]:
     """Parse the getTTData waypoints string.
 
-    Returns (num_checkpoints, multi_planet, multi_system, multi_vessel).
+    Returns (num_checkpoints, multi_planet, multi_system, multi_mode).
     Checkpoints are delimited by double-backticks (``).
     Each checkpoint's fields are ~-delimited: TYPE:System~[station]~body~coords~...
-    multi_vessel is True when the race requires more than one base vehicle type
+    multi_mode is True when the race requires more than one base vehicle type
     (e.g. Ship + SRV in a biathlon), detected from the type prefix of each checkpoint.
     """
     segments = [s for s in waypoints_str.split("``") if s.strip()]
@@ -298,7 +298,7 @@ async def fetch_and_store_race_details() -> None:
                     continue
                 description: str = str(data[0][0])
                 waypoints_str: str = str(data[0][1])
-                num_cp, multi_planet, multi_system, multi_vessel = _parse_ttdata(waypoints_str)
+                num_cp, multi_planet, multi_system, multi_mode = _parse_ttdata(waypoints_str)
             except Exception as exc:
                 log.error("Failed getTTData for %s: %s", key, exc)
                 continue
@@ -308,10 +308,10 @@ async def fetch_and_store_race_details() -> None:
                 await db.execute(
                     """
                     UPDATE locations
-                    SET description = ?, num_checkpoints = ?, multi_planet = ?, multi_system = ?, multi_vessel = ?
+                    SET description = ?, num_checkpoints = ?, multi_planet = ?, multi_system = ?, multi_mode = ?
                     WHERE key = ?
                     """,
-                    (description, num_cp, int(multi_planet), int(multi_system), int(multi_vessel), key),
+                    (description, num_cp, int(multi_planet), int(multi_system), int(multi_mode), key),
                 )
                 await db.commit()
             finally:

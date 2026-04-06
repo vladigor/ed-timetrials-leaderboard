@@ -70,8 +70,13 @@ async def cmdr_page(name: str):
 async def api_races(
     active_days: Optional[int] = Query(None, ge=1),
     commander: Optional[str] = Query(None),
+    commander_pos: Optional[str] = Query(None),
 ):
-    return await list_races(active_days=active_days, commander=commander)
+    # commander      → filter to that cmdr's races AND show their position
+    # commander_pos  → show all races but still annotate with that cmdr's position
+    effective_cmdr = commander or commander_pos
+    filter_cmdr    = commander  # only restrict to their races when 'commander' is set
+    return await list_races(active_days=active_days, commander=filter_cmdr, commander_pos=effective_cmdr)
 
 
 @app.get("/api/races/{key}")

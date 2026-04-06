@@ -65,13 +65,14 @@ async def init_db() -> None:
             "ALTER TABLE locations ADD COLUMN multi_planet BOOLEAN NOT NULL DEFAULT 0",
             "ALTER TABLE locations ADD COLUMN multi_system BOOLEAN NOT NULL DEFAULT 0",
             "ALTER TABLE locations ADD COLUMN multi_vessel BOOLEAN NOT NULL DEFAULT 0",
+            "ALTER TABLE locations ADD COLUMN multi_mode BOOLEAN NOT NULL DEFAULT 0",
         ):
             try:
                 await db.execute(col_sql)
             except Exception:
                 pass  # Column already exists
         # One-time migration: multi_vessel was previously derived from getTTList row[14]
-        # (which flags circuit races, not multi-vessel races). Reset num_checkpoints so
+        # (which flags circuit races, not multi-mode races). Reset num_checkpoints so
         # fetch_and_store_race_details re-fetches waypoints and recalculates correctly.
         async with db.execute(
             "SELECT key FROM last_updated_cache WHERE key = 'migration_multi_vessel_v1'"
@@ -81,5 +82,15 @@ async def init_db() -> None:
             await db.execute("UPDATE locations SET num_checkpoints = 0")
             await db.execute(
                 "INSERT INTO last_updated_cache (key, updated) VALUES ('migration_multi_vessel_v1', 'done')"
+            )
+        # One-time migration: renamed multi_vessel → multi_mode; force re-fetch to populate new column.
+        async with db.execute(
+            "SELECT key FROM last_updated_cache WHERE key = 'migration_multi_mode_v1'"
+        ) as cur:
+            already_done2 = await cur.fetchone()
+        if not already_done2:
+            await db.execute("UPDATE locations SET num_checkpoints = 0")
+            await db.execute(
+                "INSERT INTO last_updated_cache (key, updated) VALUES ('migration_multi_mode_v1', 'done')"
             )
         await db.commit()
