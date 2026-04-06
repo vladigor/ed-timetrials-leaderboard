@@ -58,6 +58,62 @@ def _parse_location(row: list[str]) -> dict:
     }
 
 
+# Vehicle type prefixes that appear before the `:` in each checkpoint's first field.
+# Longer prefixes must come before shorter ones to avoid partial matches.
+_VEHICLE_BASE_TYPES = [
+    ("onfoot", "OnFoot"),
+    ("fighter", "Fighter"),
+    ("ship", "Ship"),
+    ("srv", "SRV"),
+]
+
+
+def _base_vehicle(type_prefix: str) -> str | None:
+    """Return the canonical base vehicle type from a checkpoint type prefix, or None."""
+    low = type_prefix.lower()
+    for prefix, canonical in _VEHICLE_BASE_TYPES:
+        if low.startswith(prefix):
+            return canonical
+    return None
+
+
+def _parse_ttdata(waypoints_str: str) -> tuple[int, bool, bool, bool]:
+    """Parse the getTTData waypoints string.
+
+    Returns (num_checkpoints, multi_planet, multi_system, multi_vessel).
+    Checkpoints are delimited by double-backticks (``).
+    Each checkpoint's fields are ~-delimited: TYPE:System~[station]~body~coords~...
+    multi_vessel is True when the race requires more than one base vehicle type
+    (e.g. Ship + SRV in a biathlon), detected from the type prefix of each checkpoint.
+    """
+    segments = [s for s in waypoints_str.split("``") if s.strip()]
+    systems: set[str] = set()
+    bodies: set[str] = set()
+    vehicle_types: set[str] = set()
+
+    for seg in segments:
+        fields = seg.split("~")
+        type_and_sys = fields[0]
+        if ":" in type_and_sys:
+            type_prefix, sys_name = type_and_sys.split(":", 1)
+            sys_name = sys_name.strip()
+            if sys_name:
+                systems.add(sys_name.lower())
+            vt = _base_vehicle(type_prefix.strip())
+            if vt:
+                vehicle_types.add(vt)
+        # Body is at index 2 for most types, or index 1 as fallback.
+        # Skip values that look like coordinates (no alphabetic chars).
+        for i in (2, 1):
+            if len(fields) > i and fields[i].strip():
+                val = fields[i].strip()
+                if any(c.isalpha() for c in val):
+                    bodies.add(val.lower())
+                    break
+
+    return len(segments), len(bodies) > 1, len(systems) > 1, len(vehicle_types) > 1
+
+
 def _parse_constraints(location: str, constraint_str: str, global_value: str) -> list[dict]:
     out: list[dict] = []
     for pair in constraint_str.split("**"):
@@ -210,3 +266,55 @@ async def fetch_last_updated() -> dict[str, datetime]:
     async with httpx.AsyncClient() as client:
         rows = await _fetch(client, f"{BASE_URL}/getTTResultsLU/LEADERBOARD")
     return _parse_last_updated(rows)
+
+
+async def fetch_and_store_race_details() -> None:
+    """Fetch getTTData for any locations not yet enriched (num_checkpoints = 0)."""
+    db = await get_db()
+    try:
+        async with db.execute(
+            "SELECT key FROM locations WHERE num_checkpoints = 0"
+        ) as cursor:
+            rows = await cursor.fetchall()
+        keys = [row["key"] for row in rows]
+    finally:
+        await db.close()
+
+    if not keys:
+        log.info("All races already have detail data; skipping getTTData fetch.")
+        return
+
+    log.info("Fetching race details (getTTData) for %d races…", len(keys))
+    from urllib.parse import quote as _quote
+
+    async with httpx.AsyncClient() as client:
+        for key in keys:
+            encoded = _quote(f"LEADERBOARD<|>{key}")
+            url = f"{BASE_URL}/getTTData/{encoded}"
+            try:
+                data = await _fetch(client, url)
+                if not (isinstance(data, list) and data and isinstance(data[0], list) and len(data[0]) >= 2):
+                    log.warning("Unexpected getTTData response for %s", key)
+                    continue
+                description: str = str(data[0][0])
+                waypoints_str: str = str(data[0][1])
+                num_cp, multi_planet, multi_system, multi_vessel = _parse_ttdata(waypoints_str)
+            except Exception as exc:
+                log.error("Failed getTTData for %s: %s", key, exc)
+                continue
+
+            db = await get_db()
+            try:
+                await db.execute(
+                    """
+                    UPDATE locations
+                    SET description = ?, num_checkpoints = ?, multi_planet = ?, multi_system = ?, multi_vessel = ?
+                    WHERE key = ?
+                    """,
+                    (description, num_cp, int(multi_planet), int(multi_system), int(multi_vessel), key),
+                )
+                await db.commit()
+            finally:
+                await db.close()
+
+    log.info("Race detail fetch complete for %d races.", len(keys))

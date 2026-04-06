@@ -14,6 +14,8 @@ const titleEl      = document.getElementById('race-title');
 const breadcrumbEl = document.getElementById('race-breadcrumb');
 const metaEl       = document.getElementById('race-meta');
 const constrEl     = document.getElementById('race-constraints');
+const infoEl       = document.getElementById('race-info');
+const descEl       = document.getElementById('race-description');
 const layoutEl     = document.getElementById('results-layout');
 const statusDot    = document.getElementById('status-dot');
 const statusText   = document.getElementById('status-text');
@@ -91,6 +93,23 @@ function renderRace() {
     ).join('');
   } else {
     constrEl.innerHTML = '';
+  }
+
+  // Info badges: checkpoints, multi-system, multi-planet, multi-vessel
+  const infoBadges = [];
+  if (race.num_checkpoints > 0) {
+    infoBadges.push(`<span class="info-badge">🏁 ${race.num_checkpoints} checkpoint${race.num_checkpoints !== 1 ? 's' : ''}</span>`);
+  }
+  if (race.multi_system) infoBadges.push('<span class="info-badge info-badge-accent">Multi-system</span>');
+  if (race.multi_planet) infoBadges.push('<span class="info-badge info-badge-accent">Multi-planet</span>');
+  if (race.multi_vessel) infoBadges.push('<span class="info-badge info-badge-accent">Multi-vessel</span>');
+  infoEl.innerHTML = infoBadges.join('');
+
+  if (race.description) {
+    descEl.textContent = race.description;
+    descEl.style.display = '';
+  } else {
+    descEl.style.display = 'none';
   }
 
   if (!race.results || race.results.length === 0) {

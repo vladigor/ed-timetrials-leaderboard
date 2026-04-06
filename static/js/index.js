@@ -146,12 +146,19 @@ function raceCard(r) {
     ? `${ordinal(r.cmdr_position)} of ${entries}`
     : `${entries}`;
 
+  const infoBadges = [
+    r.multi_vessel ? `<span class="info-badge info-badge-accent">Multi-vessel</span>` : '',
+    r.multi_planet ? `<span class="info-badge info-badge-accent">Multi-planet</span>` : '',
+    r.multi_system ? `<span class="info-badge info-badge-accent">Multi-system</span>` : '',
+  ].join('');
+
   return `
   <a class="race-card" href="/race/${encodeURIComponent(r.key)}"
      aria-label="View ${esc(r.name)} leaderboard">
     <div class="race-card-name">${esc(r.name)}</div>
     <div class="race-card-meta">
       ${typeBadge(r.type)}
+      ${infoBadges}
     </div>
     <div class="race-card-meta">
       <span>${esc(r.system)}</span>

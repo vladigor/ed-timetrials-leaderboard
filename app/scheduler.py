@@ -13,6 +13,7 @@ from .database import get_db
 from .importer import (
     fetch_and_store_locations,
     fetch_and_store_results,
+    fetch_and_store_race_details,
     fetch_last_updated,
 )
 
@@ -98,6 +99,11 @@ async def full_refresh() -> None:
     except Exception as exc:
         log.error("Failed to fetch locations: %s", exc)
         return
+
+    try:
+        await fetch_and_store_race_details()
+    except Exception as exc:
+        log.error("Failed to fetch race details: %s", exc)
 
     global _last_updated_snapshot
     try:

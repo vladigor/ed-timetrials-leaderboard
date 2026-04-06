@@ -261,6 +261,34 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
 }
 
+.race-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-top: .6rem;
+}
+
+.info-badge {
+  font-size: .75rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: .3rem;
+  padding: .15rem .55rem;
+  color: var(--text-muted);
+}
+
+.info-badge-accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.race-description {
+  margin-top: .75rem;
+  font-size: .875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 /* ============================================================
    Results layout: chart above table
    ============================================================ */

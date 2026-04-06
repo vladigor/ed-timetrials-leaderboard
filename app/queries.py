@@ -63,6 +63,9 @@ async def list_races(
                 l.station,
                 l.address,
                 l.sort,
+                l.multi_vessel,
+                l.multi_planet,
+                l.multi_system,
                 (SELECT COUNT(DISTINCT name) FROM results
                  WHERE location = l.key)          AS entry_count,
                 MAX(r.updated)                    AS last_activity
