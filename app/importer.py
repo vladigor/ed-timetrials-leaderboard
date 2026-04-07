@@ -50,6 +50,7 @@ def _parse_location(row: list[str]) -> dict:
         "name": row[1],
         "system": row[2] if len(row) > 2 else "",
         "station": row[3] if len(row) > 3 else "",
+        "coords": row[4] if len(row) > 4 else "",
         "type": row[5].upper() if len(row) > 5 else "",
         "version": version,
         "address": row[8] if len(row) > 8 else "",
@@ -172,8 +173,8 @@ def _parse_result(key: str, row: list[Any]) -> dict | None:
 async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
     await db.execute(
         """
-        INSERT INTO locations (key, name, type, version, system, station, address, sort)
-        VALUES (:key, :name, :type, :version, :system, :station, :address, :sort)
+        INSERT INTO locations (key, name, type, version, system, station, address, sort, coords)
+        VALUES (:key, :name, :type, :version, :system, :station, :address, :sort, :coords)
         ON CONFLICT(key) DO UPDATE SET
             name    = excluded.name,
             type    = excluded.type,
@@ -181,7 +182,8 @@ async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
             system  = excluded.system,
             station = excluded.station,
             address = excluded.address,
-            sort    = excluded.sort
+            sort    = excluded.sort,
+            coords  = excluded.coords
         """,
         loc,
     )
@@ -228,13 +230,32 @@ async def fetch_and_store_locations() -> None:
     async with httpx.AsyncClient() as client:
         rows = await _fetch(client, f"{BASE_URL}/getTTList/LEADERBOARD")
 
+_SUPERSEDED_MARKERS = ("superseded", "do not use")
+
+
+def _is_superseded(name: str) -> bool:
+    """Return True if the race name indicates it is superseded/deprecated."""
+    low = name.lower()
+    return any(m in low for m in _SUPERSEDED_MARKERS)
+
+
+async def fetch_and_store_locations() -> None:
+    """Fetch the TT list from the API and upsert into the database."""
+    async with httpx.AsyncClient() as client:
+        rows = await _fetch(client, f"{BASE_URL}/getTTList/LEADERBOARD")
+
     locations = [_parse_location(r) for r in rows]
     db = await get_db()
     try:
         for loc in locations:
-            await _upsert_location(db, loc)
+            if _is_superseded(loc["name"]):
+                # Remove any previously stored superseded race (cascade cleans results/constraints)
+                await db.execute("DELETE FROM locations WHERE key = ?", (loc["key"],))
+                log.info("Removed superseded race: %s", loc["key"])
+            else:
+                await _upsert_location(db, loc)
         await db.commit()
-        log.info("Upserted %d locations", len(locations))
+        log.info("Upserted %d locations", sum(1 for l in locations if not _is_superseded(l["name"])))
     finally:
         await db.close()
 

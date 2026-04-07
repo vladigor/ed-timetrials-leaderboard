@@ -100,6 +100,46 @@ async def api_cmdr(name: str):
     return stats
 
 
+@app.get("/api/system-coords")
+async def api_system_coords(name: str = Query(..., min_length=1, max_length=100)):
+    """Proxy to EDSM to resolve a star system name to galaxy coordinates."""
+    import httpx
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            resp = await client.get(
+                "https://www.edsm.net/api-v1/system",
+                params={"systemName": name, "showCoordinates": "1"},
+            )
+    except httpx.RequestError as exc:
+        log.warning("EDSM lookup failed for %r: %s", name, exc)
+        raise HTTPException(status_code=502, detail="EDSM lookup failed")
+    if resp.status_code != 200:
+        raise HTTPException(status_code=502, detail="EDSM returned an error")
+    data = resp.json()
+    if not data or "coords" not in data:
+        raise HTTPException(status_code=404, detail="System not found")
+    c = data["coords"]
+    return {"name": data["name"], "x": c["x"], "y": c["y"], "z": c["z"]}
+
+
+@app.get("/api/system-suggest")
+async def api_system_suggest(q: str = Query(..., min_length=1, max_length=100)):
+    """Proxy to Spansh autocomplete for star system name suggestions."""
+    import httpx
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get(
+                "https://spansh.co.uk/api/systems",
+                params={"q": q},
+            )
+    except httpx.RequestError as exc:
+        log.warning("Spansh suggest failed for %r: %s", q, exc)
+        raise HTTPException(status_code=502, detail="Spansh lookup failed")
+    if resp.status_code != 200:
+        raise HTTPException(status_code=502, detail="Spansh returned an error")
+    return resp.json()
+
+
 @app.get("/api/poll")
 async def api_poll():
     """

@@ -68,6 +68,7 @@ async def list_races(
                 l.station,
                 l.address,
                 l.sort,
+                l.coords,
                 l.multi_mode,
                 l.multi_planet,
                 l.multi_system,

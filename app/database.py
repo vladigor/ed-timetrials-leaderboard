@@ -66,6 +66,7 @@ async def init_db() -> None:
             "ALTER TABLE locations ADD COLUMN multi_system BOOLEAN NOT NULL DEFAULT 0",
             "ALTER TABLE locations ADD COLUMN multi_vessel BOOLEAN NOT NULL DEFAULT 0",
             "ALTER TABLE locations ADD COLUMN multi_mode BOOLEAN NOT NULL DEFAULT 0",
+            "ALTER TABLE locations ADD COLUMN coords TEXT NOT NULL DEFAULT ''",
         ):
             try:
                 await db.execute(col_sql)
@@ -92,5 +93,17 @@ async def init_db() -> None:
             await db.execute("UPDATE locations SET num_checkpoints = 0")
             await db.execute(
                 "INSERT INTO last_updated_cache (key, updated) VALUES ('migration_multi_mode_v1', 'done')"
+            )
+        # One-time migration: remove superseded races (name contains SUPERSEDED or DO NOT USE)
+        async with db.execute(
+            "SELECT key FROM last_updated_cache WHERE key = 'migration_superseded_v1'"
+        ) as cur:
+            already_done3 = await cur.fetchone()
+        if not already_done3:
+            await db.execute(
+                "DELETE FROM locations WHERE lower(name) LIKE '%superseded%' OR lower(name) LIKE '%do not use%'"
+            )
+            await db.execute(
+                "INSERT INTO last_updated_cache (key, updated) VALUES ('migration_superseded_v1', 'done')"
             )
         await db.commit()

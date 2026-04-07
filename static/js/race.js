@@ -88,8 +88,10 @@ function renderRace() {
   `;
 
   if (race.constraints && race.constraints.length) {
-    const tags = race.constraints.map(
-      c => `<span class="constraint-tag">${esc(camelToWords(c.key))}: ${esc(String(c.value))}</span>`
+    const tags = race.constraints.map(c => {
+      const val = c.key === 'MaxSRVPips' ? c.value / 2 : c.value;
+      return `<span class="constraint-tag">${esc(camelToWords(c.key))}: ${esc(String(val))}</span>`;
+    }
     ).join('');
     constrEl.innerHTML = `<span class="constraints-label">Race constraints:</span> ${tags}`;
   } else {
