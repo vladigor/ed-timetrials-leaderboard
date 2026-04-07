@@ -12,13 +12,13 @@ const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 let neidyScoredCache  = null;
 let neidySourceSystem = '';
 let neidyTypeFilter   = '';   // '' = All
-let neidyDistFilter   = 0;    // 0 = All, otherwise max ly
+let neidyDistFilter   = 1000; // default < 1000ly
 
 // NENDY filter state
 let nendyUndoneCache  = null;
 let nendySourceSystem = '';
 let nendyTypeFilter   = '';   // '' = All
-let nendyDistFilter   = 0;    // 0 = All, otherwise max ly
+let nendyDistFilter   = 1000; // default < 1000ly
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const breadcrumb    = document.getElementById('cmdr-breadcrumb');
