@@ -114,7 +114,7 @@ function renderTables() {
   const typeLabels = {
     SHIP:    'Ship Races',
     SRV:     'SRV Races',
-    FIGHTER: 'Fighter Races',
+    FIGHTER: 'SLF (Fighter) Races',
     ONFOOT:  'On Foot Races',
   };
 

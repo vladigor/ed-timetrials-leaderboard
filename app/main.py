@@ -52,6 +52,16 @@ async def index():
     return FileResponse(TEMPLATES_DIR / "index.html")
 
 
+@app.get("/favicon.ico")
+async def favicon():
+    return FileResponse(STATIC_DIR / "favicon.ico", media_type="image/x-icon")
+
+
+@app.get("/site.webmanifest")
+async def webmanifest():
+    return FileResponse(STATIC_DIR / "site.webmanifest", media_type="application/manifest+json")
+
+
 @app.get("/race/{key}", response_class=HTMLResponse)
 async def race_page(key: str):
     return FileResponse(TEMPLATES_DIR / "race.html")
