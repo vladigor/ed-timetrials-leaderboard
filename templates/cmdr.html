@@ -35,6 +35,76 @@
       <div id="cmdr-summary" class="cmdr-summary"></div>
     </div>
 
+    <div class="nearby-section" id="nearby-section">
+      <h2 class="cmdr-type-heading nearby-section-heading">Opportunities</h2>
+      <div class="nendy-controls">
+        <span class="filter-group-label">Your current star system</span>
+        <div class="nendy-input-row">
+          <div class="nendy-autocomplete">
+            <input type="text" id="nendy-system" class="nendy-input" placeholder="e.g. Deciat" autocomplete="off" spellcheck="false">
+            <ul class="nendy-suggestions" id="nendy-suggestions" hidden></ul>
+          </div>
+          <button id="nendy-find" class="btn-chip">Find</button>
+        </div>
+      </div>
+
+      <div class="nearby-tabs" id="nearby-tabs" style="display:none">
+        <button class="nearby-tab active" data-tab="neidy" id="tab-neidy">Improvement Opportunities</button>
+        <button class="nearby-tab" data-tab="nendy" id="tab-nendy">Not Done Yet</button>
+      </div>
+
+      <div id="neidy-panel">
+        <div class="neidy-filters" id="neidy-filters" style="display:none">
+          <div class="cmdr-sort-group">
+            <span class="filter-group-label">Type</span>
+            <div class="btn-toggle-group" id="neidy-type-btns">
+              <button class="btn-toggle active" data-type="">All</button>
+              <button class="btn-toggle" data-type="SHIP">Ship</button>
+              <button class="btn-toggle" data-type="SRV">SRV</button>
+              <button class="btn-toggle" data-type="FIGHTER">Fighter</button>
+              <button class="btn-toggle" data-type="ONFOOT">On Foot</button>
+            </div>
+          </div>
+          <div class="cmdr-sort-group">
+            <span class="filter-group-label">Distance</span>
+            <div class="btn-toggle-group" id="neidy-dist-btns">
+              <button class="btn-toggle active" data-dist="0">All</button>
+              <button class="btn-toggle" data-dist="1000">≤ 1,000 ly</button>
+              <button class="btn-toggle" data-dist="2000">≤ 2,000 ly</button>
+              <button class="btn-toggle" data-dist="5000">≤ 5,000 ly</button>
+            </div>
+          </div>
+        </div>
+        <div id="neidy-results"></div>
+      </div>
+      <div id="nendy-panel" style="display:none">
+        <div class="neidy-filters" id="nendy-filters" style="display:none">
+          <div class="cmdr-sort-group">
+            <span class="filter-group-label">Type</span>
+            <div class="btn-toggle-group" id="nendy-type-btns">
+              <button class="btn-toggle active" data-type="">All</button>
+              <button class="btn-toggle" data-type="SHIP">Ship</button>
+              <button class="btn-toggle" data-type="SRV">SRV</button>
+              <button class="btn-toggle" data-type="FIGHTER">Fighter</button>
+              <button class="btn-toggle" data-type="ONFOOT">On Foot</button>
+            </div>
+          </div>
+          <div class="cmdr-sort-group">
+            <span class="filter-group-label">Distance</span>
+            <div class="btn-toggle-group" id="nendy-dist-btns">
+              <button class="btn-toggle active" data-dist="0">All</button>
+              <button class="btn-toggle" data-dist="1000">&le; 1,000 ly</button>
+              <button class="btn-toggle" data-dist="2000">&le; 2,000 ly</button>
+              <button class="btn-toggle" data-dist="5000">&le; 5,000 ly</button>
+            </div>
+          </div>
+        </div>
+        <div id="nendy-results"></div>
+      </div>
+    </div>
+
+    <h2 class="cmdr-type-heading rankings-heading">Your Rankings</h2>
+
     <div class="cmdr-controls">
       <div class="cmdr-sort-group">
         <span class="filter-group-label">Sort by</span>
@@ -54,21 +124,6 @@
     <div class="cmdr-legend" id="cmdr-legend" style="display:none">
       <span class="legend-swatch highlight-opportunity"></span>
       Races where your percentile is below your average for that vehicle type — these are your best improvement opportunities.
-    </div>
-
-    <div class="nendy-section" id="nendy-section">
-      <h2 class="cmdr-type-heading">NENDY — Nearest Events Not Done Yet</h2>
-      <div class="nendy-controls">
-        <span class="filter-group-label">Your current star system</span>
-        <div class="nendy-input-row">
-          <div class="nendy-autocomplete">
-            <input type="text" id="nendy-system" class="nendy-input" placeholder="e.g. Deciat" autocomplete="off" spellcheck="false">
-            <ul class="nendy-suggestions" id="nendy-suggestions" hidden></ul>
-          </div>
-          <button id="nendy-find" class="btn-chip">Find</button>
-        </div>
-      </div>
-      <div id="nendy-results"></div>
     </div>
 
     <div id="trophy-case" style="display:none"></div>
