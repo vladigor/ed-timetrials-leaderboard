@@ -2,6 +2,7 @@ import { formatTime, formatImprovement, relativeTime, esc, ordinal } from './uti
 
 // ── State ──────────────────────────────────────────────────────────────────
 const cmdrName   = decodeURIComponent(location.pathname.split('/cmdr/')[1] ?? '');
+const isSelf     = !!cmdrName && cmdrName.toUpperCase() === (localStorage.getItem('tt_filter_cmdr') || '').toUpperCase();
 let   stats      = null;   // full API response
 let   sortBy     = 'percentile';  // 'percentile' | 'recent'
 let   filterRecent = false;
@@ -24,7 +25,6 @@ const breadcrumb    = document.getElementById('cmdr-breadcrumb');
 const title         = document.getElementById('cmdr-title');
 const summaryEl     = document.getElementById('cmdr-summary');
 const tablesEl      = document.getElementById('cmdr-tables');
-const legendEl      = document.getElementById('cmdr-legend');
 const trophyEl      = document.getElementById('trophy-case');
 const sortPctBtn    = document.getElementById('sort-pct');
 const sortRecBtn    = document.getElementById('sort-recent');
@@ -97,7 +97,10 @@ function renderSummary() {
 
   summaryEl.innerHTML = `
     <div class="cmdr-overall-pct">
-      You are in the <strong>top ${overall}%</strong> of pilots overall.
+      ${isSelf
+        ? `You are in the <strong>top ${overall}%</strong> of pilots overall.`
+        : `CMDR ${esc(cmdrName)} is in the <strong>top ${overall}%</strong> of pilots overall.`
+      }
     </div>
     ${typeStatements ? `<div class="cmdr-type-stats">${typeStatements}</div>` : ''}
   `;
@@ -116,12 +119,6 @@ function renderTables() {
   }
 
   const types = [...new Set(stats.races.map(r => r.type))].sort();
-  const hasHighlight = races.some(r => {
-    const typeAvg = stats.by_type_percentile[r.type];
-    return typeAvg !== undefined && r.percentile > typeAvg;
-  });
-  legendEl.style.display = hasHighlight ? 'flex' : 'none';
-
   const typeLabels = {
     SHIP:    'Ship Races',
     SRV:     'SRV Races',
@@ -163,10 +160,10 @@ function renderTables() {
 
     html += `
       <section class="cmdr-type-section">
-        <h2 class="cmdr-type-heading">
+        <h3 class="cmdr-type-heading">
           ${esc(typeLabels[type] ?? type)}
           <span class="cmdr-type-avg">avg top ${typeAvgPct}%</span>
-        </h2>
+        </h3>
         <table class="results-table">
           <thead>
             <tr>
@@ -216,15 +213,15 @@ function renderTrophyCase() {
   .filter(t => t.count > 0)
   .map(t => `
     <div class="trophy-item ${t.cls}">
+      <span class="trophy-label">${t.label}</span>
       <span class="trophy-icon" aria-hidden="true">${t.emoji}</span>
       <span class="trophy-count">${t.count}</span>
-      <span class="trophy-label">${t.label}</span>
     </div>`)
   .join('');
 
   trophyEl.style.display = '';
   trophyEl.innerHTML = `
-    <h2 class="cmdr-type-heading">Trophy Case</h2>
+    <h2 class="cmdr-section-heading">Trophy Case</h2>
     <div class="trophy-row">${items}</div>
   `;
 }
@@ -562,7 +559,7 @@ async function nearbyFind() {
 function renderNendy(resolvedName, undone) {
   if (undone.length === 0) {
     nendyFiltersEl.style.display = 'none';
-    nendyResults.innerHTML = `<p class="empty-state">You've done every race — nothing left to find!</p>`;
+    nendyResults.innerHTML = `<p class="empty-state">${isSelf ? "You've" : 'This commander has'} done every race \u2014 nothing left to find!</p>`;
     return;
   }
 

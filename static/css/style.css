@@ -610,6 +610,15 @@ a:hover { text-decoration: underline; }
 .btn-toggle.active       { background: rgba(232,160,32,.15); color: var(--accent); border-color: var(--accent-dim); }
 
 .cmdr-type-section { margin-bottom: 2.5rem; }
+.cmdr-section-heading {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: .75rem;
+  display: flex;
+  align-items: baseline;
+  gap: .75rem;
+}
 .cmdr-type-heading {
   font-size: 1.15rem;
   font-weight: 700;
@@ -693,8 +702,16 @@ a:hover { text-decoration: underline; }
   margin-bottom: 2.5rem;
 }
 .nearby-section-heading {
-  margin-bottom: 1rem;
+  margin-bottom: .5rem;
 }
+.section-intro {
+  font-size: .88rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 1.25rem;
+  max-width: 72ch;
+}
+.section-intro strong { color: var(--text); }
 .rankings-heading {
   margin-top: 0;
   margin-bottom: .75rem;
