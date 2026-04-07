@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
@@ -11,6 +12,8 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 
 from .config import OFFLINE
 from .database import init_db
@@ -25,6 +28,7 @@ log = logging.getLogger(__name__)
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
 TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+STATIC_VER = str(int(time.time()))
 
 
 @asynccontextmanager
@@ -41,6 +45,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Elite Dangerous Time Trials Leaderboard", lifespan=lifespan)
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
 # ---------------------------------------------------------------------------
@@ -48,8 +53,8 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 # ---------------------------------------------------------------------------
 
 @app.get("/", response_class=HTMLResponse)
-async def index():
-    return FileResponse(TEMPLATES_DIR / "index.html")
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request, "v": STATIC_VER})
 
 
 @app.get("/favicon.ico")
@@ -63,13 +68,18 @@ async def webmanifest():
 
 
 @app.get("/race/{key}", response_class=HTMLResponse)
-async def race_page(key: str):
-    return FileResponse(TEMPLATES_DIR / "race.html")
+async def race_page(request: Request, key: str):
+    return templates.TemplateResponse("race.html", {"request": request, "v": STATIC_VER})
 
 
 @app.get("/cmdr/{name}", response_class=HTMLResponse)
-async def cmdr_page(name: str):
-    return FileResponse(TEMPLATES_DIR / "cmdr.html")
+async def cmdr_page(request: Request, name: str):
+    return templates.TemplateResponse("cmdr.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request):
+    return templates.TemplateResponse("about.html", {"request": request, "v": STATIC_VER})
 
 
 # ---------------------------------------------------------------------------
