@@ -75,8 +75,21 @@ async def _sync_changed(old: dict[str, datetime], new: dict[str, datetime]) -> N
 
 
 async def poll() -> None:
-    """One polling cycle: check last-updated, fetch changed results, persist cache."""
+    """One polling cycle: refresh locations, check last-updated, fetch changed results, persist cache."""
     global _last_updated_snapshot
+    
+    # Refresh the locations list to detect new races
+    try:
+        await fetch_and_store_locations()
+    except Exception as exc:
+        log.error("Failed to fetch locations during poll: %s", exc)
+    
+    # Fetch details for any new races
+    try:
+        await fetch_and_store_race_details()
+    except Exception as exc:
+        log.error("Failed to fetch race details during poll: %s", exc)
+    
     try:
         fresh = await fetch_last_updated()
     except Exception as exc:
