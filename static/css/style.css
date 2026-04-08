@@ -929,6 +929,7 @@ a:hover { text-decoration: underline; }
 }
 @media (max-width: 600px) and (orientation: portrait) {
   .portrait-banner { display: block; }
+  .site-logo { font-size: .9rem; white-space: normal; }
 }
 
 /* ── Mobile styles ─────────────────────────────────────────────────── */
