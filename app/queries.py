@@ -195,6 +195,55 @@ async def get_race(key: str) -> dict | None:
             })
 
         race["results"] = results
+
+        # ── Rivalry data ───────────────────────────────────────────────────
+        # Count P1 changes in last day and last week using position_snapshots
+        async with db.execute(
+            """
+            WITH p1 AS (
+                SELECT name, snapped_at,
+                    LAG(name) OVER (ORDER BY snapped_at) AS prev_name
+                FROM position_snapshots
+                WHERE location = ? AND position = 1
+            )
+            SELECT
+                COUNT(CASE WHEN prev_name != name AND snapped_at >= datetime('now', '-1 day')  THEN 1 END) AS switches_day,
+                COUNT(CASE WHEN prev_name != name AND snapped_at >= datetime('now', '-7 days') THEN 1 END) AS switches_week
+            FROM p1
+            WHERE prev_name IS NOT NULL
+            """,
+            (key,),
+        ) as cur:
+            sw_row = await cur.fetchone()
+
+        rivalry = None
+        if sw_row:
+            switches_day  = sw_row["switches_day"]  or 0
+            switches_week = sw_row["switches_week"] or 0
+            if switches_week > 0:
+                window   = "day"  if switches_day  > 0 else "week"
+                switches = switches_day if switches_day > 0 else switches_week
+                since    = "datetime('now', '-1 day')" if window == "day" else "datetime('now', '-7 days')"
+                async with db.execute(
+                    f"""
+                    SELECT DISTINCT name
+                    FROM position_snapshots
+                    WHERE location = ? AND position <= 3
+                      AND snapped_at >= {since}
+                    ORDER BY name
+                    """,
+                    (key,),
+                ) as cur:
+                    contender_rows = await cur.fetchall()
+                contenders = [r["name"] for r in contender_rows]
+                if len(contenders) >= 2:
+                    rivalry = {
+                        "switches":   switches,
+                        "window":     window,
+                        "contenders": contenders,
+                    }
+
+        race["rivalry"] = rivalry
         return race
     finally:
         await db.close()

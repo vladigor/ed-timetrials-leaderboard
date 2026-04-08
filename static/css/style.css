@@ -356,6 +356,24 @@ a:hover { text-decoration: underline; }
   overflow: hidden;
 }
 
+.rivalry-panel {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-top: 1rem;
+  padding: .75rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--accent-dim);
+  border-radius: .5rem;
+  font-size: .875rem;
+  color: var(--text);
+}
+
+.rivalry-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
 /* ============================================================
    ECharts container
    ============================================================ */

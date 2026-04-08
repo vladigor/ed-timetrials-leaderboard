@@ -17,6 +17,7 @@ const constrEl     = document.getElementById('race-constraints');
 const infoEl       = document.getElementById('race-info');
 const descEl       = document.getElementById('race-description');
 const layoutEl     = document.getElementById('results-layout');
+const rivalryEl    = document.getElementById('race-rivalry');
 const statusDot    = document.getElementById('status-dot');
 const statusText   = document.getElementById('status-text');
 const backLink     = document.getElementById('back-link');
@@ -171,6 +172,35 @@ function renderRace() {
   if (window._chartRO) window._chartRO.disconnect();
   window._chartRO = new ResizeObserver(() => chartInstance && chartInstance.resize());
   window._chartRO.observe(chartEl);
+
+  renderRivalry(race.rivalry);
+}
+
+// ── Rivalry panel ──────────────────────────────────────────────────────────
+function renderRivalry(rivalry) {
+  if (!rivalry) { rivalryEl.style.display = 'none'; return; }
+
+  const { switches, window: win, contenders } = rivalry;
+  const windowLabel = win === 'day' ? 'past 24 hours' : 'past week';
+  const timesLabel  = `${switches} time${switches !== 1 ? 's' : ''}`;
+
+  const names = contenders.map(n =>
+    `<a href="/cmdr/${encodeURIComponent(n)}" class="cmdr-link">${esc(n)}</a>`
+  );
+  let nameList;
+  if (names.length === 2) {
+    nameList = `${names[0]} and ${names[1]}`;
+  } else {
+    nameList = names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+  }
+
+  rivalryEl.innerHTML = `
+    <div class="rivalry-panel">
+      <span class="rivalry-icon">⚔️</span>
+      <span>The lead has changed <strong>${timesLabel}</strong> in the ${windowLabel}.
+      CMDRs ${nameList} are duking it out for the top spot.</span>
+    </div>`;
+  rivalryEl.style.display = '';
 }
 
 // ── ECharts option builder ─────────────────────────────────────────────────
