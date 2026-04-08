@@ -68,7 +68,7 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 
-.site-logo span { color: var(--text-muted); font-weight: 400; font-size: .85em; }
+
 
 /* ============================================================
    Breadcrumb
@@ -937,10 +937,19 @@ a:hover { text-decoration: underline; }
   #race-chart { display: none; }
   .results-layout { display: block; }
 
-  /* Race name column: clamp width and truncate (scoped to race results panel) */
+  /* Race page: clamp Commander name column */
   .results-table-panel .results-table td:nth-child(2),
   .results-table-panel .results-table th:nth-child(2) {
     max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Cmdr page: clamp Race name column (1st col) */
+  .cmdr-type-section .results-table td:nth-child(1),
+  .cmdr-type-section .results-table th:nth-child(1) {
+    max-width: 130px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
