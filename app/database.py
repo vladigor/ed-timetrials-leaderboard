@@ -78,6 +78,7 @@ async def init_db() -> None:
             "ALTER TABLE locations ADD COLUMN multi_vessel BOOLEAN NOT NULL DEFAULT 0",
             "ALTER TABLE locations ADD COLUMN multi_mode BOOLEAN NOT NULL DEFAULT 0",
             "ALTER TABLE locations ADD COLUMN coords TEXT NOT NULL DEFAULT ''",
+            "ALTER TABLE locations ADD COLUMN created_at TEXT NOT NULL DEFAULT ''",
         ):
             try:
                 await db.execute(col_sql)

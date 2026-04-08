@@ -171,10 +171,11 @@ def _parse_result(key: str, row: list[Any]) -> dict | None:
 # ---------------------------------------------------------------------------
 
 async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
     await db.execute(
         """
-        INSERT INTO locations (key, name, type, version, system, station, address, sort, coords)
-        VALUES (:key, :name, :type, :version, :system, :station, :address, :sort, :coords)
+        INSERT INTO locations (key, name, type, version, system, station, address, sort, coords, created_at)
+        VALUES (:key, :name, :type, :version, :system, :station, :address, :sort, :coords, :created_at)
         ON CONFLICT(key) DO UPDATE SET
             name    = excluded.name,
             type    = excluded.type,
@@ -185,7 +186,7 @@ async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
             sort    = excluded.sort,
             coords  = excluded.coords
         """,
-        loc,
+        {**loc, "created_at": now},
     )
     # Rebuild constraints: delete then insert
     await db.execute("DELETE FROM constraints WHERE location = ?", (loc["key"],))

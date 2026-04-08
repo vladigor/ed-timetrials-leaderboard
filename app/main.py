@@ -18,7 +18,7 @@ from fastapi import Request
 from .config import OFFLINE
 from .database import init_db
 from .scheduler import full_refresh, get_last_updated_snapshot, start_scheduler
-from .queries import list_races, get_race, list_commanders, get_commander_stats
+from .queries import list_races, get_race, list_commanders, get_commander_stats, list_new_races
 
 logging.basicConfig(
     level=logging.INFO,
@@ -97,6 +97,11 @@ async def api_races(
     effective_cmdr = commander or commander_pos
     filter_cmdr    = commander  # only restrict to their races when 'commander' is set
     return await list_races(active_days=active_days, commander=filter_cmdr, commander_pos=effective_cmdr)
+
+
+@app.get("/api/races/new")
+async def api_new_races(days: int = Query(7, ge=1, le=90)):
+    return await list_new_races(days=days)
 
 
 @app.get("/api/races/{key}")

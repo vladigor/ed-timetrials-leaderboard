@@ -16,7 +16,7 @@
     <div class="page-wrapper">
       <div class="inner">
         <div class="site-logo">
-          Elite Dangerous Time Trials Leaderboards
+          <a href="/" class="site-logo-link">Elite Dangerous Time Trials Leaderboards</a>
         </div>
       </div>
     </div>
@@ -24,11 +24,16 @@
 
   <main class="page-wrapper">
 
+    <div id="new-races-panel" style="display:none">
+      <h2 class="new-races-heading">New this week</h2>
+      <ul id="new-races-list" class="new-races-list"></ul>
+    </div>
+
     <section class="filter-bar" aria-label="Filters">
       <div class="filter-group">
         <span class="filter-group-label">Commander</span>
         <div class="profile-display-row">
-          <span id="profile-label" class="profile-name no-profile">No profile selected</span>
+          <a id="profile-label" class="profile-name no-profile" href="#">No profile selected</a>
           <button id="btn-change-profile" class="btn-chip">Change</button>
         </div>
       </div>
@@ -39,7 +44,7 @@
         </label>
         <label class="filter-toggle">
           <input type="checkbox" id="filter-active">
-          Active in last 7 days only
+          Races with activity in the last 7 days only
         </label>
       </div>
       <div style="margin-left:auto;display:flex;align-items:center">

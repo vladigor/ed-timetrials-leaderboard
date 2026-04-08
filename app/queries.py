@@ -43,7 +43,9 @@ async def list_races(
         cmdr_position_params: list[Any] = []
         if pos_cmdr:
             cmdr_position_sql = """,
-                (
+                CASE WHEN EXISTS(
+                    SELECT 1 FROM results WHERE location = l.key AND name = ?
+                ) THEN (
                     SELECT COUNT(*) + 1
                     FROM (
                         SELECT name, MIN(time) AS best
@@ -55,8 +57,8 @@ async def list_races(
                         SELECT MIN(time) FROM results
                         WHERE location = l.key AND name = ?
                     )
-                ) AS cmdr_position"""
-            cmdr_position_params = [pos_cmdr]
+                ) ELSE NULL END AS cmdr_position"""
+            cmdr_position_params = [pos_cmdr, pos_cmdr]
 
         base_sql = f"""
             SELECT
@@ -207,6 +209,28 @@ async def list_commanders() -> list[str]:
         ) as cursor:
             rows = await cursor.fetchall()
         return [row["name"] for row in rows]
+    finally:
+        await db.close()
+
+
+async def list_new_races(days: int = 7) -> list[dict]:
+    """Return races added within the last N days, ordered newest first."""
+    db = await get_db()
+    try:
+        cutoff = (
+            datetime.now(timezone.utc) - timedelta(days=days)
+        ).strftime("%Y-%m-%d %H:%M:%S.%f")
+        async with db.execute(
+            """
+            SELECT key, name, created_at
+            FROM locations
+            WHERE created_at >= ?
+            ORDER BY created_at DESC
+            """,
+            (cutoff,),
+        ) as cursor:
+            rows = await cursor.fetchall()
+        return [_row_to_dict(row) for row in rows]
     finally:
         await db.close()
 

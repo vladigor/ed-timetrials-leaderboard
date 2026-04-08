@@ -42,7 +42,7 @@ async function init() {
   checkCmdrRaces.checked = filterCmdrRaces;
   updateProfileLabel();
 
-  await Promise.all([loadRaces(), loadCommanders()]);
+  await Promise.all([loadRaces(), loadCommanders(), loadNewRaces()]);
 
   checkActive.addEventListener('change', () => {
     filterActive = checkActive.checked;
@@ -119,6 +119,21 @@ async function loadCommanders() {
   }
 }
 
+async function loadNewRaces() {
+  try {
+    const data = await fetch('/api/races/new').then(r => r.json());
+    const panel = document.getElementById('new-races-panel');
+    const list  = document.getElementById('new-races-list');
+    if (!data.length) { panel.style.display = 'none'; return; }
+    list.innerHTML = data.map(r =>
+      `<li><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></li>`
+    ).join('');
+    panel.style.display = '';
+  } catch (_) {
+    // Non-fatal
+  }
+}
+
 // ── Render ─────────────────────────────────────────────────────────────────
 function renderGrid() {
   let races = allRaces;
@@ -187,15 +202,18 @@ function raceCard(r) {
 // ── Profile modal ───────────────────────────────────────────────────────────
 function updateProfileLabel() {
   if (filterCmdr) {
+    const profileUrl = `/cmdr/${encodeURIComponent(filterCmdr)}`;
     profileLabel.textContent = `CMDR ${filterCmdr}`;
     profileLabel.classList.remove('no-profile');
-    btnViewProfile.href = `/cmdr/${encodeURIComponent(filterCmdr)}`;
+    profileLabel.href = profileUrl;
+    btnViewProfile.href = profileUrl;
     btnViewProfile.style.display = '';
     cmdrRacesGroup.style.display = '';
     checkCmdrRaces.checked = filterCmdrRaces;
   } else {
     profileLabel.textContent = 'No profile selected';
     profileLabel.classList.add('no-profile');
+    profileLabel.removeAttribute('href');
     btnViewProfile.style.display = 'none';
     cmdrRacesGroup.style.display = 'none';
   }
