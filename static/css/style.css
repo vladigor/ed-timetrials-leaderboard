@@ -917,7 +917,36 @@ a:hover { text-decoration: underline; }
 /* ============================================================
    Responsive
    ============================================================ */
+/* ── Portrait-mode banner ─────────────────────────────────────────── */
+.portrait-banner {
+  display: none;
+  background: var(--accent);
+  color: #fff;
+  text-align: center;
+  font-size: .85rem;
+  padding: .45rem 1rem;
+  letter-spacing: .02em;
+}
+@media (max-width: 600px) and (orientation: portrait) {
+  .portrait-banner { display: block; }
+}
+
+/* ── Mobile styles ─────────────────────────────────────────────────── */
 @media (max-width: 720px) {
+  /* Race page: hide chart on narrow portrait, show only table */
+  #race-chart { display: none; }
+  .results-layout { display: block; }
+
+  /* Race name column: clamp width and truncate (scoped to race results panel) */
+  .results-table-panel .results-table td:nth-child(2),
+  .results-table-panel .results-table th:nth-child(2) {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Hide less important columns past the 4th */
   .results-table th:nth-child(n+5),
   .results-table td:nth-child(n+5) { display: none; }
 }

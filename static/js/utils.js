@@ -30,9 +30,9 @@ export function formatImprovement(ms) {
   if (ms == null) return { text: '—', cls: 'improvement-none' };
   if (ms === 0)   return { text: '—', cls: 'improvement-none' };
   if (ms > 0) {
-    return { text: `▼ ${formatTime(ms)}`, cls: 'improvement-better' };
+    return { text: `▲ ${formatTime(ms)}`, cls: 'improvement-better' };
   }
-  return { text: `▲ ${formatTime(Math.abs(ms))}`, cls: 'improvement-worse' };
+  return { text: `▼ ${formatTime(Math.abs(ms))}`, cls: 'improvement-worse' };
 }
 
 /**

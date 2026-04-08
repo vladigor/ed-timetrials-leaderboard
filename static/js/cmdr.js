@@ -260,21 +260,21 @@ function renderThievses(thefts) {
   const n = thefts.length;
   const baseQuotes = [
     '',
-    'Gollum... gollum... they stealses it from us, precious. One precious position, gone!',
-    'Two times! Two precious positions stolen! Nasty tricksy commanderses, gollum!',
-    'Three... three thievses, precious! We hatesss them, we does! Gollum gollum!',
+    'They stealses it from us, precious. One precious position, gone!',
+    'Two times! Two precious positions stolen! Nasty tricksy commanderses!',
+    'Three... three thievses, precious! We hatesss them, we does!',
     'Four timeses they stealses from us! Mean and horrible! Cruelses, like Baggins!',
     'FIVE! We is counting, precious — five precious positions, all gone! NASTY THIEVSES!',
-    'Six! Six precious positions stolen! We is overwhelmed with griefs, gollum gollum!',
+    'Six! Six precious positions stolen! We is overwhelmed with griefs, precious!',
     "Seven times! SEVEN! We doesn't even wantsss to count anymore, precious!",
-    'Eight precious positionses, gone forever! They is destroying us! GOLLUM GOLLUM!',
+    'Eight precious positionses, gone forever! They is destroying us!',
     'Nine thefts, precious... nine! We is running out of words for how much we hatesss them...',
-    'TEN! TEN PRECIOUS POSITIONSES STOLEN! We gives up, precious. They winsss. GOLLUM GOLLUM GOLLUM!',
+    'TEN! TEN PRECIOUS POSITIONSES STOLEN! We gives up, precious. They winsss.',
   ];
   let quote = baseQuotes[Math.min(n, 10)];
   if (rogue) {
     quote += rogueCount >= 3
-      ? ` Especially that wicked ${esc(rogue)}! We hatesss ${esc(rogue)} most of all, precious! GOLLUM!`
+      ? ` Especially that wicked ${esc(rogue)}! We hatesss ${esc(rogue)} most of all, precious!`
       : ` That nasty ${esc(rogue)}, precious — always them!`;
   }
 
