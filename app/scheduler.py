@@ -63,6 +63,33 @@ async def _save_cache(snapshot: dict[str, datetime]) -> None:
 # Scheduler jobs
 # ---------------------------------------------------------------------------
 
+async def _backfill_missing_results() -> None:
+    """Fetch results for races that exist in locations but have no results."""
+    db = await get_db()
+    try:
+        async with db.execute(
+            """
+            SELECT l.key
+            FROM locations l
+            WHERE NOT EXISTS (
+                SELECT 1 FROM results WHERE location = l.key
+            )
+            """
+        ) as cursor:
+            rows = await cursor.fetchall()
+        keys = [row["key"] for row in rows]
+    finally:
+        await db.close()
+
+    if keys:
+        log.info("Backfilling results for %d races with no results: %s", len(keys), keys)
+        for key in keys:
+            try:
+                await fetch_and_store_results(key)
+            except Exception as exc:
+                log.error("Failed to backfill results for %s: %s", key, exc)
+
+
 async def _sync_changed(old: dict[str, datetime], new: dict[str, datetime]) -> None:
     """Fetch results for every key whose timestamp has changed or is new."""
     for key, when in new.items():
@@ -95,6 +122,11 @@ async def poll() -> None:
     except Exception as exc:
         log.error("Failed to fetch last-updated: %s", exc)
         return
+
+    # Backfill: fetch results for any races that are in locations but have zero results.
+    # This handles cases where races were added while the location list wasn't being
+    # refreshed, causing foreign key constraint failures on result inserts.
+    await _backfill_missing_results()
 
     await _sync_changed(_last_updated_snapshot, fresh)
     await _save_cache(fresh)
