@@ -640,6 +640,10 @@ a:hover { text-decoration: underline; }
 .pct-mid   { color: var(--text);   }
 .pct-low   { color: var(--text-muted); }
 
+/* Position delta (7-day trend) */
+.delta-up   { color: var(--good); font-weight: 600; }
+.delta-down { color: var(--bad); font-weight: 600; }
+
 /* Opportunity highlight row */
 .row-opportunity td {
   background: rgba(217, 79, 79, .07);
@@ -684,7 +688,7 @@ a:hover { text-decoration: underline; }
   min-width: 110px;
   text-align: center;
 }
-.trophy-icon  { font-size: 2.2rem; line-height: 1; }
+.trophy-icon  { width: 150px; height: 150px; object-fit: contain; }
 .trophy-count { font-size: 1.8rem; font-weight: 700; line-height: 1.1; }
 .trophy-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
 
@@ -694,6 +698,22 @@ a:hover { text-decoration: underline; }
 .trophy-silver .trophy-count { color: var(--rank2); }
 .trophy-bronze { border-color: var(--rank3); background: rgba(205,127,50,.07); }
 .trophy-bronze .trophy-count { color: var(--rank3); }
+
+/* ── Thievses ──────────────────────────────────────────────────────────── */
+.thievses-section {
+  margin-top: 2.5rem;
+}
+.thievses-gollum {
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: .9rem;
+  line-height: 1.6;
+  max-width: 72ch;
+  margin: 0 0 1rem;
+}
+.theft-pos-1 { color: var(--rank1); font-weight: 700; }
+.theft-pos-2 { color: var(--rank2); font-weight: 700; }
+.theft-pos-3 { color: var(--rank3); font-weight: 700; }
 
 /* ============================================================
    Opportunities (NENDY + NEIDY)

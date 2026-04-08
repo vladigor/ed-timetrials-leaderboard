@@ -147,11 +147,13 @@ function renderTables() {
       const isOpportunity = typeAvgPct !== undefined && r.percentile > typeAvgPct;
       const imp = r.improvement_ms != null ? formatImprovement(r.improvement_ms) : null;
       const shipLabel = [r.ship, r.shipname].filter(Boolean).join(' — ');
+      const delta = formatPositionDelta(r.position_delta);
       return `
         <tr class="${isOpportunity ? 'row-opportunity' : ''}">
           <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.race_name)}</a></td>
           <td class="num">${ordinal(r.position)} of ${r.total_entries}</td>
           <td class="num ${percentileClass(r.percentile)}">${r.position === 1 ? '#1 — top' : `top ${r.percentile}%`}</td>
+          <td class="num ${delta.cls}">${delta.text}</td>
           <td class="num ${imp ? imp.cls : ''}">${imp ? imp.text : '—'}</td>
           <td class="muted">${esc(shipLabel) || '—'}</td>
           <td class="muted">${r.last_competed ? relativeTime(r.last_competed) : '—'}</td>
@@ -170,6 +172,7 @@ function renderTables() {
               <th>Race</th>
               <th class="num">Position</th>
               <th class="num">Percentile</th>
+              <th class="num">7d trend</th>
               <th class="num">Improvement</th>
               <th>Ship</th>
               <th>Last competed</th>
@@ -195,35 +198,112 @@ function percentileClass(pct) {
   return 'pct-low';
 }
 
+function formatPositionDelta(delta) {
+  if (delta == null || delta === 0) return { text: '—', cls: 'muted' };
+  if (delta > 0) return { text: `▲${delta}`, cls: 'delta-up' };
+  return { text: `▼${Math.abs(delta)}`, cls: 'delta-down' };
+}
+
 function renderTrophyCase() {
   const gold   = stats.races.filter(r => r.position === 1).length;
   const silver = stats.races.filter(r => r.position === 2).length;
   const bronze = stats.races.filter(r => r.position === 3).length;
+  const thefts = stats.podium_thefts ?? [];
 
-  if (gold + silver + bronze === 0) {
+  if (gold + silver + bronze === 0 && thefts.length === 0) {
     trophyEl.style.display = 'none';
     return;
   }
 
-  const items = [
-    { count: gold,   cls: 'trophy-gold',   label: '1st place', emoji: '\uD83C\uDFC6' },
-    { count: silver, cls: 'trophy-silver', label: '2nd place', emoji: '\uD83E\uDD48' },
-    { count: bronze, cls: 'trophy-bronze', label: '3rd place', emoji: '\uD83E\uDD49' },
-  ]
-  .filter(t => t.count > 0)
-  .map(t => `
-    <div class="trophy-item ${t.cls}">
-      <span class="trophy-label">${t.label}</span>
-      <span class="trophy-icon" aria-hidden="true">${t.emoji}</span>
-      <span class="trophy-count">${t.count}</span>
-    </div>`)
-  .join('');
-
   trophyEl.style.display = '';
-  trophyEl.innerHTML = `
-    <h2 class="cmdr-section-heading">Trophy Case</h2>
-    <div class="trophy-row">${items}</div>
-  `;
+  let html = '';
+
+  if (gold + silver + bronze > 0) {
+    const items = [
+      { count: gold,   cls: 'trophy-gold',   label: '1st place', img: '/static/trophy_gold_150.png'   },
+      { count: silver, cls: 'trophy-silver', label: '2nd place', img: '/static/trophy_silver_150.png' },
+      { count: bronze, cls: 'trophy-bronze', label: '3rd place', img: '/static/trophy_bronze_150.png' },
+    ]
+    .filter(t => t.count > 0)
+    .map(t => `
+      <div class="trophy-item ${t.cls}">
+        <span class="trophy-label">${t.label}</span>
+        <img class="trophy-icon" src="${t.img}" alt="${t.label} trophy" width="150" height="150">
+        <span class="trophy-count">${t.count}</span>
+      </div>`)
+    .join('');
+
+    html += `
+      <h2 class="cmdr-section-heading">Trophy Case</h2>
+      <div class="trophy-row">${items}</div>
+    `;
+  }
+
+  if (thefts.length > 0) {
+    html += renderThievses(thefts);
+  }
+
+  trophyEl.innerHTML = html;
+}
+
+function renderThievses(thefts) {
+  const posLabel = { 1: 'Gold', 2: 'Silver', 3: 'Bronze' };
+  const posCls   = { 1: 'theft-pos-1', 2: 'theft-pos-2', 3: 'theft-pos-3' };
+
+  // Find the most prolific thief
+  const counts = {};
+  thefts.forEach(t => { if (t.thief_name) counts[t.thief_name] = (counts[t.thief_name] || 0) + 1; });
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const rogue      = sorted.length && sorted[0][1] >= 2 ? sorted[0][0] : null;
+  const rogueCount = rogue ? sorted[0][1] : 0;
+
+  const n = thefts.length;
+  const baseQuotes = [
+    '',
+    'Gollum... gollum... they stealses it from us, precious. One precious position, gone!',
+    'Two times! Two precious positions stolen! Nasty tricksy commanderses, gollum!',
+    'Three... three thievses, precious! We hatesss them, we does! Gollum gollum!',
+    'Four timeses they stealses from us! Mean and horrible! Cruelses, like Baggins!',
+    'FIVE! We is counting, precious — five precious positions, all gone! NASTY THIEVSES!',
+    'Six! Six precious positions stolen! We is overwhelmed with griefs, gollum gollum!',
+    "Seven times! SEVEN! We doesn't even wantsss to count anymore, precious!",
+    'Eight precious positionses, gone forever! They is destroying us! GOLLUM GOLLUM!',
+    'Nine thefts, precious... nine! We is running out of words for how much we hatesss them...',
+    'TEN! TEN PRECIOUS POSITIONSES STOLEN! We gives up, precious. They winsss. GOLLUM GOLLUM GOLLUM!',
+  ];
+  let quote = baseQuotes[Math.min(n, 10)];
+  if (rogue) {
+    quote += rogueCount >= 3
+      ? ` Especially that wicked ${esc(rogue)}! We hatesss ${esc(rogue)} most of all, precious! GOLLUM!`
+      : ` That nasty ${esc(rogue)}, precious — always them!`;
+  }
+
+  const rows = thefts.map(t => {
+    const cls   = posCls[t.stolen_position] ?? '';
+    const label = posLabel[t.stolen_position] ?? `P${t.stolen_position}`;
+    const thief = t.thief_name
+      ? `<a href="/cmdr/${encodeURIComponent(t.thief_name)}">${esc(t.thief_name)}</a>`
+      : '<span class="muted">unknown CMDR</span>';
+    return `
+      <tr>
+        <td class="num ${cls}">${label}</td>
+        <td><a href="/race/${encodeURIComponent(t.race_key)}">${esc(t.race_name)}</a></td>
+        <td>CMDR ${thief}</td>
+        <td class="muted">${relativeTime(t.stolen_at)}</td>
+      </tr>`;
+  }).join('');
+
+  return `
+    <div class="thievses-section">
+      <h2 class="cmdr-section-heading">Thievses! 💍</h2>
+      <p class="thievses-gollum">${quote}</p>
+      <table class="results-table">
+        <thead><tr>
+          <th class="num">Lost</th><th>Race</th><th>Stolen by</th><th>When</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
 }
 
 // ── Nearby Races (NENDY + NEIDY) ───────────────────────────────────────────

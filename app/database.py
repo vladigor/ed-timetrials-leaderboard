@@ -42,6 +42,17 @@ CREATE TABLE IF NOT EXISTS results (
     updated     TEXT NOT NULL,
     UNIQUE (name, location, updated) ON CONFLICT IGNORE
 );
+
+CREATE TABLE IF NOT EXISTS position_snapshots (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    location    TEXT NOT NULL,
+    name        TEXT NOT NULL,
+    position    INTEGER NOT NULL,
+    time_ms     INTEGER NOT NULL,
+    snapped_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_snapshots_loc_name ON position_snapshots(location, name);
+CREATE INDEX IF NOT EXISTS idx_snapshots_snapped_at ON position_snapshots(snapped_at);
 """
 
 
@@ -106,4 +117,8 @@ async def init_db() -> None:
             await db.execute(
                 "INSERT INTO last_updated_cache (key, updated) VALUES ('migration_superseded_v1', 'done')"
             )
+        # Purge snapshots older than 90 days on each startup to keep DB lean
+        await db.execute(
+            "DELETE FROM position_snapshots WHERE snapped_at < datetime('now', '-90 days')"
+        )
         await db.commit()

@@ -294,6 +294,22 @@ async def get_commander_stats(commander: str) -> dict | None:
 
             percentile: float = round(position / total * 100, 1)
 
+            # Position delta: compare current position to oldest snapshot ≥7 days ago
+            position_delta: int | None = None
+            async with db.execute(
+                """
+                SELECT position FROM position_snapshots
+                WHERE location = ? AND name = ?
+                  AND snapped_at <= datetime('now', '-7 days')
+                ORDER BY snapped_at DESC
+                LIMIT 1
+                """,
+                (key, commander),
+            ) as cur:
+                snap = await cur.fetchone()
+            if snap is not None:
+                position_delta = snap["position"] - position  # positive = risen = better
+
             races.append({
                 "key": key,
                 "race_name": loc["race_name"],
@@ -308,6 +324,7 @@ async def get_commander_stats(commander: str) -> dict | None:
                 "ship": best_row["ship"],
                 "shipname": best_row["shipname"],
                 "last_competed": best_row["updated"],
+                "position_delta": position_delta,
             })
 
         if not races:
@@ -322,11 +339,56 @@ async def get_commander_stats(commander: str) -> dict | None:
             t_races = [r for r in races if r["type"] == t]
             by_type[t] = round(sum(r["percentile"] for r in t_races) / len(t_races), 1)
 
+        # ── Podium thefts ──────────────────────────────────────────────────
+        # Detect when the commander was bumped off or down from a podium position.
+        # For each event, identify who stole the position (same snapped_at batch).
+        async with db.execute(
+            """
+            WITH cmdr_snaps AS (
+                SELECT
+                    location,
+                    position,
+                    snapped_at,
+                    LAG(position)   OVER (PARTITION BY location ORDER BY snapped_at) AS prev_pos,
+                    LAG(snapped_at) OVER (PARTITION BY location ORDER BY snapped_at) AS prev_snapped_at
+                FROM position_snapshots
+                WHERE name = ?
+            )
+            SELECT
+                cs.location    AS race_key,
+                l.name         AS race_name,
+                cs.prev_pos    AS stolen_position,
+                cs.position    AS new_position,
+                cs.snapped_at  AS stolen_at,
+                (
+                    SELECT ps2.name
+                    FROM position_snapshots ps2
+                    WHERE ps2.location  = cs.location
+                      AND ps2.position  = cs.prev_pos
+                      AND ps2.snapped_at = cs.snapped_at
+                    LIMIT 1
+                ) AS thief_name
+            FROM cmdr_snaps cs
+            JOIN locations l ON l.key = cs.location
+            WHERE cs.prev_pos IS NOT NULL
+              AND cs.prev_pos <= 3
+              AND cs.position > cs.prev_pos
+            ORDER BY cs.snapped_at DESC
+            LIMIT 10
+            """,
+            (commander,),
+        ) as cur:
+            theft_rows = await cur.fetchall()
+
+        # Exclude rows where we couldn't identify the thief
+        podium_thefts = [_row_to_dict(r) for r in theft_rows if r["thief_name"]]
+
         return {
             "commander": commander,
             "overall_percentile": overall_pct,
             "by_type_percentile": by_type,
             "races": races,
+            "podium_thefts": podium_thefts,
         }
     finally:
         await db.close()

@@ -221,6 +221,49 @@ async def _save_result(db: aiosqlite.Connection, result: dict) -> None:
     )
 
 
+async def _snapshot_positions(db: aiosqlite.Connection, key: str) -> None:
+    """Snapshot current positions for all commanders in a race (on change only)."""
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
+
+    # Compute current ranked positions from DB
+    async with db.execute(
+        """
+        SELECT name, MIN(time) AS best
+        FROM results
+        WHERE location = ?
+        GROUP BY name
+        ORDER BY best
+        """,
+        (key,),
+    ) as cur:
+        ranked = await cur.fetchall()
+
+    for pos, row in enumerate(ranked, start=1):
+        name = row["name"]
+        time_ms = row["best"]
+
+        # Check last snapshot for this cmdr+location
+        async with db.execute(
+            """
+            SELECT position, time_ms FROM position_snapshots
+            WHERE location = ? AND name = ?
+            ORDER BY snapped_at DESC
+            LIMIT 1
+            """,
+            (key, name),
+        ) as cur:
+            last = await cur.fetchone()
+
+        if last is None or last["position"] != pos or last["time_ms"] != time_ms:
+            await db.execute(
+                """
+                INSERT INTO position_snapshots (location, name, position, time_ms, snapped_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (key, name, pos, time_ms, now),
+            )
+
+
 # ---------------------------------------------------------------------------
 # Public import functions
 # ---------------------------------------------------------------------------
@@ -276,6 +319,8 @@ async def fetch_and_store_results(key: str) -> None:
     try:
         for result in results:
             await _save_result(db, result)
+        await db.commit()
+        await _snapshot_positions(db, key)
         await db.commit()
         log.info("Stored %d results for %s", len(results), key)
     finally:
