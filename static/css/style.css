@@ -999,6 +999,15 @@ a:hover { text-decoration: underline; }
 @media (max-width: 600px) and (orientation: portrait) {
   .portrait-banner { display: block; }
   .site-logo { font-size: .9rem; white-space: normal; }
+
+  /* Trophy case: shrink items so all 3 fit on one row */
+  .trophy-item {
+    padding: .75rem .6rem;
+    min-width: 0;
+    flex: 1 1 0;
+  }
+  .trophy-icon { width: 64px; height: 64px; }
+  .trophy-count { font-size: 1.3rem; }
 }
 
 /* ── Mobile styles ─────────────────────────────────────────────────── */
