@@ -293,8 +293,8 @@ function renderThievses(thefts) {
   let quote = Array.isArray(raw) ? raw[Math.floor(Math.random() * raw.length)] : raw;
   if (rogue) {
     quote += rogueCount >= 3
-      ? ` Especially that wicked <b>${esc(rogue)}</b>! We hatesss <b>${esc(rogue)}</b> most of all, precious!`
-      : ` That nasty <b>${esc(rogue)}</b>, precious — always them!`;
+      ? ` Especially that wicked <strong>${esc(rogue)}</strong>! We hatesss <strong>${esc(rogue)}</strong> most of all, precious!`
+      : ` That nasty <strong>${esc(rogue)}</strong>, precious — always them!`;
   }
 
   const rows = thefts.map(t => {
@@ -314,7 +314,7 @@ function renderThievses(thefts) {
 
   return `
     <div class="thievses-section">
-      <h2 class="cmdr-section-heading">Thievses! 💍</h2>
+      <h2 class="cmdr-section-heading">Thievses! 🏆🏃💨</h2>
       <p class="thievses-gollum">${quote}</p>
       <table class="results-table">
         <thead><tr>
