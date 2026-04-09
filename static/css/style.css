@@ -778,7 +778,7 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
   font-size: .9rem;
   line-height: 1.6;
-  max-width: 72ch;
+  max-width: 120ch;
   margin: 0 0 1rem;
 }
 .theft-pos-1 { color: var(--rank1); font-weight: 700; }
@@ -799,7 +799,7 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
   line-height: 1.6;
   margin: 0 0 1.25rem;
-  max-width: 72ch;
+  max-width: 150ch;
 }
 .section-intro strong { color: var(--text); }
 .rankings-heading {

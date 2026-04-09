@@ -293,8 +293,8 @@ function renderThievses(thefts) {
   let quote = Array.isArray(raw) ? raw[Math.floor(Math.random() * raw.length)] : raw;
   if (rogue) {
     quote += rogueCount >= 3
-      ? ` Especially that wicked ${esc(rogue)}! We hatesss ${esc(rogue)} most of all, precious!`
-      : ` That nasty ${esc(rogue)}, precious — always them!`;
+      ? ` Especially that wicked <b>${esc(rogue)}</b>! We hatesss <b>${esc(rogue)}</b> most of all, precious!`
+      : ` That nasty <b>${esc(rogue)}</b>, precious — always them!`;
   }
 
   const rows = thefts.map(t => {
