@@ -306,8 +306,8 @@ function renderThievses(thefts) {
     return `
       <tr>
         <td class="num ${cls}">${label}</td>
-        <td><a href="/race/${encodeURIComponent(t.race_key)}">${esc(t.race_name)}</a></td>
         <td>CMDR ${thief}</td>
+        <td><a href="/race/${encodeURIComponent(t.race_key)}">${esc(t.race_name)}</a></td>
         <td class="muted">${relativeTime(t.stolen_at)}</td>
       </tr>`;
   }).join('');
@@ -318,7 +318,7 @@ function renderThievses(thefts) {
       <p class="thievses-gollum">${quote}</p>
       <table class="results-table">
         <thead><tr>
-          <th class="num">Lost</th><th>Race</th><th>Stolen by</th><th>When</th>
+          <th class="num">Lost</th><th>Stolen by</th><th>Race</th><th>When</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
