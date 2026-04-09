@@ -772,6 +772,7 @@ a:hover { text-decoration: underline; }
 .thievses-section {
   margin-top: 2.5rem;
 }
+.thievses-section .cmdr-section-heading { color: var(--bad); }
 .thievses-gollum {
   font-style: italic;
   color: var(--text-muted);

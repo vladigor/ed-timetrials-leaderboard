@@ -260,18 +260,37 @@ function renderThievses(thefts) {
   const n = thefts.length;
   const baseQuotes = [
     '',
-    'They stealses it from us, precious. One precious position, gone!',
-    'Two times! Two precious positions stolen! Nasty tricksy commanderses!',
-    'Three... three thievses, precious! We hatesss them, we does!',
+    [
+      'They stealses it from us, precious. One precious trophy, gone!',
+      'One! One thief, precious, and they takes our trophy just like that!',
+      'Sneaky, tricksy, it stealses from us! One precious position, gone forever!',
+      'We had it, precious. We HAD it. And now it is gone. One terrible theft.',
+      'Lost it, precious. Lost our precious spot to a nasty thief!',
+    ],
+    [
+      'Two times! Two precious positions stolen! Nasty tricksy commanderses!',
+      'Twice they does it, precious! Twice! We is beside ourselves with grief!',
+      'Two thefts, precious. Two! First one, then another — wicked, horrible commanderses!',
+      'We counts on our fingerses, precious — two. Two stolen positionses. We hatesss them.',
+      'Not once but twice! Sneaking up behind us and taking what is ourses!',
+    ],
+    [
+      'Three... three thievses, precious! We hatesss them, we does!',
+      'Three times stolen from! Three! Is nothing sacred, precious?',
+      'They comes and they steals, precious — three precious positionses, just gone!',
+      'Three thefts! Our trophy case is looking very empty, precious. Very empty indeed.',
+      'First, second, third — all of them stolen! Three times, precious, THREE!',
+    ],
     'Four timeses they stealses from us! Mean and horrible! Cruelses, like Baggins!',
     'FIVE! We is counting, precious — five precious positions, all gone! NASTY THIEVSES!',
     'Six! Six precious positions stolen! We is overwhelmed with griefs, precious!',
     "Seven times! SEVEN! We doesn't even wantsss to count anymore, precious!",
     'Eight precious positionses, gone forever! They is destroying us!',
     'Nine thefts, precious... nine! We is running out of words for how much we hatesss them...',
-    'TEN! TEN PRECIOUS POSITIONSES STOLEN! We gives up, precious. They winsss.',
+    'SO MANY PRECIOUS POSITIONSES STOLEN! We loses count, precious. We gives up. They winsss.',
   ];
-  let quote = baseQuotes[Math.min(n, 10)];
+  const raw = baseQuotes[Math.min(n, 10)];
+  let quote = Array.isArray(raw) ? raw[Math.floor(Math.random() * raw.length)] : raw;
   if (rogue) {
     quote += rogueCount >= 3
       ? ` Especially that wicked ${esc(rogue)}! We hatesss ${esc(rogue)} most of all, precious!`
