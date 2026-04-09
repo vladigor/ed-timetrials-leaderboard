@@ -430,6 +430,19 @@ a:hover { text-decoration: underline; }
 .results-table tbody tr.row-pos-2:hover td { background: rgba(192, 192, 192, .13); }
 .results-table tbody tr.row-pos-3:hover td { background: rgba(205, 127,  50, .14); }
 
+/* Recently-updated row (within 15 minutes) */
+@keyframes freshSweep {
+  0%   { background-color: rgba(63, 185, 122, .22); }
+  100% { background-color: rgba(63, 185, 122, .06); }
+}
+.results-table tbody tr.row-fresh td {
+  animation: freshSweep 2.5s ease-out forwards;
+}
+.updated-cell { color: var(--text-muted); }
+.results-table tbody tr.row-fresh .updated-cell {
+  color: var(--good);
+}
+
 /* Selected commander highlight */
 .results-table tbody tr.row-cmdr td { background: rgba(232, 160, 32, .12); }
 .results-table tbody tr.row-cmdr:hover td { background: rgba(232, 160, 32, .2); }

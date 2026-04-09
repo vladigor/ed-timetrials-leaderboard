@@ -4,6 +4,13 @@ import { ChangePoller } from './poller.js';
 // ── State ──────────────────────────────────────────────────────────────────
 const raceKey        = decodeURIComponent(location.pathname.split('/race/')[1] || '');
 const selectedCmdr   = localStorage.getItem('tt_filter_cmdr') || '';
+const FRESH_MS       = 60 * 60 * 1000;
+
+function isFresh(ts) {
+  if (!ts) return false;
+  const norm = ts.replace(' ', 'T').replace(/(\.(\d{1,6})).*$/, '$1') + 'Z';
+  return Date.now() - new Date(norm).getTime() < FRESH_MS;
+}
 let race          = null;
 let poller        = null;
 let isOffline     = false;
@@ -133,6 +140,7 @@ function renderRace() {
     const rowClasses = [
       entry.position <= 3 ? `row-pos-${entry.position}` : '',
       (selectedCmdr && entry.name === selectedCmdr) ? 'row-cmdr' : '',
+      isFresh(entry.updated) ? 'row-fresh' : '',
     ].filter(Boolean).join(' ');
     return `
       <tr${rowClasses ? ` class="${rowClasses}"` : ''}>
@@ -142,7 +150,7 @@ function renderRace() {
         <td class="delta-cell">${formatDelta(entry.delta_ms)}</td>
         <td class="improvement-cell ${imp.cls}">${imp.text}</td>
         <td style="color:var(--text-muted);font-size:.8rem">${esc(entry.ship)}</td>
-        <td style="color:var(--text-muted);font-size:.8rem">${entry.updated ? relativeTime(entry.updated) : ''}</td>
+        <td class="updated-cell" style="font-size:.8rem">${entry.updated ? relativeTime(entry.updated) : ''}</td>
       </tr>`;
   });
 
