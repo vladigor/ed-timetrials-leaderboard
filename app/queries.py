@@ -436,9 +436,18 @@ async def get_commander_stats(commander: str) -> dict | None:
                 (
                     SELECT ps2.name
                     FROM position_snapshots ps2
-                    WHERE ps2.location  = cs.location
-                      AND ps2.position  = cs.prev_pos
+                    WHERE ps2.location   = cs.location
                       AND ps2.snapped_at = cs.snapped_at
+                      AND ps2.position   <= cs.prev_pos
+                      AND NOT EXISTS (
+                          SELECT 1
+                          FROM position_snapshots ps3
+                          WHERE ps3.location   = cs.location
+                            AND ps3.snapped_at = cs.prev_snapped_at
+                            AND ps3.name       = ps2.name
+                            AND ps3.position   <= cs.prev_pos
+                      )
+                    ORDER BY ps2.position ASC
                     LIMIT 1
                 ) AS thief_name
             FROM cmdr_snaps cs
