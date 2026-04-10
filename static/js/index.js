@@ -18,7 +18,6 @@ const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
 const cmdrRacesGroup   = document.getElementById('filter-cmdr-races-group');
 const countLabel       = document.getElementById('race-count');
 const profileLabel     = document.getElementById('profile-label');
-const btnViewProfile   = document.getElementById('btn-view-profile');
 const btnChangeProfile = document.getElementById('btn-change-profile');
 const profileOverlay   = document.getElementById('profile-overlay');
 const modalCmdrSelect  = document.getElementById('modal-cmdr-select');
@@ -28,10 +27,10 @@ const modalConfirm     = document.getElementById('modal-confirm');
 async function init() {
   // Sanity check — surface missing elements immediately
   const missing = [grid, statusDot, statusText, checkActive, checkCmdrRaces, cmdrRacesGroup,
-    countLabel, profileLabel, btnViewProfile, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm]
+    countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm]
     .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-active',
       'filter-cmdr-races','filter-cmdr-races-group','race-count','profile-label',
-      'btn-view-profile','btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm'][i])
+      'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm'][i])
     .filter(Boolean);
   if (missing.length) {
     console.error('Missing DOM elements:', missing);
@@ -65,6 +64,9 @@ async function init() {
     loadRaces();
   });
 
+  profileLabel.addEventListener('click', (e) => {
+    if (!filterCmdr) { e.preventDefault(); showProfileModal(); }
+  });
   btnChangeProfile.addEventListener('click', showProfileModal);
 
   if (localStorage.getItem('tt_profile_set') !== '1') {
@@ -164,6 +166,13 @@ function typeBadge(type) {
   return `<span class="badge ${cls}">${esc(type)}</span>`;
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+function isRecentActivity(ts) {
+  if (!ts) return false;
+  const norm = ts.replace(' ', 'T').replace(/(\.\d{1,6}).*$/, '$1') + 'Z';
+  return Date.now() - new Date(norm).getTime() < DAY_MS;
+}
+
 function raceCard(r) {
   const entries = Number(r.entry_count) || 0;
   const activity = r.last_activity ? relativeTime(r.last_activity) : 'no entries';
@@ -194,7 +203,7 @@ function raceCard(r) {
     ${leaderTime ? `<div class="race-card-meta" style="color:var(--accent)">Best: ${leaderTime}</div>` : ''}
     <div class="race-card-footer">
       <span class="entry-count">${positionLabel}</span>
-      <span>${activity}</span>
+      <span${isRecentActivity(r.last_activity) ? ' class="activity-fresh"' : ''}>${activity}</span>
     </div>
   </a>`;
 }
@@ -204,17 +213,14 @@ function updateProfileLabel() {
   if (filterCmdr) {
     const profileUrl = `/cmdr/${encodeURIComponent(filterCmdr)}`;
     profileLabel.textContent = `CMDR ${filterCmdr}`;
-    profileLabel.classList.remove('no-profile');
     profileLabel.href = profileUrl;
-    btnViewProfile.href = profileUrl;
-    btnViewProfile.style.display = '';
+    btnChangeProfile.style.display = '';
     cmdrRacesGroup.style.display = '';
     checkCmdrRaces.checked = filterCmdrRaces;
   } else {
-    profileLabel.textContent = 'No profile selected';
-    profileLabel.classList.add('no-profile');
-    profileLabel.removeAttribute('href');
-    btnViewProfile.style.display = 'none';
+    profileLabel.textContent = 'Select Profile';
+    profileLabel.href = '#';
+    btnChangeProfile.style.display = 'none';
     cmdrRacesGroup.style.display = 'none';
   }
 }

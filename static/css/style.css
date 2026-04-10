@@ -263,6 +263,7 @@ a:hover { text-decoration: underline; }
 }
 
 .entry-count { font-weight: 600; color: var(--text); }
+.activity-fresh { color: var(--good); }
 
 /* ============================================================
    Section heading
@@ -536,8 +537,9 @@ a:hover { text-decoration: underline; }
   font-weight: 600;
   cursor: pointer;
   transition: opacity .15s;
+  text-decoration: none;
 }
-.btn-primary:hover { opacity: .85; }
+.btn-primary:hover { opacity: .85; text-decoration: none; }
 
 .btn-chip {
   background: transparent;
