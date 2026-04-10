@@ -271,12 +271,7 @@ function _buildChartOption(results, isOdyssey) {
     xAxis: {
       type: 'value',
       min: v => Math.max(0, v.min - (v.max - v.min) * 0.08),
-      axisLabel: {
-        formatter: val => formatTime(val),
-        rotate: 30,
-        color: '#6b7799',
-        fontSize: 11,
-      },
+      axisLabel: { show: false },
       splitLine: { lineStyle: { color: '#2a3048' } },
       axisLine:  { lineStyle: { color: '#2a3048' } },
     },
