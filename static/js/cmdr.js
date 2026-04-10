@@ -4,7 +4,8 @@ import { formatTime, formatImprovement, relativeTime, esc, ordinal } from './uti
 const cmdrName   = decodeURIComponent(location.pathname.split('/cmdr/')[1] ?? '');
 const isSelf     = !!cmdrName && cmdrName.toUpperCase() === (localStorage.getItem('tt_filter_cmdr') || '').toUpperCase();
 let   stats      = null;   // full API response
-let   sortBy     = 'percentile';  // 'percentile' | 'recent'
+let   sortBy     = 'percentile';
+let   sortDir    = 'asc';         // 'asc' | 'desc'
 let   filterRecent = false;
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
@@ -57,6 +58,11 @@ async function init() {
     render();
   });
 
+  tablesEl.addEventListener('click', e => {
+    const th = e.target.closest('.th-sortable');
+    if (th) setSort(th.dataset.sort);
+  });
+
   // NENDY: restore last-used system from localStorage
   const savedSystem = localStorage.getItem('tt_nendy_system');
   if (savedSystem) nendyInput.value = savedSystem;
@@ -66,10 +72,17 @@ async function init() {
   render();
 }
 
-function setSort(s) {
-  sortBy = s;
-  sortPctBtn.classList.toggle('active', s === 'percentile');
-  sortRecBtn.classList.toggle('active', s === 'recent');
+const SORT_DEFAULTS = { name: 'asc', position: 'asc', percentile: 'asc', trend: 'desc', improvement: 'desc', recent: 'desc' };
+
+function setSort(col) {
+  if (sortBy === col) {
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortBy  = col;
+    sortDir = SORT_DEFAULTS[col] ?? 'asc';
+  }
+  sortPctBtn.classList.toggle('active', sortBy === 'percentile');
+  sortRecBtn.classList.toggle('active', sortBy === 'recent');
   render();
 }
 
@@ -133,15 +146,23 @@ function renderTables() {
 
     const typeAvgPct = stats.by_type_percentile[type];
 
-    if (sortBy === 'percentile') {
-      typeRaces = typeRaces.slice().sort((a, b) => a.percentile - b.percentile);
-    } else {
-      typeRaces = typeRaces.slice().sort((a, b) => {
-        const ta = a.last_competed ?? '';
-        const tb = b.last_competed ?? '';
-        return tb.localeCompare(ta);
-      });
-    }
+    typeRaces = typeRaces.slice().sort((a, b) => {
+      let cmp = 0;
+      switch (sortBy) {
+        case 'name':        cmp = a.race_name.localeCompare(b.race_name); break;
+        case 'position':    cmp = a.position - b.position; break;
+        case 'percentile':  cmp = (a.position === 1 ? 0 : a.percentile) - (b.position === 1 ? 0 : b.percentile); break;
+        case 'trend':       cmp = (a.position_delta ?? 0) - (b.position_delta ?? 0); break;
+        case 'improvement': cmp = (a.improvement_ms ?? 0) - (b.improvement_ms ?? 0); break;
+        case 'recent': {
+          const ta = a.last_competed ?? '';
+          const tb = b.last_competed ?? '';
+          cmp = ta.localeCompare(tb);
+          break;
+        }
+      }
+      return sortDir === 'desc' ? -cmp : cmp;
+    });
 
     const rows = typeRaces.map(r => {
       const isOpportunity = typeAvgPct !== undefined && r.percentile > typeAvgPct;
@@ -169,13 +190,13 @@ function renderTables() {
         <table class="results-table">
           <thead>
             <tr>
-              <th>Race</th>
-              <th class="num">Position</th>
-              <th class="num">Percentile</th>
-              <th class="num">7d trend</th>
-              <th class="num">Improvement</th>
+              ${thSort('name', 'Race')}
+              ${thSort('position', 'Position', 'num')}
+              ${thSort('percentile', 'Percentile', 'num')}
+              ${thSort('trend', '7d trend', 'num')}
+              ${thSort('improvement', 'Improvement', 'num')}
               <th>Ship</th>
-              <th>Last competed</th>
+              ${thSort('recent', 'Last competed')}
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -189,6 +210,13 @@ function renderTables() {
   }
 
   tablesEl.innerHTML = html;
+}
+
+function thSort(col, label, extraClass = '') {
+  const isActive = sortBy === col;
+  const indicator = isActive ? (sortDir === 'asc' ? ' ▲' : ' ▼') : '';
+  const cls = ['th-sortable', isActive ? 'th-active' : '', extraClass].filter(Boolean).join(' ');
+  return `<th class="${cls}" data-sort="${col}">${label}${indicator}</th>`;
 }
 
 function percentileClass(pct) {

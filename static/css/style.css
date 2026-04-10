@@ -265,6 +265,10 @@ a:hover { text-decoration: underline; }
 .entry-count { font-weight: 600; color: var(--text); }
 .activity-fresh { color: var(--good); }
 
+.th-sortable { cursor: pointer; user-select: none; }
+.th-sortable:hover { color: var(--accent); }
+.th-sortable.th-active { color: var(--text); }
+
 /* ============================================================
    Section heading
    ============================================================ */
