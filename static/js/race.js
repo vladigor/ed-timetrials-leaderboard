@@ -1,4 +1,4 @@
-import { formatTime, formatImprovement, formatDelta, relativeTime, esc } from './utils.js';
+import { ordinal, formatTime, formatImprovement, formatDelta, relativeTime, esc } from './utils.js';
 import { ChangePoller } from './poller.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -181,33 +181,173 @@ function renderRace() {
   window._chartRO = new ResizeObserver(() => chartInstance && chartInstance.resize());
   window._chartRO.observe(chartEl);
 
-  renderRivalry(race.rivalry);
+  renderRivalry(race.results, race.rivalry);
 }
 
 // ── Rivalry panel ──────────────────────────────────────────────────────────
-function renderRivalry(rivalry) {
-  if (!rivalry) { rivalryEl.style.display = 'none'; return; }
+function _isRecent(ts) {
+  if (!ts) return false;
+  const norm = ts.replace(' ', 'T').replace(/(\.\d{1,6}).*$/, '$1') + 'Z';
+  return Date.now() - new Date(norm).getTime() < 24 * 60 * 60 * 1000;
+}
 
-  const { switches, window: win, contenders } = rivalry;
-  const windowLabel = win === 'day' ? 'past 24 hours' : 'past week';
-  const timesLabel  = `${switches} time${switches !== 1 ? 's' : ''}`;
+function _cmdrLink(n) {
+  const highlight = selectedCmdr && n === selectedCmdr ? ' cmdr-link-self' : '';
+  return `<a href="/cmdr/${encodeURIComponent(n)}" class="cmdr-link${highlight}">${esc(n)}</a>`;
+}
 
-  const names = contenders.map(n =>
-    `<a href="/cmdr/${encodeURIComponent(n)}" class="cmdr-link">${esc(n)}</a>`
-  );
-  let nameList;
-  if (names.length === 2) {
-    nameList = `${names[0]} and ${names[1]}`;
+function _fmt(ms) {
+  let text;
+  if (ms < 1000) {
+    text = `${ms}ms`;
+  } else if (ms < 60_000) {
+    const secs   = Math.floor(ms / 1000);
+    const millis = ms % 1000;
+    text = `${secs}.${String(millis).padStart(3, '0')}s`;
   } else {
-    nameList = names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+    text = `${(ms / 60_000).toFixed(1)}min`;
+  }
+  return `<strong>${text}</strong>`;
+}
+
+function _buildRivalryStatements(results, rivalry) {
+  const statements = [];
+  const n = results.length;
+  if (n < 2) return statements;
+
+  const p1Time = results[0].time_ms;
+
+  // Score a gap: smaller gap → higher score (0–100). Returns -1 if above threshold.
+  function gapScore(gapMs, threshold) {
+    const ratio = gapMs / p1Time;
+    if (ratio >= threshold) return -1;
+    return Math.round((threshold - ratio) / threshold * 100);
   }
 
-  rivalryEl.innerHTML = `
-    <div class="rivalry-panel">
-      <span class="rivalry-icon">⚔️</span>
-      <span>The lead has changed <strong>${timesLabel}</strong> in the ${windowLabel}.
-      CMDRs ${nameList} are duking it out for the top spot.</span>
-    </div>`;
+  // 1. Lead swap — uses existing rivalry object
+  if (rivalry && rivalry.switches >= 2) {
+    const { switches, window: win, contenders } = rivalry;
+    const windowLabel = win === 'day' ? 'past 24 hours' : 'past week';
+    const timesLabel  = `${switches} time${switches !== 1 ? 's' : ''}`;
+    const names = contenders.map(_cmdrLink);
+    const nameList = names.length === 2
+      ? `${names[0]} and ${names[1]}`
+      : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+    statements.push({
+      score: Math.min(100, 40 + switches * 12),
+      icon: '⚔️',
+      text: `The lead has changed <strong>${timesLabel}</strong> in the ${windowLabel}. CMDRs ${nameList} are fighting for the top spot.`,
+    });
+  }
+
+  // 2. Near-tie at top (P1 vs P2) — threshold 1.5% of P1 time
+  if (n >= 2) {
+    const gap = results[1].time_ms - p1Time;
+    const score = gapScore(gap, 0.015);
+    if (score >= 0) {
+      statements.push({
+        score,
+        icon: '🎯',
+        text: `Only ${_fmt(gap)} separates ${_cmdrLink(results[0].name)} (${ordinal(1)}) and ${_cmdrLink(results[1].name)} (${ordinal(2)}) — an incredibly tight top two.`,
+      });
+    }
+  }
+
+  // 3. Commanding leader — P1→P2 gap much larger than the average inter-position gap
+  if (n >= 3) {
+    const gapP1P2   = results[1].time_ms - p1Time;
+    const restSpread = results[n - 1].time_ms - results[1].time_ms;
+    const avgRestGap = restSpread / Math.max(1, n - 2);
+    const refGap     = Math.max(results[2].time_ms - results[1].time_ms, avgRestGap);
+    if (refGap > 0 && gapP1P2 / refGap > 3) {
+      const ratio = gapP1P2 / refGap;
+      statements.push({
+        score: Math.min(80, Math.round(20 + ratio * 4)),
+        icon: '👑',
+        text: `${_cmdrLink(results[0].name)} leads by ${_fmt(gapP1P2)} — a commanding margin the rest of the field has yet to match.`,
+      });
+    }
+  }
+
+  // 4. Imminent podium threat — P4 within 1.5% of P1 time behind P3
+  if (n >= 4) {
+    const gap   = results[3].time_ms - results[2].time_ms;
+    const score = gapScore(gap, 0.015);
+    if (score >= 0) {
+      statements.push({
+        score: Math.round(score * 0.85),
+        icon: '🔥',
+        text: `${_cmdrLink(results[3].name)} in ${ordinal(4)} place is just ${_fmt(gap)} off the podium.`,
+      });
+    }
+  }
+
+  // 5. Tightest cluster of 3+ consecutive positions anywhere in the results
+  let bestCluster = null;
+  let bestClusterScore = -1;
+  for (let s = 0; s < n - 2; s++) {
+    for (let e = s + 2; e < n; e++) {
+      const spread = results[e].time_ms - results[s].time_ms;
+      const ratio  = spread / p1Time;
+      if (ratio >= 0.02) break; // spread only grows as e increases
+      const count        = e - s + 1;
+      const tightness    = (0.02 - ratio) / 0.02 * 70;
+      const countBonus   = (count - 3) * 6;
+      const posBonus     = Math.max(0, 8 - results[s].position) * 2;
+      const clusterScore = Math.round(tightness + countBonus + posBonus);
+      if (clusterScore > bestClusterScore) {
+        bestClusterScore = clusterScore;
+        bestCluster = { count, spread, startPos: results[s].position, endPos: results[e].position };
+      }
+    }
+  }
+  if (bestCluster) {
+    const { count, spread, startPos, endPos } = bestCluster;
+    // Skip trivially small ranges already covered by statements 2 and 4
+    const trivial = (startPos === 1 && endPos === 2) || (startPos === 3 && endPos === 4);
+    if (!trivial) {
+      statements.push({
+        score: bestClusterScore,
+        icon: '🏎️',
+        text: `The ${count} commanders between ${ordinal(startPos)} and ${ordinal(endPos)} place are separated by just ${_fmt(spread)} — there's intense competition for the ${ordinal(startPos)} spot!`,
+      });
+    }
+  }
+
+  // 6. Recent significant improvement
+  let bestMover = null;
+  let bestMoverScore = -1;
+  for (const entry of results) {
+    if (!(entry.improvement_ms > 0 && _isRecent(entry.updated))) continue;
+    const score = Math.min(85, Math.round((entry.improvement_ms / entry.time_ms) * 1500));
+    if (score > bestMoverScore) { bestMoverScore = score; bestMover = entry; }
+  }
+  if (bestMover && bestMoverScore >= 10) {
+    const above      = bestMover.position > 1 ? results[bestMover.position - 2] : null;
+    const gapToAbove = above ? bestMover.time_ms - above.time_ms : 0;
+    const closingText = gapToAbove > 0 && gapToAbove / p1Time < 0.015
+      ? `, just ${_fmt(gapToAbove)} behind ${ordinal(bestMover.position - 1)} place`
+      : '';
+    statements.push({
+      score: bestMoverScore,
+      icon: '📈',
+      text: `Look out! ${_cmdrLink(bestMover.name)} improved their time by ${_fmt(bestMover.improvement_ms)} in their latest run${closingText}!`,
+    });
+  }
+
+  statements.sort((a, b) => b.score - a.score);
+  return statements.slice(0, 4);
+}
+
+function renderRivalry(results, rivalry) {
+  const statements = _buildRivalryStatements(results, rivalry);
+  if (statements.length === 0) { rivalryEl.style.display = 'none'; return; }
+
+  const rows = statements.map(s =>
+    `<div class="rivalry-row"><span class="rivalry-icon">${s.icon}</span><span>${s.text}</span></div>`
+  ).join('');
+
+  rivalryEl.innerHTML = `<div class="rivalry-panel">${rows}</div>`;
   rivalryEl.style.display = '';
 }
 

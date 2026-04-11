@@ -363,8 +363,7 @@ a:hover { text-decoration: underline; }
 
 .rivalry-panel {
   display: flex;
-  align-items: center;
-  gap: .6rem;
+  flex-direction: column;
   margin-top: 1rem;
   padding: .75rem 1rem;
   background: var(--surface);
@@ -372,6 +371,18 @@ a:hover { text-decoration: underline; }
   border-radius: .5rem;
   font-size: .875rem;
   color: var(--text);
+}
+
+.rivalry-row {
+  display: flex;
+  align-items: baseline;
+  gap: .6rem;
+}
+
+.rivalry-row + .rivalry-row {
+  border-top: 1px solid var(--border);
+  margin-top: .65rem;
+  padding-top: .65rem;
 }
 
 .rivalry-icon {
@@ -641,6 +652,8 @@ a:hover { text-decoration: underline; }
 /* Commander name links (in race table + profile label) */
 .cmdr-link          { color: var(--text); }
 .cmdr-link:hover    { color: var(--accent); text-decoration: none; }
+.cmdr-link-self     { color: var(--accent); font-weight: 600; }
+.cmdr-link-self:hover { opacity: .8; }
 .profile-name .cmdr-link { color: var(--accent); }
 
 /* ============================================================
@@ -970,6 +983,7 @@ a:hover { text-decoration: underline; }
 .site-footer a { color: var(--text-muted); }
 .site-footer a:hover { color: var(--accent); }
 .site-footer .sep { opacity: .4; }
+.site-footer .build-ver { opacity: .45; font-size: .75rem; }
 
 /* ============================================================
    About page
