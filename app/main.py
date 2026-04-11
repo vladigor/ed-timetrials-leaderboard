@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import time
+from datetime import datetime
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
@@ -28,7 +28,7 @@ log = logging.getLogger(__name__)
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
 TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
-STATIC_VER = str(int(time.time()))
+STATIC_VER = datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
 @asynccontextmanager
