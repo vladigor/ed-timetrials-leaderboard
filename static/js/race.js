@@ -15,6 +15,7 @@ let race          = null;
 let poller        = null;
 let isOffline     = false;
 let chartInstance = null;
+let timeUpdater   = null;
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const titleEl      = document.getElementById('race-title');
@@ -63,6 +64,9 @@ async function init() {
     poller.start();
     setStatus('live');
   }
+
+  // Start periodic time updater for relative times
+  startTimeUpdater();
 }
 
 // ── Data loading ───────────────────────────────────────────────────────────
@@ -150,7 +154,7 @@ function renderRace() {
         <td class="delta-cell">${formatDelta(entry.delta_ms)}</td>
         <td class="improvement-cell ${imp.cls}">${imp.text}</td>
         <td style="color:var(--text-muted);font-size:.8rem">${esc(entry.ship)}</td>
-        <td class="updated-cell" style="font-size:.8rem">${entry.updated ? relativeTime(entry.updated) : ''}</td>
+        <td class="updated-cell" style="font-size:.8rem" data-timestamp="${entry.updated || ''}">${entry.updated ? relativeTime(entry.updated) : ''}</td>
       </tr>`;
   });
 
@@ -445,6 +449,42 @@ function setStatus(state) {
   if (state === 'offline') { statusDot.classList.add('offline'); statusText.textContent = 'Offline — local data'; }
   if (state === 'updating'){ statusText.textContent = 'Updating…'; }
   if (state === 'error')   { statusDot.classList.add('error');   statusText.textContent = 'Connection error'; }
+}
+
+// ── Dynamic time updater ───────────────────────────────────────────────────
+/**
+ * Update all relative time displays every minute to keep them current.
+ */
+function updateRelativeTimes() {
+  const cells = document.querySelectorAll('.updated-cell[data-timestamp]');
+  
+  cells.forEach(cell => {
+    const timestamp = cell.dataset.timestamp;
+    if (!timestamp) return;
+    
+    cell.textContent = relativeTime(timestamp);
+  });
+}
+
+/**
+ * Start the periodic time updater (runs every 60 seconds)
+ */
+function startTimeUpdater() {
+  if (timeUpdater) clearInterval(timeUpdater);
+  
+  timeUpdater = setInterval(() => {
+    updateRelativeTimes();
+  }, 60_000); // Every 60 seconds
+}
+
+/**
+ * Stop the periodic time updater
+ */
+function stopTimeUpdater() {
+  if (timeUpdater) {
+    clearInterval(timeUpdater);
+    timeUpdater = null;
+  }
 }
 
 // Refresh on tab focus (skipped in offline mode)
