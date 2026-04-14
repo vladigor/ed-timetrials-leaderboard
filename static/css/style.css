@@ -678,6 +678,7 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
 }
 .cmdr-type-stat strong { color: var(--text); }
+.cmdr-type-stat .pct-highlight { color: var(--accent); }
 
 .cmdr-controls {
   display: flex;

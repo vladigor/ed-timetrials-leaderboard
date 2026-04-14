@@ -105,14 +105,14 @@ function renderSummary() {
   };
 
   const typeStatements = Object.entries(byType)
-    .map(([t, pct]) => `<span class="cmdr-type-stat"><strong>${typeLabels[t] ?? t}</strong> top ${pct}%</span>`)
+    .map(([t, pct]) => `<span class="cmdr-type-stat"><strong>${typeLabels[t] ?? t}</strong> — ahead of <strong class="pct-highlight">${pct}%</strong></span>`)
     .join('');
 
   summaryEl.innerHTML = `
     <div class="cmdr-overall-pct">
       ${isSelf
-        ? `You are in the <strong>top ${overall}%</strong> of pilots overall.`
-        : `CMDR ${esc(cmdrName)} is in the <strong>top ${overall}%</strong> of pilots overall.`
+        ? `You've finished ahead of <strong>${overall}%</strong> of all pilots you've raced against.`
+        : `CMDR ${esc(cmdrName)} has finished ahead of <strong>${overall}%</strong> of all pilots they've raced against.`
       }
     </div>
     ${typeStatements ? `<div class="cmdr-type-stats">${typeStatements}</div>` : ''}
@@ -151,7 +151,7 @@ function renderTables() {
       switch (sortBy) {
         case 'name':        cmp = a.race_name.localeCompare(b.race_name); break;
         case 'position':    cmp = a.position - b.position; break;
-        case 'percentile':  cmp = (a.position === 1 ? 0 : a.percentile) - (b.position === 1 ? 0 : b.percentile); break;
+        case 'percentile':  cmp = (a.position === 1 ? 0 : (100 - a.percentile)) - (b.position === 1 ? 0 : (100 - b.percentile)); break;
         case 'trend':       cmp = (a.position_delta ?? 0) - (b.position_delta ?? 0); break;
         case 'improvement': cmp = (a.improvement_ms ?? 0) - (b.improvement_ms ?? 0); break;
         case 'recent': {
@@ -165,7 +165,11 @@ function renderTables() {
     });
 
     const rows = typeRaces.map(r => {
-      const isOpportunity = typeAvgPct !== undefined && r.percentile > typeAvgPct;
+      // For table display, convert back to "top X%" format
+      const topPct = 100 - r.percentile;
+      // Opportunity: when top % is higher than type average (room for improvement)
+      const typeAvgTop = typeAvgPct !== undefined ? 100 - typeAvgPct : undefined;
+      const isOpportunity = typeAvgTop !== undefined && topPct > typeAvgTop;
       const imp = r.improvement_ms != null ? formatImprovement(r.improvement_ms) : null;
       const shipLabel = [r.ship, r.shipname].filter(Boolean).join(' — ');
       const delta = formatPositionDelta(r.position_delta);
@@ -173,7 +177,7 @@ function renderTables() {
         <tr class="${isOpportunity ? 'row-opportunity' : ''}">
           <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.race_name)}</a></td>
           <td class="num">${ordinal(r.position)} of ${r.total_entries}</td>
-          <td class="num ${percentileClass(r.percentile)}">${r.position === 1 ? '#1 — top' : `top ${r.percentile}%`}</td>
+          <td class="num ${percentileClass(topPct)}">${r.position === 1 ? '#1 — top' : `top ${topPct.toFixed(1)}%`}</td>
           <td class="num ${delta.cls}">${delta.text}</td>
           <td class="num ${imp ? imp.cls : ''}">${imp ? imp.text : '—'}</td>
           <td class="muted">${esc(shipLabel) || '—'}</td>
@@ -185,7 +189,7 @@ function renderTables() {
       <section class="cmdr-type-section">
         <h3 class="cmdr-type-heading">
           ${esc(typeLabels[type] ?? type)}
-          <span class="cmdr-type-avg">avg top ${typeAvgPct}%</span>
+          <span class="cmdr-type-avg">avg top ${(100 - typeAvgPct).toFixed(1)}%</span>
         </h3>
         <table class="results-table">
           <thead>
@@ -220,6 +224,7 @@ function thSort(col, label, extraClass = '') {
 }
 
 function percentileClass(pct) {
+  // pct is "top X%" — lower is better
   if (pct <= 10) return 'pct-elite';
   if (pct <= 25) return 'pct-good';
   if (pct <= 50) return 'pct-mid';
@@ -590,7 +595,7 @@ function applyNeidyFilters() {
 // Factors:
 //   gapPct    — gap to the person directly above as % of cmdr's time (lower = closer to beating them)
 //   leapable  — number of positions catchable with a 10% time improvement (more = bigger payoff)
-//   percentile — cmdr's current percentile (higher % rank = more room to improve)
+//   percentile — higher % position = more room to improve (converted from % beaten in backend)
 function catchabilityScore(myTime, myPos, results) {
   // Gap to person above
   const above = results.find(r => r.position === myPos - 1);

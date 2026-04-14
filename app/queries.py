@@ -291,7 +291,7 @@ async def list_new_races(days: int = 7) -> list[dict]:
 async def get_commander_stats(commander: str) -> dict | None:
     """
     Return all races a commander has competed in, with per-race stats:
-      position, total_entries, percentile (position/total*100, lower=better),
+      position, total_entries, percentile (% of pilots beaten, higher=better),
       improvement_ms, ship, shipname, last_competed.
     Also returns aggregate percentiles (overall + per type).
     """
@@ -365,7 +365,8 @@ async def get_commander_stats(commander: str) -> dict | None:
                 pos_row = await cur.fetchone()
             position: int = pos_row["pos"] if pos_row else 1
 
-            percentile: float = round(position / total * 100, 1)
+            # Percentile now represents "percentage of pilots beaten"
+            percentile: float = round((total - position) / total * 100, 1) if total > 0 else 0.0
 
             # Position delta: compare current position to oldest snapshot ≥7 days ago
             position_delta: int | None = None
@@ -404,13 +405,19 @@ async def get_commander_stats(commander: str) -> dict | None:
             return None
 
         # ── Aggregate percentiles ──────────────────────────────────────────
-        overall_pct = round(sum(r["percentile"] for r in races) / len(races), 1)
+        # Calculate as: (total pilots beaten) / (total pilots faced) * 100
+        # This naturally weights larger races more heavily and reflects actual competitive outcomes.
+        total_beaten = sum(r["total_entries"] - r["position"] for r in races)
+        total_faced = sum(r["total_entries"] for r in races)
+        overall_pct = round((total_beaten / total_faced * 100), 1) if total_faced > 0 else 0.0
 
         types = sorted({r["type"] for r in races})
         by_type: dict[str, float] = {}
         for t in types:
             t_races = [r for r in races if r["type"] == t]
-            by_type[t] = round(sum(r["percentile"] for r in t_races) / len(t_races), 1)
+            t_beaten = sum(r["total_entries"] - r["position"] for r in t_races)
+            t_faced = sum(r["total_entries"] for r in t_races)
+            by_type[t] = round((t_beaten / t_faced * 100), 1) if t_faced > 0 else 0.0
 
         # ── Podium thefts ──────────────────────────────────────────────────
         # Detect when the commander was bumped off or down from a podium position.
