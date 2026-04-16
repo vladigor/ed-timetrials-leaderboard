@@ -18,7 +18,7 @@ from fastapi import Request
 from .config import OFFLINE
 from .database import init_db
 from .scheduler import full_refresh, get_last_updated_snapshot, start_scheduler
-from .queries import list_races, get_race, list_commanders, get_commander_stats, list_new_races, get_stats
+from .queries import list_races, get_race, list_commanders, get_commander_stats, list_new_races, get_stats, get_stats_with_limit
 
 logging.basicConfig(
     level=logging.INFO,
@@ -131,7 +131,9 @@ async def api_cmdr(name: str):
 
 
 @app.get("/api/stats")
-async def api_stats():
+async def api_stats(limit: Optional[int] = Query(None, ge=1, le=100)):
+    if limit:
+        return await get_stats_with_limit(limit=limit)
     return await get_stats()
 
 

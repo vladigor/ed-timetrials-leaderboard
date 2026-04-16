@@ -502,6 +502,14 @@ async def get_stats() -> dict:
     Return comprehensive leaderboard statistics.
     Includes single-value stats and top-N tables.
     """
+    return await get_stats_with_limit(limit=3)
+
+
+async def get_stats_with_limit(limit: int = 3) -> dict:
+    """
+    Return comprehensive leaderboard statistics.
+    Includes single-value stats and top-N tables.
+    """
     db = await get_db()
     try:
         stats: dict[str, Any] = {}
@@ -587,8 +595,9 @@ async def get_stats() -> dict:
             WHERE creator != ''
             GROUP BY creator
             ORDER BY count DESC, creator ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_creators"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -600,8 +609,9 @@ async def get_stats() -> dict:
             WHERE system != ''
             GROUP BY system
             ORDER BY count DESC, system ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_systems"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -624,8 +634,9 @@ async def get_stats() -> dict:
             FROM winners
             GROUP BY name
             ORDER BY count DESC, name ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_gold_medals"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -649,8 +660,9 @@ async def get_stats() -> dict:
             WHERE position <= 3
             GROUP BY name
             ORDER BY count DESC, name ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_podium_finishes"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -661,8 +673,9 @@ async def get_stats() -> dict:
             FROM results
             GROUP BY name
             ORDER BY count DESC, name ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_dedicated_racers"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -674,8 +687,9 @@ async def get_stats() -> dict:
             JOIN results r ON r.location = l.key
             GROUP BY l.key
             ORDER BY count DESC, l.name ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_competitive_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -686,8 +700,9 @@ async def get_stats() -> dict:
             FROM results
             GROUP BY name
             ORDER BY last_active DESC, name ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_recently_active_cmdrs"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -699,8 +714,9 @@ async def get_stats() -> dict:
             JOIN results r ON r.location = l.key
             GROUP BY l.key
             ORDER BY last_active DESC, l.name ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_recently_active_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -713,8 +729,9 @@ async def get_stats() -> dict:
             WHERE l.type = 'SHIP' AND r.ship != ''
             GROUP BY r.ship
             ORDER BY count DESC, r.ship ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_ship_types"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -727,8 +744,9 @@ async def get_stats() -> dict:
             WHERE l.type = 'FIGHTER' AND r.ship != ''
             GROUP BY r.ship
             ORDER BY count DESC, r.ship ASC
-            LIMIT 3
-            """
+            LIMIT ?
+            """,
+            (limit,),
         ) as cur:
             stats["top_fighter_types"] = [_row_to_dict(r) for r in await cur.fetchall()]
 

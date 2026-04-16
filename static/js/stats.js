@@ -33,7 +33,12 @@ const container = document.getElementById('stats-container');
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
   try {
-    const res = await fetch('/api/stats');
+    // Check for secret limit parameter
+    const params = new URLSearchParams(window.location.search);
+    const limit = params.get('limit');
+    const url = limit ? `/api/stats?limit=${encodeURIComponent(limit)}` : '/api/stats';
+    
+    const res = await fetch(url);
     if (!res.ok) throw new Error(res.status);
     stats = await res.json();
   } catch (err) {
@@ -214,7 +219,7 @@ function renderTopNTable(items, nameLabel, countLabel) {
     if (idx > 0 && item.count !== items[idx - 1].count) {
       currentRank = idx + 1;
     }
-    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : '🥉';
+    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
     const nameDisplay = isCmdr ? renderCmdrLink(item.name) : esc(item.name);
     html += '<tr>';
     html += `<td class="stats-rank">${medal}</td>`;
@@ -244,7 +249,7 @@ function renderSystemTable(items) {
     if (idx > 0 && item.count !== items[idx - 1].count) {
       currentRank = idx + 1;
     }
-    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : '🥉';
+    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
     html += '<tr>';
     html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${esc(item.system)}</td>`;
@@ -273,7 +278,7 @@ function renderRaceTable(items, countLabel) {
     if (idx > 0 && item.count !== items[idx - 1].count) {
       currentRank = idx + 1;
     }
-    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : '🥉';
+    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
     html += '<tr>';
     html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${renderRaceLink(item.key, item.name)}</td>`;
@@ -344,7 +349,7 @@ function renderVehicleTable(items) {
     if (idx > 0 && item.count !== items[idx - 1].count) {
       currentRank = idx + 1;
     }
-    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : '🥉';
+    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
     html += '<tr>';
     html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${esc(item.ship)}</td>`;
