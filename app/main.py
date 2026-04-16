@@ -45,6 +45,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Elite Dangerous Time Trials Leaderboard", lifespan=lifespan)
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/maps", StaticFiles(directory=Path(__file__).parent.parent / "maps"), name="maps")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
@@ -175,6 +176,24 @@ async def api_system_suggest(q: str = Query(..., min_length=1, max_length=100)):
     if resp.status_code != 200:
         raise HTTPException(status_code=502, detail="Spansh returned an error")
     return resp.json()
+
+
+@app.get("/api/race-map/{key}")
+async def api_race_map(key: str):
+    """Returns the map filename for a given race key, if one exists."""
+    maps_file = Path(__file__).parent.parent / "maps" / "maps.json"
+    if not maps_file.exists():
+        return {"map": None}
+    
+    import json
+    try:
+        with open(maps_file, 'r') as f:
+            maps_data = json.load(f)
+        map_filename = maps_data.get(key)
+        return {"map": map_filename}
+    except Exception as exc:
+        log.warning("Failed to load maps.json: %s", exc)
+        return {"map": None}
 
 
 @app.get("/api/poll")

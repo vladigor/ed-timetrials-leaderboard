@@ -77,9 +77,29 @@ async function loadRace() {
       return r.json();
     });
     renderRace();
+    await loadRaceMap();
   } catch (err) {
     showError('Could not load race data.');
     setStatus('error');
+  }
+}
+
+async function loadRaceMap() {
+  try {
+    const mapData = await fetch(`/api/race-map/${encodeURIComponent(raceKey)}`).then(r => r.json());
+    if (mapData.map) {
+      const container = document.getElementById('race-map-container');
+      const link = document.getElementById('race-map-link');
+      const thumbnail = document.getElementById('race-map-thumbnail');
+      
+      const mapPath = `/maps/${mapData.map}`;
+      link.href = mapPath;
+      thumbnail.src = mapPath;
+      container.style.display = 'block';
+    }
+  } catch (err) {
+    // Silently fail if map loading fails - not critical
+    console.warn('Could not load race map:', err);
   }
 }
 

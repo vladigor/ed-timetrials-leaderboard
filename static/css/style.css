@@ -282,14 +282,52 @@ a:hover { text-decoration: underline; }
 /* ============================================================
    Race detail page
    ============================================================ */
-.race-detail-header {
+.race-detail-header-wrapper {
+  display: flex;
+  gap: 1.5rem;
   margin-bottom: 1.5rem;
+}
+
+.race-detail-header {
+  flex: 1;
 }
 
 .race-detail-header h1 {
   font-size: 1.6rem;
   font-weight: 700;
   margin-bottom: .4rem;
+}
+
+.race-map-container {
+  flex-shrink: 0;
+}
+
+.race-map-container a {
+  display: block;
+  line-height: 0;
+}
+
+.race-map-container img {
+  height: 190px;
+  width: auto;
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  transition: border-color .15s;
+  cursor: pointer;
+}
+
+.race-map-container img:hover {
+  border-color: var(--accent-dim);
+}
+
+@media (max-width: 768px) {
+  .race-detail-header-wrapper {
+    flex-direction: column;
+  }
+  
+  .race-map-container {
+    display: none !important;
+  }
 }
 
 .race-detail-header .meta {
