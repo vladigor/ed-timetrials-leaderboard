@@ -70,7 +70,7 @@ function render() {
     html += renderStatCard(
       'Longest Race',
       renderRaceLink(stats.longest_race.key, stats.longest_race.name),
-      `Fastest time: ${formatLongDuration(stats.longest_race.fastest_time_ms)}`
+      `Fastest time on this race: ${formatLongDuration(stats.longest_race.fastest_time_ms)}`
     );
   }
 
@@ -78,7 +78,7 @@ function render() {
     html += renderStatCard(
       'Shortest Race',
       renderRaceLink(stats.shortest_race.key, stats.shortest_race.name),
-      `Fastest time: ${formatTime(stats.shortest_race.fastest_time_ms)}`
+      `Fastest time on this race: ${formatTime(stats.shortest_race.fastest_time_ms)}`
     );
   }
 
@@ -198,7 +198,7 @@ function renderRaceLink(key, name) {
 function renderTopNTable(items, nameLabel, countLabel) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
 
-  const isCmdr = nameLabel === 'commander';
+  const isCmdr = nameLabel === 'commander' || nameLabel === 'creator';
   
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
@@ -208,9 +208,13 @@ function renderTopNTable(items, nameLabel, countLabel) {
   html += '</tr></thead>';
   html += '<tbody>';
   
+  let currentRank = 1;
   items.forEach((item, idx) => {
-    const rank = idx + 1;
-    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+    // Handle ties: if this item's count equals the previous item's count, use the same rank
+    if (idx > 0 && item.count !== items[idx - 1].count) {
+      currentRank = idx + 1;
+    }
+    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : '🥉';
     const nameDisplay = isCmdr ? renderCmdrLink(item.name) : esc(item.name);
     html += '<tr>';
     html += `<td class="stats-rank">${medal}</td>`;
@@ -234,9 +238,13 @@ function renderSystemTable(items) {
   html += '</tr></thead>';
   html += '<tbody>';
   
+  let currentRank = 1;
   items.forEach((item, idx) => {
-    const rank = idx + 1;
-    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+    // Handle ties: if this item's count equals the previous item's count, use the same rank
+    if (idx > 0 && item.count !== items[idx - 1].count) {
+      currentRank = idx + 1;
+    }
+    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : '🥉';
     html += '<tr>';
     html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${esc(item.system)}</td>`;
@@ -259,9 +267,13 @@ function renderRaceTable(items, countLabel) {
   html += '</tr></thead>';
   html += '<tbody>';
   
+  let currentRank = 1;
   items.forEach((item, idx) => {
-    const rank = idx + 1;
-    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+    // Handle ties: if this item's count equals the previous item's count, use the same rank
+    if (idx > 0 && item.count !== items[idx - 1].count) {
+      currentRank = idx + 1;
+    }
+    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : '🥉';
     html += '<tr>';
     html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${renderRaceLink(item.key, item.name)}</td>`;
@@ -326,9 +338,13 @@ function renderVehicleTable(items) {
   html += '</tr></thead>';
   html += '<tbody>';
   
+  let currentRank = 1;
   items.forEach((item, idx) => {
-    const rank = idx + 1;
-    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+    // Handle ties: if this item's count equals the previous item's count, use the same rank
+    if (idx > 0 && item.count !== items[idx - 1].count) {
+      currentRank = idx + 1;
+    }
+    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : '🥉';
     html += '<tr>';
     html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${esc(item.ship)}</td>`;
