@@ -92,12 +92,24 @@ function renderRace() {
   breadcrumbEl.textContent = race.name;
 
   const versionCls = race.version === 'ODYSSEY' ? 'badge-odyssey' : 'badge-horizons';
+  const creatorHtml = race.creator 
+    ? (race.creator_is_cmdr 
+        ? `<span>· Created by <a href="/cmdr/${encodeURIComponent(race.creator)}" class="cmdr-link">${esc(race.creator)}</a></span>`
+        : `<span>· Created by ${esc(race.creator)}</span>`)
+    : '';
   metaEl.innerHTML = `
     ${race.type ? `<span class="badge ${{ SHIP: 'badge-ship', SRV: 'badge-srv', FIGHTER: 'badge-fighter', ONFOOT: 'badge-onfoot' }[race.type] ?? 'badge-onfoot'}">${esc(race.type)}</span>` : ''}
-    <span>${esc(race.system)}</span>
+    <span>${esc(race.system)} <button class="copy-btn" data-copy="${esc(race.system)}" title="Copy system name" aria-label="Copy system name"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z"></path></svg></button></span>
     ${race.station ? `<span>· ${esc(race.station)}</span>` : ''}
     ${race.address ? `<span>· ${esc(race.address)}</span>` : ''}
+    ${creatorHtml}
   `;
+
+  // Attach copy handler
+  const copyBtn = metaEl.querySelector('.copy-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', handleCopySystemName);
+  }
 
   if (race.constraints && race.constraints.length) {
     const tags = race.constraints.map(c => {
@@ -484,6 +496,37 @@ function stopTimeUpdater() {
   if (timeUpdater) {
     clearInterval(timeUpdater);
     timeUpdater = null;
+  }
+}
+
+// ── Copy to clipboard handler ──────────────────────────────────────────────
+/**
+ * Copy system name to clipboard and show visual feedback
+ */
+async function handleCopySystemName(evt) {
+  const btn = evt.currentTarget;
+  const text = btn.dataset.copy;
+  
+  try {
+    await navigator.clipboard.writeText(text);
+    
+    // Visual feedback: change icon to checkmark
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>';
+    btn.classList.add('copied');
+    
+    setTimeout(() => {
+      btn.innerHTML = originalContent;
+      btn.classList.remove('copied');
+    }, 1500);
+  } catch (err) {
+    console.error('Failed to copy:', err);
+    // Fallback: show error state briefly
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>';
+    setTimeout(() => {
+      btn.innerHTML = originalContent;
+    }, 1500);
   }
 }
 

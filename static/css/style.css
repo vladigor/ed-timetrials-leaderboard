@@ -300,6 +300,40 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
 }
 
+.copy-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: .3rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: .2rem .35rem;
+  margin-left: .35rem;
+  transition: all .15s ease;
+  line-height: 1;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-btn:hover {
+  border-color: var(--accent-dim);
+  color: var(--accent);
+  background: rgba(232,160,32,.05);
+}
+
+.copy-btn.copied {
+  color: var(--good);
+  border-color: var(--good);
+  background: rgba(63,185,122,.1);
+}
+
+.copy-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  display: block;
+}
+
 .constraints-list {
   display: flex;
   flex-wrap: wrap;

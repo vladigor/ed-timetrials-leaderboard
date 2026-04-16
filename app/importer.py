@@ -36,6 +36,27 @@ def _normalise_version(raw: str) -> str:
     return "ODYSSEY" if v == "ODY" else v
 
 
+def _extract_creator(race_key: str) -> str:
+    """Extract potential creator name from race key.
+    
+    Pattern: CREATORNAME-RestOfRaceName or CREATORNAME_RestOfRaceName
+    Example: ALEXFIGHTER-DW3 Motordrome -> ALEXFIGHTER
+    
+    Returns the extracted creator name in uppercase, or empty string if no pattern matches.
+    """
+    import re
+    
+    # Strategy 1: Split on hyphen or underscore (most common pattern)
+    if '-' in race_key:
+        return race_key.split('-')[0].upper()
+    elif '_' in race_key:
+        return race_key.split('_')[0].upper()
+    else:
+        # Strategy 2: If no delimiter, try removing trailing numbers
+        potential = re.sub(r'\d+$', '', race_key).upper()
+        return potential if potential != race_key.upper() else ''
+
+
 def _parse_location(row: list[str]) -> dict:
     version = _normalise_version(row[7]) if len(row) > 7 else ""
     global_value = row[12] if len(row) > 12 and row[12] else "1"
@@ -44,6 +65,9 @@ def _parse_location(row: list[str]) -> dict:
 
     # Build a sort key: type + name
     sort = f"{row[5].upper() if len(row) > 5 else ''}_{row[1]}"
+    
+    # Extract creator from race key
+    creator = _extract_creator(row[0])
 
     return {
         "key": row[0],
@@ -55,6 +79,7 @@ def _parse_location(row: list[str]) -> dict:
         "version": version,
         "address": row[8] if len(row) > 8 else "",
         "sort": sort,
+        "creator": creator,
         "constraints": constraints,
     }
 
@@ -174,8 +199,8 @@ async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
     await db.execute(
         """
-        INSERT INTO locations (key, name, type, version, system, station, address, sort, coords, created_at)
-        VALUES (:key, :name, :type, :version, :system, :station, :address, :sort, :coords, :created_at)
+        INSERT INTO locations (key, name, type, version, system, station, address, sort, coords, created_at, creator)
+        VALUES (:key, :name, :type, :version, :system, :station, :address, :sort, :coords, :created_at, :creator)
         ON CONFLICT(key) DO UPDATE SET
             name    = excluded.name,
             type    = excluded.type,
@@ -184,7 +209,8 @@ async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
             station = excluded.station,
             address = excluded.address,
             sort    = excluded.sort,
-            coords  = excluded.coords
+            coords  = excluded.coords,
+            creator = excluded.creator
         """,
         {**loc, "created_at": now},
     )

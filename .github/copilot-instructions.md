@@ -81,6 +81,15 @@ templates/
 - **Migrations:** Add new columns via `ALTER TABLE` inside `init_db()` in `database.py`, wrapped in `try/except` to tolerate existing columns. Schema-breaking changes go through a named migration sentinel in `last_updated_cache`.
 - **No TypeScript, no bundler, no test suite** currently in use.
 
+## Working with Terminals (Agent Mode)
+
+- **IMPORTANT:** The `run_in_terminal` tool does NOT return command output directly
+- To see terminal output after running a command, either:
+  1. Redirect output to a file (`> /tmp/output.txt 2>&1`) then read the file with `read_file`
+  2. Use `terminal_last_command` (note: may not always capture full output)
+- The proper workflow is: 1) `run_in_terminal` with output redirect 2) `read_file` to see results
+- Always run Python scripts using `.venv/bin/python3` to use the project's virtual environment
+
 ## Reference Documentation
 
 - **External API details** (endpoints, request/response formats, field indexes): see `documentation/timetrials-api.md`

@@ -21,6 +21,7 @@ One row per time trial race. Populated from `getTTList` and enriched by `getTTDa
 | `address` | TEXT | `''` | Additional location address/description (may be empty) |
 | `sort` | TEXT | `''` | Sort key used for list ordering: `{TYPE}_{name}` |
 | `coords` | TEXT | `''` | Galactic XYZ coordinates as `"x,y,z"` |
+| `creator` | TEXT | `''` | Race creator name extracted from the race key (e.g. `ALEXFIGHTER` from `ALEXFIGHTER-DW3 Motordrome`). Empty if no pattern match. Matches a known commander ~95% of the time |
 | `created_at` | TEXT | `''` | UTC datetime when this row was first inserted (`%Y-%m-%d %H:%M:%S.%f`) |
 | `description` | TEXT | `''` | Plain-text race description from `getTTData` |
 | `num_checkpoints` | INTEGER | `0` | Number of waypoint checkpoints, derived from `getTTData`. `0` means details not yet fetched |

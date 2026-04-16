@@ -71,6 +71,7 @@ async def list_races(
                 l.address,
                 l.sort,
                 l.coords,
+                l.creator,
                 l.multi_mode,
                 l.multi_planet,
                 l.multi_system,
@@ -195,6 +196,15 @@ async def get_race(key: str) -> dict | None:
             })
 
         race["results"] = results
+
+        # Check if creator is an actual commander (has results in the database)
+        creator_is_cmdr = False
+        if race.get("creator"):
+            async with db.execute(
+                "SELECT 1 FROM results WHERE name = ? LIMIT 1", (race["creator"],)
+            ) as cursor:
+                creator_is_cmdr = await cursor.fetchone() is not None
+        race["creator_is_cmdr"] = creator_is_cmdr
 
         # ── Rivalry data ───────────────────────────────────────────────────
         # Count P1 changes in last day and last week using position_snapshots
