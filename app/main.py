@@ -18,7 +18,7 @@ from fastapi import Request
 from .config import OFFLINE
 from .database import init_db
 from .scheduler import full_refresh, get_last_updated_snapshot, start_scheduler
-from .queries import list_races, get_race, list_commanders, get_commander_stats, list_new_races
+from .queries import list_races, get_race, list_commanders, get_commander_stats, list_new_races, get_stats
 
 logging.basicConfig(
     level=logging.INFO,
@@ -82,6 +82,11 @@ async def about_page(request: Request):
     return templates.TemplateResponse("about.html", {"request": request, "v": STATIC_VER})
 
 
+@app.get("/stats", response_class=HTMLResponse)
+async def stats_page(request: Request):
+    return templates.TemplateResponse("stats.html", {"request": request, "v": STATIC_VER})
+
+
 # ---------------------------------------------------------------------------
 # JSON API
 # ---------------------------------------------------------------------------
@@ -123,6 +128,11 @@ async def api_cmdr(name: str):
     if stats is None:
         raise HTTPException(status_code=404, detail="Commander not found")
     return stats
+
+
+@app.get("/api/stats")
+async def api_stats():
+    return await get_stats()
 
 
 @app.get("/api/system-coords")

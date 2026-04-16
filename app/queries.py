@@ -491,3 +491,247 @@ async def get_commander_stats(commander: str) -> dict | None:
         }
     finally:
         await db.close()
+
+
+# ---------------------------------------------------------------------------
+# Leaderboard statistics
+# ---------------------------------------------------------------------------
+
+async def get_stats() -> dict:
+    """
+    Return comprehensive leaderboard statistics.
+    Includes single-value stats and top-N tables.
+    """
+    db = await get_db()
+    try:
+        stats: dict[str, Any] = {}
+
+        # ── Single-value stats ─────────────────────────────────────────────
+        
+        # Total races
+        async with db.execute("SELECT COUNT(*) AS cnt FROM locations") as cur:
+            stats["total_races"] = (await cur.fetchone())["cnt"]
+
+        # Total racers (distinct commanders)
+        async with db.execute("SELECT COUNT(DISTINCT name) AS cnt FROM results") as cur:
+            stats["total_racers"] = (await cur.fetchone())["cnt"]
+
+        # Total contributors (distinct race creators)
+        async with db.execute(
+            "SELECT COUNT(DISTINCT creator) AS cnt FROM locations WHERE creator != ''"
+        ) as cur:
+            stats["total_contributors"] = (await cur.fetchone())["cnt"]
+
+        # Active races (activity in last 30 days)
+        cutoff_30d = (
+            datetime.now(timezone.utc) - timedelta(days=30)
+        ).strftime("%Y-%m-%d %H:%M:%S.%f")
+        async with db.execute(
+            """
+            SELECT COUNT(DISTINCT location) AS cnt
+            FROM results
+            WHERE updated >= ?
+            """,
+            (cutoff_30d,),
+        ) as cur:
+            stats["active_races_30d"] = (await cur.fetchone())["cnt"]
+
+        # Longest race (by fastest participant's time)
+        async with db.execute(
+            """
+            SELECT l.key, l.name, MIN(r.time) AS fastest_time_ms
+            FROM locations l
+            JOIN results r ON r.location = l.key
+            GROUP BY l.key
+            ORDER BY fastest_time_ms DESC
+            LIMIT 1
+            """
+        ) as cur:
+            row = await cur.fetchone()
+            stats["longest_race"] = _row_to_dict(row) if row else None
+
+        # Shortest race (by fastest participant's time)
+        async with db.execute(
+            """
+            SELECT l.key, l.name, MIN(r.time) AS fastest_time_ms
+            FROM locations l
+            JOIN results r ON r.location = l.key
+            GROUP BY l.key
+            ORDER BY fastest_time_ms ASC
+            LIMIT 1
+            """
+        ) as cur:
+            row = await cur.fetchone()
+            stats["shortest_race"] = _row_to_dict(row) if row else None
+
+        # Most perseverance (commander with longest single result time)
+        async with db.execute(
+            """
+            SELECT r.name, r.location, l.name AS race_name, r.time AS time_ms
+            FROM results r
+            JOIN locations l ON l.key = r.location
+            ORDER BY r.time DESC
+            LIMIT 1
+            """
+        ) as cur:
+            row = await cur.fetchone()
+            stats["most_perseverance"] = _row_to_dict(row) if row else None
+
+        # ── Top-N tables ───────────────────────────────────────────────────
+
+        # Most races created (by contributor)
+        async with db.execute(
+            """
+            SELECT creator AS name, COUNT(*) AS count
+            FROM locations
+            WHERE creator != ''
+            GROUP BY creator
+            ORDER BY count DESC, creator ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_creators"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Systems containing the most races
+        async with db.execute(
+            """
+            SELECT system, COUNT(*) AS count
+            FROM locations
+            WHERE system != ''
+            GROUP BY system
+            ORDER BY count DESC, system ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_systems"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Most gold medals (1st place finishes)
+        async with db.execute(
+            """
+            WITH best_times AS (
+                SELECT location, name, MIN(time) AS best
+                FROM results
+                GROUP BY location, name
+            ),
+            winners AS (
+                SELECT bt.location, bt.name
+                FROM best_times bt
+                WHERE bt.best = (
+                    SELECT MIN(best) FROM best_times WHERE location = bt.location
+                )
+            )
+            SELECT name, COUNT(*) AS count
+            FROM winners
+            GROUP BY name
+            ORDER BY count DESC, name ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_gold_medals"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Most podium finishes (top 3)
+        async with db.execute(
+            """
+            WITH best_times AS (
+                SELECT location, name, MIN(time) AS best
+                FROM results
+                GROUP BY location, name
+            ),
+            ranked AS (
+                SELECT
+                    location,
+                    name,
+                    RANK() OVER (PARTITION BY location ORDER BY best ASC) AS position
+                FROM best_times
+            )
+            SELECT name, COUNT(*) AS count
+            FROM ranked
+            WHERE position <= 3
+            GROUP BY name
+            ORDER BY count DESC, name ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_podium_finishes"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Most dedicated racer (participated in most different races)
+        async with db.execute(
+            """
+            SELECT name, COUNT(DISTINCT location) AS count
+            FROM results
+            GROUP BY name
+            ORDER BY count DESC, name ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_dedicated_racers"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Most competitive races (most unique participants)
+        async with db.execute(
+            """
+            SELECT l.key, l.name, COUNT(DISTINCT r.name) AS count
+            FROM locations l
+            JOIN results r ON r.location = l.key
+            GROUP BY l.key
+            ORDER BY count DESC, l.name ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_competitive_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Most recently active commanders (by last result submitted)
+        async with db.execute(
+            """
+            SELECT name, MAX(updated) AS last_active
+            FROM results
+            GROUP BY name
+            ORDER BY last_active DESC, name ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_recently_active_cmdrs"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Most recently active races (by last result submitted)
+        async with db.execute(
+            """
+            SELECT l.key, l.name, MAX(r.updated) AS last_active
+            FROM locations l
+            JOIN results r ON r.location = l.key
+            GROUP BY l.key
+            ORDER BY last_active DESC, l.name ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_recently_active_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Most popular ship type (for SHIP races)
+        async with db.execute(
+            """
+            SELECT r.ship, COUNT(DISTINCT r.name || '|' || r.location) AS count
+            FROM results r
+            JOIN locations l ON l.key = r.location
+            WHERE l.type = 'SHIP' AND r.ship != ''
+            GROUP BY r.ship
+            ORDER BY count DESC, r.ship ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_ship_types"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Most popular fighter type (for FIGHTER races)
+        async with db.execute(
+            """
+            SELECT r.ship, COUNT(DISTINCT r.name || '|' || r.location) AS count
+            FROM results r
+            JOIN locations l ON l.key = r.location
+            WHERE l.type = 'FIGHTER' AND r.ship != ''
+            GROUP BY r.ship
+            ORDER BY count DESC, r.ship ASC
+            LIMIT 3
+            """
+        ) as cur:
+            stats["top_fighter_types"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        return stats
+    finally:
+        await db.close()
