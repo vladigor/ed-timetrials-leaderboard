@@ -161,7 +161,7 @@ function render() {
 
   // ── Recent Activity ─────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Recent Activity</h2>';
+  html += '<h2 class="cmdr-section-heading"><a href="/activity">Recent Activity</a></h2>';
 
   if (stats.top_recently_active_cmdrs && stats.top_recently_active_cmdrs.length > 0) {
     html += '<h3 class="stats-subsection-heading">Most Recently Active Commanders</h3>';

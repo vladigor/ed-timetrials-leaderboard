@@ -88,6 +88,11 @@ async def stats_page(request: Request):
     return templates.TemplateResponse("stats.html", {"request": request, "v": STATIC_VER})
 
 
+@app.get("/activity", response_class=HTMLResponse)
+async def activity_page(request: Request):
+    return templates.TemplateResponse("activity.html", {"request": request, "v": STATIC_VER})
+
+
 # ---------------------------------------------------------------------------
 # JSON API
 # ---------------------------------------------------------------------------

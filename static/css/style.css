@@ -518,16 +518,18 @@ a:hover { text-decoration: underline; }
 .results-table tbody tr.row-pos-2:hover td { background: rgba(192, 192, 192, .13); }
 .results-table tbody tr.row-pos-3:hover td { background: rgba(205, 127,  50, .14); }
 
-/* Recently-updated row (within 15 minutes) */
+/* Recently-updated row (within 1 hour) */
 @keyframes freshSweep {
   0%   { background-color: rgba(63, 185, 122, .22); }
   100% { background-color: rgba(63, 185, 122, .06); }
 }
-.results-table tbody tr.row-fresh td {
+.results-table tbody tr.row-fresh td,
+.stats-table tbody tr.row-fresh td {
   animation: freshSweep 2.5s ease-out forwards;
 }
 .updated-cell { color: var(--text-muted); }
-.results-table tbody tr.row-fresh .updated-cell {
+.results-table tbody tr.row-fresh .updated-cell,
+.stats-table tbody tr.row-fresh .activity-time {
   color: var(--good);
 }
 
@@ -1160,6 +1162,16 @@ a:hover { text-decoration: underline; }
   margin-bottom: 1.5rem;
 }
 
+.activity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.activity-column {
+  min-width: 0; /* Prevent grid overflow */
+}
+
 .stat-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1261,6 +1273,10 @@ a:hover { text-decoration: underline; }
 
 @media (max-width: 720px) {
   .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .activity-grid {
     grid-template-columns: 1fr;
   }
   
