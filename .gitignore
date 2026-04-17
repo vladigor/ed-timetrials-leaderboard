@@ -17,3 +17,6 @@ __pycache__/
 # Editor / OS
 .DS_Store
 *.code-workspace
+
+# Note: maps/ and maps/thumbnails/ are intentionally committed
+# (static assets, ~100 total, immutable after creation)

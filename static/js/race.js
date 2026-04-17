@@ -93,8 +93,9 @@ async function loadRaceMap() {
       const thumbnail = document.getElementById('race-map-thumbnail');
       
       const mapPath = `/maps/${mapData.map}`;
+      const thumbnailPath = `/maps/thumbnails/${mapData.map}`;
       link.href = mapPath;
-      thumbnail.src = mapPath;
+      thumbnail.src = thumbnailPath;
       container.style.display = 'block';
     }
   } catch (err) {
