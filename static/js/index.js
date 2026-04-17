@@ -148,6 +148,13 @@ function renderGrid() {
       const normalised = r.last_activity.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z';
       return new Date(normalised).getTime() >= cutoff;
     });
+    
+    // Sort by most recent activity first
+    races.sort((a, b) => {
+      const aTime = a.last_activity ? new Date(a.last_activity.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z').getTime() : 0;
+      const bTime = b.last_activity ? new Date(b.last_activity.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z').getTime() : 0;
+      return bTime - aTime; // descending order (most recent first)
+    });
   }
 
   countLabel.textContent = `${races.length} race${races.length !== 1 ? 's' : ''}`;
