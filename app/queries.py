@@ -494,6 +494,63 @@ async def get_commander_stats(commander: str) -> dict | None:
 
 
 # ---------------------------------------------------------------------------
+# Recent activity
+# ---------------------------------------------------------------------------
+
+async def get_recent_activity(limit: int = 20) -> list[dict]:
+    """
+    Return the most recent race results with commander, race name, position, and timestamp.
+    Each row represents an individual result submission.
+    """
+    db = await get_db()
+    try:
+        async with db.execute(
+            """
+            WITH best_times AS (
+                SELECT location, name, MIN(time) AS best
+                FROM results
+                GROUP BY location, name
+            ),
+            ranked AS (
+                SELECT
+                    bt.location,
+                    bt.name,
+                    bt.best,
+                    RANK() OVER (PARTITION BY bt.location ORDER BY bt.best ASC) AS position
+                FROM best_times bt
+            ),
+            latest_results AS (
+                SELECT
+                    r.name,
+                    r.location,
+                    l.name AS race_name,
+                    r.updated,
+                    ranked.position
+                FROM results r
+                JOIN locations l ON l.key = r.location
+                LEFT JOIN ranked ON ranked.location = r.location AND ranked.name = r.name
+                WHERE r.time = (
+                    SELECT MIN(time) FROM results WHERE location = r.location AND name = r.name
+                )
+            )
+            SELECT DISTINCT
+                name,
+                location,
+                race_name,
+                position,
+                updated
+            FROM latest_results
+            ORDER BY updated DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ) as cur:
+            return [_row_to_dict(r) for r in await cur.fetchall()]
+    finally:
+        await db.close()
+
+
+# ---------------------------------------------------------------------------
 # Leaderboard statistics
 # ---------------------------------------------------------------------------
 

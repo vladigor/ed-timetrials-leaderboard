@@ -10,7 +10,7 @@ function isFresh(ts) {
   return Date.now() - new Date(norm).getTime() < FRESH_MS;
 }
 
-let stats = null;
+let activity = null;
 let poller = null;
 let timeUpdater = null;
 let currentLimit = 20;
@@ -27,12 +27,12 @@ async function init() {
   const params = new URLSearchParams(window.location.search);
   currentLimit = parseInt(params.get('limit') || '20', 10);
   
-  await loadStats();
+  await loadActivity();
 
   // Seed poller – refresh when any race changes (since we show recent activity)
   poller = new ChangePoller(60_000, async () => {
     setStatus('updating');
-    await loadStats();
+    await loadActivity();
     setStatus('live');
   });
   
@@ -57,12 +57,12 @@ async function init() {
 }
 
 // ── Data loading ───────────────────────────────────────────────────────────
-async function loadStats() {
+async function loadActivity() {
   try {
-    const url = `/api/stats?limit=${encodeURIComponent(currentLimit)}`;
+    const url = `/api/activity?limit=${encodeURIComponent(currentLimit)}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(res.status);
-    stats = await res.json();
+    activity = await res.json();
     render();
   } catch (err) {
     container.innerHTML = '<p class="empty-state">Could not load recent activity.</p>';
@@ -73,33 +73,15 @@ async function loadStats() {
 function render() {
   let html = '';
 
-  // ── Recent Activity (side by side) ─────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<div class="activity-grid">';
-
-  // Left column: Recently Active Commanders
-  html += '<div class="activity-column">';
-  if (stats.top_recently_active_cmdrs && stats.top_recently_active_cmdrs.length > 0) {
-    html += '<h2 class="cmdr-section-heading">Most Recently Active Commanders</h2>';
-    html += renderRecentCommandersTable(stats.top_recently_active_cmdrs);
+  html += '<p style="margin-bottom: 1.5rem; color: var(--text-muted);">Showing the most recently updated race results. Each entry represents a new or improved time submission.</p>';
+  
+  if (activity && activity.length > 0) {
+    html += renderActivityTable(activity);
   } else {
-    html += '<h2 class="cmdr-section-heading">Most Recently Active Commanders</h2>';
     html += '<p class="empty-state">No recent activity found.</p>';
   }
-  html += '</div>';
 
-  // Right column: Recently Active Races
-  html += '<div class="activity-column">';
-  if (stats.top_recently_active_races && stats.top_recently_active_races.length > 0) {
-    html += '<h2 class="cmdr-section-heading">Most Recently Active Races</h2>';
-    html += renderRecentRacesTable(stats.top_recently_active_races);
-  } else {
-    html += '<h2 class="cmdr-section-heading">Most Recently Active Races</h2>';
-    html += '<p class="empty-state">No recent activity found.</p>';
-  }
-  html += '</div>';
-
-  html += '</div>'; // .activity-grid
   html += '</section>';
 
   container.innerHTML = html;
@@ -115,43 +97,31 @@ function renderRaceLink(key, name) {
   return `<a href="/race/${encodeURIComponent(key)}">${esc(name)}</a>`;
 }
 
-function renderRecentCommandersTable(items) {
+function renderActivityTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
   
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
+  html += `<th class="stats-rank">#</th>`;
   html += `<th>Commander</th>`;
-  html += `<th class="stats-time">Last Active</th>`;
-  html += '</tr></thead>';
-  html += '<tbody>';
-  
-  items.forEach(item => {
-    const rowClass = isFresh(item.last_active) ? ' class="row-fresh"' : '';
-    html += `<tr${rowClass}>`;
-    html += `<td>${renderCmdrLink(item.name)}</td>`;
-    html += `<td class="stats-time activity-time" data-timestamp="${item.last_active || ''}">${relativeTime(item.last_active)}</td>`;
-    html += '</tr>';
-  });
-  
-  html += '</tbody></table>';
-  return html;
-}
-
-function renderRecentRacesTable(items) {
-  if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-  
-  let html = '<table class="stats-table">';
-  html += '<thead><tr>';
   html += `<th>Race</th>`;
-  html += `<th class="stats-time">Last Active</th>`;
+  html += `<th style="text-align: center;">Position</th>`;
+  html += `<th class="stats-time">Updated</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
   
-  items.forEach(item => {
-    const rowClass = isFresh(item.last_active) ? ' class="row-fresh"' : '';
+  items.forEach((item, index) => {
+    const rowClass = isFresh(item.updated) ? ' class="row-fresh"' : '';
+    const rowNum = index + 1;
+    const position = item.position;
+    const positionDisplay = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
+    
     html += `<tr${rowClass}>`;
-    html += `<td>${renderRaceLink(item.key, item.name)}</td>`;
-    html += `<td class="stats-time activity-time" data-timestamp="${item.last_active || ''}">${relativeTime(item.last_active)}</td>`;
+    html += `<td class="stats-rank">${rowNum}</td>`;
+    html += `<td>${renderCmdrLink(item.name)}</td>`;
+    html += `<td>${renderRaceLink(item.location, item.race_name)}</td>`;
+    html += `<td class="stats-rank">${positionDisplay}</td>`;
+    html += `<td class="stats-time activity-time" data-timestamp="${item.updated || ''}">${relativeTime(item.updated)}</td>`;
     html += '</tr>';
   });
   

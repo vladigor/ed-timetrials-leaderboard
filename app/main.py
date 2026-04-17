@@ -143,6 +143,13 @@ async def api_stats(limit: Optional[int] = Query(None, ge=1, le=100)):
     return await get_stats()
 
 
+@app.get("/api/activity")
+async def api_activity(limit: int = Query(20, ge=1, le=100)):
+    """Return recent race results with commander, race name, position, and timestamp."""
+    from .queries import get_recent_activity
+    return await get_recent_activity(limit=limit)
+
+
 @app.get("/api/system-coords")
 async def api_system_coords(name: str = Query(..., min_length=1, max_length=100)):
     """Proxy to EDSM to resolve a star system name to galaxy coordinates."""
