@@ -279,55 +279,254 @@ function renderTrophyCase() {
   trophyEl.innerHTML = html;
 }
 
+// ── Thievses Character Personalities ─────────────────────────────────────────
+// Add new characters here! Each character needs:
+//   - heading: Section heading with emojis
+//   - quotes: Array indexed 0-10 (0=all reclaimed, 1=one theft, ..., 10+=many thefts)
+//             Each entry can be a string or array of strings (random selection)
+//   - rogueQuotes.many: Function returning quote for prolific thief (3+ thefts)
+//   - rogueQuotes.few: Function returning quote for occasional thief (2 thefts)
+//
+// Example to add a new character:
+//   yoda: {
+//     heading: 'Stolen, my trophies have been! 🏆⚔️',
+//     quotes: [ ... ],
+//     rogueQuotes: {
+//       many: (name) => ` Strong with theft, <strong>${esc(name)}</strong> is. Much anger I feel!`,
+//       few: (name) => ` Beware of <strong>${esc(name)}</strong>, you must. The dark side, they follow.`,
+//     }
+//   },
+//
+const THIEVSES_CHARACTERS = {
+  gollum: {
+    heading: 'Thievses! 🏆🏃💨',
+    quotes: [
+      'We won them all back, precious! Every single one! Sweet, sweet revenge! They thought they could keep them, but we showed them, yes we did!',
+      [
+        'They stealses it from us, precious. One precious trophy, gone!',
+        'One! One thief, precious, and they takes our trophy just like that!',
+        'Sneaky, tricksy, it stealses from us! One precious position, gone forever!',
+        'We had it, precious. We HAD it. And now it is gone. One terrible theft.',
+        'Lost it, precious. Lost our precious spot to a nasty thief!',
+      ],
+      [
+        'Two times! Two precious positions stolen! Nasty tricksy commanderses!',
+        'Twice they does it, precious! Twice! We is beside ourselves with grief!',
+        'Two thefts, precious. Two! First one, then another — wicked, horrible commanderses!',
+        'We counts on our fingerses, precious — two. Two stolen positionses. We hatesss them.',
+        'Not once but twice! Sneaking up behind us and taking what is ourses!',
+      ],
+      [
+        'Three... three thievses, precious! We hatesss them, we does!',
+        'Three times stolen from! Three! Is nothing sacred, precious?',
+        'They comes and they steals, precious — three precious positionses, just gone!',
+        'Three thefts! Our trophy case is looking very empty, precious. Very empty indeed.',
+        'First, second, third — all of them stolen! Three times, precious, THREE!',
+      ],
+      [
+        'Four timeses they stealses from us! Mean and horrible! Cruelses, like Baggins!',
+        'Four precious trophies stolen! We remembers each one, precious. Each terrible theft!',
+        'We counts them on our fingerses — four! Four times they takes from us!',
+      ],
+      [
+        'FIVE! We is counting, precious — five precious positions, all gone! NASTY THIEVSES!',
+        'Five stolen positionses! Is we cursed, precious? Is the world against us?',
+        'Five times, precious! Five! They just keeps coming and stealing! Wicked!',
+      ],
+      [
+        'Six! Six precious positions stolen! We is overwhelmed with griefs, precious!',
+        'Half a dozen thefts, precious! We is drowning in sorrowses!',
+        'Six thievses! Too many to bear, precious, too many!',
+      ],
+      [
+        "Seven times! SEVEN! We doesn't even wantsss to count anymore, precious!",
+        'Seven precious trophies, all gone! What did we do to deserve this, precious?',
+        'They stealses seven times from us! SEVEN! Is nothing sacred?',
+      ],
+      [
+        'Eight precious positionses, gone forever! They is destroying us!',
+        'Eight thefts, precious... eight! We is losing our mind!',
+        'Counted to eight, we has. Eight times stolen! Wicked, horrible commanderses!',
+      ],
+      [
+        'Nine thefts, precious... nine! We is running out of words for how much we hatesss them...',
+        'Nine times they does it! Nine! Soon there will be nothing left for us, precious!',
+        'Almost ten, precious! Nine stolen positionses! The pain, the griefs!',
+      ],
+      [
+        'SO MANY PRECIOUS POSITIONSES STOLEN! We loses count, precious. We gives up. They winsss.',
+        'Too many to counts, precious! Our trophy case is empty! They takes everything!',
+        'We hates them all, precious! So many thievses! Forever will we remembers this!',
+      ],
+    ],
+    rogueQuotes: {
+      many: (name) => ` Especially that wicked <strong>${esc(name)}</strong>! We hatesss <strong>${esc(name)}</strong> most of all, precious!`,
+      few: (name) => ` That nasty <strong>${esc(name)}</strong>, precious — always them!`,
+    }
+  },
+  
+  cartman: {
+    heading: 'Respect my authoritah! 😡',
+    quotes: [
+      'I got them ALL back! Every single one! You guys thought you could steal from me? SCREW YOU GUYS!',
+      [
+        'Are you SERIOUS right now? Someone stole my trophy? That is SO not cool!',
+        'ONE trophy stolen! Screw you guys! This is seriously weak!',
+        'Oh my God, they took my position! You bastards!',
+        'What the hell?! I had that spot and some asshole took it from me!',
+        'This is bullcrap! ONE trophy gone and I am seriously pissed off right now!',
+      ],
+      [
+        'TWO trophies?! TWO?! That is IT! I am going to kick someone in the nuts!',
+        'Oh, real mature guys. Steal from me TWICE. You will ALL respect my authority!',
+        'Two times! Seriously?! What is wrong with you people?!',
+        'This is such CRAP! Two of my trophies, just GONE!',
+        'TWO stolen positions! I swear to God I will get you guys back for this!',
+      ],
+      [
+        'Three trophies stolen! THREE! That is seriously not cool you guys!',
+        'Oh my God! Three times?! I am going to lose my mind here!',
+        'Three thefts! What am I, running a charity here?! SCREW YOU GUYS!',
+        'Seriously?! Three positions stolen?! You will ALL pay for this!',
+        'This is ridiculous! Three trophies gone! I am so seriously pissed right now!',
+      ],
+      [
+        'FOUR stolen trophies! That is IT! No more Mister Nice Guy! You guys are all assholes!',
+        'Oh my God, FOUR?! What is this, pick on Cartman day?! WEAK!',
+        'Four times! This is seriously getting old! I am going to kick ALL your asses!',
+      ],
+      [
+        'FIVE?! FIVE TROPHIES?! Oh that is IT! I am going to go home and complain about this SO HARD!',
+        'Five stolen positions! This is such BS! You will ALL respect my authority!',
+        'FIVE! Are you freaking KIDDING me right now?! I hate you guys!',
+      ],
+      [
+        'Six trophies stolen! This is such BULLCRAP! I hate you guys SO much right now!',
+        'Oh my God, SIX?! That is IT! No more playing nice! WAR is declared!',
+        'Six thefts! What am I, a joke to you guys?! This is seriously messed up!',
+      ],
+      [
+        'SEVEN times?! SERIOUSLY?! Whatever! I do what I want anyway! ...But this still sucks!',
+        'Seven stolen trophies! SEVEN! You guys are SO gonna pay for this!',
+        'Oh, real nice! Seven times! I hope you\'re all proud of yourselves!',
+      ],
+      [
+        'Eight stolen trophies! That is IT! You guys are the worst! THE WORST!',
+        'EIGHT?! How is this even happening?! This is such total crap!',
+        'Eight times stolen from! I am SO mad right now I could just... ARGH!',
+      ],
+      [
+        'Nine thefts?! Oh my God, just leave me ALONE already! This is so totally weak!',
+        'NINE! That\'s it, I quit! ...No I don\'t, but I am SERIOUSLY pissed!',
+        'Nine stolen positions! You guys SUCK! All of you! THE WORST!',
+      ],
+      [
+        'SO MANY STOLEN TROPHIES! SCREW YOU GUYS, I\'M GOING HOME! ...Actually no, I\'m staying, but I am SUPER MAD!',
+        'I can\'t even COUNT how many times you\'ve stolen from me! This is BULLCRAP!',
+        'Too many thefts! WAY too many! Whatever! I don\'t even care anymore!',
+      ],
+    ],
+    rogueQuotes: {
+      many: (name) => ` And <strong>${esc(name)}</strong>! Oh my God, <strong>${esc(name)}</strong> is the WORST! I hate them SO MUCH!`,
+      few: (name) => ` Especially that asshole <strong>${esc(name)}</strong>! Seriously, <strong>${esc(name)}</strong>, screw you!`,
+    }
+  },
+  
+  yoda: {
+    heading: 'Stolen, my trophies have been! 🏆⚔️',
+    quotes: [
+      'Reclaimed them all, I have! Hmm. Strong in the Force, my resolve was. Defeated, the thieves are!',
+      [
+        'Stolen from me, one trophy was. Disturbing, this is. Hmm.',
+        'Lost one position, I have. A great disturbance in the Force, I sense.',
+        'One theft... patience, I must have. Return, it will. Or not. Hmm.',
+        'Taken it was, yes. One precious trophy. Anger leads to suffering, but annoyed I am!',
+        'Gone, my first place is. Stolen by another. The dark side, I sense in this.',
+      ],
+      [
+        'Two times stolen from me! Strong with the dark side, these thieves are.',
+        'Twice they strike! Powerful, their speed is. Troubling, this pattern becomes.',
+        'Two positions lost. Train harder, I must. Yes. Hmmm.',
+        'Count them I do — one, two. Two thefts! The Force, unbalanced it is.',
+        'Stolen twice from me, they have. Much anger, this causes. Control it, I must... but difficult it is!',
+      ],
+      [
+        'Three trophies gone. A pattern, I sense. The dark side grows stronger.',
+        'Three times! Three! Troubling this is. Hmm. Patience wears thin, mine does.',
+        'Lost three positions, I have. To the dark side, these commanderses belong, yes.',
+        'Theft, theft, theft — three times it happens. When nine hundred years old you reach, this frustration you will understand!',
+        'Three stolen from me. Much to learn, these thieves still have... but fast they are. Hmm.',
+      ],
+      [
+        'Four thefts, there are. No more, no less. A Sith Lord, this thief could be! Troubling, yes.',
+        'Four positions lost. Always in motion, the future is. But stolen, my past glories are!',
+        'Count to four, I can. Four thefts! Train harder, I must. Yes. Hmmm.',
+      ],
+      [
+        'Five positions lost! Strong, the dark side is in these races. Meditate on this, I must.',
+        'Five times stolen from me! Much to learn, I still have. Or faster ships, I need. Hmm.',
+        'Five thefts, there are. Patience, I am losing. The Jedi way, this anger is not!',
+      ],
+      [
+        'Six times stolen from! The Force, it abandons me. Or focus more, I must. Difficult to say.',
+        'Six losses to thieves. When nine hundred years old you reach, accept defeat easier you will not!',
+        'Half dozen thefts! Much disturbance in the Force, this causes. Troubling, yes.',
+      ],
+      [
+        'Seven thefts! When nine hundred years old you reach, remember every stolen trophy, you will. Hmm!',
+        'Seven times they strike! A pattern, I sense. The dark side, strong it is in these pilots.',
+        'Lucky number seven, this is not! Unlucky, more like. Frustrating, these thefts are!',
+      ],
+      [
+        'Eight losses to thieves. Size matters not... but speed matters. MUCH speed matters! Yes.',
+        'Eight stolen positions! Do or do not, there is no try... but trying, I am! Still losing, I am!',
+        'Count to eight, I must. One, two, three... hmm, lost my place. Too many thefts, there are!',
+      ],
+      [
+        'Nine stolen trophies. Clouded, the future is. Return them, I shall... or die trying, I will. Hmm.',
+        'Nine thefts! Nearly ten! Control, control... you must learn control! But angry, I am!',
+        'Three times three equals nine. Mathematical, I am... and frustrated! Much speed, these thieves have!',
+      ],
+      [
+        'So many thefts! Lost count, I have. Too old for this, I am. Retire to Dagobah, perhaps I should. Yes, hmm.',
+        'Countless, the thefts are! In the swamp, hide I should. Fewer thieves there would be!',
+        'Many, many stolen positions! The dark side, everywhere it is! Much fear, this brings. Much anger!',
+      ],
+    ],
+    rogueQuotes: {
+      many: (name) => ` Especially <strong>${esc(name)}</strong>, yes! Strong with theft, this one is. Fear leads to anger, anger leads to hate, and hate <strong>${esc(name)}</strong>, I do!`,
+      few: (name) => ` Beware of <strong>${esc(name)}</strong>, you must. Twice they strike. The dark side, strong in this one it is.`,
+    }
+  },
+};
+
 function renderThievses(thefts) {
   const posLabel = { 1: 'Gold', 2: 'Silver', 3: 'Bronze' };
   const posCls   = { 1: 'theft-pos-1', 2: 'theft-pos-2', 3: 'theft-pos-3' };
 
-  // Find the most prolific thief
+  // Count only non-reclaimed thefts for the character quotes
+  const activeThefts = thefts.filter(t => !t.reclaimed);
+
+  // Find the most prolific thief (among active thefts only)
   const counts = {};
-  thefts.forEach(t => { if (t.thief_name) counts[t.thief_name] = (counts[t.thief_name] || 0) + 1; });
+  activeThefts.forEach(t => { if (t.thief_name) counts[t.thief_name] = (counts[t.thief_name] || 0) + 1; });
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   const rogue      = sorted.length && sorted[0][1] >= 2 ? sorted[0][0] : null;
   const rogueCount = rogue ? sorted[0][1] : 0;
 
-  const n = thefts.length;
-  const baseQuotes = [
-    '',
-    [
-      'They stealses it from us, precious. One precious trophy, gone!',
-      'One! One thief, precious, and they takes our trophy just like that!',
-      'Sneaky, tricksy, it stealses from us! One precious position, gone forever!',
-      'We had it, precious. We HAD it. And now it is gone. One terrible theft.',
-      'Lost it, precious. Lost our precious spot to a nasty thief!',
-    ],
-    [
-      'Two times! Two precious positions stolen! Nasty tricksy commanderses!',
-      'Twice they does it, precious! Twice! We is beside ourselves with grief!',
-      'Two thefts, precious. Two! First one, then another — wicked, horrible commanderses!',
-      'We counts on our fingerses, precious — two. Two stolen positionses. We hatesss them.',
-      'Not once but twice! Sneaking up behind us and taking what is ourses!',
-    ],
-    [
-      'Three... three thievses, precious! We hatesss them, we does!',
-      'Three times stolen from! Three! Is nothing sacred, precious?',
-      'They comes and they steals, precious — three precious positionses, just gone!',
-      'Three thefts! Our trophy case is looking very empty, precious. Very empty indeed.',
-      'First, second, third — all of them stolen! Three times, precious, THREE!',
-    ],
-    'Four timeses they stealses from us! Mean and horrible! Cruelses, like Baggins!',
-    'FIVE! We is counting, precious — five precious positions, all gone! NASTY THIEVSES!',
-    'Six! Six precious positions stolen! We is overwhelmed with griefs, precious!',
-    "Seven times! SEVEN! We doesn't even wantsss to count anymore, precious!",
-    'Eight precious positionses, gone forever! They is destroying us!',
-    'Nine thefts, precious... nine! We is running out of words for how much we hatesss them...',
-    'SO MANY PRECIOUS POSITIONSES STOLEN! We loses count, precious. We gives up. They winsss.',
-  ];
-  const raw = baseQuotes[Math.min(n, 10)];
+  // Randomly select a character personality
+  const characterKeys = Object.keys(THIEVSES_CHARACTERS);
+  const selectedKey = characterKeys[Math.floor(Math.random() * characterKeys.length)];
+  const character = THIEVSES_CHARACTERS[selectedKey];
+
+  const n = activeThefts.length;
+  const raw = character.quotes[Math.min(n, 10)];
   let quote = Array.isArray(raw) ? raw[Math.floor(Math.random() * raw.length)] : raw;
+  
+  // Add rogue thief quote if applicable
   if (rogue) {
-    quote += rogueCount >= 3
-      ? ` Especially that wicked <strong>${esc(rogue)}</strong>! We hatesss <strong>${esc(rogue)}</strong> most of all, precious!`
-      : ` That nasty <strong>${esc(rogue)}</strong>, precious — always them!`;
+    const rogueQuote = rogueCount >= 3 ? character.rogueQuotes.many : character.rogueQuotes.few;
+    quote += rogueQuote(rogue);
   }
 
   const rows = thefts.map(t => {
@@ -336,22 +535,26 @@ function renderThievses(thefts) {
     const thief = t.thief_name
       ? `<a href="/cmdr/${encodeURIComponent(t.thief_name)}">${esc(t.thief_name)}</a>`
       : '<span class="muted">unknown CMDR</span>';
+    const reclaimed = t.reclaimed 
+      ? '<span class="reclaimed-badge" title="Trophy reclaimed!">🏆 Reclaimed</span>' 
+      : '';
     return `
-      <tr>
+      <tr class="${t.reclaimed ? 'reclaimed-theft' : ''}">
         <td class="num ${cls}">${label}</td>
         <td>CMDR ${thief}</td>
         <td><a href="/race/${encodeURIComponent(t.race_key)}">${esc(t.race_name)}</a></td>
         <td class="muted">${relativeTime(t.stolen_at)}</td>
+        <td>${reclaimed}</td>
       </tr>`;
   }).join('');
 
   return `
     <div class="thievses-section">
-      <h2 class="cmdr-section-heading">Thievses! 🏆🏃💨</h2>
+      <h2 class="cmdr-section-heading">${character.heading}</h2>
       <p class="thievses-gollum">${quote}</p>
       <table class="results-table">
         <thead><tr>
-          <th class="num">Lost</th><th>Stolen by</th><th>Race</th><th>When</th>
+          <th class="num">Lost</th><th>Stolen by</th><th>Race</th><th>When</th><th>Status</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>

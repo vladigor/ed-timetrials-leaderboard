@@ -892,6 +892,26 @@ a:hover { text-decoration: underline; }
 .theft-pos-2 { color: var(--rank2); font-weight: 700; }
 .theft-pos-3 { color: var(--rank3); font-weight: 700; }
 
+.reclaimed-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: linear-gradient(135deg, #2a5d2a 0%, #3a7d3a 100%);
+  color: #ffd700;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.reclaimed-theft {
+  opacity: 0.6;
+}
+
+.reclaimed-theft:hover {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
 /* ============================================================
    Opportunities (NENDY + NEIDY)
    ============================================================ */

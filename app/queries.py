@@ -466,7 +466,15 @@ async def get_commander_stats(commander: str) -> dict | None:
                       )
                     ORDER BY ps2.position ASC
                     LIMIT 1
-                ) AS thief_name
+                ) AS thief_name,
+                CASE WHEN EXISTS (
+                    SELECT 1
+                    FROM position_snapshots ps_reclaim
+                    WHERE ps_reclaim.location = cs.location
+                      AND ps_reclaim.name = ?
+                      AND ps_reclaim.snapped_at > cs.snapped_at
+                      AND ps_reclaim.position <= cs.prev_pos
+                ) THEN 1 ELSE 0 END AS reclaimed
             FROM cmdr_snaps cs
             JOIN locations l ON l.key = cs.location
             WHERE cs.prev_pos IS NOT NULL
@@ -475,7 +483,7 @@ async def get_commander_stats(commander: str) -> dict | None:
             ORDER BY cs.snapped_at DESC
             LIMIT 10
             """,
-            (commander,),
+            (commander, commander),
         ) as cur:
             theft_rows = await cur.fetchall()
 
