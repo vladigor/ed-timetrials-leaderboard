@@ -1192,6 +1192,13 @@ a:hover { text-decoration: underline; }
   margin-bottom: 3rem;
 }
 
+.stats-section-description {
+  font-size: .9rem;
+  color: var(--text-dim);
+  margin: .5rem 0 1rem 0;
+  line-height: 1.5;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

@@ -567,10 +567,10 @@ async def get_stats() -> dict:
     Return comprehensive leaderboard statistics.
     Includes single-value stats and top-N tables.
     """
-    return await get_stats_with_limit(limit=3)
+    return await get_stats_with_limit(limit=6)
 
 
-async def get_stats_with_limit(limit: int = 3) -> dict:
+async def get_stats_with_limit(limit: int = 6) -> dict:
     """
     Return comprehensive leaderboard statistics.
     Includes single-value stats and top-N tables.
@@ -655,12 +655,19 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
         # Most races created (by contributor)
         async with db.execute(
             """
-            SELECT creator AS name, COUNT(*) AS count
-            FROM locations
-            WHERE creator != ''
-            GROUP BY creator
-            ORDER BY count DESC, creator ASC
-            LIMIT ?
+            WITH ranked AS (
+                SELECT 
+                    creator AS name, 
+                    COUNT(*) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+                FROM locations
+                WHERE creator != ''
+                GROUP BY creator
+            )
+            SELECT name, count
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY count DESC, name ASC
             """,
             (limit,),
         ) as cur:
@@ -669,14 +676,22 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
         # Systems containing the most races
         async with db.execute(
             """
-            SELECT system, COUNT(*) AS count
-            FROM locations
-            WHERE system != ''
-            GROUP BY system
+            WITH ranked AS (
+                SELECT 
+                    system, 
+                    COUNT(*) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+                FROM locations
+                WHERE system != ''
+                GROUP BY system
+            )
+            SELECT system, count
+            FROM ranked
+            WHERE rank <= ?
+              AND (? > 6 OR count >= 5)
             ORDER BY count DESC, system ASC
-            LIMIT ?
             """,
-            (limit,),
+            (limit, limit),
         ) as cur:
             stats["top_systems"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
@@ -694,12 +709,19 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
                 WHERE bt.best = (
                     SELECT MIN(best) FROM best_times WHERE location = bt.location
                 )
+            ),
+            ranked AS (
+                SELECT 
+                    name, 
+                    COUNT(*) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+                FROM winners
+                GROUP BY name
             )
-            SELECT name, COUNT(*) AS count
-            FROM winners
-            GROUP BY name
+            SELECT name, count
+            FROM ranked
+            WHERE rank <= ?
             ORDER BY count DESC, name ASC
-            LIMIT ?
             """,
             (limit,),
         ) as cur:
@@ -713,19 +735,26 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
                 FROM results
                 GROUP BY location, name
             ),
-            ranked AS (
+            positions AS (
                 SELECT
                     location,
                     name,
                     RANK() OVER (PARTITION BY location ORDER BY best ASC) AS position
                 FROM best_times
+            ),
+            ranked AS (
+                SELECT 
+                    name, 
+                    COUNT(*) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+                FROM positions
+                WHERE position <= 3
+                GROUP BY name
             )
-            SELECT name, COUNT(*) AS count
+            SELECT name, count
             FROM ranked
-            WHERE position <= 3
-            GROUP BY name
+            WHERE rank <= ?
             ORDER BY count DESC, name ASC
-            LIMIT ?
             """,
             (limit,),
         ) as cur:
@@ -734,11 +763,18 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
         # Most dedicated racer (participated in most different races)
         async with db.execute(
             """
-            SELECT name, COUNT(DISTINCT location) AS count
-            FROM results
-            GROUP BY name
+            WITH ranked AS (
+                SELECT 
+                    name, 
+                    COUNT(DISTINCT location) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT location) DESC) AS rank
+                FROM results
+                GROUP BY name
+            )
+            SELECT name, count
+            FROM ranked
+            WHERE rank <= ?
             ORDER BY count DESC, name ASC
-            LIMIT ?
             """,
             (limit,),
         ) as cur:
@@ -747,25 +783,85 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
         # Most competitive races (most unique participants)
         async with db.execute(
             """
-            SELECT l.key, l.name, COUNT(DISTINCT r.name) AS count
-            FROM locations l
-            JOIN results r ON r.location = l.key
-            GROUP BY l.key
-            ORDER BY count DESC, l.name ASC
-            LIMIT ?
+            WITH ranked AS (
+                SELECT 
+                    l.key, 
+                    l.name, 
+                    COUNT(DISTINCT r.name) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) DESC) AS rank
+                FROM locations l
+                JOIN results r ON r.location = l.key
+                GROUP BY l.key
+            )
+            SELECT key, name, count
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY count DESC, name ASC
             """,
             (limit,),
         ) as cur:
             stats["top_competitive_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
+        # Least competitive races (fewest unique participants, minimum 1)
+        async with db.execute(
+            """
+            WITH ranked AS (
+                SELECT 
+                    l.key, 
+                    l.name, 
+                    COUNT(DISTINCT r.name) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) ASC) AS rank
+                FROM locations l
+                JOIN results r ON r.location = l.key
+                GROUP BY l.key
+            )
+            SELECT key, name, count
+            FROM ranked
+            WHERE rank <= ?
+              AND (? > 6 OR count >= 4)
+            ORDER BY count ASC, name ASC
+            """,
+            (limit, limit),
+        ) as cur:
+            stats["least_competitive_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Least recently active races (by last result submitted, oldest first)
+        async with db.execute(
+            """
+            WITH ranked AS (
+                SELECT 
+                    l.key, 
+                    l.name, 
+                    MAX(r.updated) AS last_active,
+                    DENSE_RANK() OVER (ORDER BY MAX(r.updated) ASC) AS rank
+                FROM locations l
+                JOIN results r ON r.location = l.key
+                GROUP BY l.key
+            )
+            SELECT key, name, last_active
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY last_active ASC, name ASC
+            """,
+            (limit,),
+        ) as cur:
+            stats["least_recently_active_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
         # Most recently active commanders (by last result submitted)
         async with db.execute(
             """
-            SELECT name, MAX(updated) AS last_active
-            FROM results
-            GROUP BY name
+            WITH ranked AS (
+                SELECT 
+                    name, 
+                    MAX(updated) AS last_active,
+                    DENSE_RANK() OVER (ORDER BY MAX(updated) DESC) AS rank
+                FROM results
+                GROUP BY name
+            )
+            SELECT name, last_active
+            FROM ranked
+            WHERE rank <= ?
             ORDER BY last_active DESC, name ASC
-            LIMIT ?
             """,
             (limit,),
         ) as cur:
@@ -774,12 +870,20 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
         # Most recently active races (by last result submitted)
         async with db.execute(
             """
-            SELECT l.key, l.name, MAX(r.updated) AS last_active
-            FROM locations l
-            JOIN results r ON r.location = l.key
-            GROUP BY l.key
-            ORDER BY last_active DESC, l.name ASC
-            LIMIT ?
+            WITH ranked AS (
+                SELECT 
+                    l.key, 
+                    l.name, 
+                    MAX(r.updated) AS last_active,
+                    DENSE_RANK() OVER (ORDER BY MAX(r.updated) DESC) AS rank
+                FROM locations l
+                JOIN results r ON r.location = l.key
+                GROUP BY l.key
+            )
+            SELECT key, name, last_active
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY last_active DESC, name ASC
             """,
             (limit,),
         ) as cur:
@@ -788,13 +892,20 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
         # Most popular ship type (for SHIP races)
         async with db.execute(
             """
-            SELECT r.ship, COUNT(DISTINCT r.name || '|' || r.location) AS count
-            FROM results r
-            JOIN locations l ON l.key = r.location
-            WHERE l.type = 'SHIP' AND r.ship != ''
-            GROUP BY r.ship
-            ORDER BY count DESC, r.ship ASC
-            LIMIT ?
+            WITH ranked AS (
+                SELECT 
+                    r.ship, 
+                    COUNT(DISTINCT r.name || '|' || r.location) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name || '|' || r.location) DESC) AS rank
+                FROM results r
+                JOIN locations l ON l.key = r.location
+                WHERE l.type = 'SHIP' AND r.ship != ''
+                GROUP BY r.ship
+            )
+            SELECT ship, count
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY count DESC, ship ASC
             """,
             (limit,),
         ) as cur:
@@ -803,13 +914,20 @@ async def get_stats_with_limit(limit: int = 3) -> dict:
         # Most popular fighter type (for FIGHTER races)
         async with db.execute(
             """
-            SELECT r.ship, COUNT(DISTINCT r.name || '|' || r.location) AS count
-            FROM results r
-            JOIN locations l ON l.key = r.location
-            WHERE l.type = 'FIGHTER' AND r.ship != ''
-            GROUP BY r.ship
-            ORDER BY count DESC, r.ship ASC
-            LIMIT ?
+            WITH ranked AS (
+                SELECT 
+                    r.ship, 
+                    COUNT(DISTINCT r.name || '|' || r.location) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name || '|' || r.location) DESC) AS rank
+                FROM results r
+                JOIN locations l ON l.key = r.location
+                WHERE l.type = 'FIGHTER' AND r.ship != ''
+                GROUP BY r.ship
+            )
+            SELECT ship, count
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY count DESC, ship ASC
             """,
             (limit,),
         ) as cur:

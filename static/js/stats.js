@@ -106,14 +106,6 @@ function render() {
     html += '</section>';
   }
 
-  // ── Top Systems ─────────────────────────────────────────────────────────
-  if (stats.top_systems && stats.top_systems.length > 0) {
-    html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Systems Hosting The Most Races</h2>';
-    html += renderSystemTable(stats.top_systems);
-    html += '</section>';
-  }
-
   // ── Top Performers ──────────────────────────────────────────────────────
   html += '<section class="stats-section">';
   html += '<h2 class="cmdr-section-heading">Top Performers</h2>';
@@ -124,7 +116,7 @@ function render() {
   }
 
   if (stats.top_podium_finishes && stats.top_podium_finishes.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Podium Finishes (Top 3)</h3>';
+    html += '<h3 class="stats-subsection-heading">Most Podium Finishes (in the top 3)</h3>';
     html += renderTopNTable(stats.top_podium_finishes, 'commander', 'podium finishes');
   }
 
@@ -138,8 +130,26 @@ function render() {
   // ── Most Competitive Races ──────────────────────────────────────────────
   if (stats.top_competitive_races && stats.top_competitive_races.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Most Competitive Races (Most Participants)</h2>';
+    html += '<h2 class="cmdr-section-heading">Most Participants</h2>';
     html += renderRaceTable(stats.top_competitive_races, 'participants');
+    html += '</section>';
+  }
+
+  // ── Least Competitive Races ─────────────────────────────────────────────
+  if (stats.least_competitive_races && stats.least_competitive_races.length > 0) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Fewest Participants</h2>';
+    html += '<p class="stats-section-description">Want to bag a sneaky trophy? These races haven\'t had much love — maybe you can pad out the numbers and sneak a trophy while no-one is looking?</p>';
+    html += renderRaceTable(stats.least_competitive_races, 'participants');
+    html += '</section>';
+  }
+
+  // ── Least Recently Active Races ─────────────────────────────────────────
+  if (stats.least_recently_active_races && stats.least_recently_active_races.length > 0) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Most Neglected Races (Longest Time Since Activity)</h2>';
+    html += '<p class="stats-section-description">These races are gathering dust in the hangar. Show them some love and be the first to set a new time in ages!</p>';
+    html += renderRecentRacesTable(stats.least_recently_active_races);
     html += '</section>';
   }
 
@@ -159,21 +169,13 @@ function render() {
 
   html += '</section>';
 
-  // ── Recent Activity ─────────────────────────────────────────────────────
-  html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading"><a href="/activity">Recent Activity</a></h2>';
-
-  if (stats.top_recently_active_cmdrs && stats.top_recently_active_cmdrs.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Recently Active Commanders</h3>';
-    html += renderRecentCommandersTable(stats.top_recently_active_cmdrs);
+  // ── Top Systems ─────────────────────────────────────────────────────────
+  if (stats.top_systems && stats.top_systems.length > 0) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Systems Hosting The Most Races</h2>';
+    html += renderSystemTable(stats.top_systems);
+    html += '</section>';
   }
-
-  if (stats.top_recently_active_races && stats.top_recently_active_races.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Recently Active Races</h3>';
-    html += renderRecentRacesTable(stats.top_recently_active_races);
-  }
-
-  html += '</section>';
 
   container.innerHTML = html;
 }
