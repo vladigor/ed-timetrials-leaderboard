@@ -98,14 +98,6 @@ function render() {
   html += '</div>';
   html += '</section>';
 
-  // ── Top Contributors ────────────────────────────────────────────────────
-  if (stats.top_creators && stats.top_creators.length > 0) {
-    html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Most Races Created</h2>';
-    html += renderTopNTable(stats.top_creators, 'creator', 'races created');
-    html += '</section>';
-  }
-
   // ── Top Performers ──────────────────────────────────────────────────────
   html += '<section class="stats-section">';
   html += '<h2 class="cmdr-section-heading">Top Performers</h2>';
@@ -116,7 +108,7 @@ function render() {
   }
 
   if (stats.top_podium_finishes && stats.top_podium_finishes.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Podium Finishes (in the top 3)</h3>';
+    html += '<h3 class="stats-subsection-heading">Most Podium Finishes (In the top 3)</h3>';
     html += renderTopNTable(stats.top_podium_finishes, 'commander', 'podium finishes');
   }
 
@@ -125,12 +117,18 @@ function render() {
     html += renderTopNTable(stats.top_dedicated_racers, 'commander', 'races participated');
   }
 
+    // ── Top Contributors ────────────────────────────────────────────────────
+  if (stats.top_creators && stats.top_creators.length > 0) {
+    html += '<h3 class="stats-subsection-heading">Top Contributors</h3>';
+    html += renderTopNTable(stats.top_creators, 'creator', 'races created');
+  }
+
   html += '</section>';
 
   // ── Most Competitive Races ──────────────────────────────────────────────
   if (stats.top_competitive_races && stats.top_competitive_races.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Most Participants</h2>';
+    html += '<h2 class="cmdr-section-heading">Races with the Most Participants</h2>';
     html += renderRaceTable(stats.top_competitive_races, 'participants');
     html += '</section>';
   }
@@ -138,7 +136,7 @@ function render() {
   // ── Least Competitive Races ─────────────────────────────────────────────
   if (stats.least_competitive_races && stats.least_competitive_races.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Fewest Participants</h2>';
+    html += '<h2 class="cmdr-section-heading">Races with the Fewest Participants</h2>';
     html += '<p class="stats-section-description">Want to bag a sneaky trophy? These races haven\'t had much love — maybe you can pad out the numbers and sneak a trophy while no-one is looking?</p>';
     html += renderRaceTable(stats.least_competitive_races, 'participants');
     html += '</section>';
@@ -158,12 +156,12 @@ function render() {
   html += '<h2 class="cmdr-section-heading">Popular Vehicles</h2>';
 
   if (stats.top_ship_types && stats.top_ship_types.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Popular Ships (Ship Races)</h3>';
+    html += '<h3 class="stats-subsection-heading">Most Popular Ships</h3>';
     html += renderVehicleTable(stats.top_ship_types);
   }
 
   if (stats.top_fighter_types && stats.top_fighter_types.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Popular Fighters (Fighter Races)</h3>';
+    html += '<h3 class="stats-subsection-heading">Most Popular Fighters</h3>';
     html += renderVehicleTable(stats.top_fighter_types);
   }
 
@@ -172,7 +170,7 @@ function render() {
   // ── Top Systems ─────────────────────────────────────────────────────────
   if (stats.top_systems && stats.top_systems.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Systems Hosting The Most Races</h2>';
+    html += '<h2 class="cmdr-section-heading">Systems That Host The Most Races</h2>';
     html += renderSystemTable(stats.top_systems);
     html += '</section>';
   }
@@ -239,21 +237,13 @@ function renderSystemTable(items) {
   
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
-  html += `<th class="stats-rank">Rank</th>`;
   html += `<th>System</th>`;
   html += `<th class="stats-count">Races</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
   
-  let currentRank = 1;
-  items.forEach((item, idx) => {
-    // Handle ties: if this item's count equals the previous item's count, use the same rank
-    if (idx > 0 && item.count !== items[idx - 1].count) {
-      currentRank = idx + 1;
-    }
-    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
+  items.forEach(item => {
     html += '<tr>';
-    html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${esc(item.system)}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
@@ -268,21 +258,13 @@ function renderRaceTable(items, countLabel) {
   
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
-  html += `<th class="stats-rank">Rank</th>`;
   html += `<th>Race</th>`;
   html += `<th class="stats-count">${esc(countLabel.charAt(0).toUpperCase() + countLabel.slice(1))}</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
   
-  let currentRank = 1;
-  items.forEach((item, idx) => {
-    // Handle ties: if this item's count equals the previous item's count, use the same rank
-    if (idx > 0 && item.count !== items[idx - 1].count) {
-      currentRank = idx + 1;
-    }
-    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
+  items.forEach(item => {
     html += '<tr>';
-    html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${renderRaceLink(item.key, item.name)}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
@@ -339,21 +321,13 @@ function renderVehicleTable(items) {
   
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
-  html += `<th class="stats-rank">Rank</th>`;
   html += `<th>Vehicle</th>`;
   html += `<th class="stats-count">Times Set</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
   
-  let currentRank = 1;
-  items.forEach((item, idx) => {
-    // Handle ties: if this item's count equals the previous item's count, use the same rank
-    if (idx > 0 && item.count !== items[idx - 1].count) {
-      currentRank = idx + 1;
-    }
-    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
+  items.forEach(item => {
     html += '<tr>';
-    html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${esc(item.ship)}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';

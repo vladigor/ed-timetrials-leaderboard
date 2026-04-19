@@ -102,7 +102,6 @@ function renderActivityTable(items) {
   
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
-  html += `<th class="stats-rank">#</th>`;
   html += `<th>Commander</th>`;
   html += `<th>Race</th>`;
   html += `<th style="text-align: center;">Position</th>`;
@@ -110,14 +109,12 @@ function renderActivityTable(items) {
   html += '</tr></thead>';
   html += '<tbody>';
   
-  items.forEach((item, index) => {
+  items.forEach(item => {
     const rowClass = isFresh(item.updated) ? ' class="row-fresh"' : '';
-    const rowNum = index + 1;
     const position = item.position;
     const positionDisplay = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
     
     html += `<tr${rowClass}>`;
-    html += `<td class="stats-rank">${rowNum}</td>`;
     html += `<td>${renderCmdrLink(item.name)}</td>`;
     html += `<td>${renderRaceLink(item.location, item.race_name)}</td>`;
     html += `<td class="stats-rank">${positionDisplay}</td>`;

@@ -818,7 +818,7 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
             SELECT key, name, count
             FROM ranked
             WHERE rank <= ?
-              AND (? > 6 OR count >= 4)
+              AND (? > 6 OR count <= 4)
             ORDER BY count ASC, name ASC
             """,
             (limit, limit),
