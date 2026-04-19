@@ -192,20 +192,20 @@ async def api_system_suggest(q: str = Query(..., min_length=1, max_length=100)):
 
 @app.get("/api/race-map/{key}")
 async def api_race_map(key: str):
-    """Returns the map filename for a given race key, if one exists."""
-    maps_file = Path(__file__).parent.parent / "maps" / "maps.json"
-    if not maps_file.exists():
-        return {"map": None}
+    """Returns the media data for a given race key (map + optional links)."""
+    media_file = Path(__file__).parent.parent / "media.json"
+    if not media_file.exists():
+        return {}
     
     import json
     try:
-        with open(maps_file, 'r') as f:
-            maps_data = json.load(f)
-        map_filename = maps_data.get(key)
-        return {"map": map_filename}
+        with open(media_file, 'r') as f:
+            media_data = json.load(f)
+        race_media = media_data.get(key, {})
+        return race_media
     except Exception as exc:
-        log.warning("Failed to load maps.json: %s", exc)
-        return {"map": None}
+        log.warning("Failed to load media.json: %s", exc)
+        return {}
 
 
 @app.get("/api/poll")

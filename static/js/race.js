@@ -86,17 +86,45 @@ async function loadRace() {
 
 async function loadRaceMap() {
   try {
-    const mapData = await fetch(`/api/race-map/${encodeURIComponent(raceKey)}`).then(r => r.json());
-    if (mapData.map) {
+    const mediaData = await fetch(`/api/race-map/${encodeURIComponent(raceKey)}`).then(r => r.json());
+    
+    // Handle map thumbnail if present
+    if (mediaData.map) {
       const container = document.getElementById('race-map-container');
       const link = document.getElementById('race-map-link');
       const thumbnail = document.getElementById('race-map-thumbnail');
       
-      const mapPath = `/maps/${mapData.map}`;
-      const thumbnailPath = `/maps/thumbnails/${mapData.map}`;
-      link.href = mapPath;
-      thumbnail.src = thumbnailPath;
+      const { thumbnail: thumbPath, target: targetPath } = mediaData.map;
+      
+      // Handle both relative and absolute URLs for thumbnail
+      const thumbnailUrl = thumbPath.startsWith('http') ? thumbPath : `/${thumbPath}`;
+      // Handle both relative and absolute URLs for target
+      const targetUrl = targetPath.startsWith('http') ? targetPath : `/${targetPath}`;
+      
+      link.href = targetUrl;
+      thumbnail.src = thumbnailUrl;
+      
+      // Open external links in new tab
+      if (targetPath.startsWith('http')) {
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+      } else {
+        link.target = '_blank';
+      }
+      
       container.style.display = 'block';
+    }
+    
+    // Render additional links if present (works with or without a map)
+    if (mediaData.links && mediaData.links.length > 0) {
+      const linksContainer = document.getElementById('race-media-links');
+      if (linksContainer) {
+        const linksHtml = mediaData.links.map(linkItem => 
+          `<a href="${linkItem.url}" class="media-link" target="_blank" rel="noopener noreferrer">${esc(linkItem.label)}</a>`
+        ).join('');
+        linksContainer.innerHTML = linksHtml;
+        linksContainer.style.display = 'block';
+      }
     }
   } catch (err) {
     // Silently fail if map loading fails - not critical

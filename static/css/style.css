@@ -298,8 +298,12 @@ a:hover { text-decoration: underline; }
   margin-bottom: .4rem;
 }
 
-.race-map-container {
+.race-media-wrapper {
   flex-shrink: 0;
+}
+
+.race-map-container {
+  /* No longer needs flex-shrink since wrapper handles it */
 }
 
 .race-map-container a {
@@ -320,12 +324,44 @@ a:hover { text-decoration: underline; }
   border-color: var(--accent-dim);
 }
 
+.race-media-links {
+  margin-top: .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.media-link {
+  display: inline-block;
+  font-size: .8rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: .35rem;
+  padding: .4rem .75rem;
+  text-decoration: none;
+  transition: all .15s ease;
+  text-align: center;
+}
+
+.media-link:hover {
+  background: var(--surface2);
+  border-color: var(--accent-dim);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.media-link::before {
+  content: '🔗 ';
+  margin-right: .35rem;
+}
+
 @media (max-width: 768px) {
   .race-detail-header-wrapper {
     flex-direction: column;
   }
   
-  .race-map-container {
+  .race-media-wrapper {
     display: none !important;
   }
 }

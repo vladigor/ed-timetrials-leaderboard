@@ -1,0 +1,368 @@
+{
+  "ALEXFIGHTER-_DW3 Rendezvous Minigolf": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_minigolf.png",
+      "target": "maps/dw3_minigolf.png"
+    }
+  },
+  "ALEC TURNER-DW3_PLANCIRC_1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_planetary_circumnav.png",
+      "target": "maps/dw3_planetary_circumnav.png"
+    }
+  },
+  "ALEXFIGHTER-_DW3 Swing": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_swing.webp",
+      "target": "maps/dw3_swing.webp"
+    }
+  },
+  "ALEC TURNER-RENDEZVOUS_RACEWAY": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_rendezvous_raceway.png",
+      "target": "maps/dw3_rendezvous_raceway.png"
+    }
+  },
+  "VR247-DW3 SENTINEL'S SALUTE": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_sentinels_salute_map.png",
+      "target": "maps/dw3_sentinels_salute_map.png"
+    }
+  },
+  "VR247-DW3 SENTINEL'S SLF SALUTE": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_sentinels_salute_map.png",
+      "target": "maps/dw3_sentinels_salute_map.png"
+    }
+  },
+  "FOEHAMMERR-DW3 Meet Me In the Middle": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_meet_me_in_the_middle.png",
+      "target": "maps/dw3_meet_me_in_the_middle.png"
+    }
+  },
+  "FOEHAMMERR-DW3 Meet Me In the Middle (SLF)": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_meet_me_in_the_middle.png",
+      "target": "maps/dw3_meet_me_in_the_middle.png"
+    }
+  },
+  "ALEXFIGHTER-DW3 WP10 Pathfinder": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_meet_me_in_the_middle.png",
+      "target": "maps/dw3_meet_me_in_the_middle.png"
+    }
+  },
+  "GREAVES-DW3 Rendezvous Rally 11": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_meet_me_in_the_middle.png",
+      "target": "maps/dw3_meet_me_in_the_middle.png"
+    }
+  },
+  "ALEXFIGHTER-DW3 Minigolf 2": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_minigolf_2.png",
+      "target": "maps/dw3_minigolf_2.png"
+    }
+  },
+  "ALEXFIGHTER-DW3 Motordrome": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_motordrome.png",
+      "target": "maps/dw3_motordrome.png"
+    }
+  },
+  "ALEXFIGHTER-DW3 Rendezvous Rally 12": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_rendezvous_rally_12.webp",
+      "target": "maps/dw3_rendezvous_rally_12.webp"
+    }
+  },
+  "NKIRSE-DW3PodRacing": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_now_this_is_pod_racing.png",
+      "target": "maps/dw3_now_this_is_pod_racing.png"
+    }
+  },
+  "NKIRSE-DW3PodRacingSLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_now_this_is_pod_racing.png",
+      "target": "maps/dw3_now_this_is_pod_racing.png"
+    }
+  },
+  "ALEC TURNER-_ARGON_ICE_DESCENT_1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/ArgonDescent.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_ARGON_ICE_DESCENT_1"
+    }
+  },
+  "WALTER WALL-_BridgerTownTour(ODY)": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BridgerTownTour.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=WALTER%20WALL-_BridgerTownTour%28ODY%29"
+    }
+  },
+  "VR247-_Broo's Cruise": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BroosCruise.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-_Broo%E2%80%99s%20Cruise"
+    }
+  },
+  "VR247-Broo's Loose Screws": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BroosLooseScrews.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%E2%80%99s%20Loose%20Screws"
+    }
+  },
+  "VR247-Broo's Views": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BroosViews.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%E2%80%99s%20Views%20"
+    }
+  },
+  "DUCK0-BUSTOSCANYON": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BustosCanyon.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-BUSTOSCANYON"
+    }
+  },
+  "ALEC TURNER-02102023": {
+    "map": {
+      "thumbnail": "maps/thumbnails/CalicosCrater.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-02102023"
+    }
+  },
+  "ALEC TURNER-_Camp_Bucky_1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/CampBucky.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Camp_Bucky_1"
+    }
+  },
+  "ALEC TURNER-_Camp_Bucky_hill_climb_1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/CampBuckyHillClimb.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Camp_Bucky_hill_climb_1"
+    }
+  },
+  "ALEC TURNER-DEVILS_TOWER_RUN": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DevilsTower.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DEVILS_TOWER_RUN"
+    }
+  },
+  "ALEC TURNER-DRAKHYR_RALLY": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DrakhyrRally.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DRAKHYR_RALLY"
+    }
+  },
+  "ALEC TURNER-DRAKHYRS_TORC_1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DrakhyrsTorc.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DRAKHYRS_TORC_1"
+    }
+  },
+  "ALEC TURNER-FortAsch1Pip": {
+    "map": {
+      "thumbnail": "maps/thumbnails/FortAsch.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-FortAsch1Pip"
+    }
+  },
+  "WULLAIL-_HR 2354 3 lap race": {
+    "map": {
+      "thumbnail": "maps/thumbnails/GoatsHole.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=WULLAIL-_HR%202354%203%20lap%20race"
+    }
+  },
+  "ALICE KNIGHT-COLONIASRV01": {
+    "map": {
+      "thumbnail": "maps/thumbnails/EliteTimeTrials.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-COLONIASRV01"
+    }
+  },
+  "SGURR-_Indra Spire Site Scramble": {
+    "map": {
+      "thumbnail": "maps/thumbnails/IndraSpireSite.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=SGURR-_Indra%20Spire%20Site%20Scramble"
+    }
+  },
+  "ALEC TURNER-_Jameson Base Tour": {
+    "map": {
+      "thumbnail": "maps/thumbnails/JamesonBase.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Jameson%20Base%20Tour"
+    }
+  },
+  "ALEC TURNER-_leigongspire1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/LeigongSpire.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_leigongspire1"
+    }
+  },
+  "DUCK0-DUCK0_LeopoldCircuit": {
+    "map": {
+      "thumbnail": "maps/thumbnails/LeopoldCircuit.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-DUCK0_LeopoldCircuit"
+    }
+  },
+  "ALEC TURNER-MAJI_500_SPEEDWAY": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Maji500Speedway.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-MAJI_500_SPEEDWAY"
+    }
+  },
+  "ELITE RACERS-Octorafor_Figure_8": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Okorafor8.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-Octorafor_Figure_8"
+    }
+  },
+  "ELITE RACERS-Okorafor Circuit": {
+    "map": {
+      "thumbnail": "maps/thumbnails/OkoraforX.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-Okorafor%20Circuit"
+    }
+  },
+  "ALEC TURNER-_RAIJIN_RUMBLE": {
+    "map": {
+      "thumbnail": "maps/thumbnails/RaijinRumble.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_RAIJIN_RUMBLE"
+    }
+  },
+  "ALEC TURNER-_raijinspire1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/LeigongSpire.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_raijinspire1"
+    }
+  },
+  "ELITE RACERS-_Skiff Survey": {
+    "map": {
+      "thumbnail": "maps/thumbnails/SkiffSurveySRVParkour.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-_Skiff%20Survey"
+    }
+  },
+  "ALEC TURNER-SPARKS_BAR_DASH": {
+    "map": {
+      "thumbnail": "maps/thumbnails/SparksVoyage.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-SPARKS_BAR_DASH"
+    }
+  },
+  "ALEC TURNER-TARANIS_TUSSLE_3": {
+    "map": {
+      "thumbnail": "maps/thumbnails/NoctrachIhazevichResearchFacility.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-TARANIS_TUSSLE_3"
+    }
+  },
+  "ALICE KNIGHT-TIRSRV01": {
+    "map": {
+      "thumbnail": "maps/thumbnails/EliteTimeTrials.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-TIRSRV01"
+    }
+  },
+  "ALEC TURNER-VALENTINO_BAR_DASH": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Valentinos.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-VALENTINO_BAR_DASH"
+    }
+  },
+  "ALICE KNIGHT-BEAGLE01": {
+    "map": {
+      "thumbnail": "maps/thumbnails/EliteTimeTrials.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-BEAGLE01"
+    }
+  },
+  "ALEC TURNER-_kumay_chimney_stacks": {
+    "map": {
+      "thumbnail": "maps/thumbnails/KumayChimneyStacks.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_chimney_stacks"
+    }
+  },
+  "ALEC TURNER-_kumay_launch_pad": {
+    "map": {
+      "thumbnail": "maps/thumbnails/KumayLaunchPad.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_launch_pad"
+    }
+  },
+  "ALEC TURNER-_kumay_snake": {
+    "map": {
+      "thumbnail": "maps/thumbnails/KumaySnake.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_snake"
+    }
+  },
+  "ALEC TURNER-_ARGON_ICE_CLIMB_1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/ArgonAscent.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_ARGON_ICE_CLIMB_1"
+    }
+  },
+  "ALEC TURNER-_07092023": {
+    "map": {
+      "thumbnail": "maps/thumbnails/CayleyBarracks1.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_07092023"
+    }
+  },
+  "ELITE RACERS-_Cayley Cross TT": {
+    "map": {
+      "thumbnail": "maps/thumbnails/CayleyBarracksXcourse.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-_Cayley%20Cross%20TT"
+    }
+  },
+  "ALEC TURNER-In_The_Cooler": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Cooler.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-In_The_Cooler"
+    }
+  },
+  "RAZZAFRAG-KESSELSRV15K": {
+    "map": {
+      "thumbnail": "maps/thumbnails/KesselBastion15.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG-KESSELSRV15K"
+    }
+  },
+  "RAZZAFRAG04": {
+    "map": {
+      "thumbnail": "maps/thumbnails/KesselRun3Lap.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG04"
+    }
+  },
+  "ALOYSIUS BLACK-KOZLOVSRV02": {
+    "map": {
+      "thumbnail": "maps/thumbnails/KozlovKeep.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALOYSIUS%20BLACK-KOZLOVSRV02"
+    }
+  },
+  "ALEC TURNER-Spiralizer": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Spiralizer.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-Spiralizer"
+    }
+  },
+  "ALEC TURNER-02092023": {
+    "map": {
+      "thumbnail": "maps/thumbnails/TradersRest.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-02092023"
+    }
+  },
+  "RICK RAZZAFRAG-TURNERSRV01": {
+    "map": {
+      "thumbnail": "maps/thumbnails/TurnerMetallicsTour.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RICK%20RAZZAFRAG-TURNERSRV01"
+    }
+  },
+  "RAZZAFRAG-BULUSRV02": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Westerfield.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG-BULUSRV02"
+    }
+  },
+  "ALEC TURNER-B201C": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Wregoe.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-B201C"
+    }
+  },
+  "ALEC TURNER-JACKRABBIT1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/JackRabbit.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-JACKRABBIT1"
+    }
+  }
+}
