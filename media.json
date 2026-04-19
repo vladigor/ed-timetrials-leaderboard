@@ -57,7 +57,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_meet_me_in_the_middle.png",
       "target": "maps/dw3_meet_me_in_the_middle.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=MzLbOOisa3o"
+      }
+    ]
   },
   "ALEXFIGHTER-DW3 Minigolf 2": {
     "map": {
@@ -187,6 +194,15 @@
       "thumbnail": "maps/thumbnails/FortAsch.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-FortAsch1Pip"
     }
+  },
+  "ALEC TURNER-DW3_GUARDIAN_GEYSER_HIGH_JUMP": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=amx8iqTuIUo&pp=0gcJCdMKAYcqIYzv"
+      }
+    ]
   },
   "WULLAIL-_HR 2354 3 lap race": {
     "map": {

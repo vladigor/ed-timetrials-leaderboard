@@ -208,6 +208,23 @@ async def api_race_map(key: str):
         return {}
 
 
+@app.get("/api/media")
+async def api_media():
+    """Returns the entire media.json file."""
+    media_file = Path(__file__).parent.parent / "media.json"
+    if not media_file.exists():
+        return {}
+    
+    import json
+    try:
+        with open(media_file, 'r') as f:
+            media_data = json.load(f)
+        return media_data
+    except Exception as exc:
+        log.warning("Failed to load media.json: %s", exc)
+        return {}
+
+
 @app.get("/api/poll")
 async def api_poll():
     """
