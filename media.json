@@ -75,19 +75,40 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_rendezvous_rally_12.webp",
       "target": "maps/dw3_rendezvous_rally_12.webp"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=eCvMt_zBnhk"
+      }
+    ]
   },
   "NKIRSE-DW3PodRacing": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_now_this_is_pod_racing.png",
       "target": "maps/dw3_now_this_is_pod_racing.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=Z7oWerWGf1E"
+      }
+    ]
   },
   "NKIRSE-DW3PodRacingSLF": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_now_this_is_pod_racing.png",
       "target": "maps/dw3_now_this_is_pod_racing.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=Z7oWerWGf1E"
+      }
+    ]
   },
   "ALEC TURNER-_ARGON_ICE_DESCENT_1": {
     "map": {

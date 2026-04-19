@@ -183,6 +183,15 @@ a:hover { text-decoration: underline; }
   text-decoration: none;
 }
 
+.new-races-list li a i {
+  font-size: .75rem;
+  margin-right: .35rem;
+}
+
+.new-races-list li a .fa-youtube {
+  color: #CD201F;
+}
+
 .new-races-list li a:hover {
   color: var(--accent);
   text-decoration: underline;
@@ -326,34 +335,6 @@ a:hover { text-decoration: underline; }
 
 .race-media-links {
   margin-top: .75rem;
-  display: flex;
-  flex-direction: column;
-  gap: .5rem;
-}
-
-.media-link {
-  display: inline-block;
-  font-size: .8rem;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: .35rem;
-  padding: .4rem .75rem;
-  text-decoration: none;
-  transition: all .15s ease;
-  text-align: center;
-}
-
-.media-link:hover {
-  background: var(--surface2);
-  border-color: var(--accent-dim);
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.media-link::before {
-  content: '🔗 ';
-  margin-right: .35rem;
 }
 
 @media (max-width: 768px) {

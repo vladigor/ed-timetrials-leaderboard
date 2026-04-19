@@ -119,10 +119,15 @@ async function loadRaceMap() {
     if (mediaData.links && mediaData.links.length > 0) {
       const linksContainer = document.getElementById('race-media-links');
       if (linksContainer) {
-        const linksHtml = mediaData.links.map(linkItem => 
-          `<a href="${linkItem.url}" class="media-link" target="_blank" rel="noopener noreferrer">${esc(linkItem.label)}</a>`
-        ).join('');
-        linksContainer.innerHTML = linksHtml;
+        const listItems = mediaData.links.map(linkItem => {
+          // Select icon based on link type
+          let icon = '<i class="fa-solid fa-link"></i>'; // default
+          if (linkItem.type === 'video') icon = '<i class="fa-brands fa-youtube"></i>';
+          else if (linkItem.type === 'image') icon = '<i class="fa-solid fa-image"></i>';
+          
+          return `<li><a href="${linkItem.url}" target="_blank" rel="noopener noreferrer">${icon}${esc(linkItem.label)}</a></li>`;
+        }).join('');
+        linksContainer.innerHTML = `<ul class="new-races-list">${listItems}</ul>`;
         linksContainer.style.display = 'block';
       }
     }
