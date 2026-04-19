@@ -152,7 +152,6 @@ function renderTables() {
         case 'name':        cmp = a.race_name.localeCompare(b.race_name); break;
         case 'position':    cmp = a.position - b.position; break;
         case 'percentile':  cmp = (a.position === 1 ? 0 : (100 - a.percentile)) - (b.position === 1 ? 0 : (100 - b.percentile)); break;
-        case 'trend':       cmp = (a.position_delta ?? 0) - (b.position_delta ?? 0); break;
         case 'improvement': cmp = (a.improvement_ms ?? 0) - (b.improvement_ms ?? 0); break;
         case 'recent': {
           const ta = a.last_competed ?? '';
@@ -172,13 +171,11 @@ function renderTables() {
       const isOpportunity = typeAvgTop !== undefined && topPct > typeAvgTop;
       const imp = r.improvement_ms != null ? formatImprovement(r.improvement_ms) : null;
       const shipLabel = [r.ship, r.shipname].filter(Boolean).join(' — ');
-      const delta = formatPositionDelta(r.position_delta);
       return `
         <tr class="${isOpportunity ? 'row-opportunity' : ''}">
           <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.race_name)}</a></td>
           <td class="num">${ordinal(r.position)} of ${r.total_entries}</td>
           <td class="num ${percentileClass(topPct)}">${r.position === 1 ? '#1 — top' : `top ${topPct.toFixed(1)}%`}</td>
-          <td class="num ${delta.cls}">${delta.text}</td>
           <td class="num ${imp ? imp.cls : ''}">${imp ? imp.text : '—'}</td>
           <td class="muted">${esc(shipLabel) || '—'}</td>
           <td class="muted">${r.last_competed ? relativeTime(r.last_competed) : '—'}</td>
@@ -197,7 +194,6 @@ function renderTables() {
               ${thSort('name', 'Race')}
               ${thSort('position', 'Position', 'num')}
               ${thSort('percentile', 'Percentile', 'num')}
-              ${thSort('trend', '7d trend', 'num')}
               ${thSort('improvement', 'Improvement', 'num')}
               <th>Ship</th>
               ${thSort('recent', 'Last competed')}

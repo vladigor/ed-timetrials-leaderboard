@@ -88,6 +88,8 @@ async function loadRaceMap() {
   try {
     const mediaData = await fetch(`/api/race-map/${encodeURIComponent(raceKey)}`).then(r => r.json());
     
+    let allLinks = [...(mediaData.links || [])];
+    
     // Handle map thumbnail if present
     if (mediaData.map) {
       const container = document.getElementById('race-map-container');
@@ -113,19 +115,28 @@ async function loadRaceMap() {
       }
       
       container.style.display = 'block';
+      
+      // Add map as a link at the beginning for mobile view
+      allLinks.unshift({
+        label: 'Map',
+        url: targetUrl,
+        type: 'image',
+        mobileOnly: true
+      });
     }
     
-    // Render additional links if present (works with or without a map)
-    if (mediaData.links && mediaData.links.length > 0) {
+    // Render links if present (includes map link on mobile + any additional links)
+    if (allLinks.length > 0) {
       const linksContainer = document.getElementById('race-media-links');
       if (linksContainer) {
-        const listItems = mediaData.links.map(linkItem => {
+        const listItems = allLinks.map(linkItem => {
           // Select icon based on link type
           let icon = '<i class="fa-solid fa-link"></i>'; // default
           if (linkItem.type === 'video') icon = '<i class="fa-brands fa-youtube"></i>';
           else if (linkItem.type === 'image') icon = '<i class="fa-solid fa-image"></i>';
           
-          return `<li><a href="${linkItem.url}" target="_blank" rel="noopener noreferrer">${icon}${esc(linkItem.label)}</a></li>`;
+          const mobileClass = linkItem.mobileOnly ? ' class="mobile-only-link"' : '';
+          return `<li${mobileClass}><a href="${linkItem.url}" target="_blank" rel="noopener noreferrer">${icon}${esc(linkItem.label)}</a></li>`;
         }).join('');
         linksContainer.innerHTML = `<ul class="new-races-list">${listItems}</ul>`;
         linksContainer.style.display = 'block';

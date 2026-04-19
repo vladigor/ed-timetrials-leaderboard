@@ -899,7 +899,11 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name || '|' || r.location) DESC) AS rank
                 FROM results r
                 JOIN locations l ON l.key = r.location
-                WHERE l.type = 'SHIP' AND r.ship != ''
+                WHERE l.type = 'SHIP' 
+                    AND r.ship != ''
+                    AND r.ship NOT LIKE '%SRV%'
+                    AND r.ship NOT LIKE '%Scarabée%'
+                    AND r.ship NOT LIKE '%On Foot%'
                 GROUP BY r.ship
             )
             SELECT ship, count

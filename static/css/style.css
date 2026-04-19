@@ -342,7 +342,27 @@ a:hover { text-decoration: underline; }
     flex-direction: column;
   }
   
+  .race-detail-header .status-bar {
+    margin-bottom: 0.5rem;
+  }
+  
   .race-media-wrapper {
+    margin-top: 0;
+  }
+  
+  /* Hide the thumbnail image on mobile, but keep the links list */
+  .race-map-container {
+    display: none !important;
+  }
+  
+  .race-media-links {
+    margin-top: 0;
+  }
+}
+
+/* Hide mobile-only map link on desktop (thumbnail is shown instead) */
+@media (min-width: 769px) {
+  .mobile-only-link {
     display: none !important;
   }
 }
