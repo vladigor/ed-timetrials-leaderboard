@@ -114,6 +114,11 @@
         "label": "Demo video",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=Z7oWerWGf1E"
+      },
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://youtu.be/Vle-mNqBiF4?si=CznHINrJyvYN_YyP"
       }
     ]
   },
