@@ -1121,6 +1121,8 @@ a:hover { text-decoration: underline; }
    About page
    ============================================================ */
 .about-page { max-width: 72ch; }
+.guide-page { /* Uses default page-wrapper width */ }
+
 .about-title {
   font-size: 1.6rem;
   font-weight: 700;
@@ -1148,6 +1150,107 @@ a:hover { text-decoration: underline; }
   text-decoration: none;
 }
 .site-logo-link:hover { color: var(--accent); }
+
+/* ============================================================
+   Racing Guide page
+   ============================================================ */
+.guide-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+}
+.guide-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+  color: var(--text);
+}
+.guide-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+.guide-content h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+  color: var(--accent);
+}
+.guide-content ul, 
+.guide-content ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+.guide-content li {
+  margin-bottom: 0.5rem;
+}
+.guide-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+.guide-content table th {
+  background-color: rgba(0, 188, 212, 0.1);
+  padding: 0.75rem;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  color: var(--text);
+}
+.guide-content table td {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+.guide-content table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+.guide-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5rem auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+.guide-content code {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Courier New', Monaco, monospace;
+  font-size: 0.9em;
+  color: var(--accent);
+}
+.guide-content pre {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.guide-content pre code {
+  background: none;
+  padding: 0;
+  color: var(--text-muted);
+}
+.guide-content blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: var(--text-muted);
+  opacity: 0.9;
+}
 
 /* ============================================================
    Responsive

@@ -1,27 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Elite Dangerous — Time Trials Leaderboards</title>
-  <link rel="stylesheet" href="/static/css/style.css?v={{ v }}">
-  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-</head>
-<body>
-  <header class="site-header">
-    <div class="page-wrapper">
-      <div class="inner">
-        <div class="site-logo">
-          <a href="/" class="site-logo-link">Elite Dangerous Time Trials Leaderboards</a>
-        </div>
-      </div>
-    </div>
-  </header>
+{% extends "base.html" %}
 
+{% block content %}
   <main class="page-wrapper">
 
     <div id="new-races-panel" style="display:none">
@@ -82,23 +61,8 @@
       </div>
     </div>
   </div>
+{% endblock %}
 
+{% block extra_scripts %}
   <script type="module" src="/static/js/index.js?v={{ v }}"></script>
-
-  <footer class="site-footer">
-    <div class="page-wrapper">
-      <span>Elite TT Leaderboards</span>
-      <span class="sep">&middot;</span>
-      <a href="/about">About</a>
-      <span class="sep">&middot;</span>
-      <a href="/activity">Activity</a>
-      <span class="sep">&middot;</span>
-      <a href="/stats">Stats</a>
-      <span class="sep">&middot;</span>
-      <a href="https://github.com/vladigor/ed-timetrials-leaderboard/issues" target="_blank" rel="noopener">Feedback &amp; bug reports</a>
-      <span class="sep">&middot;</span>
-      <span class="build-ver">Build {{ v }}</span>
-    </div>
-  </footer>
-</body>
-</html>
+{% endblock %}

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import markdown
 from datetime import datetime
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -91,6 +92,46 @@ async def stats_page(request: Request):
 @app.get("/activity", response_class=HTMLResponse)
 async def activity_page(request: Request):
     return templates.TemplateResponse("activity.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/guide", response_class=HTMLResponse)
+async def guide_page(request: Request):
+    """Render the racing beginners guide from markdown."""
+    guide_path = Path(__file__).parent.parent / "documentation" / "guide.md"
+    guide_content = guide_path.read_text(encoding="utf-8")
+    
+    # Configure markdown with extensions
+    md = markdown.Markdown(extensions=['tables', 'fenced_code', 'nl2br'])
+    html_content = md.convert(guide_content)
+    
+    return templates.TemplateResponse(
+        "guide.html", 
+        {
+            "request": request, 
+            "v": STATIC_VER,
+            "content": html_content
+        }
+    )
+
+
+@app.get("/graphics-settings", response_class=HTMLResponse)
+async def graphics_settings_page(request: Request):
+    """Render the graphics settings guide from markdown."""
+    settings_path = Path(__file__).parent.parent / "documentation" / "suggested_graphics_settings.md"
+    settings_content = settings_path.read_text(encoding="utf-8")
+    
+    # Configure markdown with extensions
+    md = markdown.Markdown(extensions=['tables', 'fenced_code', 'nl2br'])
+    html_content = md.convert(settings_content)
+    
+    return templates.TemplateResponse(
+        "graphics-settings.html", 
+        {
+            "request": request, 
+            "v": STATIC_VER,
+            "content": html_content
+        }
+    )
 
 
 # ---------------------------------------------------------------------------

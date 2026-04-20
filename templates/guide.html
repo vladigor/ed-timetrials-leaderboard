@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Racing Beginners Guide — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+  <main class="page-wrapper guide-page">
+
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span>Racing Guide</span>
+    </div>
+
+    <div class="about-section guide-content">
+      {{ content | safe }}
+    </div>
+
+  </main>
+{% endblock %}
