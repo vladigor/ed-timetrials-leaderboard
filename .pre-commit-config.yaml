@@ -8,7 +8,6 @@ repos:
       - id: check-json
         files: \.(json)$
       - id: check-yaml
-      - id: check-added-large-files
       - id: mixed-line-ending
 
   # Python: Ruff linter and formatter

@@ -1,4 +1,107 @@
 {
+  "ALEC TURNER-DW3_GLACIEM_ICE_HIKE": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=4Ggt6vfBpHs"
+      }
+    ]
+  },
+  "VR247-DW3 Eictach Eliminator Orca": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_eictach_eliminator.jpg",
+      "target": "maps/dw3_eictach_eliminator.jpg"
+    },
+    "links": [
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=9zlSS-WKdVk"
+      }
+    ]
+  },
+  "GREAVES-DW3 Rendezvous Rally 5": {
+    "links": [
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=EGyIAFGfY14"
+      }
+    ]
+  },
+  "ALEC TURNER-ECLIPSION_CRATER_MAKER": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=AT3ZocDtYUQ"
+      }
+    ]
+  },
+  "GREAVES-DW3 Rendezvous Rally 4A": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=zZMSRsRsPjI"
+      }
+    ]
+  },
+  "GREAVES-DW3 Rendezvous Rally 4B": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=j_aPTbL0rn4"
+      }
+    ]
+  },
+  "GREAVES-DW3 Rendezvous Rally 3": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=77fv1UnsNjc"
+      }
+    ]
+  },
+  "GREAVES-DW3%20Rendezvous%20Rally%202": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=G_Klz0OoemU&pp=0gcJCdMKAYcqIYzvv"
+      }
+    ]
+  },
+  "ALEC TURNER-DW3_GREAT_WALL_OF_CHINA": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=Ezq6saXgw2Y"
+      }
+    ]
+  },
+  "ALEC TURNER-DW3_HQ_ROAD_RACE": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=XjYDksa18-k"
+      }
+    ]
+  },
+  "ALEC TURNER-DW3_HQ_CRATER_CROSS": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=BKGO1d_Lnsk"
+      }
+    ]
+  },
   "ALEXFIGHTER-_DW3 Rendezvous Minigolf": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_minigolf.png",
@@ -9,7 +112,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_planetary_circumnav.png",
       "target": "maps/dw3_planetary_circumnav.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=QjwYoiZ7uis"
+      }
+    ]
   },
   "ALEXFIGHTER-_DW3 Swing": {
     "map": {
@@ -21,7 +131,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_rendezvous_raceway.png",
       "target": "maps/dw3_rendezvous_raceway.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=azlk1x9kQmQ"
+      }
+    ]
   },
   "VR247-DW3 SENTINEL'S SALUTE": {
     "map": {
@@ -63,6 +180,15 @@
         "label": "Demo video",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=MzLbOOisa3o"
+      }
+    ]
+  },
+  "GREAVES-DW3 Rendezvous Rally 9": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=tWcea2ICvqk&pp=0gcJCdMKAYcqIYzv"
       }
     ]
   },
@@ -119,6 +245,11 @@
         "label": "Expert video",
         "type": "video",
         "url": "https://youtu.be/Vle-mNqBiF4?si=CznHINrJyvYN_YyP"
+      },
+      {
+        "label": "Awesome video!",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=lwCv_IJfh9I"
       }
     ]
   },
