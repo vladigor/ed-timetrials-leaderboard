@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import logging
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 import aiosqlite
@@ -161,7 +161,7 @@ def _parse_last_updated(rows: list[list[str]]) -> dict[str, datetime]:
         if len(row) < 2:
             continue
         try:
-            dt = datetime.strptime(row[1], TIME_FORMAT).replace(tzinfo=UTC)
+            dt = datetime.strptime(row[1], TIME_FORMAT).replace(tzinfo=timezone.utc)
             result[row[0]] = dt
         except ValueError:
             log.warning("Cannot parse last-updated datetime: %s", row[1])
@@ -197,7 +197,7 @@ def _parse_result(key: str, row: list[Any]) -> dict | None:
 
 
 async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
-    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S.%f")
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
     await db.execute(
         """
         INSERT INTO locations (key, name, type, version, system, station, address, sort, coords, created_at, creator)
@@ -251,7 +251,7 @@ async def _save_result(db: aiosqlite.Connection, result: dict) -> None:
 
 async def _snapshot_positions(db: aiosqlite.Connection, key: str) -> None:
     """Snapshot current positions for all commanders in a race (on change only)."""
-    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S.%f")
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
 
     # Compute current ranked positions from DB
     async with db.execute(

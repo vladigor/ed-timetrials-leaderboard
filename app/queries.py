@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import aiosqlite
@@ -90,7 +90,7 @@ async def list_races(
         params = cmdr_position_params[:]
 
         if active_days is not None:
-            cutoff = (datetime.now(UTC) - timedelta(days=active_days)).strftime(
+            cutoff = (datetime.now(timezone.utc) - timedelta(days=active_days)).strftime(
                 "%Y-%m-%d %H:%M:%S.%f"
             )
             where_clauses.append("r.updated >= ?")
@@ -275,7 +275,9 @@ async def list_new_races(days: int = 7) -> list[dict]:
     """Return races added within the last N days, ordered newest first."""
     db = await get_db()
     try:
-        cutoff = (datetime.now(UTC) - timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S.%f")
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).strftime(
+            "%Y-%m-%d %H:%M:%S.%f"
+        )
         async with db.execute(
             """
             SELECT key, name, created_at
@@ -596,7 +598,9 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
             stats["total_contributors"] = (await cur.fetchone())["cnt"]
 
         # Active races (activity in last 30 days)
-        cutoff_30d = (datetime.now(UTC) - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S.%f")
+        cutoff_30d = (datetime.now(timezone.utc) - timedelta(days=30)).strftime(
+            "%Y-%m-%d %H:%M:%S.%f"
+        )
         async with db.execute(
             """
             SELECT COUNT(DISTINCT location) AS cnt
