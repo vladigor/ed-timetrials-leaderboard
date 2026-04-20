@@ -38,38 +38,38 @@ for ext in png jpg jpeg webp gif; do
     for image in "$MAPS_DIR"/*."$ext"; do
         # Skip if no files match (literal glob pattern)
         [ -e "$image" ] || continue
-    
+
     # Skip if it's the maps.json file or a directory
     [ -f "$image" ] || continue
-    
+
     # Get the filename without path
     filename=$(basename "$image")
-    
+
     # Skip if already a thumbnail path (shouldn't happen but just in case)
     if [[ "$filename" == "thumbnails" ]]; then
         continue
     fi
-    
+
     # Define thumbnail path
     thumbnail="$THUMBNAILS_DIR/$filename"
-    
+
     # Check if thumbnail already exists
     if [ -f "$thumbnail" ]; then
         echo -e "${YELLOW}⊘${NC} Skipping $filename (thumbnail already exists)"
         ((skipped++))
         continue
     fi
-    
+
     # Create thumbnail
     echo -e "${GREEN}✓${NC} Creating thumbnail for $filename"
-    
+
     # Use ImageMagick to resize image
     # -thumbnail is faster than -resize for creating smaller images
     # x${THUMBNAIL_HEIGHT} sets fixed height, width adjusts to maintain aspect ratio
     # -quality 85 ensures good quality for JPEG/WebP output
     # -strip removes EXIF data to reduce file size
     convert "$image" -thumbnail "x${THUMBNAIL_HEIGHT}" -quality 85 -strip "$thumbnail"
-    
+
     if [ $? -eq 0 ]; then
         ((created++))
     else

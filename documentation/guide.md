@@ -64,7 +64,7 @@ SRV races will take place either on a planet's surface or on the paved roads of 
 
 **Key Principles:**
 
-1. **Pitch and Roll Control:** When airborne, you need to constantly adjust your SRV's orientation using pitch and roll so that you're facing the direction you're traveling when you land. 
+1. **Pitch and Roll Control:** When airborne, you need to constantly adjust your SRV's orientation using pitch and roll so that you're facing the direction you're traveling when you land.
 
 2. **Thrust Management:** The SRV has three axes of control—6-wheel drive (actually 8-wheel!), and the rear wheels are also directional. Landing slightly off-center or sideways can cause violent spins.
 
@@ -119,7 +119,7 @@ If you disable Flight Assist in a planet's gravity well (like near the surface),
 #### Cargo Scoop Braking
 
 Opening your cargo scoop creates significant drag, slowing you down without losing boost energy. This is especially useful for the Viper Mk 3.
-  
+
 - **Scoop-Boost Technique:** Keep your cargo scoop open most of the time, but briefly close it to let off just enough speed to boost forward in the direction you need for tight turns. The key is closing the scoop just long enough to reach the turn exit with some boost multiplier remaining.
 
 - **The Viper Advantage:** The Viper barely loses forward momentum when using the cargo scoop—you only need to release it for a fraction of a second to get back above 800 m/s. Other ships lose speed more quickly.
@@ -242,9 +242,9 @@ These races test your parkour skills and knowledge of station/settlement layouts
   - Trophy case and rivalry tracking
   - Recent activity page
   - Race statistics
-  
+
 - **Alternative Leaderboard:** [https://leaderboard.shangtai.net](https://leaderboard.shangtai.net)
-  
+
 ### Race Visualizer
 
 EDCoPilot can save race definition (.txt) and route trace (.csv) files after each run. You can upload these to [https://raceviz.shangtai.net/](https://raceviz.shangtai.net/) to get a 3D visualization of the course and your route, helping you analyze your racing line.
@@ -281,4 +281,3 @@ Remember:
 - Most importantly: have fun and embrace the explosions!
 
 o7 Commander, and may your boost always recharge when you need it!
-

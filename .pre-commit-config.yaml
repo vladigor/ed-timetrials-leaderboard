@@ -1,0 +1,36 @@
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+        files: \.(json)$
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: mixed-line-ending
+
+  # Python: Ruff linter and formatter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      # Run the linter
+      - id: ruff
+        args: [--fix]
+      # Run the formatter
+      - id: ruff-format
+
+  # JavaScript: ESLint
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.17.0
+    hooks:
+      - id: eslint
+        files: \.(js)$
+        types: [file]
+        additional_dependencies:
+          - eslint@9.17.0
+          - eslint-config-standard@17.1.0
+          - eslint-plugin-import@2.31.0
+          - eslint-plugin-n@17.14.0
+          - eslint-plugin-promise@7.2.1

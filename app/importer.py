@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import json
+import contextlib
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
-import httpx
 import aiosqlite
+import httpx
 
 from .database import get_db
 
@@ -21,6 +21,7 @@ TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 # Low-level HTTP helpers
 # ---------------------------------------------------------------------------
 
+
 async def _fetch(client: httpx.AsyncClient, url: str) -> Any:
     response = await client.get(url, timeout=30)
     response.raise_for_status()
@@ -31,6 +32,7 @@ async def _fetch(client: httpx.AsyncClient, url: str) -> Any:
 # Parse helpers
 # ---------------------------------------------------------------------------
 
+
 def _normalise_version(raw: str) -> str:
     v = raw.upper()
     return "ODYSSEY" if v == "ODY" else v
@@ -38,23 +40,23 @@ def _normalise_version(raw: str) -> str:
 
 def _extract_creator(race_key: str) -> str:
     """Extract potential creator name from race key.
-    
+
     Pattern: CREATORNAME-RestOfRaceName or CREATORNAME_RestOfRaceName
     Example: ALEXFIGHTER-DW3 Motordrome -> ALEXFIGHTER
-    
+
     Returns the extracted creator name in uppercase, or empty string if no pattern matches.
     """
     import re
-    
+
     # Strategy 1: Split on hyphen or underscore (most common pattern)
-    if '-' in race_key:
-        return race_key.split('-')[0].upper()
-    elif '_' in race_key:
-        return race_key.split('_')[0].upper()
+    if "-" in race_key:
+        return race_key.split("-")[0].upper()
+    elif "_" in race_key:
+        return race_key.split("_")[0].upper()
     else:
         # Strategy 2: If no delimiter, try removing trailing numbers
-        potential = re.sub(r'\d+$', '', race_key).upper()
-        return potential if potential != race_key.upper() else ''
+        potential = re.sub(r"\d+$", "", race_key).upper()
+        return potential if potential != race_key.upper() else ""
 
 
 def _parse_location(row: list[str]) -> dict:
@@ -65,7 +67,7 @@ def _parse_location(row: list[str]) -> dict:
 
     # Build a sort key: type + name
     sort = f"{row[5].upper() if len(row) > 5 else ''}_{row[1]}"
-    
+
     # Extract creator from race key
     creator = _extract_creator(row[0])
 
@@ -148,10 +150,8 @@ def _parse_constraints(location: str, constraint_str: str, global_value: str) ->
         else:
             k, v = pair, global_value
         if k and v:
-            try:
+            with contextlib.suppress(ValueError):
                 out.append({"location": location, "key": k, "value": int(v)})
-            except ValueError:
-                pass
     return out
 
 
@@ -161,7 +161,7 @@ def _parse_last_updated(rows: list[list[str]]) -> dict[str, datetime]:
         if len(row) < 2:
             continue
         try:
-            dt = datetime.strptime(row[1], TIME_FORMAT).replace(tzinfo=timezone.utc)
+            dt = datetime.strptime(row[1], TIME_FORMAT).replace(tzinfo=UTC)
             result[row[0]] = dt
         except ValueError:
             log.warning("Cannot parse last-updated datetime: %s", row[1])
@@ -195,8 +195,9 @@ def _parse_result(key: str, row: list[Any]) -> dict | None:
 # Database write helpers
 # ---------------------------------------------------------------------------
 
+
 async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S.%f")
     await db.execute(
         """
         INSERT INTO locations (key, name, type, version, system, station, address, sort, coords, created_at, creator)
@@ -250,7 +251,7 @@ async def _save_result(db: aiosqlite.Connection, result: dict) -> None:
 
 async def _snapshot_positions(db: aiosqlite.Connection, key: str) -> None:
     """Snapshot current positions for all commanders in a race (on change only)."""
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S.%f")
 
     # Compute current ranked positions from DB
     async with db.execute(
@@ -295,10 +296,6 @@ async def _snapshot_positions(db: aiosqlite.Connection, key: str) -> None:
 # Public import functions
 # ---------------------------------------------------------------------------
 
-async def fetch_and_store_locations() -> None:
-    """Fetch the TT list from the API and upsert into the database."""
-    async with httpx.AsyncClient() as client:
-        rows = await _fetch(client, f"{BASE_URL}/getTTList/LEADERBOARD")
 
 _SUPERSEDED_MARKERS = ("superseded", "do not use")
 
@@ -325,7 +322,9 @@ async def fetch_and_store_locations() -> None:
             else:
                 await _upsert_location(db, loc)
         await db.commit()
-        log.info("Upserted %d locations", sum(1 for l in locations if not _is_superseded(l["name"])))
+        log.info(
+            "Upserted %d locations", sum(1 for loc in locations if not _is_superseded(loc["name"]))
+        )
     finally:
         await db.close()
 
@@ -365,9 +364,7 @@ async def fetch_and_store_race_details() -> None:
     """Fetch getTTData for any locations not yet enriched (num_checkpoints = 0)."""
     db = await get_db()
     try:
-        async with db.execute(
-            "SELECT key FROM locations WHERE num_checkpoints = 0"
-        ) as cursor:
+        async with db.execute("SELECT key FROM locations WHERE num_checkpoints = 0") as cursor:
             rows = await cursor.fetchall()
         keys = [row["key"] for row in rows]
     finally:
@@ -386,7 +383,12 @@ async def fetch_and_store_race_details() -> None:
             url = f"{BASE_URL}/getTTData/{encoded}"
             try:
                 data = await _fetch(client, url)
-                if not (isinstance(data, list) and data and isinstance(data[0], list) and len(data[0]) >= 2):
+                if not (
+                    isinstance(data, list)
+                    and data
+                    and isinstance(data[0], list)
+                    and len(data[0]) >= 2
+                ):
                     log.warning("Unexpected getTTData response for %s", key)
                     continue
                 description: str = str(data[0][0])
@@ -404,7 +406,14 @@ async def fetch_and_store_race_details() -> None:
                     SET description = ?, num_checkpoints = ?, multi_planet = ?, multi_system = ?, multi_mode = ?
                     WHERE key = ?
                     """,
-                    (description, num_cp, int(multi_planet), int(multi_system), int(multi_mode), key),
+                    (
+                        description,
+                        num_cp,
+                        int(multi_planet),
+                        int(multi_system),
+                        int(multi_mode),
+                        key,
+                    ),
                 )
                 await db.commit()
             finally:

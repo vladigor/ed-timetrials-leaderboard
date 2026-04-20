@@ -2,24 +2,29 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
-import markdown
-from datetime import datetime
 from contextlib import asynccontextmanager
+from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import HTMLResponse, FileResponse
+import markdown
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
 
 from .config import OFFLINE
 from .database import init_db
+from .queries import (
+    get_commander_stats,
+    get_race,
+    get_stats,
+    get_stats_with_limit,
+    list_commanders,
+    list_new_races,
+    list_races,
+)
 from .scheduler import full_refresh, get_last_updated_snapshot, start_scheduler
-from .queries import list_races, get_race, list_commanders, get_commander_stats, list_new_races, get_stats, get_stats_with_limit
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,6 +58,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 # ---------------------------------------------------------------------------
 # HTML pages
 # ---------------------------------------------------------------------------
+
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -99,38 +105,30 @@ async def guide_page(request: Request):
     """Render the racing beginners guide from markdown."""
     guide_path = Path(__file__).parent.parent / "documentation" / "guide.md"
     guide_content = guide_path.read_text(encoding="utf-8")
-    
+
     # Configure markdown with extensions
-    md = markdown.Markdown(extensions=['tables', 'fenced_code', 'nl2br'])
+    md = markdown.Markdown(extensions=["tables", "fenced_code", "nl2br"])
     html_content = md.convert(guide_content)
-    
+
     return templates.TemplateResponse(
-        "guide.html", 
-        {
-            "request": request, 
-            "v": STATIC_VER,
-            "content": html_content
-        }
+        "guide.html", {"request": request, "v": STATIC_VER, "content": html_content}
     )
 
 
 @app.get("/graphics-settings", response_class=HTMLResponse)
 async def graphics_settings_page(request: Request):
     """Render the graphics settings guide from markdown."""
-    settings_path = Path(__file__).parent.parent / "documentation" / "suggested_graphics_settings.md"
+    settings_path = (
+        Path(__file__).parent.parent / "documentation" / "suggested_graphics_settings.md"
+    )
     settings_content = settings_path.read_text(encoding="utf-8")
-    
+
     # Configure markdown with extensions
-    md = markdown.Markdown(extensions=['tables', 'fenced_code', 'nl2br'])
+    md = markdown.Markdown(extensions=["tables", "fenced_code", "nl2br"])
     html_content = md.convert(settings_content)
-    
+
     return templates.TemplateResponse(
-        "graphics-settings.html", 
-        {
-            "request": request, 
-            "v": STATIC_VER,
-            "content": html_content
-        }
+        "graphics-settings.html", {"request": request, "v": STATIC_VER, "content": html_content}
     )
 
 
@@ -138,17 +136,20 @@ async def graphics_settings_page(request: Request):
 # JSON API
 # ---------------------------------------------------------------------------
 
+
 @app.get("/api/races")
 async def api_races(
-    active_days: Optional[int] = Query(None, ge=1),
-    commander: Optional[str] = Query(None),
-    commander_pos: Optional[str] = Query(None),
+    active_days: int | None = Query(None, ge=1),
+    commander: str | None = Query(None),
+    commander_pos: str | None = Query(None),
 ):
     # commander      → filter to that cmdr's races AND show their position
     # commander_pos  → show all races but still annotate with that cmdr's position
     effective_cmdr = commander or commander_pos
-    filter_cmdr    = commander  # only restrict to their races when 'commander' is set
-    return await list_races(active_days=active_days, commander=filter_cmdr, commander_pos=effective_cmdr)
+    filter_cmdr = commander  # only restrict to their races when 'commander' is set
+    return await list_races(
+        active_days=active_days, commander=filter_cmdr, commander_pos=effective_cmdr
+    )
 
 
 @app.get("/api/races/new")
@@ -178,7 +179,7 @@ async def api_cmdr(name: str):
 
 
 @app.get("/api/stats")
-async def api_stats(limit: Optional[int] = Query(None, ge=1, le=100)):
+async def api_stats(limit: int | None = Query(None, ge=1, le=100)):
     if limit:
         return await get_stats_with_limit(limit=limit)
     return await get_stats()
@@ -188,6 +189,7 @@ async def api_stats(limit: Optional[int] = Query(None, ge=1, le=100)):
 async def api_activity(limit: int = Query(20, ge=1, le=100)):
     """Return recent race results with commander, race name, position, and timestamp."""
     from .queries import get_recent_activity
+
     return await get_recent_activity(limit=limit)
 
 
@@ -195,6 +197,7 @@ async def api_activity(limit: int = Query(20, ge=1, le=100)):
 async def api_system_coords(name: str = Query(..., min_length=1, max_length=100)):
     """Proxy to EDSM to resolve a star system name to galaxy coordinates."""
     import httpx
+
     try:
         async with httpx.AsyncClient(timeout=8.0) as client:
             resp = await client.get(
@@ -203,7 +206,7 @@ async def api_system_coords(name: str = Query(..., min_length=1, max_length=100)
             )
     except httpx.RequestError as exc:
         log.warning("EDSM lookup failed for %r: %s", name, exc)
-        raise HTTPException(status_code=502, detail="EDSM lookup failed")
+        raise HTTPException(status_code=502, detail="EDSM lookup failed") from exc
     if resp.status_code != 200:
         raise HTTPException(status_code=502, detail="EDSM returned an error")
     data = resp.json()
@@ -217,6 +220,7 @@ async def api_system_coords(name: str = Query(..., min_length=1, max_length=100)
 async def api_system_suggest(q: str = Query(..., min_length=1, max_length=100)):
     """Proxy to Spansh autocomplete for star system name suggestions."""
     import httpx
+
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
             resp = await client.get(
@@ -225,7 +229,7 @@ async def api_system_suggest(q: str = Query(..., min_length=1, max_length=100)):
             )
     except httpx.RequestError as exc:
         log.warning("Spansh suggest failed for %r: %s", q, exc)
-        raise HTTPException(status_code=502, detail="Spansh lookup failed")
+        raise HTTPException(status_code=502, detail="Spansh lookup failed") from exc
     if resp.status_code != 200:
         raise HTTPException(status_code=502, detail="Spansh returned an error")
     return resp.json()
@@ -237,10 +241,11 @@ async def api_race_map(key: str):
     media_file = Path(__file__).parent.parent / "media.json"
     if not media_file.exists():
         return {}
-    
+
     import json
+
     try:
-        with open(media_file, 'r') as f:
+        with open(media_file) as f:
             media_data = json.load(f)
         race_media = media_data.get(key, {})
         return race_media
@@ -255,10 +260,11 @@ async def api_media():
     media_file = Path(__file__).parent.parent / "media.json"
     if not media_file.exists():
         return {}
-    
+
     import json
+
     try:
-        with open(media_file, 'r') as f:
+        with open(media_file) as f:
             media_data = json.load(f)
         return media_data
     except Exception as exc:

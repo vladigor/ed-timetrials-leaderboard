@@ -58,17 +58,17 @@ Commander "Razz" competes in three races:
 
 ### Advantages
 
-✅ **Naturally weights larger races** — a 100-pilot race has 100× the impact of a 1-pilot race  
-✅ **Accurate** — reflects actual competitive outcomes  
-✅ **Intuitive** — "You beat X% of all the pilots you raced against"  
-✅ **Resistant to gaming** — can't inflate the metric by cherry-picking small races  
-✅ **Fast** — same O(n) performance as the original, no additional database queries  
+✅ **Naturally weights larger races** — a 100-pilot race has 100× the impact of a 1-pilot race
+✅ **Accurate** — reflects actual competitive outcomes
+✅ **Intuitive** — "You beat X% of all the pilots you raced against"
+✅ **Resistant to gaming** — can't inflate the metric by cherry-picking small races
+✅ **Fast** — same O(n) performance as the original, no additional database queries
 
 ### Limitations
 
-⚠️ **Not a global rank** — two pilots with the same percentage aren't necessarily equal performers (they may have competed in different races)  
-⚠️ **Large races dominate** — one bad performance in a large race has more impact than in a small race (but this is arguably fairer)  
-⚠️ **Participation matters** — pilots self-select which races to enter, introducing selection bias  
+⚠️ **Not a global rank** — two pilots with the same percentage aren't necessarily equal performers (they may have competed in different races)
+⚠️ **Large races dominate** — one bad performance in a large race has more impact than in a small race (but this is arguably fairer)
+⚠️ **Participation matters** — pilots self-select which races to enter, introducing selection bias
 
 ## Alternative Approaches Considered
 
@@ -110,7 +110,7 @@ Time complexity: O(n) where n = number of races competed (typically 10-100).
 
 ## Implementation
 
-**Backend**: [app/queries.py](../app/queries.py) — `get_commander_stats()` function  
+**Backend**: [app/queries.py](../app/queries.py) — `get_commander_stats()` function
 **Frontend**: [static/js/cmdr.js](../static/js/cmdr.js) — `renderSummary()` function
 
 ---

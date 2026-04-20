@@ -87,25 +87,25 @@ async function loadRace() {
 async function loadRaceMap() {
   try {
     const mediaData = await fetch(`/api/race-map/${encodeURIComponent(raceKey)}`).then(r => r.json());
-    
+
     let allLinks = [...(mediaData.links || [])];
-    
+
     // Handle map thumbnail if present
     if (mediaData.map) {
       const container = document.getElementById('race-map-container');
       const link = document.getElementById('race-map-link');
       const thumbnail = document.getElementById('race-map-thumbnail');
-      
+
       const { thumbnail: thumbPath, target: targetPath } = mediaData.map;
-      
+
       // Handle both relative and absolute URLs for thumbnail
       const thumbnailUrl = thumbPath.startsWith('http') ? thumbPath : `/${thumbPath}`;
       // Handle both relative and absolute URLs for target
       const targetUrl = targetPath.startsWith('http') ? targetPath : `/${targetPath}`;
-      
+
       link.href = targetUrl;
       thumbnail.src = thumbnailUrl;
-      
+
       // Open external links in new tab
       if (targetPath.startsWith('http')) {
         link.target = '_blank';
@@ -113,9 +113,9 @@ async function loadRaceMap() {
       } else {
         link.target = '_blank';
       }
-      
+
       container.style.display = 'block';
-      
+
       // Add map as a link at the beginning for mobile view
       allLinks.unshift({
         label: 'Map',
@@ -124,7 +124,7 @@ async function loadRaceMap() {
         mobileOnly: true
       });
     }
-    
+
     // Render links if present (includes map link on mobile + any additional links)
     if (allLinks.length > 0) {
       const linksContainer = document.getElementById('race-media-links');
@@ -134,7 +134,7 @@ async function loadRaceMap() {
           let icon = '<i class="fa-solid fa-link"></i>'; // default
           if (linkItem.type === 'video') icon = '<i class="fa-brands fa-youtube"></i>';
           else if (linkItem.type === 'image') icon = '<i class="fa-solid fa-image"></i>';
-          
+
           const mobileClass = linkItem.mobileOnly ? ' class="mobile-only-link"' : '';
           return `<li${mobileClass}><a href="${linkItem.url}" target="_blank" rel="noopener noreferrer">${icon}${esc(linkItem.label)}</a></li>`;
         }).join('');
@@ -156,9 +156,9 @@ function renderRace() {
   titleEl.textContent      = race.name;
   breadcrumbEl.textContent = race.name;
 
-  const versionCls = race.version === 'ODYSSEY' ? 'badge-odyssey' : 'badge-horizons';
-  const creatorHtml = race.creator 
-    ? (race.creator_is_cmdr 
+  const _versionCls = race.version === 'ODYSSEY' ? 'badge-odyssey' : 'badge-horizons';
+  const creatorHtml = race.creator
+    ? (race.creator_is_cmdr
         ? `<span>· Created by <a href="/cmdr/${encodeURIComponent(race.creator)}" class="cmdr-link">${esc(race.creator)}</a></span>`
         : `<span>· Created by ${esc(race.creator)}</span>`)
     : '';
@@ -534,11 +534,11 @@ function setStatus(state) {
  */
 function updateRelativeTimes() {
   const cells = document.querySelectorAll('.updated-cell[data-timestamp]');
-  
+
   cells.forEach(cell => {
     const timestamp = cell.dataset.timestamp;
     if (!timestamp) return;
-    
+
     cell.textContent = relativeTime(timestamp);
   });
 }
@@ -548,7 +548,7 @@ function updateRelativeTimes() {
  */
 function startTimeUpdater() {
   if (timeUpdater) clearInterval(timeUpdater);
-  
+
   timeUpdater = setInterval(() => {
     updateRelativeTimes();
   }, 60_000); // Every 60 seconds
@@ -557,7 +557,7 @@ function startTimeUpdater() {
 /**
  * Stop the periodic time updater
  */
-function stopTimeUpdater() {
+function _stopTimeUpdater() {
   if (timeUpdater) {
     clearInterval(timeUpdater);
     timeUpdater = null;
@@ -571,15 +571,15 @@ function stopTimeUpdater() {
 async function handleCopySystemName(evt) {
   const btn = evt.currentTarget;
   const text = btn.dataset.copy;
-  
+
   try {
     await navigator.clipboard.writeText(text);
-    
+
     // Visual feedback: change icon to checkmark
     const originalContent = btn.innerHTML;
     btn.innerHTML = '<svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>';
     btn.classList.add('copied');
-    
+
     setTimeout(() => {
       btn.innerHTML = originalContent;
       btn.classList.remove('copied');

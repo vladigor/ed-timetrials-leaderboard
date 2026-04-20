@@ -1,7 +1,9 @@
 """SQLite database initialisation and helper functions."""
 
-import aiosqlite
+import contextlib
 from pathlib import Path
+
+import aiosqlite
 
 DB_PATH = Path(__file__).parent.parent / "leaderboard.sqlite3"
 
@@ -81,10 +83,8 @@ async def init_db() -> None:
             "ALTER TABLE locations ADD COLUMN created_at TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE locations ADD COLUMN creator TEXT NOT NULL DEFAULT ''",
         ):
-            try:
+            with contextlib.suppress(Exception):
                 await db.execute(col_sql)
-            except Exception:
-                pass  # Column already exists
         # One-time migration: multi_vessel was previously derived from getTTList row[14]
         # (which flags circuit races, not multi-mode races). Reset num_checkpoints so
         # fetch_and_store_race_details re-fetches waypoints and recalculates correctly.

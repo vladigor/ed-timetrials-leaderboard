@@ -227,7 +227,7 @@ function percentileClass(pct) {
   return 'pct-low';
 }
 
-function formatPositionDelta(delta) {
+function _formatPositionDelta(delta) {
   if (delta == null || delta === 0) return { text: '—', cls: 'muted' };
   if (delta > 0) return { text: `▲${delta}`, cls: 'delta-up' };
   return { text: `▼${Math.abs(delta)}`, cls: 'delta-down' };
@@ -360,7 +360,7 @@ const THIEVSES_CHARACTERS = {
       few: (name) => ` That nasty <strong>${esc(name)}</strong>, precious — always them!`,
     }
   },
-  
+
   cartman: {
     heading: 'Respect my authoritah! 😡',
     quotes: [
@@ -427,7 +427,7 @@ const THIEVSES_CHARACTERS = {
       few: (name) => ` Especially that asshole <strong>${esc(name)}</strong>! Seriously, <strong>${esc(name)}</strong>, screw you!`,
     }
   },
-  
+
   yoda: {
     heading: 'Stolen, my trophies have been! 🏆⚔️',
     quotes: [
@@ -518,7 +518,7 @@ function renderThievses(thefts) {
   const n = activeThefts.length;
   const raw = character.quotes[Math.min(n, 10)];
   let quote = Array.isArray(raw) ? raw[Math.floor(Math.random() * raw.length)] : raw;
-  
+
   // Add rogue thief quote if applicable
   if (rogue) {
     const rogueQuote = rogueCount >= 3 ? character.rogueQuotes.many : character.rogueQuotes.few;
@@ -531,8 +531,8 @@ function renderThievses(thefts) {
     const thief = t.thief_name
       ? `<a href="/cmdr/${encodeURIComponent(t.thief_name)}">${esc(t.thief_name)}</a>`
       : '<span class="muted">unknown CMDR</span>';
-    const reclaimed = t.reclaimed 
-      ? '<span class="reclaimed-badge" title="Trophy reclaimed!">🏆 Reclaimed</span>' 
+    const reclaimed = t.reclaimed
+      ? '<span class="reclaimed-badge" title="Trophy reclaimed!">🏆 Reclaimed</span>'
       : '';
     return `
       <tr class="${t.reclaimed ? 'reclaimed-theft' : ''}">

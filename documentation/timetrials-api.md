@@ -69,7 +69,7 @@ GET https://razzserver.com/razapis/getTTList/LEADERBOARD
 | 13 | `unknown13` | string | `""` | Purpose unknown. Usually empty |
 | 14 | `circuit_race` | string | `"False"` | `"True"` for circuit/flying-start races (ShipPass/FighterFlyingStart checkpoints). **Does NOT indicate multi-vessel.** Multi-vessel must be derived from the waypoints in `getTTData` — see below |
 
-**Constraint string format (row[11]):**  
+**Constraint string format (row[11]):**
 Pairs separated by `**`. Each pair is `KEY=VALUE` (integer value). If a pair has no `=`,
 the global constraint value (row[12]) is used as the value. Example: `"Hull=50**Speed=300"`.
 

@@ -12,15 +12,15 @@ function formatLongDuration(ms) {
   const totalMinutes = Math.floor(totalSeconds / 60);
   const totalHours = Math.floor(totalMinutes / 60);
   const days = Math.floor(totalHours / 24);
-  
+
   const hours = totalHours % 24;
   const minutes = totalMinutes % 60;
-  
+
   const parts = [];
   if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
   if (hours > 0) parts.push(`${hours} hr${hours !== 1 ? 's' : ''}`);
   if (minutes > 0) parts.push(`${minutes} min${minutes !== 1 ? 's' : ''}`);
-  
+
   return parts.length > 0 ? parts.join(' ') : '0 mins';
 }
 
@@ -37,7 +37,7 @@ async function init() {
     const params = new URLSearchParams(window.location.search);
     const limit = params.get('limit');
     const url = limit ? `/api/stats?limit=${encodeURIComponent(limit)}` : '/api/stats';
-    
+
     const res = await fetch(url);
     if (!res.ok) throw new Error(res.status);
     stats = await res.json();
@@ -57,12 +57,12 @@ function render() {
   html += '<section class="stats-section">';
   html += '<h2 class="cmdr-section-heading">Overview</h2>';
   html += '<div class="stats-grid">';
-  
+
   html += renderStatCard('Total Races', stats.total_races);
   html += renderStatCard('Total Racers', stats.total_racers);
   html += renderStatCard('Race Creators', stats.total_contributors);
   html += renderStatCard('Active Races (30d)', stats.active_races_30d);
-  
+
   html += '</div>';
   html += '</section>';
 
@@ -204,7 +204,7 @@ function renderTopNTable(items, nameLabel, countLabel) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
 
   const isCmdr = nameLabel === 'commander' || nameLabel === 'creator';
-  
+
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
   html += `<th class="stats-rank">Rank</th>`;
@@ -212,7 +212,7 @@ function renderTopNTable(items, nameLabel, countLabel) {
   html += `<th class="stats-count">${esc(countLabel.charAt(0).toUpperCase() + countLabel.slice(1))}</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
-  
+
   let currentRank = 1;
   items.forEach((item, idx) => {
     // Handle ties: if this item's count equals the previous item's count, use the same rank
@@ -227,112 +227,112 @@ function renderTopNTable(items, nameLabel, countLabel) {
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
   });
-  
+
   html += '</tbody></table>';
   return html;
 }
 
 function renderSystemTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-  
+
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
   html += `<th>System</th>`;
   html += `<th class="stats-count">Races</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
-  
+
   items.forEach(item => {
     html += '<tr>';
     html += `<td>${esc(item.system)}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
   });
-  
+
   html += '</tbody></table>';
   return html;
 }
 
 function renderRaceTable(items, countLabel) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-  
+
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
   html += `<th>Race</th>`;
   html += `<th class="stats-count">${esc(countLabel.charAt(0).toUpperCase() + countLabel.slice(1))}</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
-  
+
   items.forEach(item => {
     html += '<tr>';
     html += `<td>${renderRaceLink(item.key, item.name)}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
   });
-  
+
   html += '</tbody></table>';
   return html;
 }
 
-function renderRecentCommandersTable(items) {
+function _renderRecentCommandersTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-  
+
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
   html += `<th>Commander</th>`;
   html += `<th class="stats-time">Last Active</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
-  
+
   items.forEach(item => {
     html += '<tr>';
     html += `<td>${renderCmdrLink(item.name)}</td>`;
     html += `<td class="stats-time">${relativeTime(item.last_active)}</td>`;
     html += '</tr>';
   });
-  
+
   html += '</tbody></table>';
   return html;
 }
 
 function renderRecentRacesTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-  
+
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
   html += `<th>Race</th>`;
   html += `<th class="stats-time">Last Active</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
-  
+
   items.forEach(item => {
     html += '<tr>';
     html += `<td>${renderRaceLink(item.key, item.name)}</td>`;
     html += `<td class="stats-time">${relativeTime(item.last_active)}</td>`;
     html += '</tr>';
   });
-  
+
   html += '</tbody></table>';
   return html;
 }
 
 function renderVehicleTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-  
+
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
   html += `<th>Vehicle</th>`;
   html += `<th class="stats-count">Times Set</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
-  
+
   items.forEach(item => {
     html += '<tr>';
     html += `<td>${esc(item.ship)}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
   });
-  
+
   html += '</tbody></table>';
   return html;
 }

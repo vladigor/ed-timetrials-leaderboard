@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import aiosqlite
@@ -17,6 +17,7 @@ def _row_to_dict(row: aiosqlite.Row) -> dict:
 # ---------------------------------------------------------------------------
 # Races / locations
 # ---------------------------------------------------------------------------
+
 
 async def list_races(
     active_days: int | None = None,
@@ -89,16 +90,14 @@ async def list_races(
         params = cmdr_position_params[:]
 
         if active_days is not None:
-            cutoff = (
-                datetime.now(timezone.utc) - timedelta(days=active_days)
-            ).strftime("%Y-%m-%d %H:%M:%S.%f")
+            cutoff = (datetime.now(UTC) - timedelta(days=active_days)).strftime(
+                "%Y-%m-%d %H:%M:%S.%f"
+            )
             where_clauses.append("r.updated >= ?")
             params.append(cutoff)
 
         if commander:
-            where_clauses.append(
-                "l.key IN (SELECT DISTINCT location FROM results WHERE name = ?)"
-            )
+            where_clauses.append("l.key IN (SELECT DISTINCT location FROM results WHERE name = ?)")
             params.append(commander)
 
         if where_clauses:
@@ -128,9 +127,7 @@ async def get_race(key: str) -> dict | None:
     """Return a single race with full ranked results."""
     db = await get_db()
     try:
-        async with db.execute(
-            "SELECT * FROM locations WHERE key = ?", (key,)
-        ) as cursor:
+        async with db.execute("SELECT * FROM locations WHERE key = ?", (key,)) as cursor:
             row = await cursor.fetchone()
 
         if row is None:
@@ -184,16 +181,18 @@ async def get_race(key: str) -> dict | None:
                 delta_ms = entry["time"] - prev_time
             prev_time = entry["time"]
 
-            results.append({
-                "position": pos,
-                "name": name,
-                "ship": entry["ship"],
-                "shipname": entry["shipname"],
-                "time_ms": entry["time"],
-                "updated": entry["updated"],
-                "improvement_ms": improvement_ms,
-                "delta_ms": delta_ms,
-            })
+            results.append(
+                {
+                    "position": pos,
+                    "name": name,
+                    "ship": entry["ship"],
+                    "shipname": entry["shipname"],
+                    "time_ms": entry["time"],
+                    "updated": entry["updated"],
+                    "improvement_ms": improvement_ms,
+                    "delta_ms": delta_ms,
+                }
+            )
 
         race["results"] = results
 
@@ -228,12 +227,14 @@ async def get_race(key: str) -> dict | None:
 
         rivalry = None
         if sw_row:
-            switches_day  = sw_row["switches_day"]  or 0
+            switches_day = sw_row["switches_day"] or 0
             switches_week = sw_row["switches_week"] or 0
             if switches_week > 0:
-                window   = "day"  if switches_day  > 0 else "week"
+                window = "day" if switches_day > 0 else "week"
                 switches = switches_day if switches_day > 0 else switches_week
-                since    = "datetime('now', '-1 day')" if window == "day" else "datetime('now', '-7 days')"
+                since = (
+                    "datetime('now', '-1 day')" if window == "day" else "datetime('now', '-7 days')"
+                )
                 async with db.execute(
                     f"""
                     SELECT DISTINCT name
@@ -248,8 +249,8 @@ async def get_race(key: str) -> dict | None:
                 contenders = [r["name"] for r in contender_rows]
                 if len(contenders) >= 2:
                     rivalry = {
-                        "switches":   switches,
-                        "window":     window,
+                        "switches": switches,
+                        "window": window,
                         "contenders": contenders,
                     }
 
@@ -263,9 +264,7 @@ async def list_commanders() -> list[str]:
     """Return a sorted list of all commander names known in the database."""
     db = await get_db()
     try:
-        async with db.execute(
-            "SELECT DISTINCT name FROM results ORDER BY name"
-        ) as cursor:
+        async with db.execute("SELECT DISTINCT name FROM results ORDER BY name") as cursor:
             rows = await cursor.fetchall()
         return [row["name"] for row in rows]
     finally:
@@ -276,9 +275,7 @@ async def list_new_races(days: int = 7) -> list[dict]:
     """Return races added within the last N days, ordered newest first."""
     db = await get_db()
     try:
-        cutoff = (
-            datetime.now(timezone.utc) - timedelta(days=days)
-        ).strftime("%Y-%m-%d %H:%M:%S.%f")
+        cutoff = (datetime.now(UTC) - timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S.%f")
         async with db.execute(
             """
             SELECT key, name, created_at
@@ -298,6 +295,7 @@ async def list_new_races(days: int = 7) -> list[dict]:
 # Commander stats page
 # ---------------------------------------------------------------------------
 
+
 async def get_commander_stats(commander: str) -> dict | None:
     """
     Return all races a commander has competed in, with per-race stats:
@@ -308,9 +306,7 @@ async def get_commander_stats(commander: str) -> dict | None:
     db = await get_db()
     try:
         # Check the commander exists
-        async with db.execute(
-            "SELECT 1 FROM results WHERE name = ? LIMIT 1", (commander,)
-        ) as cur:
+        async with db.execute("SELECT 1 FROM results WHERE name = ? LIMIT 1", (commander,)) as cur:
             if not await cur.fetchone():
                 return None
 
@@ -394,22 +390,24 @@ async def get_commander_stats(commander: str) -> dict | None:
             if snap is not None:
                 position_delta = snap["position"] - position  # positive = risen = better
 
-            races.append({
-                "key": key,
-                "race_name": loc["race_name"],
-                "type": loc["type"],
-                "system": loc["system"],
-                "station": loc["station"],
-                "position": position,
-                "total_entries": total,
-                "percentile": percentile,
-                "improvement_ms": improvement_ms,
-                "time_ms": best_row["time"],
-                "ship": best_row["ship"],
-                "shipname": best_row["shipname"],
-                "last_competed": best_row["updated"],
-                "position_delta": position_delta,
-            })
+            races.append(
+                {
+                    "key": key,
+                    "race_name": loc["race_name"],
+                    "type": loc["type"],
+                    "system": loc["system"],
+                    "station": loc["station"],
+                    "position": position,
+                    "total_entries": total,
+                    "percentile": percentile,
+                    "improvement_ms": improvement_ms,
+                    "time_ms": best_row["time"],
+                    "ship": best_row["ship"],
+                    "shipname": best_row["shipname"],
+                    "last_competed": best_row["updated"],
+                    "position_delta": position_delta,
+                }
+            )
 
         if not races:
             return None
@@ -505,6 +503,7 @@ async def get_commander_stats(commander: str) -> dict | None:
 # Recent activity
 # ---------------------------------------------------------------------------
 
+
 async def get_recent_activity(limit: int = 20) -> list[dict]:
     """
     Return the most recent race results with commander, race name, position, and timestamp.
@@ -562,6 +561,7 @@ async def get_recent_activity(limit: int = 20) -> list[dict]:
 # Leaderboard statistics
 # ---------------------------------------------------------------------------
 
+
 async def get_stats() -> dict:
     """
     Return comprehensive leaderboard statistics.
@@ -580,7 +580,7 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         stats: dict[str, Any] = {}
 
         # ── Single-value stats ─────────────────────────────────────────────
-        
+
         # Total races
         async with db.execute("SELECT COUNT(*) AS cnt FROM locations") as cur:
             stats["total_races"] = (await cur.fetchone())["cnt"]
@@ -596,9 +596,7 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
             stats["total_contributors"] = (await cur.fetchone())["cnt"]
 
         # Active races (activity in last 30 days)
-        cutoff_30d = (
-            datetime.now(timezone.utc) - timedelta(days=30)
-        ).strftime("%Y-%m-%d %H:%M:%S.%f")
+        cutoff_30d = (datetime.now(UTC) - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S.%f")
         async with db.execute(
             """
             SELECT COUNT(DISTINCT location) AS cnt
@@ -656,8 +654,8 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    creator AS name, 
+                SELECT
+                    creator AS name,
                     COUNT(*) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
                 FROM locations
@@ -677,8 +675,8 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    system, 
+                SELECT
+                    system,
                     COUNT(*) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
                 FROM locations
@@ -711,8 +709,8 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                 )
             ),
             ranked AS (
-                SELECT 
-                    name, 
+                SELECT
+                    name,
                     COUNT(*) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
                 FROM winners
@@ -743,8 +741,8 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                 FROM best_times
             ),
             ranked AS (
-                SELECT 
-                    name, 
+                SELECT
+                    name,
                     COUNT(*) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
                 FROM positions
@@ -764,8 +762,8 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    name, 
+                SELECT
+                    name,
                     COUNT(DISTINCT location) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT location) DESC) AS rank
                 FROM results
@@ -784,9 +782,9 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    l.key, 
-                    l.name, 
+                SELECT
+                    l.key,
+                    l.name,
                     COUNT(DISTINCT r.name) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) DESC) AS rank
                 FROM locations l
@@ -806,9 +804,9 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    l.key, 
-                    l.name, 
+                SELECT
+                    l.key,
+                    l.name,
                     COUNT(DISTINCT r.name) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) ASC) AS rank
                 FROM locations l
@@ -829,9 +827,9 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    l.key, 
-                    l.name, 
+                SELECT
+                    l.key,
+                    l.name,
                     MAX(r.updated) AS last_active,
                     DENSE_RANK() OVER (ORDER BY MAX(r.updated) ASC) AS rank
                 FROM locations l
@@ -851,8 +849,8 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    name, 
+                SELECT
+                    name,
                     MAX(updated) AS last_active,
                     DENSE_RANK() OVER (ORDER BY MAX(updated) DESC) AS rank
                 FROM results
@@ -871,9 +869,9 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    l.key, 
-                    l.name, 
+                SELECT
+                    l.key,
+                    l.name,
                     MAX(r.updated) AS last_active,
                     DENSE_RANK() OVER (ORDER BY MAX(r.updated) DESC) AS rank
                 FROM locations l
@@ -893,13 +891,13 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    r.ship, 
+                SELECT
+                    r.ship,
                     COUNT(DISTINCT r.name || '|' || r.location) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name || '|' || r.location) DESC) AS rank
                 FROM results r
                 JOIN locations l ON l.key = r.location
-                WHERE l.type = 'SHIP' 
+                WHERE l.type = 'SHIP'
                     AND r.ship != ''
                     AND r.ship NOT LIKE '%SRV%'
                     AND r.ship NOT LIKE '%Scarabée%'
@@ -919,8 +917,8 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute(
             """
             WITH ranked AS (
-                SELECT 
-                    r.ship, 
+                SELECT
+                    r.ship,
                     COUNT(DISTINCT r.name || '|' || r.location) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name || '|' || r.location) DESC) AS rank
                 FROM results r

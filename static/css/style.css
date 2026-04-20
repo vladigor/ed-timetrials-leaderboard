@@ -341,20 +341,20 @@ a:hover { text-decoration: underline; }
   .race-detail-header-wrapper {
     flex-direction: column;
   }
-  
+
   .race-detail-header .status-bar {
     margin-bottom: 0.5rem;
   }
-  
+
   .race-media-wrapper {
     margin-top: 0;
   }
-  
+
   /* Hide the thumbnail image on mobile, but keep the links list */
   .race-map-container {
     display: none !important;
   }
-  
+
   .race-media-links {
     margin-top: 0;
   }
@@ -1183,7 +1183,7 @@ a:hover { text-decoration: underline; }
   margin-bottom: 0.4rem;
   color: var(--accent);
 }
-.guide-content ul, 
+.guide-content ul,
 .guide-content ol {
   margin-bottom: 1rem;
   padding-left: 1.5rem;
@@ -1442,19 +1442,19 @@ a:hover { text-decoration: underline; }
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .activity-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .stat-card-value {
     font-size: 1.5rem;
   }
-  
+
   .stats-table {
     font-size: .85rem;
   }
-  
+
   .stats-table th,
   .stats-table td {
     padding: .5rem .75rem;

@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -12,8 +11,8 @@ from .config import OFFLINE
 from .database import get_db
 from .importer import (
     fetch_and_store_locations,
-    fetch_and_store_results,
     fetch_and_store_race_details,
+    fetch_and_store_results,
     fetch_last_updated,
 )
 
@@ -29,6 +28,7 @@ POLL_INTERVAL_SECONDS = 60
 # ---------------------------------------------------------------------------
 # Cache persistence helpers
 # ---------------------------------------------------------------------------
+
 
 async def _load_cache() -> dict[str, str]:
     """Load the persisted last-updated timestamps from the database (as ISO strings)."""
@@ -62,6 +62,7 @@ async def _save_cache(snapshot: dict[str, datetime]) -> None:
 # ---------------------------------------------------------------------------
 # Scheduler jobs
 # ---------------------------------------------------------------------------
+
 
 async def _backfill_missing_results() -> None:
     """Fetch results for races that exist in locations but have no results."""
@@ -104,19 +105,19 @@ async def _sync_changed(old: dict[str, datetime], new: dict[str, datetime]) -> N
 async def poll() -> None:
     """One polling cycle: refresh locations, check last-updated, fetch changed results, persist cache."""
     global _last_updated_snapshot
-    
+
     # Refresh the locations list to detect new races
     try:
         await fetch_and_store_locations()
     except Exception as exc:
         log.error("Failed to fetch locations during poll: %s", exc)
-    
+
     # Fetch details for any new races
     try:
         await fetch_and_store_race_details()
     except Exception as exc:
         log.error("Failed to fetch race details during poll: %s", exc)
-    
+
     try:
         fresh = await fetch_last_updated()
     except Exception as exc:
@@ -173,7 +174,8 @@ async def full_refresh() -> None:
     _last_updated_snapshot = fresh
     log.info(
         "Startup refresh complete. %d TTs tracked, %d updated.",
-        len(fresh), changed,
+        len(fresh),
+        changed,
     )
 
 

@@ -26,7 +26,7 @@ async function init() {
   // Check for limit parameter (default 20)
   const params = new URLSearchParams(window.location.search);
   currentLimit = parseInt(params.get('limit') || '20', 10);
-  
+
   await loadActivity();
 
   // Seed poller – refresh when any race changes (since we show recent activity)
@@ -35,7 +35,7 @@ async function init() {
     await loadActivity();
     setStatus('live');
   });
-  
+
   try {
     const body = await fetch('/api/poll').then(r => r.json());
     const snap = body.last_updated ?? body;
@@ -75,7 +75,7 @@ function render() {
 
   html += '<section class="stats-section">';
   html += '<p style="margin-bottom: 1.5rem; color: var(--text-muted);">Showing the most recently updated race results. Each entry represents a new or improved time submission.</p>';
-  
+
   if (activity && activity.length > 0) {
     html += renderActivityTable(activity);
   } else {
@@ -99,7 +99,7 @@ function renderRaceLink(key, name) {
 
 function renderActivityTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-  
+
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
   html += `<th>Commander</th>`;
@@ -108,12 +108,12 @@ function renderActivityTable(items) {
   html += `<th class="stats-time">Updated</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
-  
+
   items.forEach(item => {
     const rowClass = isFresh(item.updated) ? ' class="row-fresh"' : '';
     const position = item.position;
     const positionDisplay = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
-    
+
     html += `<tr${rowClass}>`;
     html += `<td>${renderCmdrLink(item.name)}</td>`;
     html += `<td>${renderRaceLink(item.location, item.race_name)}</td>`;
@@ -121,7 +121,7 @@ function renderActivityTable(items) {
     html += `<td class="stats-time activity-time" data-timestamp="${item.updated || ''}">${relativeTime(item.updated)}</td>`;
     html += '</tr>';
   });
-  
+
   html += '</tbody></table>';
   return html;
 }
@@ -132,11 +132,11 @@ function renderActivityTable(items) {
  */
 function updateRelativeTimes() {
   const cells = document.querySelectorAll('.activity-time[data-timestamp]');
-  
+
   cells.forEach(cell => {
     const timestamp = cell.dataset.timestamp;
     if (!timestamp) return;
-    
+
     cell.textContent = relativeTime(timestamp);
   });
 }
@@ -146,7 +146,7 @@ function updateRelativeTimes() {
  */
 function startTimeUpdater() {
   if (timeUpdater) clearInterval(timeUpdater);
-  
+
   timeUpdater = setInterval(() => {
     updateRelativeTimes();
   }, 60_000); // Every 60 seconds
@@ -155,7 +155,7 @@ function startTimeUpdater() {
 /**
  * Stop the periodic time updater
  */
-function stopTimeUpdater() {
+function _stopTimeUpdater() {
   if (timeUpdater) {
     clearInterval(timeUpdater);
     timeUpdater = null;
