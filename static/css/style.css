@@ -57,7 +57,7 @@ a:hover { text-decoration: underline; }
 .site-header .inner {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2.5rem;
 }
 
 .site-logo {
@@ -68,7 +68,26 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 
+.header-links {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.95rem;
+}
 
+.header-links a {
+  color: var(--text);
+  transition: color 0.2s;
+}
+
+.header-links a:hover {
+  color: var(--accent);
+}
+
+.header-links .sep {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
 
 /* ============================================================
    Breadcrumb
@@ -175,6 +194,10 @@ a:hover { text-decoration: underline; }
   font-size: .6rem;
   margin-right: .35rem;
   vertical-align: middle;
+}
+
+.race-media-links .new-races-list li::before {
+  content: none;
 }
 
 .new-races-list li a {
