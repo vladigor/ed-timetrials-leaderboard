@@ -60,8 +60,10 @@ function render() {
 
   html += renderStatCard('Total Races', stats.total_races);
   html += renderStatCard('Total Racers', stats.total_racers);
+  html += renderStatCard('DW3 Racers', stats.dw3_racers);
+  html += renderStatCard('Non-DW3 Racers', stats.non_dw3_racers);
   html += renderStatCard('Race Creators', stats.total_contributors);
-  html += renderStatCard('Active Races (30d)', stats.active_races_30d);
+  html += renderStatCard('Active Races (in the last 30 days)', stats.active_races_30d);
 
   html += '</div>';
   html += '</section>';

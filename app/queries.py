@@ -591,6 +591,28 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute("SELECT COUNT(DISTINCT name) AS cnt FROM results") as cur:
             stats["total_racers"] = (await cur.fetchone())["cnt"]
 
+        # DW3 racers (distinct commanders who raced in DW3 races)
+        async with db.execute(
+            """
+            SELECT COUNT(DISTINCT r.name) AS cnt
+            FROM results r
+            JOIN locations l ON r.location = l.key
+            WHERE l.name LIKE 'DW3%' OR l.name LIKE 'The DW3%'
+            """
+        ) as cur:
+            stats["dw3_racers"] = (await cur.fetchone())["cnt"]
+
+        # Non-DW3 racers (distinct commanders who raced in non-DW3 races)
+        async with db.execute(
+            """
+            SELECT COUNT(DISTINCT r.name) AS cnt
+            FROM results r
+            JOIN locations l ON r.location = l.key
+            WHERE l.name NOT LIKE 'DW3%' AND l.name NOT LIKE 'The DW3%'
+            """
+        ) as cur:
+            stats["non_dw3_racers"] = (await cur.fetchone())["cnt"]
+
         # Total contributors (distinct race creators)
         async with db.execute(
             "SELECT COUNT(DISTINCT creator) AS cnt FROM locations WHERE creator != ''"

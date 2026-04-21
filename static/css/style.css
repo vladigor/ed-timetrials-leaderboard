@@ -107,7 +107,7 @@ a:hover { text-decoration: underline; }
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   gap: .75rem 1.25rem;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -157,6 +157,13 @@ a:hover { text-decoration: underline; }
   height: 1rem;
   accent-color: var(--accent);
   cursor: pointer;
+}
+
+@media (min-width: 769px) {
+  .filter-group {
+    flex-direction: row;
+    gap: 1.3rem;
+  }
 }
 
 /* ============================================================
