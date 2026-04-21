@@ -537,5 +537,18 @@
       "thumbnail": "maps/thumbnails/JackRabbit.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-JACKRABBIT1"
     }
+  },
+  "KIRLLU-_Hill Climb": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_ceekia_hill_climb.png",
+      "target": "maps/dw3_ceekia_hill_climb.png"
+    },
+    "links": [
+      {
+        "label": "This system can be found 418ly from Beagle Point",
+        "type": "info",
+        "url": ""
+      }
+    ]
   }
 }

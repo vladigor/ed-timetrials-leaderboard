@@ -207,7 +207,8 @@ a:hover { text-decoration: underline; }
   content: none;
 }
 
-.new-races-list li a {
+.new-races-list li a,
+.new-races-list li .link-text {
   font-size: .85rem;
   color: var(--text);
   text-decoration: none;

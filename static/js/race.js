@@ -134,8 +134,15 @@ async function loadRaceMap() {
           let icon = '<i class="fa-solid fa-link"></i>'; // default
           if (linkItem.type === 'video') icon = '<i class="fa-brands fa-youtube"></i>';
           else if (linkItem.type === 'image') icon = '<i class="fa-solid fa-image"></i>';
+          else if (linkItem.type === 'info') icon = 'ℹ️';
 
           const mobileClass = linkItem.mobileOnly ? ' class="mobile-only-link"' : '';
+
+          // If URL is empty, render as plain text instead of a link
+          if (!linkItem.url || linkItem.url.trim() === '') {
+            return `<li${mobileClass}><span class="link-text">${icon}${esc(linkItem.label)}</span></li>`;
+          }
+
           return `<li${mobileClass}><a href="${linkItem.url}" target="_blank" rel="noopener noreferrer">${icon}${esc(linkItem.label)}</a></li>`;
         }).join('');
         linksContainer.innerHTML = `<ul class="new-races-list">${listItems}</ul>`;
