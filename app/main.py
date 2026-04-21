@@ -50,6 +50,19 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Elite Dangerous Time Trials Leaderboard", lifespan=lifespan)
 
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    """Add security headers for PWA compatibility and modern web standards."""
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    return response
+
+
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 app.mount("/maps", StaticFiles(directory=Path(__file__).parent.parent / "maps"), name="maps")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))

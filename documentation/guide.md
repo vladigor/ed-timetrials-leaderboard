@@ -243,7 +243,13 @@ These races test your parkour skills and knowledge of station/settlement layouts
   - Recent activity page
   - Race statistics
 
-- **Alternative Leaderboard:** [https://leaderboard.shangtai.net](https://leaderboard.shangtai.net)
+- **EDCoPilot Time Trial leaderboards:** [https://leaderboard.shangtai.net](https://leaderboard.shangtai.net)
+  - Alternative leaderboard site
+
+- **EDCoPilot Time Trial Maps:** [https://frinkbottle.uk/TimeTrials/](https://frinkbottle.uk/TimeTrials/)
+  - Maps for races around the bubble
+  - Manually curated course notes and videos for races
+  - Difficulty level indicator
 
 ### Race Visualizer
 
