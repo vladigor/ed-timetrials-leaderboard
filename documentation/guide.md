@@ -1,46 +1,64 @@
 # Racing Guide
 
-Welcome to the exciting (and explosive) world of Elite Dangerous time trial racing! This guide will help you get started with SRV, ship, and fighter racing.
 
-## Prerequisites
+Welcome to the exciting (and often explosive) world of Elite Dangerous time trial racing!  The hobby where you deliberately fly too fast through gaps in rocks and then act surprised when your canopy becomes a suggestion.
 
-**EDCoPilot** ([https://www.razzafrag.com](https://www.razzafrag.com)) is essential for time trial races and for getting on the leaderboards. Without it, your times will not be recorded and it becomes more of a game of Extreme Orienteering than racing.
+This guide is for:
 
-For instructions on getting started with EDCoPilot time trials, see: [https://razzserver.com/dokuwiki/doku.php?id=time_trials](https://razzserver.com/dokuwiki/doku.php?id=time_trials)
+- **Beginners** who want learn what they need to get started racing, and what types of race are available.
+- **Improvers** who want to understand *why* the fast pilots look so calm while you’re wrestling your ship like its a swamp aligator.
 
-## Is it Dangerous?
+We’ll cover SRV, ship, SLF (ship-launched fighter), and on-foot races.
+
+## What You Need (Prereqs)
+
+You’ll want **EDCoPilot** ([https://www.razzafrag.com](https://www.razzafrag.com)). It’s essential for your races get timed and uploaded, and to guide you round the track.  EDCoPilot will guide you to the start line and then give verbal and written directions through each checkpoint to the finish line.
+
+Without EDCoPilot your run still “counts” spiritually, but it won’t show up on the leaderboards and finding your way around the course becomes more like Extreme Orienteering. Which could become a thing, I guess!
+
+Here's the EDCoPilot time trials setup guide:
+[https://razzserver.com/dokuwiki/doku.php?id=time_trials](https://razzserver.com/dokuwiki/doku.php?id=time_trials)
+
+## Is It Dangerous?
 
 Yes! Absolutely. You will become quite familiar with rocks coming towards you very fast, followed by explosions.
 
-### What's the worst that can happen?
+### What’s the worst that can happen?
 
-Not a lot, really. So long as you obey the first rule of Elite Dangerous: **Never fly a ship you can't afford to rebuy.**
+Not a lot really, so long as you obey the first rule of Elite Dangerous: **Never fly a ship you can't afford to rebuy.**
 
-- **Ship races:** If you crash, you will be returned to the last place you docked and you will need to rebuy your ship. If you had any discovery or exobiology data, they will be lost.
 
-- **SRV races:** If you crash, you will be returned to your ship. You will need to buy a new SRV.
+What a crash means in practice:
 
-- **SLF (Ship-Launched Fighter) races:** If you crash, you will be returned to your ship. You will need to wait for the fighter to be reassembled (80 seconds). After multiple crashes, you'll need to restock at a station.
+- **Ship races:** You respawn at your last dock and **rebuy**. Any discovery/exobio data that you might have been holding goes *poof*.
+- **SRV races:** You get popped back to your ship and you’ll need a new SRV.
+- **SLF races:** You’re back in the mothership and the fighter needs **80 seconds** to rebuild. After enough explosions, you’ll need to restock at a station.
 
-## Preparation
+## Getting Ready
 
 ### Finding Races Near You
 
-Use this leaderboard site ([https://elitettleaderboard.vladigor.net](https://elitettleaderboard.vladigor.net)) to find your nearest races:
+Use the leaderboard site to find races in your area:
+[https://elitettleaderboard.vladigor.net](https://elitettleaderboard.vladigor.net)
+
+Steps:
+
 1. Go to your commander page
 2. Find the **Opportunities** section
 3. Enter your current system and click **Find**
-4. Click the **Not Done Yet** button to list the nearest races you haven't entered
+4. Click **Not Done Yet** to list the nearest races you haven’t entered
 
-The Opportunities section also ranks races you've already completed by how catchable the positions above you are, helping you focus on races where you can make the biggest improvements.
+**Improver tip:** the Opportunities section also ranks races you’ve already done by how “catchable” the next positions above you are. It’s basically “where should I spend my practice time for the biggest payoff?”
 
 ### Raw Materials for SRV Racing
 
-For SRV races, stock up on **Iron** and **Nickel** at your nearest Raw Materials Trader. These are used to synthesize SRV repairs during races.
+If you plan to do SRV races, stock up on **Iron** and **Nickel** at a Raw Materials Trader. You’ll use them for synthesizing SRV repairs mid-run.
 
 ### Engineering Your Ships
 
-You don't *need* a racing ship to participate—but if you want to climb near the top of the ship race leaderboards, you will want one.
+You don’t *need* a dedicated race ship to participate.
+
+But if you want to climb the ship leaderboards, engineering matters a lot (and yes, it’s unfair and we love it anyway).
 
 Here are some example racing ship builds to get you started:
 
@@ -48,129 +66,143 @@ Here are some example racing ship builds to get you started:
 - [**Imperial Eagle**](https://edsy.org/#/L=IP00000I0C0S80,,CjwG05G_W0,9p3G05I_W0A3wG04J_W0AL7G05I_W0AbDG02K_W0AniG03G_W0B2QG05L_W0BIWG03G_W0BWQ00,,)
 - [**Cobra Mk 3**](https://edsy.org/#/L=I200000A2C0S00,,,9p3G05I_W0A3wG04J_W0AMgG05I_W0AcnG02K_W0AqqG03G_W0B4SG05L_W0BK4G03G_W0BX_00,,)
 
-Focus on **dirty drives**, **lightweight engineering**, and **enhanced thrusters** for maximum speed and maneuverability.  Also critical is **engine focused** power distributor with **super conduits** for minimum boost recharge time.
+Engineering checklist (the “go faster” starter pack):
 
-## Race Types
+- **Dirty drives**
+- **Lightweight** where it makes sense
+- **Enhanced thrusters**
+- **Engine-focused** power distributor + **Super conduits** (so boosts come back faster)
 
-## SRV Races
+## Race Types (Pick Your Poison)
 
-SRV races will take place either on a planet's surface or on the paved roads of a starport. If the former, expect things to get **very** bumpy.
+### SRV Races
 
-### SRV Flyving Basics
+SRV races happen on:
 
-"Flyving" is the art of keeping your SRV airborne as much as possible while maintaining control and speed. Its a complex art, but quite necessary to avoid having to deal with the bumpiness of the terrain and the jankiness of the SRVs steering. Here's the fundamental technique:
+- **Planet surfaces** (bumpy)
+- **Starport roads** (still bumpy, but in a different, more insulting way)
+
+#### SRV “Flyving” Basics
+
+“Flyving” = keeping your SRV airborne as much as possible while still being in control *when you land*.
+
+Why it matters:
+
+- Terrain is slow and chaotic.
+- SRV steering is… an experience.
+- Air time lets you skip bumps and keep speed.
+
+Here’s the core idea:
 
 ![SRV Flyving Basics](../static/beginners_guide/srv_flyving_basics.png)
 
-**Key Principles:**
+**Key principles:**
 
-1. **Pitch and Roll Control:** When airborne, you need to constantly adjust your SRV's orientation using pitch and roll so that you're facing the direction you're traveling when you land.
+1. **Pitch + roll control:** While airborne, constantly adjust pitch/roll so you’re facing your travel direction when you touch down.
+2. **Landing straight-ish:** The SRV has drive + thrusters + a strong opinion. Landing sideways can cause dramatic, time-wasting spins.
+3. **Drive Assist OFF:** Turn it off. Binary throttle is awkward at first, but it’s the path to consistency.
+4. **Free look:** If you’re not in VR, you’ll probably want free look so you can see where you’re going on steep climbs.
 
-2. **Thrust Management:** The SRV has three axes of control—6-wheel drive (actually 8-wheel!), and the rear wheels are also directional. Landing slightly off-center or sideways can cause violent spins.
+**Recovery move (when the SRV is doing interpretive dance mid-air):**
 
-3. **Drive Assist OFF:** Always turn drive assist off. While binary throttle control (all-or-nothing acceleration) is challenging, it can be overcome with skill and practice.
+1. Roll the SRV sideways (~90°)
+2. Use pitch controls to rotate until you’re facing where you want to go
+3. Roll back upright
+4. Land and continue pretending that was intentional
 
-4.  **Free look:** If you're not using VR you'll probably wait to enable free look so that you can see ahead on steep inclines.
+**Pro tips:**
 
-**Recovery Techniques:**
+- Alec Turner’s tutorials are gold and its well worth practising the drills shown here: [Drakhyr Rally SRV driving tutorials](https://youtube.com/playlist?list=PLSeEFsl5MwqSOdoqhZD_Bom2kK441imiT)
+- For “how is that SRV even legal”, watch Cmdr Sgurr’s [Kumay Snake run](https://youtu.be/gfiP-DheaF8)
+- Rocks do and will appear from nowhere. Especially once you start getting the hang of things.  Its just the way it is. Dust yourself off and get back on track.
+- The SRV is sometimes called the “Sanity Research Vehicle”. This nickname is earned.
 
-When you find yourself turned around in the air after a bad bounce:
-1. Roll the SRV sideways (90 degrees)
-2. Use pitch controls (R or F) to rotate until you're facing where you want to go
-3. Roll back to upright position
-4. Land and continue
+### Ship Races
 
-**Pro Tips:**
+Ship races come in a few flavors; each rewards different habits.
 
-- Watch Alec Turner's tutorial video series for detailed SRV driving techniques: [Drakhyr Rally SRV driving tutorials](https://youtube.com/playlist?list=PLSeEFsl5MwqSOdoqhZD_Bom2kK441imiT)
-- For advanced techniques, watch Cmdr Sgurr's [Kumay Snake run](https://youtu.be/gfiP-DheaF8) to see masterful SRV flyving
-- Practice makes perfect. The SRV is officially the "Sanity Research Vehicle" for good reason!
+#### Canyon and Starport Races
 
-## Ship Races
+These often have waypoint altitude limits, tight turns, and “thread the needle” flying.
 
-There are several types of ship races, each requiring different techniques and skills.
+**Ship-specific vibes:**
 
-### Canyon and Starport Races
+- **Imperial Eagle:** Turns cleanly; great for learning race lines. Cargo scoop/gear is mostly for the nastiest corners.
+- **Cobra Mk 3:** Great laterals. You can really “kick” around corners. Braking aids are usually reserved for sharp direction changes.
+- **Viper Mk 3:** Very fast, very committed. You’ll often use braking (cargo scoop or landing gear) to keep your speed controllable so your boosts actually go where you want.
+- **Imperial Courier:** Harder to redirect quickly, even with boost + braking. Can lose time in tight/360° sections, but accelerates well and has a strong distributor.
 
-These races typically feature a maximum altitude limit on waypoints. They require precise flying through tight spaces with sharp turns and elevation changes.
+#### Advanced Technique: Flight Assist Off (FA-Off)
 
-**Ship-Specific Handling:**
-  - **Imperial Eagle:** Turns very cleanly with excellent maneuverability. Use cargo scoop mainly on the tightest turns.
-  - **Cobra Mk 3:** Great lateral thrusters allow you to "kick" hard on corners. Cargo scoop primarily needed for the sharpest turns (like 180-degree peaks).
-  - **Viper Mk 3:** Requires constant cargo scoop management throughout the course to control speed on most turns.  **TODO:** Revise this statement. Mention speed and boost, not cargo scoop.
-  - **Imperial Courier:** Much more difficult to fly—it cannot change directions quickly even when boosting with cargo scoop. Loses significant time on sharp turns and 360-degree sections, but has better acceleration and distributor.
+FA-Off lets you **keep speed without constant boosting** by drifting through lines you’ve pre-planned.
 
+This is why fast runs look calm: good pilots are often just… drifting efficiently.
 
-**Advanced Techniques:**
+Benefits:
 
-#### Flight Assist Off (FA-Off)
-
-FA-Off allows you to drift at maximum speed for extended periods without constantly boosting. The faster runs will have seemingly leisurely periods where pilots are just quietly drifting at speed rather than frantically boosting.
-
-**Benefits:**
-- Conserve boost energy for when you really need it
-- Maintain speed through corners by drifting
-- More control over your trajectory in zero-gravity sections
-
-**FA-Off and Gravity:**
-If you disable Flight Assist in a planet's gravity well (like near the surface), you **will fall**. The ship does not hover with FA-Off.
+- Save boost for when you truly need it
+- Carry speed through corners via controlled drift
+- Better control in low/zero gravity sections
 
 
-#### Cargo Scoop Braking
+#### Advanced Technique: Cargo Scoop Braking
 
-Opening your cargo scoop creates significant drag, slowing you down without losing boost energy. This is especially useful for the Viper Mk 3.
+Opening your cargo scoop creates drag. It’s a great “brake” that doesn’t consume boost energy.
 
-- **Scoop-Boost Technique:** Keep your cargo scoop open most of the time, but briefly close it to let off just enough speed to boost forward in the direction you need for tight turns. The key is closing the scoop just long enough to reach the turn exit with some boost multiplier remaining.
+- **Scoop-boost rhythm:** Keep the scoop open when you need to bleed speed, then briefly close it to regain enough speed to boost cleanly out of the corner.
+- **Why it’s useful:** It helps you avoid over-speeding the turn so your boost vector actually matches the exit.
+- **Landing gear alternative:** Landing gear also works as a brake. Cargo scoop is usually preferred, but either is valid if it keeps you tidy.
 
-- **The Viper Advantage:** The Viper barely loses forward momentum when using the cargo scoop—you only need to release it for a fraction of a second to get back above 800 m/s. Other ships lose speed more quickly.
+#### Inter-Planetary Races
 
-- **Landing Gear Alternative:** Landing gear can also be used for braking, though cargo scoop is generally preferred.
+In these races you’ll take off, fly to another body, then land at a station or in a crater.
 
+They’re less about “micro-turning” and more about approach discipline and not panicking.
 
-### Inter-Planetary Races
-
-These are like Buckyball races—you'll need to take off from one planet and fly to another, landing at either a starport or in a crater. These require different skills from canyon racing, focusing on supercruise approach techniques.
-
-**The Corkscrew Supercruise Approach:**
-
-This technique allows you to enter Orbital Cruise and Glide at surprisingly high speeds:
+**The corkscrew supercruise approach** (high-speed glide entry):
 
 1. **Max throttle until ETA hits 0:04**
-2. **Zero the throttle and enter a corkscrew** (massive pitch, steering with roll and yaw)
-3. **Keep the ETA around 0:03** by carefully controlling speed and trajectory
-4. **Watch the station/planet hologram** and plan your curve around to the front
-5. **Trust the planet to slow you down** at the last minute
-6. **If speed drops too much, open throttle again**—ideally ETA should never go back above 0:05
+2. **Zero throttle and start a corkscrew** (aggressive pitch; steer with roll/yaw)
+3. **Hold ETA around 0:03** by controlling trajectory and speed
+4. **Watch the hologram** and plan your curve so you come around to the front
+5. **Trust the planet to slow you down** at the last moment
+6. **If speed drops too much, add throttle** (ideally ETA never climbs back above 0:05)
 
-For absolute top times, you can push the ETA down to 0:02, but this carries risk of overshooting and aborting the run.
+For top times you can push to 0:02, but that’s where runs go from “fast” to “why is my ship 3 km underground”.
 
-**Dropping from orbital cruise to glide:** What triggers "too fast for orbital cruise" is when the **vertical speed indicator goes into the red**. You can reduce vertical speed by:
+**Dropping from orbital cruise to glide:** “Too fast for orbital cruise” usually happens when the **vertical speed indicator goes red**. Fix it by:
+
 - Slowing down
 - Reducing your angle of attack
 
-The corkscrew gives you greater control over your angle of attack, letting you "slice" your way into both Orbital Cruise and Glide at very high speeds.
+The corkscrew helps you control angle of attack so you can “slice” into Orbital Cruise/Glide at higher speeds.
 
-**Advanced Tip:** Use nearby planets to brake or reduce speed—it's hard to optimize but can save precious seconds by allowing you to approach from further away at higher speed.
+Tutorial video: Alec Turner’s [classic controlled supercruise approach](https://youtu.be/nHY6ctI5Jgk).
 
-**Tutorial Video:** Watch Alec Turner's [classic controlled supercruise approach](https://youtu.be/nHY6ctI5Jgk) demonstration.
+### SLF (Ship-Launched Fighter) Races
 
+SLF races are ship races with the volume turned down:
 
-## SLF (Ship-Launched Fighter) Races
+- Slower
+- Cheaper mistakes
+- Great for learning the course
 
-Fighter races are similar to ship races but a little slower and with less risk. If the same race is available in both ship and SLF variants, choose the SLF version first to learn the course safely.
+If a course exists in both ship and SLF variants, doing the SLF version first is a fantastic “scout run.”
 
-**Advantages of SLF Racing:**
+Advantages:
 
-- **More level playing field:** No engineering available for fighters
-- **Lower risk:** 80-second rebuild time if you crash (vs. ship rebuy)
-- **Lower cost:** Only 1,030cr per fighter to restock
-- **Great for learning:** Practice race lines without expensive consequences
+- **Level playing field:** No engineering
+- **Lower risk:** 80-second rebuild instead of a rebuy
+- **Lower cost:** 1,030cr per fighter to restock
+- **Practice-friendly:** Learn lines without expensive consequences
 
-### Human Fighters
+They have more level playing field than the Ship races because there's no engineering involved, so the gaps between top positions on the leaderboard is tight.
 
-There are three human ship-launched fighters, each available in 5 different weapon loadouts.  However, for racing we only care about the `Aegis F` and `AX1 F` builds - the other variants are slower.
+#### Human Fighters
 
-**Quick Comparison (Racing Loadouts Only):**  [[ref](https://www.reddit.com/r/EliteDangerous/comments/58q7cv/everything_you_need_to_know_about_ship_launched/)]
+There are three human SLFs with multiple weapon loadouts, but for racing we only care about the **Aegis F** and **AX1 F** builds (the other variants are slower).  [[ref](https://www.reddit.com/r/EliteDangerous/comments/58q7cv/everything_you_need_to_know_about_ship_launched/)]
+
+Quick comparison (racing loadouts only):
 
 | Fighter Type | Build | Maneuverability | Durability | Speed | Boost |
 |--------------|-------|-----------------|------------|-------|-------|
@@ -179,9 +211,9 @@ There are three human ship-launched fighters, each available in 5 different weap
 | Taipan | Aegis F | Pitch 41°/s, Yaw 18°/s, Roll 88°/s | 30 MJ shields, 45 armor | 273 | 564 |
 | Taipan | AX1 F | Pitch 41°/s, Yaw 18°/s, Roll 88°/s | 30 MJ shields, 45 armor | 279 | 577 |
 
-### Guardian Fighters
+#### Guardian Fighters
 
-Guardian fighters must be unlocked via the Guardian tech broker and feature faster boost recharge rates.
+Guardian fighters are unlocked via the Guardian tech broker and have faster boost recharge.
 
 | Fighter | Speed | Boost |
 |---------|-------|-------|
@@ -189,15 +221,15 @@ Guardian fighters must be unlocked via the Guardian tech broker and feature fast
 | XG8 Javelin | 332 | 563 |
 | XG9 Lance | 332 | 563 |
 
-- **Common Stats:** 30 MJ shields, 10 hull
-- **Maneuverability:** Between Condor and GU-97
-- **Faster Boost Recharge:** Guardian fighters recharge boost faster than human fighters, but have a lower boost speed than the Taipan.
+- Common stats: 30 MJ shields, 10 hull
+- Maneuverability: between Condor and GU-97
+- Boost behavior: Guardian SLFs recharge boost faster than human SLFs, but still have lower boost speed than the Taipan
 
-**Unlocking Guardian Fighters:** See [Exigeous's video guide](https://www.youtube.com/watch?v=4Mqp56VgFAU) for unlocking Guardian fighters via the tech broker.
+Unlocking guide: [Exigeous’s video](https://www.youtube.com/watch?v=4Mqp56VgFAU).
 
-### Fighter Hangars
+#### Fighter Hangars
 
-To use ship-launched fighters, you need a fighter hangar module:
+You’ll need a fighter hangar module:
 
 | Class | Loadouts | Rebuilds | Mass | Power | Price |
 |-------|----------|----------|------|-------|-------|
@@ -205,85 +237,95 @@ To use ship-launched fighters, you need a fighter hangar module:
 | 6 | 2 | 8 per loadout (16 total) | 40t | 0.35MW | 1,640,350cr |
 | 7 | 2 | 15 per loadout (30 total) | 60t | 0.35MW | 2,079,090cr |
 
-**Ships that can equip fighter hangars:** Keelback, Alliance Crusader, Federal Gunship, Krait MkII, Type-9 Heavy, Beluga Liner, Type-10 Defender, Anaconda, Federal Corvette, Imperial Cutter
+Ships that can equip hangars: Keelback, Alliance Crusader, Federal Gunship, Krait MkII, Type-9 Heavy, Beluga Liner, Type-10 Defender, Anaconda, Federal Corvette, Imperial Cutter
 
-**Important Notes:**
+Important notes:
 
-- If a fighter is destroyed, there's an **80-second** rebuild delay before you can launch that loadout again
-- Class 6+ hangars let you launch the second loadout while the first rebuilds
-- Restocking costs only 1,030cr per fighter
+- A destroyed fighter triggers an **80-second** rebuild for that loadout
+- Class 6+ lets you launch a second loadout while the first rebuilds
+- Restocking is cheap (1,030cr per fighter)
 
-### Advanced Fighter Techniques
+#### Advanced SLF Tip: FA-Off
 
-**FA-Off:**
-This technique is particularly important for non-permaboost ships like the Taipan fighter. Guardian SLFs are permaboost, so there's less to gain, but it's still useful for picking up extra time.
+FA-Off is especially useful for non-permaboost SLFs like the Taipan. Guardian SLFs are permaboost, so gains are smaller, but it can still help.
 
-### Starting SLF races in EDCoPilot
-When you start an SLF race in EDCoPilot you must remember to select the fighter type that you are flying, as EDCoPilot is not able to get this information from the game's journal file.
+#### Starting SLF Races in EDCoPilot
 
+When you start an SLF race in EDCoPilot, remember to select the fighter type you’re actually flying. EDCoPilot is n’t able to detect this from the journal file.
 
-## On Foot Races
+### On-Foot Races
 
-There are only a couple of on-foot races available. Not much to say about these beyond: put on your running shoes and go!
+There are only a couple of on-foot races. The strategy is simple:
 
-These races test your parkour skills and knowledge of station/settlement layouts more than anything else.
+- Put on your running shoes and a decent suit
+- Try not to breath too loud while running
+
+These are mostly parkour and layout knowledge.
 
 ## Graphics Settings
 
-[See this page](./graphics-settings) for tips on graphics settings for racing.
+See [graphics settings tips](./graphics-settings) for racing-friendly visuals.
 
-## Additional Resources
+## Extra Resources
 
 ### Leaderboards and Tools
 
-- **Elite TT Leaderboard:** [https://elitettleaderboard.vladigor.net](https://elitettleaderboard.vladigor.net)
+#### Elite TT Leaderboard: [https://elitettleaderboard.vladigor.net](https://elitettleaderboard.vladigor.net)
   - Commander stats with percentile rankings
   - Opportunities finder for nearest races
   - Trophy case and rivalry tracking
   - Recent activity page
   - Race statistics
 
-- **EDCoPilot Time Trial leaderboards:** [https://leaderboard.shangtai.net](https://leaderboard.shangtai.net)
+#### EDCoPilot Time Trial leaderboards: [https://leaderboard.shangtai.net](https://leaderboard.shangtai.net)
   - Alternative leaderboard site
 
-- **EDCoPilot Time Trial Maps:** [https://frinkbottle.uk/TimeTrials/](https://frinkbottle.uk/TimeTrials/)
-  - Maps for races around the bubble
-  - Manually curated course notes and videos for races
-  - Difficulty level indicator
+#### EDCoPilot Time Trial Maps: [https://frinkbottle.uk/TimeTrials/](https://frinkbottle.uk/TimeTrials/)
+  - Bubble-wide race maps
+  - Curated course notes and videos
+  - Difficulty indicator
 
 ### Race Visualizer
 
-EDCoPilot can save race definition (.txt) and route trace (.csv) files after each run. You can upload these to [https://raceviz.shangtai.net/](https://raceviz.shangtai.net/) to get a 3D visualization of the course and your route, helping you analyze your racing line.
+EDCoPilot can save race definition (`.txt`) and route trace (`.csv`) files after each run. Upload them to:
 
+[https://raceviz.shangtai.net/](https://raceviz.shangtai.net/)
+
+…to get a 3D view of the course and your line, which is great for spotting “why did I do THAT there?” moments.
 
 ### Tutorial Videos
 
-- **Alec Turner's SRV Tutorial Series:** [Drakhyr Rally SRV driving tutorials](https://youtube.com/playlist?list=PLSeEFsl5MwqSOdoqhZD_Bom2kK441imiT)
-- **Mountain Climbing Tutorial:** [https://youtu.be/fi0ta3K-RLo](https://youtu.be/fi0ta3K-RLo)
-- **SRV Flyving Skills:** [https://youtu.be/H9fu8k5v6Dc](https://youtu.be/H9fu8k5v6Dc)
-- **Pro SRV Techniques:** Watch Cmdr Sgurr's [Kumay Snake run](https://youtu.be/gfiP-DheaF8)
-- **Supercruise Approach:** [Classic controlled approach](https://youtu.be/nHY6ctI5Jgk)
-- **Guardian Fighter Unlock:** [Exigeous's guide](https://www.youtube.com/watch?v=4Mqp56VgFAU)
+- Alec Turner’s SRV tutorial series: [Drakhyr Rally SRV driving tutorials](https://youtube.com/playlist?list=PLSeEFsl5MwqSOdoqhZD_Bom2kK441imiT)
+- Mountain climbing tutorial: [https://youtu.be/fi0ta3K-RLo](https://youtu.be/fi0ta3K-RLo)
+- SRV flyving skills: [https://youtu.be/H9fu8k5v6Dc](https://youtu.be/H9fu8k5v6Dc)
+- Pro SRV techniques: Cmdr Sgurr’s [Kumay Snake run](https://youtu.be/gfiP-DheaF8)
+- Supercruise approach: [classic controlled approach](https://youtu.be/nHY6ctI5Jgk)
+- Guardian fighter unlock: [Exigeous’s guide](https://www.youtube.com/watch?v=4Mqp56VgFAU)
 
-### Racing Community
+## Racing Community
 
-Join the Elite Dangerous racing community on Discord to:
-- Get notified of new races
-- Share techniques and tips
-- Participate in organized racing events
+Join the Elite Dangerous racing community on [Discord](https://discord.com/channels/110284160874082304/744017622424748032) to:
+
+- Hear about new races
+- Ask for tips (and get ten different answers, all correct)
+- Join organized events
 - Watch live racing streams
-- Compare times and strategies
+- Compare times, lines, and “how did you survive that?” moments
 
+EDCoPilot also has a [Discord](https://discord.com/channels/762683864589271060/1279159937502543912) to help with questions and find help.
 
-## The End
+And Buckyball racing is on [Discord](https://discord.com/channels/614710275295412259/614713280900104212) for more interplanetary racing without EDCoPilot.
 
-Now get out there and **race! race! race!**
+## Now Go Race
 
-Remember:
-- Start with SLF or SRV races to learn the basics safely
-- Practice your flyving/FA-Off techniques
-- Don't worry about perfect times at first—focus on clean runs
-- Study the leaderboards to see where you can improve
-- Most importantly: have fun and embrace the explosions!
+Go get a time on the board. Then improve it. Then improve it again. That’s the whole loop.
 
-o7 Commander, and may your boost always recharge when you need it!
+Quick reminders:
+
+- Start with **SLF** or **SRV** races if you want lower consequences while you learn
+- Don’t chase perfect times on day one — chase **clean runs**
+- Study the leaderboards to find “catchable” improvements
+- Practice flyving / FA-Off in low-stakes runs
+- Most importantly: have fun and embrace the occasional explosion
+
+o7 Commander — may your boost always recharge exactly when you need it.
