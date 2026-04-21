@@ -177,6 +177,15 @@ function render() {
     html += '</section>';
   }
 
+  // ── Popular Ship Names ─────────────────────────────────────────────────
+  if (stats.popular_ship_names && stats.popular_ship_names.length > 0) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Popular Ship Names</h2>';
+    html += '<p class="stats-section-description">Ship names used by more than one cmdr.</p>';
+    html += renderPopularShipNamesTable(stats.popular_ship_names);
+    html += '</section>';
+  }
+
   container.innerHTML = html;
 }
 
@@ -332,6 +341,28 @@ function renderVehicleTable(items) {
     html += '<tr>';
     html += `<td>${esc(item.ship)}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderPopularShipNamesTable(items) {
+  if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
+
+  let html = '<table class="stats-table">';
+  html += '<thead><tr>';
+  html += '<th>Ship Name</th>';
+  html += '<th>Commanders</th>';
+  html += '</tr></thead>';
+  html += '<tbody>';
+
+  items.forEach(item => {
+    const cmdrs = (item.cmdrs || []).map(n => renderCmdrLink(n)).join(', ');
+    html += '<tr>';
+    html += `<td>${esc(item.ship_name)}</td>`;
+    html += `<td>${cmdrs || '<span class="muted">—</span>'}</td>`;
     html += '</tr>';
   });
 

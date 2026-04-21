@@ -961,6 +961,82 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         ) as cur:
             stats["top_fighter_types"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
+        # Popular ship names (player-assigned) shared by more than one commander.
+        # Group case-insensitively and display in simple Title Case.
+        async with db.execute(
+            """
+            WITH ship_owners AS (
+                SELECT DISTINCT
+                    LOWER(TRIM(shipname)) AS ship_key,
+                    name
+                FROM results
+                WHERE shipname IS NOT NULL
+                  AND TRIM(shipname) != ''
+            ),
+            ship_counts AS (
+                SELECT
+                    ship_key,
+                    COUNT(*) AS commanders
+                FROM ship_owners
+                GROUP BY ship_key
+                HAVING COUNT(*) > 1
+            ),
+            ranked AS (
+                SELECT
+                    ship_key,
+                    commanders,
+                    DENSE_RANK() OVER (ORDER BY commanders DESC) AS rank
+                FROM ship_counts
+            )
+            SELECT ship_key, commanders
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY commanders DESC, ship_key ASC
+            """,
+            (limit,),
+        ) as cur:
+            rows = await cur.fetchall()
+
+        ship_keys = [r["ship_key"] for r in rows]
+        commanders_by_key: dict[str, list[str]] = {k: [] for k in ship_keys}
+
+        if ship_keys:
+            placeholders = ",".join(["?"] * len(ship_keys))
+            async with db.execute(
+                f"""
+                WITH ship_owners AS (
+                    SELECT DISTINCT
+                        LOWER(TRIM(shipname)) AS ship_key,
+                        name
+                    FROM results
+                    WHERE shipname IS NOT NULL
+                      AND TRIM(shipname) != ''
+                )
+                SELECT ship_key, name
+                FROM ship_owners
+                WHERE ship_key IN ({placeholders})
+                ORDER BY ship_key ASC, name COLLATE NOCASE ASC
+                """,
+                tuple(ship_keys),
+            ) as cur:
+                for r in await cur.fetchall():
+                    commanders_by_key[r["ship_key"]].append(r["name"])
+
+        def _simple_title_case(s: str) -> str:
+            s = " ".join(s.split())
+            if not s:
+                return s
+            return " ".join((w[:1].upper() + w[1:]) if w else w for w in s.split(" "))
+
+        stats["popular_ship_names"] = [
+            {
+                "ship_name": _simple_title_case(r["ship_key"]),
+                "commanders": r["commanders"],
+                "cmdrs": commanders_by_key.get(r["ship_key"], []),
+            }
+            for r in rows
+        ]
+
         return stats
     finally:
         await db.close()
