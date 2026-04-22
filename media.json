@@ -16,7 +16,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_mountain_climb.png",
       "target": "maps/dw3_syrenthis_verge_mountain_climb.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/2L90Bzg5UMk"
+      }
+    ]
   },
   "ALEC TURNER-syrenthis_verge_descent": {
     "map": {
