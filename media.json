@@ -1,4 +1,16 @@
 {
+  "ALEC TURNER-syrenthis_verge_mountain_climb": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_mountain_climb.png",
+      "target": "maps/dw3_syrenthis_verge_mountain_climb.png"
+    }
+  },
+  "ALEC TURNER-syrenthis_verge_descent": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_mountain_climb.png",
+      "target": "maps/dw3_syrenthis_verge_mountain_climb.png"
+    }
+  },
   "ALEC TURNER-DW3_GLACIEM_ICE_HIKE": {
     "links": [
       {
