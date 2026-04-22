@@ -55,7 +55,7 @@ for ext in png jpg jpeg webp gif; do
 
     # Check if thumbnail already exists
     if [ -f "$thumbnail" ]; then
-        echo -e "${YELLOW}⊘${NC} Skipping $filename (thumbnail already exists)"
+        # echo -e "${YELLOW}⊘${NC} Skipping $filename (thumbnail already exists)"
         ((skipped++))
         continue
     fi
