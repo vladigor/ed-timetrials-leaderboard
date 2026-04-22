@@ -259,6 +259,11 @@
         "label": "Demo video",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=Z7oWerWGf1E"
+      },
+      {
+        "label": "Expert",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=scOWb82QS8Q"
       }
     ]
   },
