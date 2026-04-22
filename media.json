@@ -1,4 +1,17 @@
 {
+  "FOEHAMMERR-DW3%20Mind%20the%20Gap": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_mind_the_gap.png",
+      "target": "maps/dw3_mind_the_gap.png"
+    },
+    "links": [
+      {
+        "label": "Expert video (+ sick beats)",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=UG1VoN-mrtw"
+      }
+    ]
+  },
   "ALEC TURNER-syrenthis_verge_mountain_climb": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_mountain_climb.png",
@@ -249,19 +262,24 @@
     },
     "links": [
       {
-        "label": "Demo video",
+        "label": "Demo",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=Z7oWerWGf1E"
       },
+            {
+        "label": "Awesome!",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=lwCv_IJfh9I"
+      },
       {
-        "label": "Expert video",
+        "label": "Expert",
         "type": "video",
         "url": "https://youtu.be/Vle-mNqBiF4?si=CznHINrJyvYN_YyP"
       },
       {
-        "label": "Awesome video!",
+        "label": "Expert (FA off)",
         "type": "video",
-        "url": "https://www.youtube.com/watch?v=lwCv_IJfh9I"
+        "url": "https://www.youtube.com/watch?v=x9JZkO0TxgY"
       }
     ]
   },
