@@ -474,7 +474,48 @@ async def get_commander_stats(commander: str) -> dict | None:
                       AND ps_reclaim.name = ?
                       AND ps_reclaim.snapped_at > cs.snapped_at
                       AND ps_reclaim.position <= cs.prev_pos
-                ) THEN 1 ELSE 0 END AS reclaimed
+                ) THEN 1 ELSE 0 END AS reclaimed,
+                (
+                    SELECT ps2.name
+                    FROM position_snapshots ps2
+                    WHERE ps2.location   = cs.location
+                      AND ps2.snapped_at = cs.snapped_at
+                      AND ps2.position   <= cs.prev_pos
+                      AND NOT EXISTS (
+                          SELECT 1
+                          FROM position_snapshots ps3
+                          WHERE ps3.location   = cs.location
+                            AND ps3.snapped_at = cs.prev_snapped_at
+                            AND ps3.name       = ps2.name
+                            AND ps3.position   <= cs.prev_pos
+                      )
+                    ORDER BY ps2.position ASC
+                    LIMIT 1
+                ) AS thief_name_inner,
+                (
+                    SELECT ps_latest.position
+                    FROM position_snapshots ps_latest
+                    WHERE ps_latest.location = cs.location
+                      AND ps_latest.name = (
+                          SELECT ps2.name
+                          FROM position_snapshots ps2
+                          WHERE ps2.location   = cs.location
+                            AND ps2.snapped_at = cs.snapped_at
+                            AND ps2.position   <= cs.prev_pos
+                            AND NOT EXISTS (
+                                SELECT 1
+                                FROM position_snapshots ps3
+                                WHERE ps3.location   = cs.location
+                                  AND ps3.snapped_at = cs.prev_snapped_at
+                                  AND ps3.name       = ps2.name
+                                  AND ps3.position   <= cs.prev_pos
+                            )
+                          ORDER BY ps2.position ASC
+                          LIMIT 1
+                      )
+                    ORDER BY ps_latest.snapped_at DESC
+                    LIMIT 1
+                ) AS thief_current_position
             FROM cmdr_snaps cs
             JOIN locations l ON l.key = cs.location
             WHERE cs.prev_pos IS NOT NULL
@@ -487,8 +528,29 @@ async def get_commander_stats(commander: str) -> dict | None:
         ) as cur:
             theft_rows = await cur.fetchall()
 
-        # Exclude rows where we couldn't identify the thief
-        podium_thefts = [_row_to_dict(r) for r in theft_rows if r["thief_name"]]
+        # Exclude rows where we couldn't identify the thief and compute redeemed status
+        podium_thefts = []
+        for r in theft_rows:
+            if not r["thief_name"]:
+                continue
+
+            row_dict = _row_to_dict(r)
+
+            # Compute redeemed: victim hasn't reclaimed AND thief no longer holds that position
+            reclaimed = row_dict["reclaimed"]
+            thief_current = row_dict.get("thief_current_position")
+            stolen_pos = row_dict["stolen_position"]
+
+            # Redeemed if: not reclaimed AND (thief has no current position OR current position is worse than stolen)
+            row_dict["redeemed"] = not reclaimed and (
+                thief_current is None or thief_current > stolen_pos
+            )
+
+            # Clean up internal fields
+            row_dict.pop("thief_name_inner", None)
+            row_dict.pop("thief_current_position", None)
+
+            podium_thefts.append(row_dict)
 
         return {
             "commander": commander,

@@ -531,16 +531,23 @@ function renderThievses(thefts) {
     const thief = t.thief_name
       ? `<a href="/cmdr/${encodeURIComponent(t.thief_name)}">${esc(t.thief_name)}</a>`
       : '<span class="muted">unknown CMDR</span>';
-    const reclaimed = t.reclaimed
-      ? '<span class="reclaimed-badge" title="Trophy reclaimed!">🏆 Reclaimed</span>'
-      : '';
+
+    let statusBadge = '';
+    if (t.reclaimed) {
+      statusBadge = '<span class="reclaimed-badge" title="Trophy reclaimed!">🏆 Reclaimed</span>';
+    } else if (t.redeemed) {
+      statusBadge = '<span class="redeemed-badge" title="Thief lost the trophy too!">✨ Redeemed</span>';
+    }
+
+    const rowClass = t.reclaimed ? 'reclaimed-theft' : (t.redeemed ? 'redeemed-theft' : '');
+
     return `
-      <tr class="${t.reclaimed ? 'reclaimed-theft' : ''}">
+      <tr class="${rowClass}">
         <td class="num ${cls}">${label}</td>
         <td>CMDR ${thief}</td>
         <td><a href="/race/${encodeURIComponent(t.race_key)}">${esc(t.race_name)}</a></td>
         <td class="muted">${relativeTime(t.stolen_at)}</td>
-        <td>${reclaimed}</td>
+        <td>${statusBadge}</td>
       </tr>`;
   }).join('');
 
