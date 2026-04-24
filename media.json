@@ -3,7 +3,29 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_crater_madness.png",
       "target": "maps/dw3_syrenthis_verge_crater_madness.png"
-    }
+    },
+    "links": [
+      {
+        "label": "1 Phrua Flyuae ZE-A e7 C_1",
+        "type": "image",
+        "url": "/maps/dw3_syrenthis_verge_crater_madness_1_Phrua_Flyuae_ZE-A_e7_C_1.webp"
+      },
+      {
+        "label": "2 Phrua Flyuae ZE-Z c16 A_2",
+        "type": "image",
+        "url": "/maps/dw3_syrenthis_verge_crater_madness_2_Phrua_Flyuae_ZE-Z_c16_A_2.webp"
+      },
+      {
+        "label": "3 Phrua Flyuae ZE-Z c16 BC_2_a",
+        "type": "image",
+        "url": "/maps/dw3_syrenthis_verge_crater_madness_3_Phrua_Flyuae_ZE-Z_c16_BC_2_a.webp"
+      },
+      {
+        "label": "4 Phrua Flyuae ZE-Z c17 C_4",
+        "type": "image",
+        "url": "/maps/dw3_syrenthis_verge_crater_madness_4_Phrua_Flyuae_ZE-Z_c17_C_4.webp"
+      }
+    ]
   },
   "FOEHAMMERR-DW3 Mind the Gap": {
     "map": {

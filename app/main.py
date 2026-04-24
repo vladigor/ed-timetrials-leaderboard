@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import mimetypes
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
@@ -35,6 +36,10 @@ log = logging.getLogger(__name__)
 STATIC_DIR = Path(__file__).parent.parent / "static"
 TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
 STATIC_VER = datetime.now().strftime("%Y%m%d-%H%M%S")
+
+# Register WebP MIME type if not already known
+if not mimetypes.guess_type("test.webp")[0]:
+    mimetypes.add_type("image/webp", ".webp")
 
 
 @asynccontextmanager

@@ -366,6 +366,7 @@ a:hover { text-decoration: underline; }
 
 .race-media-links {
   margin-top: .75rem;
+  max-width: 450px;
 }
 
 @media (max-width: 768px) {
