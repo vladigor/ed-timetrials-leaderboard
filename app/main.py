@@ -150,6 +150,12 @@ async def graphics_settings_page(request: Request):
     )
 
 
+@app.get("/community", response_class=HTMLResponse)
+async def community_page(request: Request):
+    """Render the racing community page."""
+    return templates.TemplateResponse("community.html", {"request": request, "v": STATIC_VER})
+
+
 # ---------------------------------------------------------------------------
 # JSON API
 # ---------------------------------------------------------------------------

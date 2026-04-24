@@ -1192,6 +1192,16 @@ a:hover { text-decoration: underline; }
 .about-section p:last-child { margin-bottom: 0; }
 .about-section a { color: var(--accent); }
 .about-section a:hover { text-decoration: underline; }
+.about-section ul,
+.about-section ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+.about-section li {
+  margin-bottom: 0.5rem;
+}
 .about-issue-link {
   display: inline-block;
   margin-top: .5rem;
