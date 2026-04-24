@@ -1,4 +1,10 @@
 {
+  "SO MUCH FOR SUBTLETY- SV_CRATER_MADNESS": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_crater_madness.png",
+      "target": "maps/dw3_syrenthis_verge_crater_madness.png"
+    }
+  },
   "FOEHAMMERR-DW3 Mind the Gap": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_mind_the_gap.png",
