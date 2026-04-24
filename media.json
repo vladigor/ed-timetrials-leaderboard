@@ -1,4 +1,10 @@
 {
+  "GREAVES-DW3 Rendezvous Rally 13": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_rendezvous_rally_13.webp",
+      "target": "maps/dw3_rendezvous_rally_13.webp"
+    }
+  },
   "SO MUCH FOR SUBTLETY- SV_CRATER_MADNESS": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_crater_madness.png",
