@@ -10,7 +10,6 @@ Usage:
 """
 
 import argparse
-import asyncio
 import sqlite3
 from pathlib import Path
 
@@ -22,7 +21,7 @@ def format_time_ms(ms: int) -> str:
     return f"{minutes}:{seconds:06.3f}"
 
 
-async def main():
+def main():
     parser = argparse.ArgumentParser(description="Delete race result entries from the database")
     parser.add_argument("--commander", "-c", help="Commander name (case-insensitive)")
     parser.add_argument("--race", "-r", help="Race key (location)")
@@ -52,8 +51,32 @@ async def main():
         print(f"Error: Database not found at {db_path}")
         return 1
 
+    # Check permissions
+    if not db_path.parent.is_dir():
+        print(f"Error: Parent directory does not exist: {db_path.parent}")
+        return 1
+
+    if not db_path.parent.stat().st_mode & 0o200:  # Check write permission on directory
+        print(f"Error: No write permission on directory: {db_path.parent}")
+        print("Hint: SQLite needs write access to the directory for WAL/journal files")
+        return 1
+
+    if not db_path.stat().st_mode & 0o200:  # Check write permission on file
+        print(f"Error: No write permission on database file: {db_path}")
+        print(f"Run: chmod u+w {db_path}")
+        return 1
+
     # Connect to database
-    conn = sqlite3.connect(db_path)
+    try:
+        conn = sqlite3.connect(db_path)
+    except sqlite3.OperationalError as e:
+        print(f"Error: Cannot open database: {e}")
+        print(f"\nDatabase: {db_path}")
+        print(f"Permissions: {oct(db_path.stat().st_mode)[-3:]}")
+        print(f"Owner: {db_path.stat().st_uid}")
+        print(f"Current user: {Path.cwd()}")
+        return 1
+
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -106,8 +129,22 @@ async def main():
         ids = [row["id"] for row in results]
         placeholders = ",".join("?" * len(ids))
         delete_query = f"DELETE FROM results WHERE id IN ({placeholders})"
-        cursor.execute(delete_query, ids)
-        conn.commit()
+
+        try:
+            cursor.execute(delete_query, ids)
+            conn.commit()
+        except sqlite3.OperationalError as e:
+            print(f"\n✗ Error deleting results: {e}")
+            print("\nPossible causes:")
+            print("  - Database file is readonly")
+            print("  - Another process has the database locked")
+            print("  - Insufficient permissions")
+            print("\nTo fix:")
+            print(f"  1. Check file permissions: ls -la {db_path}")
+            print(f"  2. Check directory permissions: ls -la {db_path.parent}")
+            print("  3. Stop any services using the database (e.g., systemctl stop tt-leaderboard)")
+            print(f"  4. Ensure you have write access: chmod u+w {db_path}")
+            return 1
 
         print(f"\n✓ Deleted {len(results)} result(s).")
 
@@ -132,4 +169,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    exit(asyncio.run(main()))
+    exit(main())
