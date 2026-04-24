@@ -27,6 +27,34 @@
       }
     ]
   },
+  "ALEC TURNER-VEILS_EMBER_CRATER_MAKER": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_veils_ember_crater_maker.png",
+      "target": "maps/dw3_veils_ember_crater_maker.png"
+    },
+    "links": [
+      {
+        "label": "1 - Byua Auwsy NR-Q b46-6 2",
+        "type": "image",
+        "url": "/maps/dw3_veils_ember_crater_maker_01_-_Byua_Auwsy_NR-Q_b46-6_2.png"
+      },
+      {
+        "label": "2 - Byua Auwsy NR-Q b46-9 B 1",
+        "type": "image",
+        "url": "/maps/dw3_veils_ember_crater_maker_02_-_Byua_Auwsy_NR-Q_b46-9_B_1.png"
+      },
+      {
+        "label": "3 - Byua Auwsy LW-Q b46-0 A 4",
+        "type": "image",
+        "url": "/maps/dw3_veils_ember_crater_maker_03_-_Byua_Auwsy_LW-Q_b46-0_A_4.png"
+      },
+      {
+        "label": "4 - Byua Auwsy NR-Q b46-6 3",
+        "type": "image",
+        "url": "/maps/dw3_veils_ember_crater_maker_04_-_Byua_Auwsy_NR-Q_b46-6_3.png"
+      }
+    ]
+  },
   "FOEHAMMERR-DW3 Mind the Gap": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_mind_the_gap.png",
