@@ -118,6 +118,11 @@ async def activity_page(request: Request):
     return templates.TemplateResponse("activity.html", {"request": request, "v": STATIC_VER})
 
 
+@app.get("/races-list", response_class=HTMLResponse)
+async def races_table_page(request: Request):
+    return templates.TemplateResponse("races-table.html", {"request": request, "v": STATIC_VER})
+
+
 @app.get("/guide", response_class=HTMLResponse)
 async def guide_page(request: Request):
     """Render the racing beginners guide from markdown."""

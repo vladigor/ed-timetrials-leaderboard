@@ -404,6 +404,15 @@ a:hover { text-decoration: underline; }
   .race-media-links {
     margin-top: 0;
   }
+
+  /* Abbreviate Improvement column header on race page */
+  #results-layout .results-table th:nth-child(5) {
+    font-size: 0;
+  }
+  #results-layout .results-table th:nth-child(5)::before {
+    content: "Impvmt";
+    font-size: .82rem;
+  }
 }
 
 /* Hide mobile-only map link on desktop (thumbnail is shown instead) */
@@ -498,6 +507,7 @@ a:hover { text-decoration: underline; }
   border-radius: .3rem;
   padding: .15rem .55rem;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .info-badge-accent {
@@ -581,6 +591,15 @@ a:hover { text-decoration: underline; }
   font-size: .9rem;
 }
 
+#races-table-container .results-table {
+  table-layout: fixed;
+}
+
+#races-table-container {
+  margin-right: -150px;
+  overflow-x: auto;
+}
+
 .results-table thead tr {
   background: var(--surface2);
 }
@@ -600,6 +619,57 @@ a:hover { text-decoration: underline; }
   padding: .65rem 1rem;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
+}
+
+/* Column width constraints for races-table page */
+#races-table-container .results-table th:nth-child(1),
+#races-table-container .results-table td:nth-child(1) {
+  width: 250px;
+  max-width: 250px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+#races-table-container .results-table th:nth-child(2),
+#races-table-container .results-table td:nth-child(2) {
+  width: 80px;
+  max-width: 80px;
+}
+
+#races-table-container .results-table th:nth-child(3),
+#races-table-container .results-table td:nth-child(3) {
+  width: 250px;
+  max-width: 250px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+#races-table-container .results-table th:nth-child(4),
+#races-table-container .results-table td:nth-child(4),
+#races-table-container .results-table th:nth-child(5),
+#races-table-container .results-table td:nth-child(5),
+#races-table-container .results-table th:nth-child(6),
+#races-table-container .results-table td:nth-child(6),
+#races-table-container .results-table th:nth-child(7),
+#races-table-container .results-table td:nth-child(7) {
+  width: 120px;
+  max-width: 120px;
+}
+
+#races-table-container .results-table th:nth-child(8),
+#races-table-container .results-table td:nth-child(8) {
+  width: 150px;
+  max-width: 150px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+#races-table-container .results-table th:nth-child(9),
+#races-table-container .results-table td:nth-child(9) {
+  width: 120px;
+  max-width: 120px;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .results-table tbody tr:last-child td { border-bottom: none; }
@@ -923,6 +993,33 @@ a:hover { text-decoration: underline; }
 .btn-toggle.active       { background: rgba(232,160,32,.15); color: var(--accent); border-color: var(--accent-dim); }
 
 .cmdr-type-section { margin-bottom: 2.5rem; }
+
+/* Limit race name width on cmdr page tables */
+.cmdr-type-section .results-table th:nth-child(1),
+.cmdr-type-section .results-table td:nth-child(1) {
+  max-width: 250px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* Limit ship column width on cmdr page tables */
+.cmdr-type-section .results-table th:nth-child(5),
+.cmdr-type-section .results-table td:nth-child(5) {
+  max-width: 250px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* Limit stolen by and race columns on cmdr page thieves table */
+.thievses-section .results-table th:nth-child(2),
+.thievses-section .results-table td:nth-child(2),
+.thievses-section .results-table th:nth-child(3),
+.thievses-section .results-table td:nth-child(3) {
+  max-width: 250px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
 .cmdr-section-heading {
   font-size: 1.4rem;
   font-weight: 700;
@@ -1593,6 +1690,42 @@ a:hover { text-decoration: underline; }
   font-weight: 700;
   color: var(--accent);
   margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1470px) {
+  #races-table-container {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #races-table-container .results-table th:nth-child(9),
+  #races-table-container .results-table td:nth-child(9) {
+    display: none;
+  }
+}
+
+@media (max-width: 1250px) {
+  #races-table-container .results-table th:nth-child(7),
+  #races-table-container .results-table td:nth-child(7),
+  #races-table-container .results-table th:nth-child(8),
+  #races-table-container .results-table td:nth-child(8) {
+    display: none;
+  }
+}
+
+@media (max-width: 968px) {
+  #races-table-container .results-table th:nth-child(5),
+  #races-table-container .results-table td:nth-child(5) {
+    display: none;
+  }
+}
+
+/* Hide ship column on race page below 900px */
+@media (max-width: 900px) {
+  #results-layout .results-table th:nth-child(6),
+  #results-layout .results-table td:nth-child(6) {
+    display: none;
+  }
 }
 
 @media (max-width: 720px) {

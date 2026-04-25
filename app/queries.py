@@ -73,6 +73,7 @@ async def list_races(
                 l.sort,
                 l.coords,
                 l.creator,
+                l.created_at,
                 l.multi_mode,
                 l.multi_planet,
                 l.multi_system,
