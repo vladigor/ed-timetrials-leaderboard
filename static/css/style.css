@@ -58,6 +58,7 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;
   gap: 2.5rem;
+  flex-wrap: wrap;
 }
 
 .site-logo {
@@ -66,6 +67,10 @@ a:hover { text-decoration: underline; }
   letter-spacing: .05em;
   color: var(--accent);
   white-space: nowrap;
+}
+
+.site-logo .logo-short {
+  display: none;
 }
 
 .header-links {
@@ -1393,6 +1398,8 @@ a:hover { text-decoration: underline; }
 @media (max-width: 600px) and (orientation: portrait) {
   .portrait-banner { display: block; }
   .site-logo { font-size: .9rem; white-space: normal; }
+  .site-logo .logo-full { display: none; }
+  .site-logo .logo-short { display: inline; }
 
   /* Trophy case: shrink items so all 3 fit on one row */
   .trophy-item {
@@ -1406,6 +1413,11 @@ a:hover { text-decoration: underline; }
 
 /* ── Mobile styles ─────────────────────────────────────────────────── */
 @media (max-width: 720px) {
+  /* Header: use shorter logo and reduce gap */
+  .site-header .inner { gap: 1.25rem; }
+  .site-logo .logo-full { display: none; }
+  .site-logo .logo-short { display: inline; }
+
   /* Race page: hide chart on narrow portrait, show only table */
   #race-chart { display: none; }
   .results-layout { display: block; }
