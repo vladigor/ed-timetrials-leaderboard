@@ -9,12 +9,14 @@ let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
 let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // default on
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
 let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
+let filterSearchText = ''; // Not persisted - ephemeral search state
 let poller        = null;
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const grid             = document.getElementById('races-grid');
 const statusDot        = document.getElementById('status-dot');
 const statusText       = document.getElementById('status-text');
+const searchInput      = document.getElementById('filter-search');
 const checkActive      = document.getElementById('filter-active');
 const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
 const checkHideDW3     = document.getElementById('filter-hide-dw3');
@@ -30,9 +32,9 @@ const modalConfirm     = document.getElementById('modal-confirm');
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
   // Sanity check — surface missing elements immediately
-  const missing = [grid, statusDot, statusText, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, cmdrRacesGroup,
+  const missing = [grid, statusDot, statusText, searchInput, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, cmdrRacesGroup,
     countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm]
-    .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-active',
+    .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-search','filter-active',
       'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-cmdr-races-group','race-count','profile-label',
       'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm'][i])
     .filter(Boolean);
@@ -70,6 +72,11 @@ async function init() {
   checkHideHorizons.addEventListener('change', () => {
     filterHideHorizons = checkHideHorizons.checked;
     localStorage.setItem('tt_filter_hide_horizons', filterHideHorizons ? '1' : '0');
+    renderGrid(); // Client-side only, no need to reload from API
+  });
+
+  searchInput.addEventListener('input', () => {
+    filterSearchText = searchInput.value;
     renderGrid(); // Client-side only, no need to reload from API
   });
 
@@ -168,6 +175,28 @@ function renderGrid() {
   // Client-side filter: hide Horizons races
   if (filterHideHorizons) {
     races = races.filter(r => r.version !== 'HORIZONS');
+  }
+
+  // Client-side filter: search text
+  if (filterSearchText.trim()) {
+    const searchLower = filterSearchText.toLowerCase();
+    races = races.filter(r => {
+      // Search in name
+      if (r.name && r.name.toLowerCase().includes(searchLower)) return true;
+      // Search in system
+      if (r.system && r.system.toLowerCase().includes(searchLower)) return true;
+      // Search in station
+      if (r.station && r.station.toLowerCase().includes(searchLower)) return true;
+      // Search in type (SRV, SHIP, FIGHTER, ONFOOT)
+      if (r.type && r.type.toLowerCase().includes(searchLower)) return true;
+      // Search in version (HORIZONS, ODYSSEY)
+      if (r.version && r.version.toLowerCase().includes(searchLower)) return true;
+      // Search for badge keywords
+      if (r.multi_mode && 'multi-mode'.includes(searchLower)) return true;
+      if (r.multi_planet && 'multi-planet'.includes(searchLower)) return true;
+      if (r.multi_system && 'multi-system'.includes(searchLower)) return true;
+      return false;
+    });
   }
 
   // Client-side filter: active in last 7 days
