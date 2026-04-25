@@ -8,6 +8,7 @@ let filterActive  = localStorage.getItem('tt_filter_active') === '1';
 let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
 let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // default on
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
+let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
 let poller        = null;
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
@@ -17,6 +18,7 @@ const statusText       = document.getElementById('status-text');
 const checkActive      = document.getElementById('filter-active');
 const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
 const checkHideDW3     = document.getElementById('filter-hide-dw3');
+const checkHideHorizons = document.getElementById('filter-hide-horizons');
 const cmdrRacesGroup   = document.getElementById('filter-cmdr-races-group');
 const countLabel       = document.getElementById('race-count');
 const profileLabel     = document.getElementById('profile-label');
@@ -28,10 +30,10 @@ const modalConfirm     = document.getElementById('modal-confirm');
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
   // Sanity check — surface missing elements immediately
-  const missing = [grid, statusDot, statusText, checkActive, checkCmdrRaces, checkHideDW3, cmdrRacesGroup,
+  const missing = [grid, statusDot, statusText, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, cmdrRacesGroup,
     countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm]
     .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-active',
-      'filter-cmdr-races','filter-hide-dw3','filter-cmdr-races-group','race-count','profile-label',
+      'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-cmdr-races-group','race-count','profile-label',
       'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm'][i])
     .filter(Boolean);
   if (missing.length) {
@@ -42,6 +44,7 @@ async function init() {
   checkActive.checked    = filterActive;
   checkCmdrRaces.checked = filterCmdrRaces;
   checkHideDW3.checked   = filterHideDW3;
+  checkHideHorizons.checked = filterHideHorizons;
   updateProfileLabel();
 
   await Promise.all([loadRaces(), loadCommanders(), loadNewRaces()]);
@@ -61,6 +64,12 @@ async function init() {
   checkHideDW3.addEventListener('change', () => {
     filterHideDW3 = checkHideDW3.checked;
     localStorage.setItem('tt_filter_hide_dw3', filterHideDW3 ? '1' : '0');
+    renderGrid(); // Client-side only, no need to reload from API
+  });
+
+  checkHideHorizons.addEventListener('change', () => {
+    filterHideHorizons = checkHideHorizons.checked;
+    localStorage.setItem('tt_filter_hide_horizons', filterHideHorizons ? '1' : '0');
     renderGrid(); // Client-side only, no need to reload from API
   });
 
@@ -154,6 +163,11 @@ function renderGrid() {
     races = races.filter(r => {
       return !r.name.startsWith('DW3') && !r.name.startsWith('The DW3');
     });
+  }
+
+  // Client-side filter: hide Horizons races
+  if (filterHideHorizons) {
+    races = races.filter(r => r.version !== 'HORIZONS');
   }
 
   // Client-side filter: active in last 7 days
