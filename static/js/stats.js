@@ -292,7 +292,7 @@ function renderRaceTable(items, countLabel) {
   items.forEach(item => {
     const badges = `${typeBadge(item.type)} ${versionBadge(item.version)}`;
     html += '<tr>';
-    html += `<td>${renderRaceLink(item.key, item.name)} <span style="margin-left: 0.5em">${badges}</span></td>`;
+    html += `<td>${renderRaceLink(item.key, item.name)} ${badges}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
   });
@@ -335,7 +335,7 @@ function renderRecentRacesTable(items) {
   items.forEach(item => {
     const badges = `${typeBadge(item.type)} ${versionBadge(item.version)}`;
     html += '<tr>';
-    html += `<td>${renderRaceLink(item.key, item.name)} <span style="margin-left: 0.5em">${badges}</span></td>`;
+    html += `<td>${renderRaceLink(item.key, item.name)} ${badges}</td>`;
     html += `<td class="stats-time">${relativeTime(item.last_active)}</td>`;
     html += '</tr>';
   });
