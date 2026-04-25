@@ -162,6 +162,7 @@ a:hover { text-decoration: underline; }
 @media (min-width: 769px) {
   .filter-group {
     flex-direction: row;
+    align-items: center;
     gap: 1.3rem;
   }
 }
@@ -731,6 +732,7 @@ a:hover { text-decoration: underline; }
   font-size: .75rem;
   text-transform: uppercase;
   letter-spacing: .06em;
+  align-self: center;
   color: var(--text-muted);
 }
 .profile-display-row {
