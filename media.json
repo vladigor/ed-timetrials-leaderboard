@@ -1,4 +1,17 @@
 {
+  "FOEHAMMERR-DW3SpaceshipFountain": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_spaceship_fountain.png",
+      "target": "maps/dw3_syrenthis_verge_spaceship_fountain.png"
+    },
+    "links": [
+      {
+        "label": "Gate positions",
+        "type": "image",
+        "url": "/maps/dw3_syrenthis_verge_spaceship_fountain_gates.png"
+      }
+    ]
+  },
   "GREAVES-DW3 Rendezvous Rally 13": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_rendezvous_rally_13.webp",
