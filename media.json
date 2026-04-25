@@ -1,4 +1,82 @@
 {
+  "VR247-Kawasaki Town Uphill Battle": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Kawasaki_Town_Uphill_Battle.jpg",
+      "target": "maps/Kawasaki_Town_Uphill_Battle.jpg"
+    }
+  },
+  "VR247-Kawasaki Town UpDown": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Kawasaki_Town_UpDown.jpg",
+      "target": "maps/Kawasaki_Town_UpDown.jpg"
+    }
+  },
+  "VR247-Kawasaki Town Showdown Crown": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Kawasaki_Town_Showdown.jpg",
+      "target": "maps/Kawasaki_Town_Showdown.jpg"
+    }
+  },
+  "VR247-Kawasaki Town Showdown": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Kawasaki_Town_Showdown.jpg",
+      "target": "maps/Kawasaki_Town_Showdown.jpg"
+    }
+  },
+  "VR247-Kawasaki Town Hoedown": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Kawasaki_Town_Hoedown.jpg",
+      "target": "maps/Kawasaki_Town_Hoedown.jpg"
+    }
+  },
+  "VR247-Kawasaki Town Hoedown Crown": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Kawasaki_Town_Hoedown.jpg",
+      "target": "maps/Kawasaki_Town_Hoedown.jpg"
+    }
+  },
+  "VR247-Kawasaki Town Downhill Dash": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Kawasaki_Town_Downhill_Dash.jpg",
+      "target": "maps/Kawasaki_Town_Downhill_Dash.jpg"
+    }
+  },
+  "VR247-Kawasaki Town Down and Back": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Kawasaki_Town_Down_and_Back.jpg",
+      "target": "maps/Kawasaki_Town_Down_and_Back.jpg"
+    }
+  },
+  "VR247-DW3 Rendezvous Round_a_Butte": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DW3_Rendezvous_Round-a-Butte.jpg",
+      "target": "maps/DW3_Rendezvous_Round-a-Butte.jpg"
+    }
+  },
+  "VR247-DW3 Rendezvous Butte and Bastion": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DW3_Rendezvous_Butte_and_Bastion.jpg",
+      "target": "maps/DW3_Rendezvous_Butte_and_Bastion.jpg"
+    }
+  },
+  "VR247-DW3 Blo Chroa Base Loop": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DW3_Blo_Chroa_Base_Loop2.jpg",
+      "target": "maps/DW3_Blo_Chroa_Base_Loop2.jpg"
+    }
+  },
+  "VR247-DW3 Beagle Point Ridge Run": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DW3_Beagle_Point_Ridge_Run.jpg",
+      "target": "maps/DW3_Beagle_Point_Ridge_Run.jpg"
+    }
+  },
+  "VR247-DW3 Beagle Point Boogie": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DW3_Beagle_Point_Boogie.jpg",
+      "target": "maps/DW3_Beagle_Point_Boogie.jpg"
+    }
+  },
   "FOEHAMMERR-DW3SpaceshipFountain": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_syrenthis_verge_spaceship_fountain.png",
