@@ -1,5 +1,6 @@
 import { formatTime, relativeTime, esc, ordinal } from './utils.js';
 import { ChangePoller } from './poller.js';
+import { updateProfileDisplay } from './profile.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
 let allRaces      = [];
@@ -28,15 +29,16 @@ const btnChangeProfile = document.getElementById('btn-change-profile');
 const profileOverlay   = document.getElementById('profile-overlay');
 const modalCmdrSelect  = document.getElementById('modal-cmdr-select');
 const modalConfirm     = document.getElementById('modal-confirm');
+const modalClose       = document.getElementById('modal-close');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
   // Sanity check — surface missing elements immediately
   const missing = [grid, statusDot, statusText, searchInput, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, cmdrRacesGroup,
-    countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm]
+    countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm, modalClose]
     .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-search','filter-active',
       'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-cmdr-races-group','race-count','profile-label',
-      'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm'][i])
+      'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm','modal-close'][i])
     .filter(Boolean);
   if (missing.length) {
     console.error('Missing DOM elements:', missing);
@@ -47,7 +49,8 @@ async function init() {
   checkCmdrRaces.checked = filterCmdrRaces;
   checkHideDW3.checked   = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
-  updateProfileLabel();
+  updateProfileDisplay();
+  updateCmdrRacesGroup();
 
   await Promise.all([loadRaces(), loadCommanders(), loadNewRaces()]);
 
@@ -84,7 +87,8 @@ async function init() {
     filterCmdr = modalCmdrSelect.value;
     localStorage.setItem('tt_filter_cmdr', filterCmdr);
     localStorage.setItem('tt_profile_set', '1');
-    updateProfileLabel();
+    updateProfileDisplay();
+    updateCmdrRacesGroup();
     hideProfileModal();
     loadRaces();
   });
@@ -93,6 +97,7 @@ async function init() {
     if (!filterCmdr) { e.preventDefault(); showProfileModal(); }
   });
   btnChangeProfile.addEventListener('click', showProfileModal);
+  modalClose.addEventListener('click', hideProfileModal);
 
   if (localStorage.getItem('tt_profile_set') !== '1') {
     showProfileModal();
@@ -276,18 +281,11 @@ function raceCard(r) {
 }
 
 // ── Profile modal ───────────────────────────────────────────────────────────
-function updateProfileLabel() {
+function updateCmdrRacesGroup() {
   if (filterCmdr) {
-    const profileUrl = `/cmdr/${encodeURIComponent(filterCmdr)}`;
-    profileLabel.textContent = `CMDR ${filterCmdr}`;
-    profileLabel.href = profileUrl;
-    btnChangeProfile.style.display = '';
     cmdrRacesGroup.style.display = '';
     checkCmdrRaces.checked = filterCmdrRaces;
   } else {
-    profileLabel.textContent = 'Select Profile';
-    profileLabel.href = '#';
-    btnChangeProfile.style.display = 'none';
     cmdrRacesGroup.style.display = 'none';
   }
 }

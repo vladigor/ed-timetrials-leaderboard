@@ -30,6 +30,10 @@
           <span class="sep">&middot;</span>
           <a href="/about">About</a>
         </div>
+        <div class="header-profile">
+          <a id="profile-label" class="btn-primary" href="#">Select Profile</a>
+          <button id="btn-change-profile" class="btn-chip" style="display:none">Change</button>
+        </div>
       </div>
     </div>
   </header>
@@ -54,6 +58,10 @@
     </div>
   </footer>
 
+  <script type="module">
+    import { initProfileSelector } from '/static/js/profile.js?v={{ v }}';
+    initProfileSelector();
+  </script>
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>
