@@ -887,13 +887,15 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                 SELECT
                     l.key,
                     l.name,
+                    l.type,
+                    l.version,
                     COUNT(DISTINCT r.name) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) DESC) AS rank
                 FROM locations l
                 JOIN results r ON r.location = l.key
                 GROUP BY l.key
             )
-            SELECT key, name, count
+            SELECT key, name, type, version, count
             FROM ranked
             WHERE rank <= ?
             ORDER BY count DESC, name ASC
@@ -909,13 +911,15 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                 SELECT
                     l.key,
                     l.name,
+                    l.type,
+                    l.version,
                     COUNT(DISTINCT r.name) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) ASC) AS rank
                 FROM locations l
                 JOIN results r ON r.location = l.key
                 GROUP BY l.key
             )
-            SELECT key, name, count
+            SELECT key, name, type, version, count
             FROM ranked
             WHERE rank <= ?
               AND (? > 6 OR count <= 4)
@@ -932,13 +936,15 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                 SELECT
                     l.key,
                     l.name,
+                    l.type,
+                    l.version,
                     MAX(r.updated) AS last_active,
                     DENSE_RANK() OVER (ORDER BY MAX(r.updated) ASC) AS rank
                 FROM locations l
                 JOIN results r ON r.location = l.key
                 GROUP BY l.key
             )
-            SELECT key, name, last_active
+            SELECT key, name, type, version, last_active
             FROM ranked
             WHERE rank <= ?
             ORDER BY last_active ASC, name ASC

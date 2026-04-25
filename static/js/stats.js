@@ -211,6 +211,21 @@ function renderRaceLink(key, name) {
   return `<a href="/race/${encodeURIComponent(key)}">${esc(name)}</a>`;
 }
 
+function typeBadge(type) {
+  if (!type) return '';
+  const cls = { SHIP: 'badge-ship', SRV: 'badge-srv', FIGHTER: 'badge-fighter', ONFOOT: 'badge-onfoot' }[type] ?? 'badge-onfoot';
+  return `<span class="badge ${cls}">${esc(type)}</span>`;
+}
+
+function versionBadge(version) {
+  if (!version || version === 'ODYSSEY') return '';
+  // version can be stored as 'HRZ' or 'HORIZONS' in the database
+  if (version === 'HRZ' || version === 'HORIZONS') {
+    return `<span class="info-badge info-badge-horizons">Horizons</span>`;
+  }
+  return '';
+}
+
 function renderTopNTable(items, nameLabel, countLabel) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
 
@@ -275,8 +290,9 @@ function renderRaceTable(items, countLabel) {
   html += '<tbody>';
 
   items.forEach(item => {
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)}`;
     html += '<tr>';
-    html += `<td>${renderRaceLink(item.key, item.name)}</td>`;
+    html += `<td>${renderRaceLink(item.key, item.name)} <span style="margin-left: 0.5em">${badges}</span></td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
   });
@@ -317,8 +333,9 @@ function renderRecentRacesTable(items) {
   html += '<tbody>';
 
   items.forEach(item => {
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)}`;
     html += '<tr>';
-    html += `<td>${renderRaceLink(item.key, item.name)}</td>`;
+    html += `<td>${renderRaceLink(item.key, item.name)} <span style="margin-left: 0.5em">${badges}</span></td>`;
     html += `<td class="stats-time">${relativeTime(item.last_active)}</td>`;
     html += '</tr>';
   });
