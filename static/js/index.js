@@ -29,16 +29,16 @@ const btnChangeProfile = document.getElementById('btn-change-profile');
 const profileOverlay   = document.getElementById('profile-overlay');
 const modalCmdrSelect  = document.getElementById('modal-cmdr-select');
 const modalConfirm     = document.getElementById('modal-confirm');
-const modalClose       = document.getElementById('modal-close');
+const modalCloseX      = document.getElementById('modal-close-x');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
   // Sanity check — surface missing elements immediately
   const missing = [grid, statusDot, statusText, searchInput, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, cmdrRacesGroup,
-    countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm, modalClose]
+    countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm, modalCloseX]
     .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-search','filter-active',
       'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-cmdr-races-group','race-count','profile-label',
-      'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm','modal-close'][i])
+      'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm','modal-close-x'][i])
     .filter(Boolean);
   if (missing.length) {
     console.error('Missing DOM elements:', missing);
@@ -97,7 +97,7 @@ async function init() {
     if (!filterCmdr) { e.preventDefault(); showProfileModal(); }
   });
   btnChangeProfile.addEventListener('click', showProfileModal);
-  modalClose.addEventListener('click', hideProfileModal);
+  modalCloseX.addEventListener('click', hideProfileModal);
 
   if (localStorage.getItem('tt_profile_set') !== '1') {
     showProfileModal();

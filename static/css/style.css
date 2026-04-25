@@ -795,6 +795,28 @@ a:hover { text-decoration: underline; }
   padding: 2rem;
   max-width: 500px;
   width: 90%;
+  position: relative;
+}
+.modal-close-x {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .15s;
+}
+.modal-close-x:hover {
+  color: var(--text);
 }
 .profile-modal-title {
   font-size: 1.2rem;

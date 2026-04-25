@@ -10,6 +10,9 @@
 
     <section class="filter-bar" aria-label="Filters">
 
+      <div class="filter-group">
+        <input type="text" id="filter-search" placeholder="Filter by name, system, type..." aria-label="Search races" style="min-width:240px">
+      </div>
       <div class="filter-group" style="justify-content:flex-end">
         <label class="filter-toggle">
           <input type="checkbox" id="filter-hide-dw3">
@@ -27,10 +30,6 @@
           <input type="checkbox" id="filter-active">
           Only races with activity in the last 7 days
         </label>
-      </div>
-      <div class="filter-group">
-        <label for="filter-search" class="filter-group-label">Search</label>
-        <input type="text" id="filter-search" placeholder="Filter by name, system, type..." aria-label="Search races" style="min-width:240px">
       </div>
 
     </section>
@@ -50,6 +49,7 @@
   <!-- Commander profile selection modal -->
   <div class="profile-overlay" id="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title" style="display:none">
     <div class="profile-modal">
+      <button id="modal-close-x" class="modal-close-x" aria-label="Close" title="Close">&times;</button>
       <h2 id="profile-title" class="profile-modal-title">Select Commander Profile</h2>
       <p class="profile-modal-intro">
         This site displays leaderboard results from Elite Dangerous time trials, recorded via
@@ -64,7 +64,6 @@
       </div>
       <div class="profile-modal-actions">
         <button id="modal-confirm" class="btn-primary">Confirm</button>
-        <button id="modal-close" class="btn-secondary">Close</button>
       </div>
     </div>
   </div>
