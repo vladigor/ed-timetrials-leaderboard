@@ -184,18 +184,17 @@ function renderRace() {
   }
 
   if (race.constraints && race.constraints.length) {
-    const tags = race.constraints.map(c => {
-      const val = c.key === 'MaxSRVPips' ? c.value / 2 : c.value;
-      return `<span class="constraint-tag">${esc(camelToWords(c.key))}: ${esc(String(val))}</span>`;
-    }
-    ).join('');
-    constrEl.innerHTML = `<span class="constraints-label">Race constraints:</span> ${tags}`;
+    const descriptions = formatConstraintsUserFriendly(race.constraints);
+    constrEl.innerHTML = `<div class="constraints-label">Race constraints:</div><ul class="constraints-list">${descriptions}</ul>`;
   } else {
     constrEl.innerHTML = '';
   }
 
   // Info badges: checkpoints, multi-system, multi-planet, multi-vessel
   const infoBadges = [];
+  if (race.version === 'HORIZONS') {
+    infoBadges.push('<span class="info-badge info-badge-horizons">Horizons</span>');
+  }
   if (race.num_checkpoints > 0) {
     infoBadges.push(`<span class="info-badge">🏁 ${race.num_checkpoints} checkpoint${race.num_checkpoints !== 1 ? 's' : ''}</span>`);
   }
@@ -437,6 +436,97 @@ function renderRivalry(results, rivalry) {
 
   rivalryEl.innerHTML = `<div class="rivalry-panel">${rows}</div>`;
   rivalryEl.style.display = '';
+}
+
+// ── Constraint formatting ──────────────────────────────────────────────────
+/**
+ * Converts raw constraint objects into human-friendly descriptions.
+ * Combines related constraints (e.g., pip limits + penalties) into single items.
+ * @param {Array<{key: string, value: number}>} constraints
+ * @returns {string} HTML string with <li> elements
+ */
+function formatConstraintsUserFriendly(constraints) {
+  if (!constraints || !constraints.length) return '';
+
+  // Build a map for easy lookup
+  const cmap = {};
+  constraints.forEach(c => { cmap[c.key] = c.value; });
+
+  const items = [];
+  const processed = new Set(); // Track which constraints we've already handled
+
+  // 1. Handle pip-related constraints as a combined item
+  if ('MaxSRVPips' in cmap) {
+    const maxPips = cmap.MaxSRVPips / 2; // stored doubled in DB
+    const faultLimit = cmap.SRVPipFaultLimit;
+    const penalty = cmap.SRVPipPenalty;
+    const disqualify = cmap.SRVPipDisqualify;
+
+    let desc = `Maximum SRV engine pips allowed = ${maxPips.toFixed(1)}`;
+
+    // Build penalty/disqualification details
+    const details = [];
+
+    if (penalty !== undefined && faultLimit !== undefined) {
+      const penaltyWord = penalty !== 1 ? 'seconds' : 'second';
+      details.push(`you will incur a ${penalty} ${penaltyWord} penalty every ${faultLimit} pip fault${faultLimit !== 1 ? 's' : ''}`);
+    } else if (penalty !== undefined) {
+      const penaltyWord = penalty !== 1 ? 'seconds' : 'second';
+      details.push(`${penalty} ${penaltyWord} penalty per pip violation`);
+    } else if (faultLimit !== undefined) {
+      details.push(`you are allowed ${faultLimit} pip fault${faultLimit !== 1 ? 's' : ''}`);
+    }
+
+    if (disqualify !== undefined) {
+      details.push(`you will be disqualified after ${disqualify} pip violation${disqualify !== 1 ? 's' : ''}`);
+    }
+
+    if (details.length > 0) {
+      desc += ' : ' + details.join(' and ');
+    }
+
+    items.push(`<li>${esc(desc)}</li>`);
+    processed.add('MaxSRVPips');
+    processed.add('SRVPipFaultLimit');
+    processed.add('SRVPipPenalty');
+    processed.add('SRVPipDisqualify');
+  }
+
+  // 2. NoShipDocking constraint
+  if ('NoShipDocking' in cmap && !processed.has('NoShipDocking')) {
+    const value = cmap.NoShipDocking;
+    const desc = value === 1
+      ? 'You may not return to your ship to dock'
+      : `${value} ${value !== 1 ? 'seconds' : 'second'} penalty for returning to ship to dock`;
+    items.push(`<li>${esc(desc)}</li>`);
+    processed.add('NoShipDocking');
+  }
+
+  // 3. NoHullRepair constraint
+  if ('NoHullRepair' in cmap && !processed.has('NoHullRepair')) {
+    const value = cmap.NoHullRepair;
+    const desc = value === 1
+      ? 'You may not repair hull damage'
+      : `${value} ${value !== 1 ? 'seconds' : 'second'} penalty for repairing hull damage`;
+    items.push(`<li>${esc(desc)}</li>`);
+    processed.add('NoHullRepair');
+  }
+
+  // 4. PauseResume constraint
+  if ('PauseResume' in cmap && !processed.has('PauseResume')) {
+    items.push(`<li>You may pause and resume this race</li>`);
+    processed.add('PauseResume');
+  }
+
+  // 5. Handle any remaining unprocessed constraints (fallback for unknown types)
+  constraints.forEach(c => {
+    if (!processed.has(c.key)) {
+      const val = c.key === 'MaxSRVPips' ? c.value / 2 : c.value;
+      items.push(`<li>${esc(camelToWords(c.key))}: ${esc(String(val))}</li>`);
+    }
+  });
+
+  return items.join('');
 }
 
 // ── ECharts option builder ─────────────────────────────────────────────────

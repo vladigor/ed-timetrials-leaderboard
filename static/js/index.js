@@ -206,6 +206,7 @@ function raceCard(r) {
     : `${entries} finisher${entries !== 1 ? 's' : ''}`;
 
   const infoBadges = [
+    r.version === 'HORIZONS' ? `<span class="info-badge info-badge-horizons">Horizons</span>` : '',
     r.multi_mode ? `<span class="info-badge info-badge-accent">Multi-mode</span>` : '',
     r.multi_planet ? `<span class="info-badge info-badge-accent">Multi-planet</span>` : '',
     r.multi_system ? `<span class="info-badge info-badge-accent">Multi-system</span>` : '',

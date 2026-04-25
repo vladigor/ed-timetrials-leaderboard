@@ -442,10 +442,16 @@ a:hover { text-decoration: underline; }
 }
 
 .constraints-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .4rem;
-  margin-top: .5rem;
+  list-style: disc;
+  margin: 0.5rem 0 0 1.5rem;
+  padding: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.constraints-list li {
+  margin-bottom: 0.25rem;
 }
 
 .constraint-tag {
@@ -458,9 +464,10 @@ a:hover { text-decoration: underline; }
 }
 
 .constraints-label {
-  font-size: .75rem;
-  color: var(--text-muted);
-  margin-right: .25rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
 }
 
 .race-info-row {
@@ -482,6 +489,12 @@ a:hover { text-decoration: underline; }
 .info-badge-accent {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.info-badge-horizons {
+  border-color: var(--bar-horizons);
+  color: #c47eff;
+  background: rgba(123, 63, 160, .15);
 }
 
 .race-description {
