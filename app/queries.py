@@ -515,7 +515,15 @@ async def get_commander_stats(commander: str) -> dict | None:
                       )
                     ORDER BY ps_latest.snapped_at DESC
                     LIMIT 1
-                ) AS thief_current_position
+                ) AS thief_current_position,
+                (
+                    SELECT ps_cmdr.position
+                    FROM position_snapshots ps_cmdr
+                    WHERE ps_cmdr.location = cs.location
+                      AND ps_cmdr.name = ?
+                    ORDER BY ps_cmdr.snapped_at DESC
+                    LIMIT 1
+                ) AS cmdr_current_position
             FROM cmdr_snaps cs
             JOIN locations l ON l.key = cs.location
             WHERE cs.prev_pos IS NOT NULL
@@ -524,11 +532,11 @@ async def get_commander_stats(commander: str) -> dict | None:
             ORDER BY cs.snapped_at DESC
             LIMIT 10
             """,
-            (commander, commander),
+            (commander, commander, commander),
         ) as cur:
             theft_rows = await cur.fetchall()
 
-        # Exclude rows where we couldn't identify the thief and compute redeemed status
+        # Exclude rows where we couldn't identify the thief and compute status flags
         podium_thefts = []
         for r in theft_rows:
             if not r["thief_name"]:
@@ -536,19 +544,25 @@ async def get_commander_stats(commander: str) -> dict | None:
 
             row_dict = _row_to_dict(r)
 
-            # Compute redeemed: victim hasn't reclaimed AND thief no longer holds that position
+            # Extract relevant positions
             reclaimed = row_dict["reclaimed"]
             thief_current = row_dict.get("thief_current_position")
+            cmdr_current = row_dict.get("cmdr_current_position")
             stolen_pos = row_dict["stolen_position"]
 
-            # Redeemed if: not reclaimed AND (thief has no current position OR current position is worse than stolen)
-            row_dict["redeemed"] = not reclaimed and (
-                thief_current is None or thief_current > stolen_pos
-            )
+            # Compute thief_lost: thief no longer holds the stolen position (or better)
+            thief_lost = not reclaimed and thief_current is not None and thief_current > stolen_pos
+
+            # Compute redeemed: thief lost the trophy AND commander is now ahead of the thief
+            redeemed = thief_lost and cmdr_current is not None and cmdr_current < thief_current
+
+            row_dict["thief_lost"] = thief_lost
+            row_dict["redeemed"] = redeemed
 
             # Clean up internal fields
             row_dict.pop("thief_name_inner", None)
             row_dict.pop("thief_current_position", None)
+            row_dict.pop("cmdr_current_position", None)
 
             podium_thefts.append(row_dict)
 

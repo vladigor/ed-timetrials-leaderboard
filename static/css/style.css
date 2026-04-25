@@ -1051,6 +1051,17 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 
+.thief-lost-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: linear-gradient(135deg, #6a5a3a 0%, #7a6a4a 100%);
+  color: #e0d0b0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
 .reclaimed-theft {
   opacity: 0.6;
 }
@@ -1065,6 +1076,15 @@ a:hover { text-decoration: underline; }
 }
 
 .redeemed-theft:hover {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.thief-lost-theft {
+  opacity: 0.75;
+}
+
+.thief-lost-theft:hover {
   opacity: 1;
   transition: opacity 0.2s ease;
 }

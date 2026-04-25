@@ -500,8 +500,8 @@ function renderThievses(thefts) {
   const posLabel = { 1: 'Gold', 2: 'Silver', 3: 'Bronze' };
   const posCls   = { 1: 'theft-pos-1', 2: 'theft-pos-2', 3: 'theft-pos-3' };
 
-  // Count only non-reclaimed thefts for the character quotes
-  const activeThefts = thefts.filter(t => !t.reclaimed);
+  // Count only truly active thefts (not reclaimed, redeemed, or lost by thief) for the character quotes
+  const activeThefts = thefts.filter(t => !t.reclaimed && !t.redeemed && !t.thief_lost);
 
   // Find the most prolific thief (among active thefts only)
   const counts = {};
@@ -536,10 +536,12 @@ function renderThievses(thefts) {
     if (t.reclaimed) {
       statusBadge = '<span class="reclaimed-badge" title="Trophy reclaimed!">🏆 Reclaimed</span>';
     } else if (t.redeemed) {
-      statusBadge = '<span class="redeemed-badge" title="Thief lost the trophy too!">✨ Redeemed</span>';
+      statusBadge = '<span class="redeemed-badge" title="Thief lost the trophy and you\'re ahead of them now!">✨ Redeemed</span>';
+    } else if (t.thief_lost) {
+      statusBadge = '<span class="thief-lost-badge" title="Thief no longer holds this trophy">📉 Dropped</span>';
     }
 
-    const rowClass = t.reclaimed ? 'reclaimed-theft' : (t.redeemed ? 'redeemed-theft' : '');
+    const rowClass = t.reclaimed ? 'reclaimed-theft' : (t.redeemed ? 'redeemed-theft' : (t.thief_lost ? 'thief-lost-theft' : ''));
 
     return `
       <tr class="${rowClass}">
