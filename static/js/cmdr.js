@@ -65,7 +65,11 @@ async function init() {
 
   // NENDY: restore last-used system from localStorage
   const savedSystem = localStorage.getItem('tt_nendy_system');
-  if (savedSystem) nendyInput.value = savedSystem;
+  if (savedSystem) {
+    nendyInput.value = savedSystem;
+    // Auto-expand Opportunities section by running the search
+    nearbyFind();
+  }
   nendyFindBtn.addEventListener('click', nearbyFind);
   nendyInput.addEventListener('keydown', e => { if (e.key === 'Enter') nearbyFind(); });
 
