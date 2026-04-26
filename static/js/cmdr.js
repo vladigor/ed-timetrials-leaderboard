@@ -32,6 +32,7 @@ const sortRecBtn    = document.getElementById('sort-recent');
 const filterCheck   = document.getElementById('filter-recent');
 const nendyInput    = document.getElementById('nendy-system');
 const nendyFindBtn  = document.getElementById('nendy-find');
+const nearbySection = document.getElementById('nearby-section');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
@@ -63,13 +64,18 @@ async function init() {
     if (th) setSort(th.dataset.sort);
   });
 
-  // NENDY: restore last-used system from localStorage
-  const savedSystem = localStorage.getItem('tt_nendy_system');
-  if (savedSystem) {
-    nendyInput.value = savedSystem;
-    // Auto-expand Opportunities section by running the search
-    nearbyFind();
+  // Hide Opportunities section when viewing someone else's profile
+  if (!isSelf) {
+    nearbySection.style.display = 'none';
+  } else {
+    // NENDY: restore last-used system from localStorage and auto-expand
+    const savedSystem = localStorage.getItem('tt_nendy_system');
+    if (savedSystem) {
+      nendyInput.value = savedSystem;
+      nearbyFind();
+    }
   }
+
   nendyFindBtn.addEventListener('click', nearbyFind);
   nendyInput.addEventListener('keydown', e => { if (e.key === 'Enter') nearbyFind(); });
 

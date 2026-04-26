@@ -377,7 +377,7 @@ function renderRow(r, _idx) {
   const entries = Number(r.entry_count) || 0;
   const positionText = (filterCmdr && r.cmdr_position != null)
     ? `${ordinal(r.cmdr_position)} of ${entries}`
-    : entries.toString();
+    : `${entries.toString()} finishers`;
 
   const activity = r.last_activity ? relativeTime(r.last_activity) : '—';
 
