@@ -1112,6 +1112,7 @@ a:hover { text-decoration: underline; }
 /* ── Thievses ──────────────────────────────────────────────────────────── */
 .thievses-section {
   margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
 }
 .thievses-section .cmdr-section-heading { color: var(--bad); }
 .thievses-gollum {
