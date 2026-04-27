@@ -702,7 +702,12 @@ a:hover { text-decoration: underline; }
 /* Selected commander highlight */
 .results-table tbody tr.row-cmdr td { background: rgba(232, 160, 32, .12); }
 .results-table tbody tr.row-cmdr:hover td { background: rgba(232, 160, 32, .2); }
+.stats-table tbody tr.row-cmdr td { background: rgba(232, 160, 32, .12); }
+.stats-table tbody tr.row-cmdr:hover td { background: rgba(232, 160, 32, .2); }
 .results-table tbody tr.row-cmdr .cmdr-name {
+  color: var(--accent);
+}
+.stats-table tbody tr.row-cmdr a {
   color: var(--accent);
 }
 

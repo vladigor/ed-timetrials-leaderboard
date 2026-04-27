@@ -26,6 +26,7 @@ function formatLongDuration(ms) {
 
 // ── State ──────────────────────────────────────────────────────────────────
 let stats = null;
+const selectedCmdr = localStorage.getItem('tt_filter_cmdr') || '';
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const container = document.getElementById('stats-container');
@@ -247,7 +248,8 @@ function renderTopNTable(items, nameLabel, countLabel) {
     }
     const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
     const nameDisplay = isCmdr ? renderCmdrLink(item.name) : esc(item.name);
-    html += '<tr>';
+    const rowClass = selectedCmdr && item.name === selectedCmdr ? ' class="row-cmdr"' : '';
+    html += `<tr${rowClass}>`;
     html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${nameDisplay}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
