@@ -1750,4 +1750,8 @@ a:hover { text-decoration: underline; }
   .stats-table td {
     padding: .5rem .75rem;
   }
+
+  .stats-table .stats-rank {
+    font-size: 0.95rem;
+  }
 }

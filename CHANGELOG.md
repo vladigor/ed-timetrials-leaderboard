@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-05-03
+
+- Cmdr page:
+  - Moved the trophies section above the Rankings tables.
+  - Auto-expand the Opportunities section.
+
+
 ## 2026-04-25
 
 I've been busy this week on https://elitettleaderboard.vladigor.net/
