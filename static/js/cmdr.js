@@ -33,6 +33,8 @@ const filterCheck   = document.getElementById('filter-recent');
 const nendyInput    = document.getElementById('nendy-system');
 const nendyFindBtn  = document.getElementById('nendy-find');
 const nearbySection = document.getElementById('nearby-section');
+const oppsIntro     = document.getElementById('opps-intro');
+const oppsIntroClose = document.getElementById('opps-intro-close');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
@@ -73,6 +75,22 @@ async function init() {
     if (savedSystem) {
       nendyInput.value = savedSystem;
       nearbyFind();
+    }
+
+    // Check if intro was previously hidden
+    const introHidden = localStorage.getItem('tt_opps_intro_hidden') === 'true';
+    if (introHidden && oppsIntro) {
+      oppsIntro.style.display = 'none';
+    }
+
+    // Close button handler
+    if (oppsIntroClose) {
+      oppsIntroClose.addEventListener('click', () => {
+        if (oppsIntro) {
+          oppsIntro.style.display = 'none';
+          localStorage.setItem('tt_opps_intro_hidden', 'true');
+        }
+      });
     }
   }
 
