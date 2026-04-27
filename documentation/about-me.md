@@ -12,11 +12,11 @@
 ## Leaving the bubble
 - At the end of 2025 I discovered the FCOC (Fleet Carrier Owners Club) on Discord and took a lift to Colonia to complete the engineering unlocks. That was the first time I left Solo mode.
 - From Colonia I made my own little expedition to Sag A\* and learned how to neutron jump on the way. Once at Sag A\*, after doing some more exobio and finding lots of undiscovered Stratum Tectonicas, I took an FC back home, just in time for Xmas.
-- By that point I'd learned about DW3 and it was only a couple of weeks till DW3.
+- By that point I'd learned about the Distant Worlds 3 expedition (DW3) and it was only a couple of weeks till DW3 started.
 
 ![Krait](../static/about-me/Thuecheae WR-H d11-54-13 d (20260208-111255).png)
 
-## DW3 and Codex bingo
+## Distant Worlds 3 and Codex bingo
 - On DW3 I started out mostly doing exploration. To keep things interesting I decided that I would try and complete the Codex. I had installed SRV Survey on the way to WP2 and it has a Codex bingo feature that tells you how much you've completed. It was on 11%.
 - A couple of weeks later I learned that you could right-click the Codex entries in SRV Survey and it would tell you the nearest systems containing species variants you haven't got yet. I thought of this as a double-edged sword. On the one hand it made the challenge a lot easier; on the other it meant that I might actually achieve this. In Elite, having some long-lasting goals is a good thing.
 - I succumbed to the temptation of the tool. As of the end of DW3, my Codex completion is just over 50%, so there's still plenty left to do there.
