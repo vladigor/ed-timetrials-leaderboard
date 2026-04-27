@@ -16,6 +16,13 @@ CREATE TABLE IF NOT EXISTS last_updated_cache (
     updated TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS inara_cache (
+    commander_name  TEXT PRIMARY KEY COLLATE NOCASE,
+    avatar_url      TEXT NOT NULL,
+    inara_url       TEXT NOT NULL,
+    cached_at       TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS locations (
     key         TEXT PRIMARY KEY,
     name        TEXT NOT NULL DEFAULT '',

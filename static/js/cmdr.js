@@ -97,7 +97,41 @@ async function init() {
   nendyFindBtn.addEventListener('click', nearbyFind);
   nendyInput.addEventListener('keydown', e => { if (e.key === 'Enter') nearbyFind(); });
 
+  // Check for Inara feature flag and load avatar if enabled
+  await loadInaraAvatar();
+
   render();
+}
+
+// ── Inara Avatar ───────────────────────────────────────────────────────────
+async function loadInaraAvatar() {
+  // Check if 'inara' feature is enabled via URL parameter
+  const params = new URLSearchParams(window.location.search);
+  const features = params.get('features');
+  if (!features || !features.split(',').some(f => f.trim().toLowerCase() === 'inara')) {
+    return; // Feature not enabled
+  }
+
+  const avatarContainer = document.getElementById('cmdr-avatar-container');
+  const avatarLink = document.getElementById('cmdr-avatar-link');
+  const avatarImg = document.getElementById('cmdr-avatar');
+
+  try {
+    const res = await fetch(`/api/cmdr/${encodeURIComponent(cmdrName)}/inara`);
+    if (!res.ok) {
+      // Commander not found on Inara or API unavailable - silently skip
+      return;
+    }
+    const profile = await res.json();
+
+    // Display the avatar
+    avatarImg.src = profile.avatar_url;
+    avatarLink.href = profile.inara_url;
+    avatarContainer.style.display = 'block';
+  } catch (err) {
+    // Silently fail - avatar is optional
+    console.debug('Failed to load Inara avatar:', err);
+  }
 }
 
 const SORT_DEFAULTS = { name: 'asc', position: 'asc', percentile: 'asc', trend: 'desc', improvement: 'desc', recent: 'desc' };

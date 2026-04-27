@@ -14,6 +14,13 @@ fi
 
 source .venv/bin/activate
 
+# Load environment variables from .env file if it exists
+if [ -f .env ]; then
+  set -a  # automatically export all variables
+  source .env
+  set +a
+fi
+
 # Install / update dependencies
 python3 -m pip install -q -r requirements.txt
 

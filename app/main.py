@@ -207,6 +207,17 @@ async def api_cmdr(name: str):
     return stats
 
 
+@app.get("/api/cmdr/{name}/inara")
+async def api_cmdr_inara(name: str):
+    """Fetch Inara profile data (avatar and profile URL) for a commander."""
+    from .inara import get_commander_profile
+
+    profile = await get_commander_profile(name)
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Inara profile not found")
+    return profile
+
+
 @app.get("/api/stats")
 async def api_stats(limit: int | None = Query(None, ge=1, le=100)):
     if limit:

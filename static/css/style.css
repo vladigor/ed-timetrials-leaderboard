@@ -941,9 +941,49 @@ a:hover { text-decoration: underline; }
    Commander page
    ============================================================ */
 .cmdr-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
-.cmdr-header h1 { margin-bottom: .75rem; }
+
+.cmdr-header-content {
+  flex: 1;
+}
+
+.cmdr-header h1 {
+  margin-bottom: .75rem;
+}
+
+.cmdr-avatar-container {
+  flex-shrink: 0;
+}
+
+.cmdr-avatar {
+  max-height: 120px;
+  width: auto;
+  border-radius: .5rem;
+  border: 2px solid var(--border);
+  transition: border-color .2s;
+}
+
+.cmdr-avatar-container a:hover .cmdr-avatar {
+  border-color: var(--accent-dim);
+}
+
+@media (max-width: 768px) {
+  .cmdr-header {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+  .cmdr-header h1 {
+    text-align: center;
+  }
+  .cmdr-avatar {
+    max-height: 100px;
+  }
+}
 
 .cmdr-overall-pct {
   font-size: 1.1rem;

@@ -7,6 +7,7 @@ Type=simple
 User=elite
 Group=elite
 WorkingDirectory=/srv/elite/timetrials-leaderboard
+EnvironmentFile=-/srv/elite/timetrials-leaderboard/.env
 ExecStart=/srv/elite/timetrials-leaderboard/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8090
 Restart=on-failure
 RestartSec=5
