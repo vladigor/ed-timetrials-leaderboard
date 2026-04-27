@@ -1563,6 +1563,55 @@ a:hover { text-decoration: underline; }
 }
 
 /* ============================================================
+   About Me page
+   ============================================================ */
+.about-me-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+  column-gap: 2rem;
+  row-gap: 1rem;
+  align-items: start;
+}
+
+.about-me-content > h1,
+.about-me-content > h2,
+.about-me-content > p:not(h2 + ul + p),
+.about-me-content > ul + p + p {
+  grid-column: 1 / -1;
+}
+
+.about-me-content > ul,
+.about-me-content > ol {
+  grid-column: 1;
+  margin-bottom: 0;
+}
+
+.about-me-content > h2 + ul + p {
+  grid-column: 2;
+  margin: 0;
+  align-self: start;
+}
+
+.about-me-content > h2 + ul + p img {
+  width: 100%;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .about-me-content {
+    display: block;
+  }
+
+  .about-me-content > h2 + ul + p {
+    margin: 1.5rem 0;
+  }
+
+  .about-me-content > h2 + ul + p img {
+    margin: 1.5rem auto;
+  }
+}
+
+/* ============================================================
    Responsive
    ============================================================ */
 /* ── Portrait-mode banner ─────────────────────────────────────────── */

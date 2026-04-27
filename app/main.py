@@ -155,6 +155,21 @@ async def graphics_settings_page(request: Request):
     )
 
 
+@app.get("/about-me", response_class=HTMLResponse)
+async def about_me_page(request: Request):
+    """Render the about me page from markdown."""
+    about_me_path = Path(__file__).parent.parent / "documentation" / "about-me.md"
+    about_me_content = about_me_path.read_text(encoding="utf-8")
+
+    # Configure markdown with extensions
+    md = markdown.Markdown(extensions=["tables", "fenced_code", "nl2br"])
+    html_content = md.convert(about_me_content)
+
+    return templates.TemplateResponse(
+        "about-me.html", {"request": request, "v": STATIC_VER, "content": html_content}
+    )
+
+
 @app.get("/community", response_class=HTMLResponse)
 async def community_page(request: Request):
     """Render the racing community page."""
