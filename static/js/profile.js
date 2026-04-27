@@ -32,6 +32,10 @@ export function initProfileSelector() {
   }
 }
 
+function isCommanderPage() {
+  return window.location.pathname === '/cmdr' || window.location.pathname.startsWith('/cmdr/');
+}
+
 export function updateProfileDisplay() {
   const profileLabel = document.getElementById('profile-label');
   const btnChangeProfile = document.getElementById('btn-change-profile');
@@ -44,7 +48,7 @@ export function updateProfileDisplay() {
     const profileUrl = `/cmdr/${encodeURIComponent(filterCmdr)}`;
     profileLabel.textContent = `CMDR ${filterCmdr}`;
     profileLabel.href = profileUrl;
-    btnChangeProfile.style.display = '';
+    btnChangeProfile.style.display = isCommanderPage() ? '' : 'none';
   } else {
     profileLabel.textContent = 'Select Profile';
     profileLabel.href = '#';

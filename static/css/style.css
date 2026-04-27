@@ -1641,7 +1641,7 @@ a:hover { text-decoration: underline; }
 }
 
 /* ── Mobile styles ─────────────────────────────────────────────────── */
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   /* Header: use shorter logo and reduce gap */
   .site-header .inner { gap: 1.25rem; }
   .site-logo .logo-full { display: none; }
