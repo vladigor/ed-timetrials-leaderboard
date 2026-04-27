@@ -7,6 +7,7 @@ let   stats      = null;   // full API response
 let   sortBy     = 'percentile';
 let   sortDir    = 'asc';         // 'asc' | 'desc'
 let   filterRecent = false;
+let   filterDW3    = false;
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 // NEIDY filter state
@@ -30,6 +31,7 @@ const trophyEl      = document.getElementById('trophy-case');
 const sortPctBtn    = document.getElementById('sort-pct');
 const sortRecBtn    = document.getElementById('sort-recent');
 const filterCheck   = document.getElementById('filter-recent');
+const filterDW3Check = document.getElementById('filter-dw3');
 const nendyInput    = document.getElementById('nendy-system');
 const nendyFindBtn  = document.getElementById('nendy-find');
 const nearbySection = document.getElementById('nearby-section');
@@ -54,10 +56,24 @@ async function init() {
     return;
   }
 
+  // Restore filter state from localStorage
+  const savedFilterRecent = localStorage.getItem('tt_filter_recent') === 'true';
+  const savedFilterDW3 = localStorage.getItem('tt_filter_dw3') === 'true';
+  filterRecent = savedFilterRecent;
+  filterDW3 = savedFilterDW3;
+  filterCheck.checked = savedFilterRecent;
+  filterDW3Check.checked = savedFilterDW3;
+
   sortPctBtn.addEventListener('click', () => setSort('percentile'));
   sortRecBtn.addEventListener('click', () => setSort('recent'));
   filterCheck.addEventListener('change', () => {
     filterRecent = filterCheck.checked;
+    localStorage.setItem('tt_filter_recent', filterRecent);
+    render();
+  });
+  filterDW3Check.addEventListener('change', () => {
+    filterDW3 = filterDW3Check.checked;
+    localStorage.setItem('tt_filter_dw3', filterDW3);
     render();
   });
 
@@ -158,6 +174,7 @@ function render() {
 function renderSummary() {
   const overall = stats.overall_percentile;
   const byType  = stats.by_type_percentile;
+  const raceCount = stats.races.length;
 
   const typeLabels = {
     SHIP:    'Ship',
@@ -173,8 +190,8 @@ function renderSummary() {
   summaryEl.innerHTML = `
     <div class="cmdr-overall-pct">
       ${isSelf
-        ? `You've finished ahead of <strong>${overall}%</strong> of all pilots you've raced against.`
-        : `CMDR ${esc(cmdrName)} has finished ahead of <strong>${overall}%</strong> of all pilots they've raced against.`
+        ? `You've competed in <strong>${raceCount}</strong> race${raceCount !== 1 ? 's' : ''}, finishing ahead of <strong>${overall}%</strong> of all pilots you've raced against.`
+        : `CMDR ${esc(cmdrName)} has competed in <strong>${raceCount}</strong> race${raceCount !== 1 ? 's' : ''}, finishing ahead of <strong>${overall}%</strong> of all pilots they've raced against.`
       }
     </div>
     ${typeStatements ? `<div class="cmdr-type-stats">${typeStatements}</div>` : ''}
@@ -191,6 +208,10 @@ function renderTables() {
       const norm = r.last_competed.replace(' ', 'T').replace(/(\.\d{1,6}).*$/, '$1') + 'Z';
       return new Date(norm).getTime() >= cutoff;
     });
+  }
+
+  if (filterDW3) {
+    races = races.filter(r => !r.race_name.includes('DW3'));
   }
 
   const types = [...new Set(stats.races.map(r => r.type))].sort();
