@@ -121,6 +121,13 @@ async function init() {
 
 // ── Inara Avatar ───────────────────────────────────────────────────────────
 async function loadInaraAvatar() {
+  // Check if 'inara' feature is enabled via URL parameter
+  const params = new URLSearchParams(window.location.search);
+  const features = params.get('features');
+  if (!features || !features.split(',').some(f => f.trim().toLowerCase() === 'inara')) {
+    return; // Feature not enabled
+  }
+
   const avatarContainer = document.getElementById('cmdr-avatar-container');
   const avatarLink = document.getElementById('cmdr-avatar-link');
   const avatarImg = document.getElementById('cmdr-avatar');
