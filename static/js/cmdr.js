@@ -576,8 +576,9 @@ function renderThievses(thefts) {
   const posLabel = { 1: 'Gold', 2: 'Silver', 3: 'Bronze' };
   const posCls   = { 1: 'theft-pos-1', 2: 'theft-pos-2', 3: 'theft-pos-3' };
 
-  // Count only truly active thefts (not reclaimed, redeemed, or lost by thief) for the character quotes
-  const activeThefts = thefts.filter(t => !t.reclaimed && !t.redeemed && !t.thief_lost);
+  // Count only truly active thefts (not reclaimed or redeemed) for the character quotes
+  // Include dropped trophies (thief_lost) since they were still stolen from you
+  const activeThefts = thefts.filter(t => !t.reclaimed && !t.redeemed);
 
   // Find the most prolific thief (among active thefts only)
   const counts = {};
