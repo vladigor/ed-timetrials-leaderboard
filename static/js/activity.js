@@ -101,14 +101,16 @@ function renderActivityTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
 
   const isMobile = window.innerWidth <= 720;
+  const commanderLabel = isMobile ? 'Cmdr' : 'Commander';
   const positionLabel = isMobile ? 'Posn' : 'Position';
+  const updatedLabel = isMobile ? 'When' : 'Updated';
 
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
-  html += `<th>Commander</th>`;
+  html += `<th>${commanderLabel}</th>`;
   html += `<th>Race</th>`;
   html += `<th style="text-align: center;">${positionLabel}</th>`;
-  html += `<th class="stats-time">Updated</th>`;
+  html += `<th class="stats-time">${updatedLabel}</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
 
