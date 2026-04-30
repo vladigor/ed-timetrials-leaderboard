@@ -223,11 +223,11 @@ async def api_cmdr(name: str):
 
 
 @app.get("/api/cmdr/{name}/inara")
-async def api_cmdr_inara(name: str):
+async def api_cmdr_inara(name: str, force_refresh: bool = Query(False)):
     """Fetch Inara profile data (avatar and profile URL) for a commander."""
     from .inara import get_commander_profile
 
-    profile = await get_commander_profile(name)
+    profile = await get_commander_profile(name, force_refresh=force_refresh)
     if profile is None:
         raise HTTPException(status_code=404, detail="Inara profile not found")
     return profile

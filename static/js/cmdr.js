@@ -125,7 +125,7 @@ async function loadInaraAvatar() {
   const params = new URLSearchParams(window.location.search);
   const features = params.get('features');
   if (!features || !features.split(',').some(f => f.trim().toLowerCase() === 'inara')) {
-    return; // Feature not enabled
+    // return; // Feature not enabled
   }
 
   const avatarContainer = document.getElementById('cmdr-avatar-container');
@@ -140,7 +140,30 @@ async function loadInaraAvatar() {
     }
     const profile = await res.json();
 
-    // Display the avatar
+    // Set up error handler to detect 404s (avoids CORS issues with HEAD requests)
+    avatarImg.onerror = async () => {
+      console.debug('Avatar image failed to load, forcing refresh from Inara API');
+      try {
+        // Avatar no longer exists - force refresh from Inara
+        const refreshRes = await fetch(`/api/cmdr/${encodeURIComponent(cmdrName)}/inara?force_refresh=1`);
+        if (refreshRes.ok) {
+          const refreshedProfile = await refreshRes.json();
+          // Clear error handler to prevent infinite loop
+          avatarImg.onerror = null;
+          // Use refreshed data
+          avatarImg.src = refreshedProfile.avatar_url;
+          avatarLink.href = refreshedProfile.inara_url;
+        } else {
+          // Refresh failed - hide avatar container
+          avatarContainer.style.display = 'none';
+        }
+      } catch (refreshErr) {
+        console.debug('Failed to refresh Inara avatar:', refreshErr);
+        avatarContainer.style.display = 'none';
+      }
+    };
+
+    // Display the avatar - onerror will handle any load failures
     avatarImg.src = profile.avatar_url;
     avatarLink.href = profile.inara_url;
     avatarContainer.style.display = 'block';

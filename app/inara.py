@@ -29,9 +29,15 @@ class InaraProfile(TypedDict):
     inara_url: str
 
 
-async def get_commander_profile(commander_name: str) -> InaraProfile | None:
+async def get_commander_profile(
+    commander_name: str, force_refresh: bool = False
+) -> InaraProfile | None:
     """
     Fetch commander profile from Inara API with caching.
+
+    Args:
+        commander_name: Commander name to look up
+        force_refresh: If True, bypass cache and fetch fresh data from API
 
     Returns None if:
     - OFFLINE mode is enabled
@@ -43,14 +49,15 @@ async def get_commander_profile(commander_name: str) -> InaraProfile | None:
         log.debug("Inara API disabled (OFFLINE=%s, API_KEY=%s)", OFFLINE, bool(INARA_API_KEY))
         return None
 
-    # Check cache first
-    cached = await _get_cached_profile(commander_name)
-    if cached:
-        log.debug("Inara profile cache hit for %r", commander_name)
-        return cached
+    # Check cache first (unless force_refresh is set)
+    if not force_refresh:
+        cached = await _get_cached_profile(commander_name)
+        if cached:
+            log.debug("Inara profile cache hit for %r", commander_name)
+            return cached
 
     # Fetch from API
-    log.info("Fetching Inara profile for %r", commander_name)
+    log.info("Fetching Inara profile for %r (force_refresh=%s)", commander_name, force_refresh)
     profile = await _fetch_from_api(commander_name)
     if profile:
         await _cache_profile(commander_name, profile)
@@ -165,3 +172,17 @@ async def _fetch_from_api(commander_name: str) -> InaraProfile | None:
         return None
 
     return {"avatar_url": avatar_url, "inara_url": inara_url}
+
+
+async def invalidate_cache(commander_name: str) -> None:
+    """Remove cached profile for a commander, forcing next fetch to be fresh."""
+    db = await get_db()
+    try:
+        await db.execute(
+            "DELETE FROM inara_cache WHERE commander_name = ? COLLATE NOCASE",
+            (commander_name,),
+        )
+        await db.commit()
+        log.info("Invalidated Inara cache for %r", commander_name)
+    finally:
+        await db.close()
