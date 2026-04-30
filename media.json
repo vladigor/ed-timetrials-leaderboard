@@ -1,4 +1,10 @@
 {
+  "GREAVES-DW3 Rendezvous Rally 14": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_rendezvous_rally_14.jpg",
+      "target": "maps/dw3_rendezvous_rally_14.jpg"
+    }
+  },
   "SO MUCH FOR SUBTLETY- Guardians": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_guardians_of_the_not_teal_nebula.png",
