@@ -229,6 +229,12 @@ function renderRace() {
       (selectedCmdr && entry.name === selectedCmdr) ? 'row-cmdr' : '',
       isFresh(entry.updated) ? 'row-fresh' : '',
     ].filter(Boolean).join(' ');
+
+    // Format ship display: "Ship Type" or "Ship Type · Ship Name"
+    const shipDisplay = entry.shipname
+      ? `${esc(entry.ship)} · <span style="font-style:italic">${esc(entry.shipname)}</span>`
+      : esc(entry.ship);
+
     return `
       <tr${rowClasses ? ` class="${rowClasses}"` : ''}>
         <td class="pos${posCls}">${entry.position}</td>
@@ -236,7 +242,7 @@ function renderRace() {
         <td class="time-cell">${formatTime(entry.time_ms)}</td>
         <td class="delta-cell">${formatDelta(entry.delta_ms)}</td>
         <td class="improvement-cell ${imp.cls}">${imp.text}</td>
-        <td style="color:var(--text-muted);font-size:.8rem">${esc(entry.ship)}</td>
+        <td style="color:var(--text-muted);font-size:.8rem">${shipDisplay}</td>
         <td class="updated-cell" style="font-size:.8rem" data-timestamp="${entry.updated || ''}">${entry.updated ? relativeTime(entry.updated) : ''}</td>
       </tr>`;
   });
@@ -251,7 +257,7 @@ function renderRace() {
         <thead>
           <tr>
             <th>#</th><th>Commander</th><th>Time</th>
-            <th>Gap</th><th>Improvement</th><th>Ship</th><th>Updated</th>
+            <th>Gap</th><th>Improvement</th><th>Ship / Name</th><th>Updated</th>
           </tr>
         </thead>
         <tbody>${tableRows.join('')}</tbody>
