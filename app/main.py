@@ -170,6 +170,36 @@ async def about_me_page(request: Request):
     )
 
 
+@app.get("/changelog", response_class=HTMLResponse)
+async def changelog_page(request: Request):
+    """Render the changelog page from markdown."""
+    changelog_path = Path(__file__).parent.parent / "CHANGELOG.md"
+    changelog_content = changelog_path.read_text(encoding="utf-8")
+
+    # Configure markdown with extensions
+    md = markdown.Markdown(extensions=["tables", "fenced_code", "nl2br"])
+    html_content = md.convert(changelog_content)
+
+    return templates.TemplateResponse(
+        "changelog.html", {"request": request, "v": STATIC_VER, "content": html_content}
+    )
+
+
+@app.get("/dw3-thanks", response_class=HTMLResponse)
+async def dw3_thanks_page(request: Request):
+    """Render the DW3 thanks page from markdown."""
+    dw3_thanks_path = Path(__file__).parent.parent / "documentation" / "dw3-thanks.md"
+    dw3_thanks_content = dw3_thanks_path.read_text(encoding="utf-8")
+
+    # Configure markdown with extensions
+    md = markdown.Markdown(extensions=["tables", "fenced_code", "nl2br"])
+    html_content = md.convert(dw3_thanks_content)
+
+    return templates.TemplateResponse(
+        "dw3-thanks.html", {"request": request, "v": STATIC_VER, "content": html_content}
+    )
+
+
 @app.get("/community", response_class=HTMLResponse)
 async def community_page(request: Request):
     """Render the racing community page."""
