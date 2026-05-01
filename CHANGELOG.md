@@ -15,6 +15,9 @@
 I continue to amuse myself by looking at players ship names and trying to work out the theme.
 eg. Skyrim locations (Greaves); Birds (Willy Eckerslike).
 And then there are those truly bizarre ones (I'm looking at you Cmdr Ed Pork).
+![pigs in space](https://static.klipy.com/ii/71b2873e478b9d8d0482ea3ec777ba7f/7d/42/CbC386Ez.gif)
+
+Can you guess mine? The older ships in the fleet stuck to a tighter definition.
 
 
 ## 2026-04-25

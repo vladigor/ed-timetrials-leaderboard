@@ -1,4 +1,22 @@
 {
+  "DRODINN-DW3 Empyrean Boomerang _ SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_empyrean_boomerang.png",
+      "target": "maps/dw3_empyrean_boomerang.png"
+    }
+  },
+  "DRODINN-DW3 Empyrean Boomerang _ Ship": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_empyrean_boomerang.png",
+      "target": "maps/dw3_empyrean_boomerang.png"
+    }
+  },
+  "ALEC TURNER-_Footsteps of the Guardians": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_footsteps_of_the_guardians.png",
+      "target": "maps/dw3_footsteps_of_the_guardians.png"
+    }
+  },
   "GREAVES-DW3 Rendezvous Rally 14": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_rendezvous_rally_14.jpg",
