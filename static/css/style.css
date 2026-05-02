@@ -1675,8 +1675,9 @@ a:hover { text-decoration: underline; }
   }
 
   /* Hide less important columns past the 4th */
-  .results-table th:nth-child(n+5),
-  .results-table td:nth-child(n+5) { display: none; }
+  .results-table th:nth-child(5),
+  .results-table td:nth-child(5) {
+    display: none; }
 }
 
 /* ============================================================

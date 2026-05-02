@@ -250,14 +250,19 @@ function renderRace() {
   // Render containers (old chart is disposed before innerHTML wipes its element)
   if (chartInstance) { chartInstance.dispose(); chartInstance = null; }
 
+  const isSmallScreen = window.innerWidth <= 950;
+  const commanderLabel = isSmallScreen ? 'Cmdr' : 'Commander';
+  const improvementLabel = isSmallScreen ? 'Imprvmnt' : 'Improvement';
+  const updatedLabel = isSmallScreen ? 'When' : 'Updated';
+
   layoutEl.innerHTML = `
     <div id="race-chart" style="height:${chartHeight}px"></div>
     <div class="results-table-panel">
       <table class="results-table">
         <thead>
           <tr>
-            <th>#</th><th>Commander</th><th>Time</th>
-            <th>Gap</th><th>Improvement</th><th>Ship / Name</th><th>Updated</th>
+            <th>#</th><th>${commanderLabel}</th><th>Time</th>
+            <th>Gap</th><th>${improvementLabel}</th><th>Ship / Name</th><th>${updatedLabel}</th>
           </tr>
         </thead>
         <tbody>${tableRows.join('')}</tbody>
