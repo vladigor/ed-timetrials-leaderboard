@@ -1,4 +1,10 @@
 {
+  "ALEXFIGHTER-DW3 Speedbowl Experiment": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_speedbowl_experiment.png",
+      "target": "maps/dw3_speedbowl_experiment.png"
+    }
+  },
   "DRODINN-DW3 Empyrean Boomerang _ SLF": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_empyrean_boomerang.png",
@@ -9,13 +15,27 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_empyrean_boomerang.png",
       "target": "maps/dw3_empyrean_boomerang.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/uXEHOoyeW8w"
+      }
+    ]
   },
   "ALEC TURNER-_Footsteps of the Guardians": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_footsteps_of_the_guardians.png",
       "target": "maps/dw3_footsteps_of_the_guardians.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=ay2o6y5gAqc"
+      }
+    ]
   },
   "GREAVES-DW3 Rendezvous Rally 14": {
     "map": {
