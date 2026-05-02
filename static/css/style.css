@@ -1831,6 +1831,14 @@ a:hover { text-decoration: underline; }
   }
 }
 
+/* Shrink ship column on race page below 1000px */
+@media (max-width: 1000px) {
+  #results-layout .results-table th:nth-child(6), #results-layout .results-table td:nth-child(6) {
+    max-width: 230px;
+    overflow: hidden;
+  }
+}
+
 @media (max-width: 968px) {
   #races-table-container .results-table th:nth-child(5),
   #races-table-container .results-table td:nth-child(5) {
@@ -1838,11 +1846,12 @@ a:hover { text-decoration: underline; }
   }
 }
 
-/* Hide ship column on race page below 900px */
+/* Shrink ship column on race page below 900px */
 @media (max-width: 900px) {
   #results-layout .results-table th:nth-child(6),
   #results-layout .results-table td:nth-child(6) {
-    display: none;
+    max-width: 130px;
+    overflow: hidden;
   }
 }
 
@@ -1870,5 +1879,13 @@ a:hover { text-decoration: underline; }
 
   .stats-table .stats-rank {
     font-size: 0.95rem;
+  }
+}
+
+/* Hide ship column on race page below 650px */
+@media (max-width: 650px) {
+  #results-layout .results-table th:nth-child(6),
+  #results-layout .results-table td:nth-child(6) {
+    display: none;
   }
 }
