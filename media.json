@@ -41,7 +41,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_rendezvous_rally_14.jpg",
       "target": "maps/dw3_rendezvous_rally_14.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/AoIcksQRmH4"
+      }
+    ]
   },
   "SO MUCH FOR SUBTLETY- Guardians": {
     "map": {

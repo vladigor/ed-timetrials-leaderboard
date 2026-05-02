@@ -11,13 +11,13 @@ let   filterDW3    = false;
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 // NEIDY filter state
-let neidyScoredCache  = null;
+let _neidyScoredCache  = null;
 let neidySourceSystem = '';
 let neidyTypeFilter   = '';   // '' = All
 let neidyDistFilter   = 1000; // default < 1000ly
 
 // NENDY filter state
-let nendyUndoneCache  = null;
+let _nendyUndoneCache  = null;
 let nendySourceSystem = '';
 let nendyTypeFilter   = '';   // '' = All
 let nendyDistFilter   = 1000; // default < 1000ly
@@ -779,7 +779,7 @@ document.getElementById('neidy-type-btns').addEventListener('click', e => {
   if (!btn) return;
   neidyTypeFilter = btn.dataset.type;
   document.querySelectorAll('#neidy-type-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
-  applyNeidyFilters();
+  if (neidySourceSystem) rerunOpportunities();
 });
 
 document.getElementById('neidy-dist-btns').addEventListener('click', e => {
@@ -787,7 +787,7 @@ document.getElementById('neidy-dist-btns').addEventListener('click', e => {
   if (!btn) return;
   neidyDistFilter = Number(btn.dataset.dist);
   document.querySelectorAll('#neidy-dist-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
-  applyNeidyFilters();
+  if (neidySourceSystem) rerunOpportunities();
 });
 
 document.getElementById('nendy-type-btns').addEventListener('click', e => {
@@ -795,7 +795,7 @@ document.getElementById('nendy-type-btns').addEventListener('click', e => {
   if (!btn) return;
   nendyTypeFilter = btn.dataset.type;
   document.querySelectorAll('#nendy-type-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
-  applyNendyFilters();
+  if (nendySourceSystem) rerunOpportunities();
 });
 
 document.getElementById('nendy-dist-btns').addEventListener('click', e => {
@@ -803,107 +803,8 @@ document.getElementById('nendy-dist-btns').addEventListener('click', e => {
   if (!btn) return;
   nendyDistFilter = Number(btn.dataset.dist);
   document.querySelectorAll('#nendy-dist-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
-  applyNendyFilters();
+  if (nendySourceSystem) rerunOpportunities();
 });
-
-function applyNendyFilters() {
-  if (!nendyUndoneCache) return;
-
-  let filtered = nendyUndoneCache;
-  if (nendyTypeFilter) filtered = filtered.filter(r => r.type === nendyTypeFilter);
-  if (nendyDistFilter) filtered = filtered.filter(r => r.dist !== Infinity && r.dist <= nendyDistFilter);
-
-  if (filtered.length === 0) {
-    nendyResults.innerHTML = `<p class="empty-state">No races match the current filters.</p>`;
-    return;
-  }
-
-  const top       = filtered.slice(0, 15);
-  const remaining = filtered.length - top.length;
-
-  const rows = top.map((r, i) => {
-    const distStr = r.dist === Infinity
-      ? '<span class="muted">\u2014</span>'
-      : (r.dist < 1 ? '&lt;1 ly' : `${Math.round(r.dist).toLocaleString()} ly`);
-    return `
-      <tr>
-        <td class="num muted">${i + 1}</td>
-        <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></td>
-        <td>${typeBadge(r.type)}</td>
-        <td class="muted">${esc(r.system)}</td>
-        <td class="num">${distStr}</td>
-      </tr>`;
-  }).join('');
-
-  const totalNote = filtered.length < nendyUndoneCache.length
-    ? `${filtered.length} of ${nendyUndoneCache.length} undone races`
-    : `${nendyUndoneCache.length} undone race${nendyUndoneCache.length !== 1 ? 's' : ''}`;
-
-  const moreNote = remaining > 0
-    ? `<p class="nendy-more">\u2026 and ${remaining} more undone race${remaining !== 1 ? 's' : ''} further away.</p>`
-    : '';
-
-  nendyResults.innerHTML = `
-    <p class="nendy-origin">From <strong>${esc(nendySourceSystem)}</strong> \u2014 ${totalNote}</p>
-    <table class="results-table">
-      <thead><tr>
-        <th class="num">#</th><th>Race</th><th>Type</th><th>System</th><th class="num">Distance</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    ${moreNote}`;
-}
-
-function applyNeidyFilters() {
-  if (!neidyScoredCache) return;
-
-  let filtered = neidyScoredCache;
-  if (neidyTypeFilter) filtered = filtered.filter(s => s.race.type === neidyTypeFilter);
-  if (neidyDistFilter) filtered = filtered.filter(s => s.race.dist !== Infinity && s.race.dist <= neidyDistFilter);
-
-  if (filtered.length === 0) {
-    neidyResults.innerHTML = `<p class="empty-state">No races match the current filters.</p>`;
-    return;
-  }
-
-  const rows = filtered.map((s, i) => {
-    const distStr = s.race.dist === Infinity
-      ? '<span class="muted">—</span>'
-      : (s.race.dist < 1 ? '&lt;1 ly' : `${Math.round(s.race.dist).toLocaleString()} ly`);
-    const gapStr  = s.gapMs != null ? formatTime(s.gapMs) : '—';
-    const leapStr = s.leapable > 0 ? `+${s.leapable}` : '—';
-    const barPct  = Math.max(0, Math.min(100, Math.round((1 - Math.max(0, s.score + 0.1) / 0.6) * 100)));
-    return `
-      <tr>
-        <td class="num muted">${i + 1}</td>
-        <td><a href="/race/${encodeURIComponent(s.race.key)}">${esc(s.race.name)}</a></td>
-        <td>${typeBadge(s.race.type)}</td>
-        <td class="num">${ordinal(s.myPos)} / ${s.total}</td>
-        <td class="num neidy-gap">${gapStr}</td>
-        <td class="num neidy-leap">${leapStr}</td>
-        <td class="num">${distStr}</td>
-        <td class="neidy-bar-cell"><div class="neidy-bar"><div class="neidy-bar-fill" style="width:${barPct}%"></div></div></td>
-      </tr>`;
-  }).join('');
-
-  const countNote = filtered.length < neidyScoredCache.length
-    ? `showing ${filtered.length} of ${neidyScoredCache.length}`
-    : `${neidyScoredCache.length} race${neidyScoredCache.length !== 1 ? 's' : ''}`;
-
-  neidyResults.innerHTML = `
-    <p class="nendy-origin">From <strong>${esc(neidySourceSystem)}</strong> — ${countNote}, sorted by catchability</p>
-    <p class="neidy-legend">
-      <span class="neidy-legend-item"><strong>Gap</strong> time between you and the position above</span>
-      <span class="neidy-legend-item"><strong>Leap</strong> positions you'd gain with a 10% faster time</span>
-    </p>
-    <table class="results-table">
-      <thead><tr>
-        <th class="num">#</th><th>Race</th><th>Type</th><th class="num">Position</th>
-        <th class="num">Gap</th><th class="num">Leap</th><th class="num">Distance</th><th>Catchability</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
-}
 
 // ── Catchability score ────────────────────────────────────────────────────────
 // Lower score = better opportunity.
@@ -925,36 +826,20 @@ function catchabilityScore(myTime, myPos, results) {
   return gapPct - leapable * 0.02;
 }
 
-// ── Main find ─────────────────────────────────────────────────────────────────
-async function nearbyFind() {
-  const systemName = nendyInput.value.trim();
-  if (!systemName) return;
+// ── Cached system coordinates for re-running with filters ────────────────────
+let cachedSystemCoords = null;
 
-  localStorage.setItem('tt_nendy_system', systemName);
+// ── Re-run opportunities with current filters ─────────────────────────────────
+async function rerunOpportunities() {
+  if (!cachedSystemCoords) return;
 
-  neidyResults.innerHTML = '<p class="empty-state">Looking up system…</p>';
+  const { name: resolvedName, x, y, z } = cachedSystemCoords;
+
+  neidyResults.innerHTML = '<p class="empty-state">Re-analysing with current filters…</p>';
   nendyResults.innerHTML = '';
-  nendyFindBtn.disabled = true;
   nearbyTabsEl.style.display = 'none';
   neidyFiltersEl.style.display = 'none';
-  neidyScoredCache = null;
   nendyFiltersEl.style.display = 'none';
-  nendyUndoneCache = null;
-
-  let resolvedName, x, y, z;
-  try {
-    const coordsRes = await fetch(`/api/system-coords?name=${encodeURIComponent(systemName)}`);
-    if (coordsRes.status === 404) {
-      neidyResults.innerHTML = `<p class="empty-state">System "<strong>${esc(systemName)}</strong>" not found. Check the spelling.</p>`;
-      return;
-    }
-    if (!coordsRes.ok) throw new Error('EDSM lookup failed');
-    ({ name: resolvedName, x, y, z } = await coordsRes.json());
-  } catch (err) {
-    neidyResults.innerHTML = `<p class="empty-state">Error: ${esc(String(err))}</p>`;
-    nendyFindBtn.disabled = false;
-    return;
-  }
 
   const allRaces = await fetchAllRaces();
   const doneKeys = new Set((stats?.races ?? []).map(r => r.key));
@@ -971,22 +856,140 @@ async function nearbyFind() {
     return { ...r, dist: Infinity };
   }
 
+  // Apply filters to all races before processing
+  let filteredRaces = allRaces;
+  if (neidyTypeFilter || nendyTypeFilter) {
+    const typeFilter = neidyTypeFilter || nendyTypeFilter;
+    filteredRaces = filteredRaces.filter(r => r.type === typeFilter);
+  }
+
   // ── NENDY (not done) ─────────────────────────────────────────────────────
-  const undone = allRaces
+  let undone = filteredRaces
     .filter(r => !doneKeys.has(r.key))
     .map(withDist)
     .sort((a, b) => a.dist - b.dist);
+
+  // Apply distance filter
+  if (nendyDistFilter) {
+    undone = undone.filter(r => r.dist !== Infinity && r.dist <= nendyDistFilter);
+  }
+
   renderNendy(resolvedName, undone);
 
   // ── NEIDY (done, nearby, fetch full results) ──────────────────────────────
-  const NEIDY_LIMIT = 20; // fetch up to this many nearby done races
-  const done = allRaces
+  const NEIDY_LIMIT = 20;
+  let done = filteredRaces
     .filter(r => doneKeys.has(r.key))
     .map(withDist)
-    .sort((a, b) => a.dist - b.dist)
-    .slice(0, NEIDY_LIMIT);
+    .sort((a, b) => a.dist - b.dist);
 
-  neidyResults.innerHTML = `<p class="empty-state">Analysing ${done.length} nearby races…</p>`;
+  // Apply distance filter before limiting
+  if (neidyDistFilter) {
+    done = done.filter(r => r.dist !== Infinity && r.dist <= neidyDistFilter);
+  }
+
+  done = done.slice(0, NEIDY_LIMIT);
+
+  neidyResults.innerHTML = `<p class="empty-state">Analysing ${done.length} filtered nearby races…</p>`;
+
+  // Fetch full results in parallel, max 5 at a time to be polite
+  const raceDetails = [];
+  for (let i = 0; i < done.length; i += 5) {
+    const batch = done.slice(i, i + 5);
+    const fetched = await Promise.all(
+      batch.map(r => fetch(`/api/races/${encodeURIComponent(r.key)}`).then(res => res.ok ? res.json() : null))
+    );
+    raceDetails.push(...fetched);
+  }
+
+  nearbyTabsEl.style.display = '';
+  renderNeidy(resolvedName, done, raceDetails);
+}
+
+// ── Main find ─────────────────────────────────────────────────────────────────
+async function nearbyFind() {
+  const systemName = nendyInput.value.trim();
+  if (!systemName) return;
+
+  localStorage.setItem('tt_nendy_system', systemName);
+
+  neidyResults.innerHTML = '<p class="empty-state">Looking up system…</p>';
+  nendyResults.innerHTML = '';
+  nendyFindBtn.disabled = true;
+  nearbyTabsEl.style.display = 'none';
+  neidyFiltersEl.style.display = 'none';
+  _neidyScoredCache = null;
+  nendyFiltersEl.style.display = 'none';
+  _nendyUndoneCache = null;
+
+  let resolvedName, x, y, z;
+  try {
+    const coordsRes = await fetch(`/api/system-coords?name=${encodeURIComponent(systemName)}`);
+    if (coordsRes.status === 404) {
+      neidyResults.innerHTML = `<p class="empty-state">System "<strong>${esc(systemName)}</strong>" not found. Check the spelling.</p>`;
+      return;
+    }
+    if (!coordsRes.ok) throw new Error('EDSM lookup failed');
+    ({ name: resolvedName, x, y, z } = await coordsRes.json());
+  } catch (err) {
+    neidyResults.innerHTML = `<p class="empty-state">Error: ${esc(String(err))}</p>`;
+    nendyFindBtn.disabled = false;
+    return;
+  }
+
+  // Cache the system coordinates for filter re-runs
+  cachedSystemCoords = { name: resolvedName, x, y, z };
+
+  const allRaces = await fetchAllRaces();
+  const doneKeys = new Set((stats?.races ?? []).map(r => r.key));
+
+  // Attach distances to all races
+  function withDist(r) {
+    if (r.coords) {
+      const parts = r.coords.split(',').map(v => Number(v.trim()));
+      if (parts.length === 3 && !parts.some(isNaN)) {
+        const [rx, ry, rz] = parts;
+        return { ...r, dist: Math.sqrt((rx - x) ** 2 + (ry - y) ** 2 + (rz - z) ** 2) };
+      }
+    }
+    return { ...r, dist: Infinity };
+  }
+
+  // Apply filters to all races before processing
+  let filteredRaces = allRaces;
+  if (neidyTypeFilter || nendyTypeFilter) {
+    const typeFilter = neidyTypeFilter || nendyTypeFilter;
+    filteredRaces = filteredRaces.filter(r => r.type === typeFilter);
+  }
+
+  // ── NENDY (not done) ─────────────────────────────────────────────────────
+  let undone = filteredRaces
+    .filter(r => !doneKeys.has(r.key))
+    .map(withDist)
+    .sort((a, b) => a.dist - b.dist);
+
+  // Apply distance filter
+  if (nendyDistFilter) {
+    undone = undone.filter(r => r.dist !== Infinity && r.dist <= nendyDistFilter);
+  }
+
+  renderNendy(resolvedName, undone);
+
+  // ── NEIDY (done, nearby, fetch full results) ──────────────────────────────
+  const NEIDY_LIMIT = 100; // fetch more races to account for filtering
+  let done = filteredRaces
+    .filter(r => doneKeys.has(r.key))
+    .map(withDist)
+    .sort((a, b) => a.dist - b.dist);
+
+  // Apply distance filter before limiting
+  if (neidyDistFilter) {
+    done = done.filter(r => r.dist !== Infinity && r.dist <= neidyDistFilter);
+  }
+
+  done = done.slice(0, NEIDY_LIMIT);
+
+  neidyResults.innerHTML = `<p class="empty-state">Analysing ${done.length} filtered nearby races…</p>`;
 
   // Fetch full results in parallel, max 5 at a time to be polite
   const raceDetails = [];
@@ -1005,15 +1008,49 @@ async function nearbyFind() {
 
 function renderNendy(resolvedName, undone) {
   if (undone.length === 0) {
-    nendyFiltersEl.style.display = 'none';
-    nendyResults.innerHTML = `<p class="empty-state">${isSelf ? "You've" : 'This commander has'} done every race \u2014 nothing left to find!</p>`;
+    nendyFiltersEl.style.display = '';
+    nendyResults.innerHTML = `<p class="empty-state">${isSelf ? "You've" : 'This commander has'} done every race ${nendyTypeFilter ? `(filtered to ${nendyTypeFilter} races) ` : ''}\u2014 nothing left to find!</p>`;
     return;
   }
 
-  nendyUndoneCache  = undone;
+  _nendyUndoneCache  = undone;
   nendySourceSystem = resolvedName;
   nendyFiltersEl.style.display = '';
-  applyNendyFilters();
+
+  const top       = undone.slice(0, 15);
+  const remaining = undone.length - top.length;
+
+  const rows = top.map((r, i) => {
+    const distStr = r.dist === Infinity
+      ? '<span class="muted">\u2014</span>'
+      : (r.dist < 1 ? '&lt;1 ly' : `${Math.round(r.dist).toLocaleString()} ly`);
+    return `
+      <tr>
+        <td class="num muted">${i + 1}</td>
+        <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></td>
+        <td>${typeBadge(r.type)}</td>
+        <td class="muted">${esc(r.system)}</td>
+        <td class="num">${distStr}</td>
+      </tr>`;
+  }).join('');
+
+  const filterNote = (nendyTypeFilter || nendyDistFilter < Infinity)
+    ? ` (filtered${nendyTypeFilter ? ` to ${nendyTypeFilter}` : ''}${nendyDistFilter < Infinity ? ` within ${nendyDistFilter} ly` : ''})`
+    : '';
+
+  const moreNote = remaining > 0
+    ? `<p class="nendy-more">\u2026 and ${remaining} more undone race${remaining !== 1 ? 's' : ''} further away.</p>`
+    : '';
+
+  nendyResults.innerHTML = `
+    <p class="nendy-origin">From <strong>${esc(resolvedName)}</strong> \u2014 ${undone.length} undone race${undone.length !== 1 ? 's' : ''}${filterNote}</p>
+    <table class="results-table">
+      <thead><tr>
+        <th class="num">#</th><th>Race</th><th>Type</th><th>System</th><th class="num">Distance</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    ${moreNote}`;
 }
 
 function renderNeidy(resolvedName, done, raceDetails) {
@@ -1045,19 +1082,56 @@ function renderNeidy(resolvedName, done, raceDetails) {
   }
 
   if (scored.length === 0) {
-    neidyFiltersEl.style.display = 'none';
-    neidyResults.innerHTML = `<p class="empty-state">No improvement data available for nearby races.</p>`;
+    neidyFiltersEl.style.display = '';
+    neidyResults.innerHTML = `<p class="empty-state">No improvement data available for nearby races${neidyTypeFilter ? ` (filtered to ${neidyTypeFilter} races)` : ''}.</p>`;
     return;
   }
 
   // Lower score = better opportunity
   scored.sort((a, b) => a.score - b.score);
 
-  // Cache for filter re-use
-  neidyScoredCache  = scored;
+  // Cache for reference
+  _neidyScoredCache  = scored;
   neidySourceSystem = resolvedName;
   neidyFiltersEl.style.display = '';
-  applyNeidyFilters();
+
+  const rows = scored.map((s, i) => {
+    const distStr = s.race.dist === Infinity
+      ? '<span class="muted">—</span>'
+      : (s.race.dist < 1 ? '&lt;1 ly' : `${Math.round(s.race.dist).toLocaleString()} ly`);
+    const gapStr  = s.gapMs != null ? formatTime(s.gapMs) : '—';
+    const leapStr = s.leapable > 0 ? `+${s.leapable}` : '—';
+    const barPct  = Math.max(0, Math.min(100, Math.round((1 - Math.max(0, s.score + 0.1) / 0.6) * 100)));
+    return `
+      <tr>
+        <td class="num muted">${i + 1}</td>
+        <td><a href="/race/${encodeURIComponent(s.race.key)}">${esc(s.race.name)}</a></td>
+        <td>${typeBadge(s.race.type)}</td>
+        <td class="num">${ordinal(s.myPos)} / ${s.total}</td>
+        <td class="num neidy-gap">${gapStr}</td>
+        <td class="num neidy-leap">${leapStr}</td>
+        <td class="num">${distStr}</td>
+        <td class="neidy-bar-cell"><div class="neidy-bar"><div class="neidy-bar-fill" style="width:${barPct}%"></div></div></td>
+      </tr>`;
+  }).join('');
+
+  const filterNote = (neidyTypeFilter || neidyDistFilter < Infinity)
+    ? ` (filtered${neidyTypeFilter ? ` to ${neidyTypeFilter}` : ''}${neidyDistFilter < Infinity ? ` within ${neidyDistFilter} ly` : ''})`
+    : '';
+
+  neidyResults.innerHTML = `
+    <p class="nendy-origin">From <strong>${esc(resolvedName)}</strong> — ${scored.length} race${scored.length !== 1 ? 's' : ''}${filterNote}, sorted by catchability</p>
+    <p class="neidy-legend">
+      <span class="neidy-legend-item"><strong>Gap</strong> time between you and the position above</span>
+      <span class="neidy-legend-item"><strong>Leap</strong> positions you'd gain with a 10% faster time</span>
+    </p>
+    <table class="results-table">
+      <thead><tr>
+        <th class="num">#</th><th>Race</th><th>Type</th><th class="num">Position</th>
+        <th class="num">Gap</th><th class="num">Leap</th><th class="num">Distance</th><th>Catchability</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 init();
