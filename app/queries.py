@@ -586,47 +586,23 @@ async def get_commander_stats(commander: str) -> dict | None:
 async def get_recent_activity(limit: int = 20) -> list[dict]:
     """
     Return the most recent race results with commander, race name, position, and timestamp.
-    Each row represents an individual result submission.
+    Uses results_history table to show ALL submissions (including multiple improvements
+    by the same commander), with positions as they were at submission time.
     """
     db = await get_db()
     try:
         async with db.execute(
             """
-            WITH best_times AS (
-                SELECT location, name, MIN(time) AS best
-                FROM results
-                GROUP BY location, name
-            ),
-            ranked AS (
-                SELECT
-                    bt.location,
-                    bt.name,
-                    bt.best,
-                    RANK() OVER (PARTITION BY bt.location ORDER BY bt.best ASC) AS position
-                FROM best_times bt
-            ),
-            latest_results AS (
-                SELECT
-                    r.name,
-                    r.location,
-                    l.name AS race_name,
-                    r.updated,
-                    ranked.position
-                FROM results r
-                JOIN locations l ON l.key = r.location
-                LEFT JOIN ranked ON ranked.location = r.location AND ranked.name = r.name
-                WHERE r.time = (
-                    SELECT MIN(time) FROM results WHERE location = r.location AND name = r.name
-                )
-            )
-            SELECT DISTINCT
-                name,
-                location,
-                race_name,
-                position,
-                updated
-            FROM latest_results
-            ORDER BY updated DESC
+            SELECT
+                rh.name,
+                rh.location,
+                l.name AS race_name,
+                rh.position,
+                rh.updated
+            FROM results_history rh
+            JOIN locations l ON l.key = rh.location
+            WHERE rh.position IS NOT NULL
+            ORDER BY rh.updated DESC
             LIMIT ?
             """,
             (limit,),

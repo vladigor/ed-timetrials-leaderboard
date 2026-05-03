@@ -74,7 +74,7 @@ function render() {
   let html = '';
 
   html += '<section class="stats-section">';
-  html += '<p style="margin-bottom: 1.5rem; color: var(--text-muted);">Showing the most recently updated race results. Each entry represents a new or improved time submission.</p>';
+  html += '<p style="margin-bottom: 1.5rem; color: var(--text-muted);">Showing all recent race submissions in chronological order. If a commander improves their time multiple times, each submission is shown with the position they achieved at that moment.</p>';
 
   if (activity && activity.length > 0) {
     html += renderActivityTable(activity);
