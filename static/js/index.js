@@ -99,8 +99,15 @@ async function init() {
   btnChangeProfile.addEventListener('click', showProfileModal);
   modalCloseX.addEventListener('click', hideProfileModal);
 
-  if (localStorage.getItem('tt_profile_set') !== '1') {
+  // Check if we should show the profile modal
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('changeProfile') || localStorage.getItem('tt_profile_set') !== '1') {
     showProfileModal();
+    // Clean up URL if changeProfile param was present
+    if (urlParams.has('changeProfile')) {
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
   }
 
   // Seed poller with current snapshot, reload races if anything changes

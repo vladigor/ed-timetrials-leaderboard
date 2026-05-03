@@ -27,7 +27,7 @@ export function initProfileSelector() {
     // "Change" button on non-index pages should redirect to home to show modal
     btnChangeProfile.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = '/';
+      window.location.href = '/?changeProfile=1';
     });
   }
 }
