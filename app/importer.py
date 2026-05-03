@@ -225,7 +225,8 @@ async def _upsert_location(db: aiosqlite.Connection, loc: dict) -> None:
 
 
 async def _save_result(db: aiosqlite.Connection, result: dict) -> None:
-    """Insert result (ignore duplicates). Keep only latest 2 per commander per location."""
+    """Insert result (ignore duplicates). Keep only latest 2 per commander per location in results table."""
+    # Insert into results (working table for fast queries)
     await db.execute(
         """
         INSERT OR IGNORE INTO results (name, ship, shipname, location, time, updated)
@@ -233,7 +234,48 @@ async def _save_result(db: aiosqlite.Connection, result: dict) -> None:
         """,
         result,
     )
-    # Prune: keep only the 2 most recent entries for this name+location
+
+    # Insert into results_history (full historical record, never pruned)
+    # We'll update the position after calculating it
+    await db.execute(
+        """
+        INSERT OR IGNORE INTO results_history (name, ship, shipname, location, time, updated, position)
+        VALUES (:name, :ship, :shipname, :location, :time, :updated, NULL)
+        """,
+        result,
+    )
+
+    # Calculate position based on current best times for this location
+    # Get all commanders' best times for this location (including the new result)
+    async with db.execute(
+        """
+        SELECT name, MIN(time) as best_time
+        FROM results
+        WHERE location = ?
+        GROUP BY name
+        ORDER BY best_time ASC
+        """,
+        (result["location"],),
+    ) as cur:
+        rankings = await cur.fetchall()
+
+    # Find this commander's position
+    position = next(
+        (i + 1 for i, row in enumerate(rankings) if row["name"] == result["name"]), None
+    )
+
+    # Update the position in the history record we just inserted
+    if position is not None:
+        await db.execute(
+            """
+            UPDATE results_history
+            SET position = ?
+            WHERE name = ? AND location = ? AND updated = ?
+            """,
+            (position, result["name"], result["location"], result["updated"]),
+        )
+
+    # Prune: keep only the 2 most recent entries for this name+location in results table
     await db.execute(
         """
         DELETE FROM results

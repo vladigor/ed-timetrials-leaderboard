@@ -52,6 +52,22 @@ CREATE TABLE IF NOT EXISTS results (
     UNIQUE (name, location, updated) ON CONFLICT IGNORE
 );
 
+CREATE TABLE IF NOT EXISTS results_history (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        TEXT NOT NULL,
+    ship        TEXT NOT NULL DEFAULT '',
+    shipname    TEXT NOT NULL DEFAULT '',
+    location    TEXT REFERENCES locations(key) ON DELETE CASCADE,
+    time        INTEGER NOT NULL,
+    updated     TEXT NOT NULL,
+    position    INTEGER,
+    UNIQUE (name, location, updated) ON CONFLICT IGNORE
+);
+CREATE INDEX IF NOT EXISTS idx_history_name ON results_history(name);
+CREATE INDEX IF NOT EXISTS idx_history_location ON results_history(location);
+CREATE INDEX IF NOT EXISTS idx_history_updated ON results_history(updated);
+CREATE INDEX IF NOT EXISTS idx_history_name_location ON results_history(name, location);
+
 CREATE TABLE IF NOT EXISTS position_snapshots (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     location    TEXT NOT NULL,
@@ -77,6 +93,7 @@ async def get_db() -> aiosqlite.Connection:
 async def init_db() -> None:
     """Create tables if they do not already exist."""
     async with aiosqlite.connect(DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
         await db.executescript(_CREATE_SQL)
         # Migrations – add race-detail columns if they don't already exist
         for col_sql in (
@@ -89,6 +106,7 @@ async def init_db() -> None:
             "ALTER TABLE locations ADD COLUMN coords TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE locations ADD COLUMN created_at TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE locations ADD COLUMN creator TEXT NOT NULL DEFAULT ''",
+            "ALTER TABLE results_history ADD COLUMN position INTEGER",
         ):
             with contextlib.suppress(Exception):
                 await db.execute(col_sql)
@@ -125,6 +143,76 @@ async def init_db() -> None:
             )
             await db.execute(
                 "INSERT INTO last_updated_cache (key, updated) VALUES ('migration_superseded_v1', 'done')"
+            )
+        # One-time migration: populate results_history with existing results data
+        async with db.execute(
+            "SELECT key FROM last_updated_cache WHERE key = 'migration_results_history_v1'"
+        ) as cur:
+            already_done4 = await cur.fetchone()
+        if not already_done4:
+            # Copy all existing results to results_history
+            await db.execute(
+                """
+                INSERT OR IGNORE INTO results_history (name, ship, shipname, location, time, updated)
+                SELECT name, ship, shipname, location, time, updated FROM results
+                """
+            )
+            await db.execute(
+                "INSERT INTO last_updated_cache (key, updated) VALUES ('migration_results_history_v1', 'done')"
+            )
+        # One-time migration: backfill positions in results_history
+        async with db.execute(
+            "SELECT key FROM last_updated_cache WHERE key = 'migration_history_positions_v1'"
+        ) as cur:
+            already_done5 = await cur.fetchone()
+        if not already_done5:
+            # Backfill positions for all existing history records
+            # For each record, calculate position based on best times at that point in time
+            async with db.execute(
+                """
+                SELECT DISTINCT location FROM results_history ORDER BY location
+                """
+            ) as cur:
+                locations = [row["location"] async for row in cur]
+
+            for loc in locations:
+                # Process each location separately
+                async with db.execute(
+                    """
+                    SELECT id, name, time, updated
+                    FROM results_history
+                    WHERE location = ?
+                    ORDER BY updated ASC
+                    """,
+                    (loc,),
+                ) as cur:
+                    history_records = [dict(row) async for row in cur]
+
+                # Track best time for each commander up to each point
+                best_times = {}  # {name: time}
+
+                for record in history_records:
+                    cmdr = record["name"]
+                    time_ms = record["time"]
+
+                    # Update this commander's best time if this is better
+                    if cmdr not in best_times or time_ms < best_times[cmdr]:
+                        best_times[cmdr] = time_ms
+
+                    # Calculate position based on current best_times
+                    sorted_commanders = sorted(best_times.items(), key=lambda x: x[1])
+                    position = next(
+                        i + 1 for i, (name, _) in enumerate(sorted_commanders) if name == cmdr
+                    )
+
+                    # Update the history record with the position
+                    await db.execute(
+                        "UPDATE results_history SET position = ? WHERE id = ?",
+                        (position, record["id"]),
+                    )
+
+            await db.execute(
+                "INSERT INTO last_updated_cache (key, updated) VALUES ('migration_history_positions_v1', 'done')"
             )
         # Purge snapshots older than 90 days on each startup to keep DB lean
         await db.execute(

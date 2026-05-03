@@ -65,6 +65,40 @@ Individual time trial submissions. At most **2 rows** are kept per `(name, locat
 
 ---
 
+### `results_history`
+
+Complete historical record of ALL time trial submissions. Unlike the `results` table, this table is **never pruned** and preserves the full history of every commander's every submission. This enables comprehensive activity tracking, performance analytics, and historical metrics like total improvements, position climbs, and average improvement rates.
+
+| Column | Type | Default | Description |
+|---|---|---|---|
+| `id` | INTEGER PK | autoincrement | Row ID |
+| `name` | TEXT | — | Commander name (e.g. `"CMDR Razz"`) |
+| `ship` | TEXT | `''` | Ship/vehicle type abbreviation (e.g. `"SRV"`, `"Cobra MkIII"`) |
+| `shipname` | TEXT | `''` | Player-assigned ship name (may be empty) |
+| `location` | TEXT FK → `locations.key` | — | Race key |
+| `time` | INTEGER | — | Elapsed time in milliseconds |
+| `updated` | TEXT | — | UTC datetime of the submission (`%Y-%m-%d %H:%M:%S.%f`) |
+| `position` | INTEGER | NULL allowed | Leaderboard position at the time of submission (1 = first). Calculated based on all commanders' best times in this race at the moment this result was submitted |
+
+**Unique constraint:** `(name, location, updated)` — duplicate submissions are silently ignored (`ON CONFLICT IGNORE`).
+
+**Indexes:** `(name)`, `(location)`, `(updated)`, `(name, location)` — optimized for activity queries, commander history lookups, and analytics.
+
+**Position calculation:** When a result is submitted, the position is calculated by ranking all commanders' best times for that race (including the newly submitted result). This captures the commander's leaderboard standing at that exact moment in time, enabling accurate historical tracking of position changes.
+
+**Usage:**
+- Activity feeds showing all improvements with historical positions
+- Commander statistics: total runs, improvement count, average improvement
+- Position climb tracking over time (accurate historical positions)
+- Historical performance analysis with leaderboard context
+
+**Relationship to `results` table:**
+- `results` is a working table optimized for fast leaderboard queries (keeps only 2 most recent per commander/race)
+- `results_history` is an append-only archive for historical analysis
+- Both tables receive the same inserts; only `results` is pruned
+
+---
+
 ### `position_snapshots`
 
 Historical record of each commander's leaderboard position at every detected change. Used to compute rival/rivalry data (P1 switches in the last day/week).
@@ -103,6 +137,7 @@ Key-value store for two purposes:
 ```
 locations  ──< constraints        (location → locations.key, CASCADE DELETE)
 locations  ──< results            (location → locations.key, CASCADE DELETE)
+locations  ──< results_history    (location → locations.key, CASCADE DELETE)
 ```
 
 `position_snapshots` and `last_updated_cache` do not use declared foreign keys.
