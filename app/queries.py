@@ -710,6 +710,17 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         ) as cur:
             stats["active_races_30d"] = (await cur.fetchone())["cnt"]
 
+        # Active racers (distinct commanders with activity in last 30 days)
+        async with db.execute(
+            """
+            SELECT COUNT(DISTINCT name) AS cnt
+            FROM results
+            WHERE updated >= ?
+            """,
+            (cutoff_30d,),
+        ) as cur:
+            stats["active_racers_30d"] = (await cur.fetchone())["cnt"]
+
         # Longest race (by fastest participant's time)
         async with db.execute(
             """

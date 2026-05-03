@@ -54,17 +54,28 @@ async function init() {
 function render() {
   let html = '';
 
-  // ── Overview Stats ──────────────────────────────────────────────────────
+  // ── Races ──────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Overview</h2>';
+  html += '<h2 class="cmdr-section-heading">Locations</h2>';
   html += '<div class="stats-grid">';
 
   html += renderStatCard('Total Races', stats.total_races);
+  html += renderStatCard('Active Races', stats.active_races_30d, 'Races that have had at least one time set in the last 30 days');
+
+  html += '</div>';
+  html += '</section>';
+
+  // ── Racers ────────────────────────────────────────────────────────
+  html += '<section class="stats-section">';
+  html += '<h2 class="cmdr-section-heading">Participants</h2>';
+  html += '<div class="stats-grid">';
+
   html += renderStatCard('Total Racers', stats.total_racers, 'Note that this will include some Alt accounts');
+  html += renderStatCard('Active Racers', stats.active_racers_30d, 'Racers who have set at least one time in the last 30 days');
   html += renderStatCard('DW3 Racers', stats.dw3_racers, 'Racers who have set a time on at least one DW3 race');
   html += renderStatCard('Non-DW3 Racers', stats.non_dw3_racers, 'Racers who have set a time on at least one non-DW3 race');
-  html += renderStatCard('Race Creators', stats.total_contributors);
-  html += renderStatCard('Active Races', stats.active_races_30d, 'Races that have had at least one time set in the last 30 days');
+
+  //html += renderStatCard('Race Creators', stats.total_contributors);
 
   html += '</div>';
   html += '</section>';
