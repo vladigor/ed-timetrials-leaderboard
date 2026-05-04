@@ -1255,6 +1255,41 @@ a:hover { text-decoration: underline; }
   transition: opacity 0.2s ease;
 }
 
+/* Status badges for thefts table */
+.status-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.status-reclaimed {
+  background: linear-gradient(135deg, #2a5d2a 0%, #3a7d3a 100%);
+  color: #ffd700;
+}
+
+.status-redeemed {
+  background: linear-gradient(135deg, #3a5a7d 0%, #4a6a9d 100%);
+  color: #ffd700;
+}
+
+.status-dropped {
+  background: linear-gradient(135deg, #6a5a3a 0%, #7a6a4a 100%);
+  color: #e0d0b0;
+}
+
+.status-active {
+  background: linear-gradient(135deg, #7d3a2a 0%, #9d4a3a 100%);
+  color: #ffaa80;
+}
+
+.active-theft {
+  /* Active thefts are fully visible */
+  opacity: 1;
+}
+
 /* ============================================================
    Opportunities (NENDY + NEIDY)
    ============================================================ */

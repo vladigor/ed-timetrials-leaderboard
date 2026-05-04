@@ -8,6 +8,8 @@
     - [Creators index page](/creators) showing all race creators with race counts by type (Ship, Fighter, SRV, On Foot)
     - Individual creator pages at `/creator/{name}` displaying all races created by that commander, grouped by race type
     - Cmdr profile pages now show creator status with race count and link to creator page
+- Recent Thefts page: New page for recent trophy thefts
+    - Shows all recent podium thefts.
 
 ## 2026-05-03
 

@@ -135,6 +135,11 @@ async def activity_page(request: Request):
     return templates.TemplateResponse("activity.html", {"request": request, "v": STATIC_VER})
 
 
+@app.get("/thefts", response_class=HTMLResponse)
+async def thefts_page(request: Request):
+    return templates.TemplateResponse("thefts.html", {"request": request, "v": STATIC_VER})
+
+
 @app.get("/races-list", response_class=HTMLResponse)
 async def races_table_page(request: Request):
     return templates.TemplateResponse("races-table.html", {"request": request, "v": STATIC_VER})
@@ -410,6 +415,14 @@ async def api_activity(limit: int = Query(20, ge=1, le=100)):
     from .queries import get_recent_activity
 
     return await get_recent_activity(limit=limit)
+
+
+@app.get("/api/thefts")
+async def api_thefts(days: int = Query(30, ge=1, le=90)):
+    """Return recent podium position thefts and regains across all races."""
+    from .queries import get_recent_thefts
+
+    return await get_recent_thefts(days=days)
 
 
 @app.get("/api/system-coords")

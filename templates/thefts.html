@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Recent Trophy Thefts — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+  <main class="page-wrapper">
+
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span>Recent Trophy Thefts</span>
+    </div>
+
+    <h1 class="page-title">Recent Trophy Thefts</h1>
+
+    <section class="filter-bar" aria-label="Filters">
+      <div class="filter-group">
+        <input type="text" id="filter-victim" placeholder="Filter by victim..." aria-label="Filter by victim" style="min-width:180px">
+        <input type="text" id="filter-thief" placeholder="Filter by thief..." aria-label="Filter by thief" style="min-width:180px">
+        <input type="text" id="filter-race" placeholder="Filter by race..." aria-label="Filter by race" style="min-width:200px">
+      </div>
+    </section>
+
+    <div class="status-bar">
+      <div class="dot" id="status-dot"></div>
+      <span id="status-text">Loading…</span>
+    </div>
+
+    <div id="thefts-container">
+      <p class="loading-placeholder">Loading recent trophy thefts…</p>
+    </div>
+
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script type="module" src="/static/js/thefts.js?v={{ v }}"></script>
+{% endblock %}

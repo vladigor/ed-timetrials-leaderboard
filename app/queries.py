@@ -580,14 +580,6 @@ async def get_commander_stats(commander: str) -> dict | None:
                     ORDER BY ps2.position ASC
                     LIMIT 1
                 ) AS thief_name,
-                CASE WHEN EXISTS (
-                    SELECT 1
-                    FROM position_snapshots ps_reclaim
-                    WHERE ps_reclaim.location = cs.location
-                      AND ps_reclaim.name = ?
-                      AND ps_reclaim.snapped_at > cs.snapped_at
-                      AND ps_reclaim.position <= cs.prev_pos
-                ) THEN 1 ELSE 0 END AS reclaimed,
                 (
                     SELECT ps2.name
                     FROM position_snapshots ps2
@@ -645,7 +637,7 @@ async def get_commander_stats(commander: str) -> dict | None:
             ORDER BY cs.snapped_at DESC
             LIMIT 10
             """,
-            (commander, commander, commander),
+            (commander, commander),
         ) as cur:
             theft_rows = await cur.fetchall()
 
@@ -658,17 +650,20 @@ async def get_commander_stats(commander: str) -> dict | None:
             row_dict = _row_to_dict(r)
 
             # Extract relevant positions
-            reclaimed = row_dict["reclaimed"]
             thief_current = row_dict.get("thief_current_position")
             cmdr_current = row_dict.get("cmdr_current_position")
             stolen_pos = row_dict["stolen_position"]
 
-            # Compute thief_lost: thief no longer holds the stolen position (or better)
-            thief_lost = not reclaimed and thief_current is not None and thief_current > stolen_pos
+            # Reclaimed: commander currently holds the stolen position or better
+            reclaimed = cmdr_current is not None and cmdr_current <= stolen_pos
 
-            # Compute redeemed: thief lost the trophy AND commander is now ahead of the thief
+            # Thief lost: thief no longer holds the stolen position (or better)
+            thief_lost = thief_current is not None and thief_current > stolen_pos
+
+            # Redeemed: thief lost the trophy AND commander is now ahead of the thief
             redeemed = thief_lost and cmdr_current is not None and cmdr_current < thief_current
 
+            row_dict["reclaimed"] = reclaimed
             row_dict["thief_lost"] = thief_lost
             row_dict["redeemed"] = redeemed
 
@@ -730,6 +725,129 @@ async def get_recent_activity(limit: int = 20) -> list[dict]:
             (limit,),
         ) as cur:
             return [_row_to_dict(r) for r in await cur.fetchall()]
+    finally:
+        await db.close()
+
+
+async def get_recent_thefts(days: int = 30) -> list[dict]:
+    """
+    Return recent podium position thefts/regains across all races.
+    Shows when commanders lost or regained podium positions (top 3) in the last N days.
+
+    Returns events where:
+    - A commander was bumped off or down from a podium position (theft)
+    - A commander regained a previously-held podium position (redemption)
+    """
+    db = await get_db()
+    try:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).strftime(
+            "%Y-%m-%d %H:%M:%S.%f"
+        )
+
+        async with db.execute(
+            """
+            WITH position_changes AS (
+                SELECT
+                    ps.location,
+                    ps.name AS victim_name,
+                    ps.position AS new_position,
+                    ps.snapped_at,
+                    LAG(ps.position) OVER (PARTITION BY ps.location, ps.name ORDER BY ps.snapped_at) AS prev_position,
+                    LAG(ps.snapped_at) OVER (PARTITION BY ps.location, ps.name ORDER BY ps.snapped_at) AS prev_snapped_at
+                FROM position_snapshots ps
+                WHERE ps.snapped_at >= ?
+            ),
+            thefts AS (
+                SELECT
+                    pc.location,
+                    pc.victim_name,
+                    pc.prev_position AS stolen_position,
+                    pc.new_position,
+                    pc.snapped_at AS stolen_at,
+                    pc.prev_snapped_at,
+                    -- Find who took the position (new commander at or above the stolen position)
+                    (
+                        SELECT ps2.name
+                        FROM position_snapshots ps2
+                        WHERE ps2.location = pc.location
+                          AND ps2.snapped_at = pc.snapped_at
+                          AND ps2.position <= pc.prev_position
+                          AND NOT EXISTS (
+                              SELECT 1
+                              FROM position_snapshots ps3
+                              WHERE ps3.location = pc.location
+                                AND ps3.snapped_at = pc.prev_snapped_at
+                                AND ps3.name = ps2.name
+                                AND ps3.position <= pc.prev_position
+                          )
+                        ORDER BY ps2.position ASC
+                        LIMIT 1
+                    ) AS thief_name
+                FROM position_changes pc
+                WHERE pc.prev_position IS NOT NULL
+                  AND pc.prev_position <= 3
+                  AND pc.new_position > pc.prev_position
+            )
+            SELECT
+                t.location AS race_key,
+                l.name AS race_name,
+                t.victim_name,
+                t.thief_name,
+                t.stolen_position,
+                t.new_position,
+                t.stolen_at,
+                -- Get current positions for both parties
+                (
+                    SELECT ps.position
+                    FROM position_snapshots ps
+                    WHERE ps.location = t.location
+                      AND ps.name = t.thief_name
+                    ORDER BY ps.snapped_at DESC
+                    LIMIT 1
+                ) AS thief_current_position,
+                (
+                    SELECT ps.position
+                    FROM position_snapshots ps
+                    WHERE ps.location = t.location
+                      AND ps.name = t.victim_name
+                    ORDER BY ps.snapped_at DESC
+                    LIMIT 1
+                ) AS victim_current_position
+            FROM thefts t
+            JOIN locations l ON l.key = t.location
+            WHERE t.thief_name IS NOT NULL
+            ORDER BY t.stolen_at DESC
+            """,
+            (cutoff,),
+        ) as cur:
+            theft_rows = await cur.fetchall()
+
+        # Process results to add computed flags
+        results = []
+        for r in theft_rows:
+            row_dict = _row_to_dict(r)
+
+            # Extract positions
+            stolen_pos = row_dict["stolen_position"]
+            thief_current = row_dict.get("thief_current_position")
+            victim_current = row_dict.get("victim_current_position")
+
+            # Reclaimed: victim currently holds the stolen position or better
+            reclaimed = victim_current is not None and victim_current <= stolen_pos
+
+            # Thief lost: thief no longer holds the stolen position (or better)
+            thief_lost = thief_current is not None and thief_current > stolen_pos
+
+            # Redeemed: thief lost the trophy AND victim is now ahead of the thief
+            redeemed = thief_lost and victim_current is not None and victim_current < thief_current
+
+            row_dict["reclaimed"] = reclaimed
+            row_dict["thief_lost"] = thief_lost
+            row_dict["redeemed"] = redeemed
+
+            results.append(row_dict)
+
+        return results
     finally:
         await db.close()
 
