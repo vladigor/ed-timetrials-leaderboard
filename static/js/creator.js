@@ -525,7 +525,7 @@ function sortRaces(races, sortBy, sortDir) {
         if (cmp === 0) {
           const la = a.last_activity ?? '';
           const lb = b.last_activity ?? '';
-          cmp = -(la.localeCompare(lb));
+          cmp = la.localeCompare(lb);
         }
         break;
       }
