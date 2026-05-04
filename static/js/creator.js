@@ -184,11 +184,10 @@ async function init() {
     }
   });
 
-  // Load Inara avatar
-  await loadInaraAvatar();
-
   // Render participation bars
-  await renderParticipationBars();
+  if (!isCreator) {
+    await renderParticipationBars();
+  }
 
   // Seed poller with current snapshot, reload races if anything changes
   poller = new ChangePoller(60_000, async () => {
@@ -234,9 +233,9 @@ async function loadCreatorRaces() {
         <p style="margin: 0; font-size: 0.95rem; line-height: 1.5;">
           <strong>Want to add maps and links?</strong><br>
           Send any race maps and related links to <strong>CMDR vladigor</strong> via DM.
-          Please include the link to the race page that the media is for (e.g., <code style="background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 3px;">https://elitettleaderboard.vladigor.net/race/YOUR_RACE_KEY</code>) —
-          this makes it easiest for me to find the race and add the media.
           <br>Please limit number of links to up to 4 items and include a label for the link (eg. demo video, crator on wp3, etc).
+          <br>Please include the link to the race page that the media is for (e.g., <code style="background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 3px;">https://elitettleaderboard.vladigor.net/race/YOUR_RACE_KEY</code>) —
+          this makes it easier for me to find the race and add the media.
         </p>
       `;
       instructionsEl.style.display = 'block';
@@ -272,53 +271,6 @@ async function resolveSystemCoords(systemName) {
     currentCoords = { x, y, z, name: resolvedName };
   } catch (err) {
     currentCoords = null;
-  }
-}
-
-// ── Inara Avatar ───────────────────────────────────────────────────────────
-async function loadInaraAvatar() {
-  const avatarContainer = document.getElementById('creator-avatar-container');
-  const avatarLink = document.getElementById('creator-avatar-link');
-  const avatarImg = document.getElementById('creator-avatar');
-
-  try {
-    const res = await fetch(`/api/cmdr/${encodeURIComponent(creatorName)}/inara`);
-    if (!res.ok) {
-      // Commander not found on Inara or API unavailable - silently skip
-      return;
-    }
-    const profile = await res.json();
-
-    // Set up error handler to detect 404s (avoids CORS issues with HEAD requests)
-    avatarImg.onerror = async () => {
-      console.debug('Avatar image failed to load, forcing refresh from Inara API');
-      try {
-        // Avatar no longer exists - force refresh from Inara
-        const refreshRes = await fetch(`/api/cmdr/${encodeURIComponent(creatorName)}/inara?force_refresh=1`);
-        if (refreshRes.ok) {
-          const refreshedProfile = await refreshRes.json();
-          // Clear error handler to prevent infinite loop
-          avatarImg.onerror = null;
-          // Use refreshed data
-          avatarImg.src = refreshedProfile.avatar_url;
-          avatarLink.href = refreshedProfile.inara_url;
-        } else {
-          // Refresh failed - hide avatar container
-          avatarContainer.style.display = 'none';
-        }
-      } catch (refreshErr) {
-        console.debug('Failed to refresh Inara avatar:', refreshErr);
-        avatarContainer.style.display = 'none';
-      }
-    };
-
-    // Display the avatar - onerror will handle any load failures
-    avatarImg.src = profile.avatar_url;
-    avatarLink.href = profile.inara_url;
-    avatarContainer.style.display = 'block';
-  } catch (err) {
-    // Silently fail - avatar is optional
-    console.debug('Failed to load Inara avatar:', err);
   }
 }
 
@@ -493,7 +445,7 @@ function renderTables() {
               ${thSort(type, 'name', 'Race Name', '', 'max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;')}
               ${thSort(type, 'location', 'Location', '', 'max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;')}
               ${currentCoords ? thSort(type, 'distance', 'Distance', 'num') : '<th class="num">Distance</th>'}
-              ${filterCmdr ? thSort(type, 'position', 'My Position', 'num') : '<th class="num">Position</th>'}
+              ${filterCmdr ? thSort(type, 'position', 'Position', 'num') : '<th class="num">Position</th>'}
               ${thSort(type, 'participants', 'Participants', 'num')}
               ${thSort(type, 'last_activity', 'Last Activity')}
               ${thSort(type, 'created_at', 'Created')}
