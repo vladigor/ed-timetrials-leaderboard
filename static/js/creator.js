@@ -35,6 +35,7 @@ const SORT_DEFAULTS = {
   location: 'asc',
   distance: 'asc',
   position: 'asc',
+  participants: 'desc',
   last_activity: 'desc',
   created_at: 'desc'
 };
@@ -90,13 +91,13 @@ async function init() {
   checkActive.addEventListener('change', () => {
     filterActive = checkActive.checked;
     localStorage.setItem('tt_filter_active', filterActive ? '1' : '0');
-    loadCreatorRaces();
+    renderTables();
   });
 
   checkCmdrRaces.addEventListener('change', () => {
     filterCmdrRaces = checkCmdrRaces.checked;
     localStorage.setItem('tt_filter_cmdr_races', filterCmdrRaces ? '1' : '0');
-    loadCreatorRaces();
+    renderTables();
   });
 
   checkHideDW3.addEventListener('change', () => {
@@ -210,10 +211,9 @@ async function loadCreatorRaces() {
   try {
     const url = new URL(`/api/creator/${encodeURIComponent(creatorName)}`, location.origin);
 
-    // Apply commander position annotation if enabled
-    // On the creator page, we always show all races by the creator,
-    // but optionally annotate with the current commander's position
-    if (filterCmdr && filterCmdrRaces) {
+    // Always fetch position data if a commander is set
+    // The filterCmdrRaces checkbox will control whether we filter to only those races
+    if (filterCmdr) {
       url.searchParams.set('commander_pos', filterCmdr);
     }
 
@@ -425,6 +425,11 @@ function renderTables() {
     });
   }
 
+  // Filter to only races the commander has participated in
+  if (filterCmdr && filterCmdrRaces) {
+    races = races.filter(r => r.cmdr_position != null);
+  }
+
   // Calculate distances if system is set
   if (currentCoords) {
     races = races.map(r => {
@@ -485,10 +490,11 @@ function renderTables() {
         <table class="results-table" style="width: 100%">
           <thead>
             <tr>
-              ${thSort(type, 'name', 'Race Name')}
-              ${thSort(type, 'location', 'Location')}
+              ${thSort(type, 'name', 'Race Name', '', 'max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;')}
+              ${thSort(type, 'location', 'Location', '', 'max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;')}
               ${currentCoords ? thSort(type, 'distance', 'Distance', 'num') : '<th class="num">Distance</th>'}
-              ${filterCmdr ? thSort(type, 'position', 'Position', 'num') : '<th class="num">Participants</th>'}
+              ${filterCmdr ? thSort(type, 'position', 'My Position', 'num') : '<th class="num">Position</th>'}
+              ${thSort(type, 'participants', 'Participants', 'num')}
               ${thSort(type, 'last_activity', 'Last Activity')}
               ${thSort(type, 'created_at', 'Created')}
               <th>Restrictions</th>
@@ -541,6 +547,12 @@ function sortRaces(races, sortBy, sortDir) {
         cmp = aPos - bPos;
         break;
       }
+      case 'participants': {
+        const aCount = Number(a.entry_count) || 0;
+        const bCount = Number(b.entry_count) || 0;
+        cmp = aCount - bCount;
+        break;
+      }
       case 'last_activity': {
         const ta = a.last_activity ?? '';
         const tb = b.last_activity ?? '';
@@ -571,12 +583,13 @@ function sortRaces(races, sortBy, sortDir) {
   return sorted;
 }
 
-function thSort(type, col, label, extraClass = '') {
+function thSort(type, col, label, extraClass = '', extraStyle = '') {
   const { by: sortBy, dir: sortDir } = sortState[type];
   const isActive = sortBy === col;
   const indicator = isActive ? (sortDir === 'asc' ? ' ▲' : ' ▼') : '';
   const cls = ['th-sortable', isActive ? 'th-active' : '', extraClass].filter(Boolean).join(' ');
-  return `<th class="${cls}" data-sort="${col}" data-type="${type}">${label}${indicator}</th>`;
+  const style = extraStyle ? ` style="${extraStyle}"` : '';
+  return `<th class="${cls}" data-sort="${col}" data-type="${type}"${style}>${label}${indicator}</th>`;
 }
 
 function renderRow(r, _idx, _type) {
@@ -598,8 +611,9 @@ function renderRow(r, _idx, _type) {
 
   const entries = Number(r.entry_count) || 0;
   const positionText = (filterCmdr && r.cmdr_position != null)
-    ? `${ordinal(r.cmdr_position)} of ${entries}`
-    : `${entries.toString()} finishers`;
+    ? ordinal(r.cmdr_position)
+    : '—';
+  const participantsText = entries.toString();
 
   const activity = r.last_activity ? relativeTime(r.last_activity) : '—';
   const created = r.created_at ? formatDate(r.created_at) : '—';
@@ -617,10 +631,11 @@ function renderRow(r, _idx, _type) {
 
   return `
     <tr>
-      <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></td>
-      <td>${location} ${copyBtn}</td>
+      <td style="max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;"><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></td>
+      <td style="max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;">${location} ${copyBtn}</td>
       <td class="num">${distance}</td>
       <td class="num">${positionText}</td>
+      <td class="num">${participantsText}</td>
       <td class="muted">${activity}</td>
       <td class="muted">${created}</td>
       <td class="muted">${restrictions}</td>
