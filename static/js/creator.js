@@ -44,6 +44,7 @@ const breadcrumb          = document.getElementById('creator-breadcrumb');
 const title               = document.getElementById('creator-title');
 const titleLink           = document.getElementById('creator-title-link');
 const summaryEl           = document.getElementById('creator-summary');
+const instructionsEl      = document.getElementById('creator-instructions');
 const searchInput         = document.getElementById('filter-search');
 const checkActive         = document.getElementById('filter-active');
 const checkCmdrRaces      = document.getElementById('filter-cmdr-races');
@@ -226,6 +227,23 @@ async function loadCreatorRaces() {
       allRaces = [];
       summaryEl.textContent = `No races created yet`;
     }
+
+    // Show instructions if viewing own creator page
+    if (isCreator) {
+      instructionsEl.innerHTML = `
+        <p style="margin: 0; font-size: 0.95rem; line-height: 1.5;">
+          <strong>Want to add maps and links?</strong><br>
+          Send any race maps and related links to <strong>CMDR vladigor</strong> via DM.
+          Please include the link to the race page that the media is for (e.g., <code style="background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 3px;">https://elitettleaderboard.vladigor.net/race/YOUR_RACE_KEY</code>) —
+          this makes it easiest for me to find the race and add the media.
+          <br>Please limit number of links to up to 4 items and include a label for the link (eg. demo video, crator on wp3, etc).
+        </p>
+      `;
+      instructionsEl.style.display = 'block';
+    } else {
+      instructionsEl.style.display = 'none';
+    }
+
     renderTables();
   } catch (err) {
     racesByTypeContainer.innerHTML = `<p class="empty-state">This commander hasn't created any races yet.</p>`;
@@ -473,9 +491,9 @@ function renderTables() {
               ${filterCmdr ? thSort(type, 'position', 'Position', 'num') : '<th class="num">Participants</th>'}
               ${thSort(type, 'last_activity', 'Last Activity')}
               ${thSort(type, 'created_at', 'Created')}
+              <th>Restrictions</th>
               ${isCreator ? '<th class="num">Map</th>' : ''}
               ${isCreator ? '<th class="num">Links</th>' : ''}
-              <th>Restrictions</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -591,8 +609,8 @@ function renderRow(r, _idx, _type) {
   let linksCol = '';
   if (isCreator) {
     const media = mediaData[r.key] || {};
-    const hasMap = media.map ? '✓' : '✗';
-    const hasLinks = (media.links && media.links.length > 0) ? '✓' : '✗';
+    const hasMap = media.map ? '<span style="color: #3fb97a;">✓</span>' : '<span style="color: #d94f4f;">✗</span>';
+    const hasLinks = (media.links && media.links.length > 0) ? '<span style="color: #3fb97a;">✓</span>' : '<span style="color: #d94f4f;">✗</span>';
     mapCol = `<td class="num">${hasMap}</td>`;
     linksCol = `<td class="num">${hasLinks}</td>`;
   }
@@ -605,9 +623,9 @@ function renderRow(r, _idx, _type) {
       <td class="num">${positionText}</td>
       <td class="muted">${activity}</td>
       <td class="muted">${created}</td>
+      <td class="muted">${restrictions}</td>
       ${mapCol}
       ${linksCol}
-      <td class="muted">${restrictions}</td>
     </tr>
   `;
 }

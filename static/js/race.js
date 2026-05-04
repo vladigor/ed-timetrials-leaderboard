@@ -172,7 +172,7 @@ function renderRace() {
   const _versionCls = race.version === 'ODYSSEY' ? 'badge-odyssey' : 'badge-horizons';
   const creatorHtml = race.creator
     ? (race.creator_is_cmdr
-        ? `<span>· Created by <a href="/cmdr/${encodeURIComponent(race.creator)}" class="cmdr-link">${esc(race.creator)}</a></span>`
+        ? `<span>· Created by <a href="/creator/${encodeURIComponent(race.creator)}" class="cmdr-link">${esc(race.creator)}</a></span>`
         : `<span>· Created by ${esc(race.creator)}</span>`)
     : '';
   metaEl.innerHTML = `

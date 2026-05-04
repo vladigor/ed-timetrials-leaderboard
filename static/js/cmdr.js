@@ -61,7 +61,7 @@ async function init() {
   // Display creator info if commander has created races
   const creatorInfo = document.getElementById('creator-info');
   if (stats.created_race_count && stats.created_race_count > 0) {
-    creatorInfo.innerHTML = `CMDR ${esc(cmdrName)} is the creator of ${stats.created_race_count} race${stats.created_race_count !== 1 ? 's' : ''}. <a href="/creator/${encodeURIComponent(cmdrName)}">View their races</a>`;
+    creatorInfo.innerHTML = `CMDR ${esc(cmdrName)} has created ${stats.created_race_count} race${stats.created_race_count !== 1 ? 's' : ''}. <a href="/creator/${encodeURIComponent(cmdrName)}">View their races</a>`;
     creatorInfo.style.display = 'block';
   }
 
