@@ -113,9 +113,13 @@ function thSort(col, label, extraClass = '') {
 }
 
 function renderRow(c) {
+  const creatorName = c.has_profile
+    ? `<a href="/creator/${encodeURIComponent(c.creator)}">${esc(c.creator)}</a>`
+    : `<span style="color: var(--accent);">${esc(c.creator)}</span>`;
+
   return `
     <tr>
-      <td><a href="/creator/${encodeURIComponent(c.creator)}">${esc(c.creator)}</a></td>
+      <td>${creatorName}</td>
       <td class="num" style="text-align: center;">${c.total}</td>
       <td class="num" style="text-align: center;">${c.ship || 0}</td>
       <td class="num" style="text-align: center;">${c.fighter || 0}</td>

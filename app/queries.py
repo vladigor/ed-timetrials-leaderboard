@@ -275,7 +275,7 @@ async def list_commanders() -> list[str]:
 async def list_creators() -> list[dict]:
     """
     Return a list of all race creators with counts of races by type.
-    Returns: [{"creator": str, "ship": int, "fighter": int, "srv": int, "onfoot": int, "total": int}]
+    Returns: [{"creator": str, "ship": int, "fighter": int, "srv": int, "onfoot": int, "total": int, "has_profile": bool}]
     """
     db = await get_db()
     try:
@@ -287,7 +287,8 @@ async def list_creators() -> list[dict]:
                 SUM(CASE WHEN type = 'SHIP' THEN 1 ELSE 0 END) AS ship,
                 SUM(CASE WHEN type = 'FIGHTER' THEN 1 ELSE 0 END) AS fighter,
                 SUM(CASE WHEN type = 'SRV' THEN 1 ELSE 0 END) AS srv,
-                SUM(CASE WHEN type = 'ONFOOT' THEN 1 ELSE 0 END) AS onfoot
+                SUM(CASE WHEN type = 'ONFOOT' THEN 1 ELSE 0 END) AS onfoot,
+                EXISTS(SELECT 1 FROM results WHERE name = creator LIMIT 1) AS has_profile
             FROM locations
             WHERE creator IS NOT NULL AND creator != ''
             GROUP BY creator
