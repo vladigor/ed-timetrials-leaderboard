@@ -2,19 +2,21 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import mimetypes
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
+from typing import Annotated
 
 import markdown
-from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .config import OFFLINE
+from .config import ENV, OFFLINE
 from .database import init_db
 from .queries import (
     get_commander_stats,
@@ -95,7 +97,9 @@ async def webmanifest():
 
 @app.get("/race/{key}", response_class=HTMLResponse)
 async def race_page(request: Request, key: str):
-    return templates.TemplateResponse("race.html", {"request": request, "v": STATIC_VER})
+    return templates.TemplateResponse(
+        "race.html", {"request": request, "v": STATIC_VER, "is_dev": ENV == "dev"}
+    )
 
 
 @app.get("/cmdr/{name}", response_class=HTMLResponse)
@@ -204,6 +208,107 @@ async def dw3_thanks_page(request: Request):
 async def community_page(request: Request):
     """Render the racing community page."""
     return templates.TemplateResponse("community.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/race/{key}/add-media", response_class=HTMLResponse)
+async def add_media_page(request: Request, key: str):
+    """Render the add media form for a race (dev mode only)."""
+    if ENV != "dev":
+        raise HTTPException(status_code=403, detail="Add media form only available in dev mode")
+
+    # Verify race exists
+    race = await get_race(key)
+    if race is None:
+        raise HTTPException(status_code=404, detail="Race not found")
+
+    return templates.TemplateResponse(
+        "add-media.html",
+        {
+            "request": request,
+            "v": STATIC_VER,
+            "race_key": key,
+            "race_name": race["name"],
+        },
+    )
+
+
+@app.post("/race/{key}/add-media")
+async def add_media_submit(
+    request: Request,
+    key: str,
+    map_image: Annotated[UploadFile | None, File()] = None,
+    link_label_0: Annotated[str, Form()] = "",
+    link_url_0: Annotated[str, Form()] = "",
+    link_type_0: Annotated[str, Form()] = "video",
+    link_label_1: Annotated[str, Form()] = "",
+    link_url_1: Annotated[str, Form()] = "",
+    link_type_1: Annotated[str, Form()] = "video",
+    link_label_2: Annotated[str, Form()] = "",
+    link_url_2: Annotated[str, Form()] = "",
+    link_type_2: Annotated[str, Form()] = "video",
+    link_label_3: Annotated[str, Form()] = "",
+    link_url_3: Annotated[str, Form()] = "",
+    link_type_3: Annotated[str, Form()] = "video",
+):
+    """Handle media upload form submission (dev mode only)."""
+    if ENV != "dev":
+        raise HTTPException(status_code=403, detail="Add media form only available in dev mode")
+
+    # Verify race exists
+    race = await get_race(key)
+    if race is None:
+        raise HTTPException(status_code=404, detail="Race not found")
+
+    from .media_utils import generate_thumbnail, save_uploaded_image, update_media_json
+
+    maps_dir = Path(__file__).parent.parent / "maps"
+    maps_dir.mkdir(exist_ok=True)
+
+    media_entry = {}
+
+    # Handle image upload
+    if map_image and map_image.filename:
+        try:
+            # Save the uploaded image
+            saved_path = await save_uploaded_image(map_image, maps_dir)
+
+            # Generate thumbnail
+            await generate_thumbnail(saved_path, maps_dir / "thumbnails")
+
+            # Add to media entry
+            media_entry["map"] = {
+                "thumbnail": f"maps/thumbnails/{saved_path.name}",
+                "target": f"maps/{saved_path.name}",
+            }
+        except Exception as exc:
+            log.error("Failed to process uploaded image: %s", exc)
+            raise HTTPException(status_code=500, detail=f"Failed to process image: {exc}") from exc
+
+    # Handle links
+    links = []
+    for i in range(4):
+        label = locals()[f"link_label_{i}"].strip()
+        url = locals()[f"link_url_{i}"].strip()
+        link_type = locals()[f"link_type_{i}"]
+
+        if label and url:
+            links.append({"label": label, "type": link_type, "url": url})
+
+    if links:
+        media_entry["links"] = links
+
+    # Update media.json
+    if media_entry:
+        try:
+            update_media_json(key, media_entry)
+        except Exception as exc:
+            log.error("Failed to update media.json: %s", exc)
+            raise HTTPException(
+                status_code=500, detail=f"Failed to update media.json: {exc}"
+            ) from exc
+
+    # Redirect back to race page
+    return RedirectResponse(url=f"/race/{key}", status_code=303)
 
 
 # ---------------------------------------------------------------------------
@@ -327,8 +432,6 @@ async def api_race_map(key: str):
     if not media_file.exists():
         return {}
 
-    import json
-
     try:
         with open(media_file) as f:
             media_data = json.load(f)
@@ -345,8 +448,6 @@ async def api_media():
     media_file = Path(__file__).parent.parent / "media.json"
     if not media_file.exists():
         return {}
-
-    import json
 
     try:
         with open(media_file) as f:

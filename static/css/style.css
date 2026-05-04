@@ -383,6 +383,29 @@ a:hover { text-decoration: underline; }
   max-width: 450px;
 }
 
+.dev-tools {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(232, 160, 32, 0.1);
+  border: 1px solid var(--accent-dim);
+  border-radius: 4px;
+}
+
+.add-media-link {
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.add-media-link:hover {
+  color: #ffc14d;
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .race-detail-header-wrapper {
     flex-direction: column;

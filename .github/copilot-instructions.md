@@ -70,8 +70,9 @@ templates/
 | **Deploy process** | `git pull` on the live container, then `sudo systemctl restart tt-leaderboard` |
 
 - Development is done on a **separate local dev server** (not the Proxmox host).
-- `run.sh` sets up the virtualenv and starts uvicorn directly — used on the dev server.
-- The systemd service calls uvicorn directly from `.venv` — used in production.
+- **Both dev and production** run as systemd services — use `sudo systemctl restart tt-leaderboard` to restart either environment.
+- `run.sh` can manually set up the virtualenv and start uvicorn directly, but is typically not needed when using systemd.
+- **Important:** Changes to `.env` require a restart to take effect — config values are read once at import time, not dynamically.
 - Never restart the production service unless explicitly asked; suggest the command instead.
 
 ## Coding Conventions

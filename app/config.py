@@ -3,6 +3,7 @@
 import os
 
 OFFLINE: bool = os.environ.get("OFFLINE", "").strip().lower() in ("1", "true", "yes")
+ENV: str = os.environ.get("ENV", "prod").strip().lower()
 
 # Inara API configuration
 INARA_API_KEY: str = os.environ.get("INARA_API_KEY", "")

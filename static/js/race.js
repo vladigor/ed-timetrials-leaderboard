@@ -41,6 +41,12 @@ async function init() {
 
   await loadRace();
 
+  // Setup add media link handler (if present in dev mode)
+  const addMediaLink = document.getElementById('add-media-link');
+  if (addMediaLink) {
+    addMediaLink.href = `/race/${encodeURIComponent(raceKey)}/add-media`;
+  }
+
   // Seed poller – only refresh if this specific race changed
   poller = new ChangePoller(60_000, async (snapshot) => {
     if (snapshot[raceKey] !== undefined) {
