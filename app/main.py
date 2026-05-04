@@ -438,6 +438,18 @@ async def api_race_map(key: str):
         with open(media_file) as f:
             media_data = json.load(f)
         race_media = media_data.get(key, {})
+
+        # In production, serve map images from GitHub
+        if ENV == "prod" and "map" in race_media:
+            github_prefix = "https://raw.githubusercontent.com/vladigor/ed-timetrials-leaderboard/refs/heads/main/"
+            map_data = race_media["map"]
+
+            # Prepend GitHub URL if paths are relative (don't start with http)
+            if "thumbnail" in map_data and not map_data["thumbnail"].startswith("http"):
+                map_data["thumbnail"] = github_prefix + map_data["thumbnail"]
+            if "target" in map_data and not map_data["target"].startswith("http"):
+                map_data["target"] = github_prefix + map_data["target"]
+
         return race_media
     except Exception as exc:
         log.warning("Failed to load media.json: %s", exc)
