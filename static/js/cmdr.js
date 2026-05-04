@@ -37,6 +37,8 @@ const nendyFindBtn  = document.getElementById('nendy-find');
 const nearbySection = document.getElementById('nearby-section');
 const oppsIntro     = document.getElementById('opps-intro');
 const oppsIntroClose = document.getElementById('opps-intro-close');
+const participationSection = document.getElementById('participation-section');
+const participationBars = document.getElementById('participation-bars');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
@@ -81,6 +83,9 @@ async function init() {
     const th = e.target.closest('.th-sortable');
     if (th) setSort(th.dataset.sort);
   });
+
+  // Render participation bars
+  await renderParticipationBars();
 
   // Hide Opportunities section when viewing someone else's profile
   if (!isSelf) {
@@ -1132,6 +1137,69 @@ function renderNeidy(resolvedName, done, raceDetails) {
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
+}
+
+// ── Participation Progress Bars ───────────────────────────────────────────
+async function renderParticipationBars() {
+  if (!stats || !stats.races) return;
+
+  try {
+    // Fetch all races to count totals by type
+    const res = await fetch('/api/races');
+    if (!res.ok) throw new Error(res.status);
+    const allRaces = await res.json();
+
+    // Count total races by type
+    const totalByType = {};
+    for (const race of allRaces) {
+      const type = race.type || 'UNKNOWN';
+      totalByType[type] = (totalByType[type] || 0) + 1;
+    }
+
+    // Count commander's races by type
+    const cmdrByType = {};
+    for (const race of stats.races) {
+      const type = race.type || 'UNKNOWN';
+      cmdrByType[type] = (cmdrByType[type] || 0) + 1;
+    }
+
+    const typeLabels = {
+      SHIP: 'Ship Races',
+      SRV: 'SRV Races',
+      FIGHTER: 'Fighter Races',
+      ONFOOT: 'On Foot Races',
+    };
+
+    // Render bars for each type that exists
+    const types = ['SHIP', 'FIGHTER', 'SRV', 'ONFOOT'].filter(t => totalByType[t] > 0);
+    if (types.length === 0) return;
+
+    const barsHTML = types.map(type => {
+      const cmdrCount = cmdrByType[type] || 0;
+      const totalCount = totalByType[type] || 1;
+      const percentage = Math.round((cmdrCount / totalCount) * 100);
+      const label = typeLabels[type] || type;
+
+      return `
+        <div class="participation-bar-row">
+          <div class="participation-bar-label">
+            <span class="participation-bar-type">${esc(label)}</span>
+            <span class="participation-bar-count">${cmdrCount} / ${totalCount}</span>
+          </div>
+          <div class="participation-bar-wrapper">
+            <div class="neidy-bar">
+              <div class="neidy-bar-fill" style="width:${percentage}%"></div>
+            </div>
+            <span class="participation-bar-pct">${percentage}%</span>
+          </div>
+        </div>`;
+    }).join('');
+
+    participationBars.innerHTML = barsHTML;
+    participationSection.style.display = 'block';
+  } catch (err) {
+    console.error('Failed to render participation bars:', err);
+  }
 }
 
 init();

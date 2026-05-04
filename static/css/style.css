@@ -1401,6 +1401,64 @@ a:hover { text-decoration: underline; }
 }
 .neidy-legend-item strong { color: var(--text); }
 
+/* ── Participation Progress Bars ──────────────────────────────── */
+.participation-section {
+  margin-bottom: 2.5rem;
+}
+.participation-intro {
+  font-size: .88rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 1.25rem;
+  max-width: 150ch;
+}
+.participation-intro strong { color: var(--text); }
+.participation-bars {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1.5rem;
+  max-width: 900px;
+}
+@media (max-width: 768px) {
+  .participation-bars {
+    grid-template-columns: 1fr;
+  }
+}
+.participation-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.participation-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: .88rem;
+}
+.participation-bar-type {
+  font-weight: 600;
+  color: var(--text);
+}
+.participation-bar-count {
+  color: var(--text-muted);
+  font-size: .82rem;
+}
+.participation-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.participation-bar-wrapper .neidy-bar {
+  flex: 1;
+  height: 8px;
+}
+.participation-bar-pct {
+  font-size: .82rem;
+  color: var(--text-muted);
+  min-width: 2.5rem;
+  text-align: right;
+}
+
 /* ============================================================
    Site footer
    ============================================================ */
