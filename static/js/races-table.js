@@ -334,7 +334,7 @@ function renderTable() {
     <table class="results-table" style="width: 100%">
       <thead>
         <tr>
-          ${thSort('name', 'Race Name')}
+          ${thSort('name', 'Race')}
           ${thSort('type', 'Type', 'num')}
           ${thSort('location', 'Location')}
           ${currentCoords ? thSort('distance', 'Distance', 'num') : '<th class="num">Distance</th>'}

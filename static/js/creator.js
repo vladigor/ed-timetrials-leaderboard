@@ -442,14 +442,14 @@ function renderTables() {
         <table class="results-table" style="width: 100%">
           <thead>
             <tr>
-              ${thSort(type, 'name', 'Race Name', '', 'max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;')}
+              ${thSort(type, 'name', 'Race', '', 'max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;')}
               ${thSort(type, 'location', 'Location', '', 'max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;')}
-              ${currentCoords ? thSort(type, 'distance', 'Distance', 'num') : '<th class="num">Distance</th>'}
-              ${filterCmdr ? thSort(type, 'position', 'Position', 'num') : '<th class="num">Position</th>'}
-              ${thSort(type, 'participants', 'Participants', 'num')}
-              ${thSort(type, 'last_activity', 'Last Activity')}
+              ${currentCoords ? thSort(type, 'distance', 'Distance', 'num', '', 'Dist') : '<th class="num" data-short="Dist"><span class="th-label">Distance</span></th>'}
+              ${filterCmdr ? thSort(type, 'position', 'Position', 'num', '', 'Posn') : '<th class="num" data-short="Posn"><span class="th-label">Position</span></th>'}
+              ${thSort(type, 'participants', 'Participants', 'num', '', '#')}
+              ${thSort(type, 'last_activity', 'Last Activity', '', '', 'Activity')}
               ${thSort(type, 'created_at', 'Created')}
-              <th>Restrictions</th>
+              <th class="col-restrictions">Restrictions</th>
               ${isCreator ? '<th class="num">Map</th>' : ''}
               ${isCreator ? '<th class="num">Links</th>' : ''}
             </tr>
@@ -535,13 +535,14 @@ function sortRaces(races, sortBy, sortDir) {
   return sorted;
 }
 
-function thSort(type, col, label, extraClass = '', extraStyle = '') {
+function thSort(type, col, label, extraClass = '', extraStyle = '', shortLabel = '') {
   const { by: sortBy, dir: sortDir } = sortState[type];
   const isActive = sortBy === col;
   const indicator = isActive ? (sortDir === 'asc' ? ' ▲' : ' ▼') : '';
   const cls = ['th-sortable', isActive ? 'th-active' : '', extraClass].filter(Boolean).join(' ');
   const style = extraStyle ? ` style="${extraStyle}"` : '';
-  return `<th class="${cls}" data-sort="${col}" data-type="${type}"${style}>${label}${indicator}</th>`;
+  const dataShort = shortLabel ? ` data-short="${shortLabel}"` : '';
+  return `<th class="${cls}" data-sort="${col}" data-type="${type}"${style}${dataShort}><span class="th-label">${label}</span>${indicator}</th>`;
 }
 
 function renderRow(r, _idx, _type) {
@@ -590,7 +591,7 @@ function renderRow(r, _idx, _type) {
       <td class="num">${participantsText}</td>
       <td class="muted">${activity}</td>
       <td class="muted">${created}</td>
-      <td class="muted">${restrictions}</td>
+      <td class="muted col-restrictions">${restrictions}</td>
       ${mapCol}
       ${linksCol}
     </tr>

@@ -146,7 +146,7 @@ a:hover { text-decoration: underline; }
   color: var(--text);
   font-size: .9rem;
   padding: .4rem .75rem;
-  min-width: 160px;
+  min-width: 180px;
   outline: none;
   appearance: none;
 }
@@ -1995,6 +1995,34 @@ a:hover { text-decoration: underline; }
 
   .stats-table .stats-rank {
     font-size: 0.95rem;
+  }
+
+  /* Make filter inputs full width on mobile when stacked */
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-bar input[type="text"] {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* Hide Restrictions column on narrower screens */
+@media (max-width: 1000px) {
+  .col-restrictions {
+    display: none;
+  }
+}
+
+/* Use shorter column labels on narrow screens */
+@media (max-width: 850px) {
+  th[data-short] .th-label {
+    display: none;
+  }
+
+  th[data-short]::after {
+    content: attr(data-short);
   }
 }
 
