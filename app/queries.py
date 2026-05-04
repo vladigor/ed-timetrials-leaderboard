@@ -272,6 +272,117 @@ async def list_commanders() -> list[str]:
         await db.close()
 
 
+async def list_creators() -> list[dict]:
+    """
+    Return a list of all race creators with counts of races by type.
+    Returns: [{"creator": str, "ship": int, "fighter": int, "srv": int, "onfoot": int, "total": int}]
+    """
+    db = await get_db()
+    try:
+        async with db.execute(
+            """
+            SELECT
+                creator,
+                COUNT(*) AS total,
+                SUM(CASE WHEN type = 'SHIP' THEN 1 ELSE 0 END) AS ship,
+                SUM(CASE WHEN type = 'FIGHTER' THEN 1 ELSE 0 END) AS fighter,
+                SUM(CASE WHEN type = 'SRV' THEN 1 ELSE 0 END) AS srv,
+                SUM(CASE WHEN type = 'ONFOOT' THEN 1 ELSE 0 END) AS onfoot
+            FROM locations
+            WHERE creator IS NOT NULL AND creator != ''
+            GROUP BY creator
+            ORDER BY total DESC, creator ASC
+            """
+        ) as cursor:
+            rows = await cursor.fetchall()
+        return [_row_to_dict(row) for row in rows]
+    finally:
+        await db.close()
+
+
+async def get_creator_races(creator: str, commander_pos: str | None = None) -> dict | None:
+    """
+    Return all races created by a specific commander, grouped by type.
+    Returns None if the creator has no races.
+
+    commander_pos – if set, annotate each race with that commander's position.
+    """
+    db = await get_db()
+    try:
+        cmdr_position_sql = ""
+        cmdr_position_params: list[Any] = []
+        if commander_pos:
+            cmdr_position_sql = """,
+                CASE WHEN EXISTS(
+                    SELECT 1 FROM results WHERE location = l.key AND name = ?
+                ) THEN (
+                    SELECT COUNT(*) + 1
+                    FROM (
+                        SELECT name, MIN(time) AS best
+                        FROM results
+                        WHERE location = l.key
+                        GROUP BY name
+                    ) t
+                    WHERE t.best < (
+                        SELECT MIN(time) FROM results
+                        WHERE location = l.key AND name = ?
+                    )
+                ) ELSE NULL END AS cmdr_position"""
+            cmdr_position_params = [commander_pos, commander_pos]
+
+        # Get all races by this creator
+        async with db.execute(
+            f"""
+            SELECT
+                l.key,
+                l.name,
+                l.type,
+                l.version,
+                l.system,
+                l.station,
+                l.address,
+                l.sort,
+                l.coords,
+                l.creator,
+                l.created_at,
+                l.multi_mode,
+                l.multi_planet,
+                l.multi_system,
+                (SELECT COUNT(DISTINCT name) FROM results WHERE location = l.key) AS entry_count,
+                MAX(r.updated) AS last_activity
+                {cmdr_position_sql}
+            FROM locations l
+            LEFT JOIN (
+                SELECT name, location, MIN(time) AS time, MAX(updated) AS updated
+                FROM results
+                GROUP BY name, location
+            ) r ON r.location = l.key
+            WHERE l.creator = ?
+            GROUP BY l.key
+            ORDER BY l.sort
+            """,
+            cmdr_position_params + [creator],
+        ) as cursor:
+            rows = await cursor.fetchall()
+
+        if not rows:
+            return None
+
+        races = []
+        for row in rows:
+            d = _row_to_dict(row)
+            # Attach constraints
+            async with db.execute(
+                "SELECT key, value FROM constraints WHERE location = ?", (d["key"],)
+            ) as c:
+                d["constraints"] = [_row_to_dict(r) for r in await c.fetchall()]
+            races.append(d)
+
+        return {"creator": creator, "races": races}
+    finally:
+        await db.close()
+
+
 async def list_new_races(days: int = 7) -> list[dict]:
     """Return races added within the last N days, ordered newest first."""
     db = await get_db()
@@ -567,12 +678,22 @@ async def get_commander_stats(commander: str) -> dict | None:
 
             podium_thefts.append(row_dict)
 
+        # ── Check if commander is a creator ────────────────────────────────
+        # Count how many races they've created
+        async with db.execute(
+            "SELECT COUNT(*) AS count FROM locations WHERE creator = ?",
+            (commander,),
+        ) as cur:
+            creator_row = await cur.fetchone()
+        created_race_count = creator_row["count"] if creator_row else 0
+
         return {
             "commander": commander,
             "overall_percentile": overall_pct,
             "by_type_percentile": by_type,
             "races": races,
             "podium_thefts": podium_thefts,
+            "created_race_count": created_race_count,
         }
     finally:
         await db.close()

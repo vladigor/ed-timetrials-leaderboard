@@ -21,10 +21,12 @@ from .config import ENV, OFFLINE
 from .database import init_db
 from .queries import (
     get_commander_stats,
+    get_creator_races,
     get_race,
     get_stats,
     get_stats_with_limit,
     list_commanders,
+    list_creators,
     list_new_races,
     list_races,
 )
@@ -106,6 +108,16 @@ async def race_page(request: Request, key: str):
 @app.get("/cmdr/{name}", response_class=HTMLResponse)
 async def cmdr_page(request: Request, name: str):
     return templates.TemplateResponse("cmdr.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/creator/{name}", response_class=HTMLResponse)
+async def creator_page(request: Request, name: str):
+    return templates.TemplateResponse("creator.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/creators", response_class=HTMLResponse)
+async def creators_page(request: Request):
+    return templates.TemplateResponse("creators.html", {"request": request, "v": STATIC_VER})
 
 
 @app.get("/about", response_class=HTMLResponse)
@@ -351,12 +363,27 @@ async def api_commanders():
     return await list_commanders()
 
 
+@app.get("/api/creators")
+async def api_creators():
+    """Return all race creators with race counts by type."""
+    return await list_creators()
+
+
 @app.get("/api/cmdr/{name}")
 async def api_cmdr(name: str):
     stats = await get_commander_stats(name)
     if stats is None:
         raise HTTPException(status_code=404, detail="Commander not found")
     return stats
+
+
+@app.get("/api/creator/{name}")
+async def api_creator(name: str, commander_pos: str | None = Query(None)):
+    """Return all races created by a specific commander."""
+    data = await get_creator_races(name, commander_pos=commander_pos)
+    if data is None:
+        raise HTTPException(status_code=404, detail="Creator not found or has no races")
+    return data
 
 
 @app.get("/api/cmdr/{name}/inara")

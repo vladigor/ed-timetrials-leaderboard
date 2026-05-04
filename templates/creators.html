@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Creators — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+  <main class="page-wrapper">
+
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span>Creators</span>
+    </div>
+
+    <h1>Race Creators</h1>
+
+    <p style="margin-bottom: 2rem;">
+      Elite Dangerous time trials are created by members of the community.
+      This page showcases the commanders who have contributed races to the leaderboard,
+      organized by the number and type of races they've created.
+    </p>
+    <p style="margin-bottom: 2rem;">
+      Clicking on a commander's name will take you to a list of their races.
+    </p>
+
+    <div class="status-bar">
+      <span id="creator-count" style="font-weight: bold; color: var(--text)"></span>
+    </div>
+
+    <div id="creators-table-container">
+      <p class="loading-placeholder">Loading creators…</p>
+    </div>
+
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script type="module" src="/static/js/creators.js?v={{ v }}"></script>
+{% endblock %}

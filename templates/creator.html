@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Creator — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+  <div class="portrait-banner" id="portrait-banner">
+    📱 Best viewed in landscape mode
+  </div>
+
+  <main class="page-wrapper">
+
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <a href="/creators">Creators</a>
+      <span class="sep">›</span>
+      <span id="creator-breadcrumb">Loading…</span>
+    </div>
+
+    <div class="cmdr-header">
+      <div class="cmdr-header-content">
+        <h1 id="creator-title"><a id="creator-title-link" href="#" style="color: inherit; text-decoration: none;">Loading…</a></h1>
+        <div id="creator-summary" class="cmdr-summary"></div>
+      </div>
+      <div id="creator-avatar-container" class="cmdr-avatar-container" style="display:none;">
+        <a id="creator-avatar-link" href="#" target="_blank" rel="noopener">
+          <img id="creator-avatar" src="" alt="Creator avatar" class="cmdr-avatar" loading="lazy">
+        </a>
+      </div>
+    </div>
+
+    <div class="participation-section" id="participation-section" style="display:none">
+      <h2 class="cmdr-section-heading">Participation Progress</h2>
+      <p class="participation-intro">Each bar shows how many of this creator's races you've competed in.</p>
+      <div id="participation-bars" class="participation-bars"></div>
+    </div>
+
+    <!-- Filters section -->
+    <section class="filter-bar" aria-label="Filters" style="margin-top: 2rem;">
+
+      <div class="filter-group">
+        <input type="text" id="filter-search" placeholder="Filter by name, system, type..." aria-label="Search races" style="min-width:240px">
+      </div>
+
+      <div class="filter-group" style="justify-content:flex-end">
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-hide-dw3">
+          Hide DW3 races
+        </label>
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-hide-horizons">
+          Hide Horizons races
+        </label>
+        <label class="filter-toggle" id="filter-cmdr-races-group" style="display:none">
+          <input type="checkbox" id="filter-cmdr-races">
+          Only races I've done
+        </label>
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-active">
+          Only races with activity in the last 7 days
+        </label>
+      </div>
+
+    </section>
+
+    <section class="filter-bar" aria-label="Current System" style="margin-top: 0.5rem">
+      <div class="filter-group">
+        <label for="current-system" style="margin-right: 0.5rem; white-space: nowrap;">Your current system:</label>
+        <div class="nendy-autocomplete">
+          <input type="text" id="current-system" class="nendy-input" placeholder="e.g. Deciat"
+                 aria-label="Current system" autocomplete="off" spellcheck="false" style="min-width:360px">
+          <ul class="nendy-suggestions" id="system-suggestions" hidden></ul>
+        </div>
+        <button id="find-system-btn" class="btn-chip">Find</button>
+      </div>
+    </section>
+
+    <!-- Race count status bar -->
+    <div class="status-bar">
+      <span id="race-count" style="font-weight: bold; color: var(--text)"></span>
+    </div>
+
+    <!-- Tables for each race type -->
+    <div id="races-by-type">
+      <p class="loading-placeholder">Loading creator's races…</p>
+    </div>
+
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script type="module" src="/static/js/creator.js?v={{ v }}"></script>
+{% endblock %}
