@@ -1790,10 +1790,20 @@ a:hover { text-decoration: underline; }
     white-space: nowrap;
   }
 
-  /* Hide less important columns past the 4th */
-  .results-table th:nth-child(5),
-  .results-table td:nth-child(5) {
-    display: none; }
+  /* Hide Ship column on cmdr page mobile */
+  .cmdr-type-section .results-table th:nth-child(5),
+  .cmdr-type-section .results-table td:nth-child(5) {
+    display: none;
+  }
+
+  /* Creators page: limit creator name column */
+  #creators-table-container .results-table th:nth-child(1),
+  #creators-table-container .results-table td:nth-child(1) {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 /* ============================================================
