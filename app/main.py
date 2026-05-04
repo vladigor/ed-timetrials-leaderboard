@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated
+from urllib.parse import quote
 
 import markdown
 from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
@@ -307,8 +308,9 @@ async def add_media_submit(
                 status_code=500, detail=f"Failed to update media.json: {exc}"
             ) from exc
 
-    # Redirect back to race page
-    return RedirectResponse(url=f"/race/{key}", status_code=303)
+    # Redirect back to race page (use validated race key to prevent redirection attacks)
+    safe_key = quote(race["key"], safe="")
+    return RedirectResponse(url=f"/race/{safe_key}", status_code=303)
 
 
 # ---------------------------------------------------------------------------
