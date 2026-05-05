@@ -488,7 +488,7 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=Z7oWerWGf1E"
       },
-            {
+      {
         "label": "Awesome!",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=lwCv_IJfh9I"
@@ -802,5 +802,11 @@
         "url": ""
       }
     ]
+  },
+  "ALEXFIGHTER-_DW3 Prick Your Belly": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_prick_your_belly.webp",
+      "target": "maps/dw3_prick_your_belly.webp"
+    }
   }
 }
