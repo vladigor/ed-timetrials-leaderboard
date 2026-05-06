@@ -808,5 +808,18 @@
       "thumbnail": "maps/thumbnails/dw3_prick_your_belly.webp",
       "target": "maps/dw3_prick_your_belly.webp"
     }
+  },
+  "GREAVES-DW3 Rendezvous Rally 15": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_rendexvous_rally_15.webp",
+      "target": "maps/dw3_rendexvous_rally_15.webp"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=Y2jK0h4u__s"
+      }
+    ]
   }
 }
