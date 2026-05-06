@@ -124,14 +124,20 @@ function renderActivityTable(items) {
     // Display historical position with medal emoji for podium
     let positionDisplay = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
 
-    // If current position differs from historical, append "(now Nth)"
+    // If current position differs from historical, show current with emoji
     if (currentPosition != null && currentPosition !== position) {
-      const ordinal = (n) => {
-        const s = ['th','st','nd','rd'];
-        const v = n % 100;
-        return n + (s[(v - 20) % 10] || s[v] || s[0]);
-      };
-      positionDisplay += ` <span style="color: var(--text-muted); font-size: 0.85em;">(now ${ordinal(currentPosition)})</span>`;
+      let currentEmoji;
+      if (currentPosition === 1) {
+        currentEmoji = '🥇';
+      } else if (currentPosition === 2) {
+        currentEmoji = '🥈';
+      } else if (currentPosition === 3) {
+        currentEmoji = '🥉';
+      } else {
+        currentEmoji = currentPosition;
+      }
+
+      positionDisplay += ` <span style="color: var(--text-muted); font-size: 0.85em;">(now ${currentEmoji})</span>`;
     }
 
     // Format time improvement: positive = got faster (better)
