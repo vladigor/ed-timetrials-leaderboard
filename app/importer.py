@@ -236,14 +236,19 @@ async def _save_result(db: aiosqlite.Connection, result: dict) -> None:
     )
 
     # Insert into results_history (full historical record, never pruned)
-    # We'll update the position after calculating it
-    await db.execute(
+    # We'll calculate position only for newly inserted records
+    cursor = await db.execute(
         """
         INSERT OR IGNORE INTO results_history (name, ship, shipname, location, time, updated, position)
         VALUES (:name, :ship, :shipname, :location, :time, :updated, NULL)
         """,
         result,
     )
+
+    # Only calculate position if we actually inserted a new row
+    if cursor.rowcount == 0:
+        # Record already exists, skip position calculation to preserve historical position
+        return
 
     # Calculate position based on current best times for this location
     # Get all commanders' best times for this location (including the new result)

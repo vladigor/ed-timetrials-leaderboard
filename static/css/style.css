@@ -1918,9 +1918,9 @@ a:hover { text-decoration: underline; }
 }
 
 .stats-table .stats-rank {
-  width: 60px;
   text-align: center;
   font-size: 1.2rem;
+  white-space: nowrap;
 }
 
 .stats-table .stats-count,

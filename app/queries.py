@@ -706,6 +706,7 @@ async def get_recent_activity(limit: int = 20) -> list[dict]:
     Uses results_history table to show ALL submissions (including multiple improvements
     by the same commander), with positions as they were at submission time.
     Includes improvement_ms: the time improvement from their previous submission on that race.
+    Includes current_position: the commander's current position in that race (may differ from historical).
     """
     db = await get_db()
     try:
@@ -726,19 +727,30 @@ async def get_recent_activity(limit: int = 20) -> list[dict]:
                 FROM results_history rh
                 JOIN locations l ON l.key = rh.location
                 WHERE rh.position IS NOT NULL
+            ),
+            current_positions AS (
+                SELECT
+                    location,
+                    name,
+                    MIN(time) as best_time,
+                    ROW_NUMBER() OVER (PARTITION BY location ORDER BY MIN(time)) as current_position
+                FROM results
+                GROUP BY location, name
             )
             SELECT
-                name,
-                location,
-                race_name,
-                position,
-                updated,
+                rh.name,
+                rh.location,
+                rh.race_name,
+                rh.position,
+                rh.updated,
                 CASE
-                    WHEN prev_time IS NOT NULL THEN prev_time - time
+                    WHEN rh.prev_time IS NOT NULL THEN rh.prev_time - rh.time
                     ELSE NULL
-                END AS improvement_ms
-            FROM ranked_history
-            ORDER BY updated DESC
+                END AS improvement_ms,
+                cp.current_position
+            FROM ranked_history rh
+            LEFT JOIN current_positions cp ON cp.location = rh.location AND cp.name = rh.name
+            ORDER BY rh.updated DESC
             LIMIT ?
             """,
             (limit,),

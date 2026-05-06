@@ -119,7 +119,20 @@ function renderActivityTable(items) {
   items.forEach(item => {
     const rowClass = isFresh(item.updated) ? ' class="row-fresh"' : '';
     const position = item.position;
-    const positionDisplay = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
+    const currentPosition = item.current_position;
+
+    // Display historical position with medal emoji for podium
+    let positionDisplay = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
+
+    // If current position differs from historical, append "(now Nth)"
+    if (currentPosition != null && currentPosition !== position) {
+      const ordinal = (n) => {
+        const s = ['th','st','nd','rd'];
+        const v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+      };
+      positionDisplay += ` <span style="color: var(--text-muted); font-size: 0.85em;">(now ${ordinal(currentPosition)})</span>`;
+    }
 
     // Format time improvement: positive = got faster (better)
     const improvement = formatImprovement(item.improvement_ms);
