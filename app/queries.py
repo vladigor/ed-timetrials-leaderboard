@@ -705,21 +705,40 @@ async def get_recent_activity(limit: int = 20) -> list[dict]:
     Return the most recent race results with commander, race name, position, and timestamp.
     Uses results_history table to show ALL submissions (including multiple improvements
     by the same commander), with positions as they were at submission time.
+    Includes improvement_ms: the time improvement from their previous submission on that race.
     """
     db = await get_db()
     try:
         async with db.execute(
             """
+            WITH ranked_history AS (
+                SELECT
+                    rh.name,
+                    rh.location,
+                    l.name AS race_name,
+                    rh.position,
+                    rh.time,
+                    rh.updated,
+                    LAG(rh.time) OVER (
+                        PARTITION BY rh.name, rh.location
+                        ORDER BY rh.updated
+                    ) AS prev_time
+                FROM results_history rh
+                JOIN locations l ON l.key = rh.location
+                WHERE rh.position IS NOT NULL
+            )
             SELECT
-                rh.name,
-                rh.location,
-                l.name AS race_name,
-                rh.position,
-                rh.updated
-            FROM results_history rh
-            JOIN locations l ON l.key = rh.location
-            WHERE rh.position IS NOT NULL
-            ORDER BY rh.updated DESC
+                name,
+                location,
+                race_name,
+                position,
+                updated,
+                CASE
+                    WHEN prev_time IS NOT NULL THEN prev_time - time
+                    ELSE NULL
+                END AS improvement_ms
+            FROM ranked_history
+            ORDER BY updated DESC
             LIMIT ?
             """,
             (limit,),

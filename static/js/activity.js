@@ -1,4 +1,4 @@
-import { relativeTime, esc } from './utils.js';
+import { relativeTime, esc, formatImprovement } from './utils.js';
 import { ChangePoller } from './poller.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -100,9 +100,10 @@ function renderRaceLink(key, name) {
 function renderActivityTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
 
-  const isMobile = window.innerWidth <= 720;
+  const isMobile = window.innerWidth <= 768;
   const commanderLabel = isMobile ? 'Cmdr' : 'Commander';
   const positionLabel = isMobile ? 'Posn' : 'Position';
+  const improvementLabel = isMobile ? 'Impvmnt' : 'Improvement';
   const updatedLabel = isMobile ? 'When' : 'Updated';
 
   let html = '<table class="stats-table">';
@@ -110,6 +111,7 @@ function renderActivityTable(items) {
   html += `<th>${commanderLabel}</th>`;
   html += `<th>Race</th>`;
   html += `<th style="text-align: center;">${positionLabel}</th>`;
+  html += `<th style="text-align: center;">${improvementLabel}</th>`;
   html += `<th class="stats-time">${updatedLabel}</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
@@ -119,10 +121,15 @@ function renderActivityTable(items) {
     const position = item.position;
     const positionDisplay = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
 
+    // Format time improvement: positive = got faster (better)
+    const improvement = formatImprovement(item.improvement_ms);
+    const improvementDisplay = `<span class="improvement-cell ${improvement.cls}">${esc(improvement.text)}</span>`;
+
     html += `<tr${rowClass}>`;
     html += `<td>${renderCmdrLink(item.name)}</td>`;
     html += `<td>${renderRaceLink(item.location, item.race_name)}</td>`;
     html += `<td class="stats-rank">${positionDisplay}</td>`;
+    html += `<td class="stats-rank">${improvementDisplay}</td>`;
     html += `<td class="stats-time activity-time" data-timestamp="${item.updated || ''}">${relativeTime(item.updated)}</td>`;
     html += '</tr>';
   });
