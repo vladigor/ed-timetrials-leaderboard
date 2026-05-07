@@ -1031,5 +1031,18 @@
         "url": "https://www.youtube.com/watch?v=Y2jK0h4u__s"
       }
     ]
+  },
+  "SO MUCH FOR SUBTLETY- DW3 CraterBaseJump": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DW3 Crater Base Jump.webp",
+      "target": "maps/DW3 Crater Base Jump.webp"
+    },
+    "links": [
+      {
+        "label": "Scenery",
+        "type": "image",
+        "url": "/maps/dw3_crater_jump_scenery.webp"
+      }
+    ]
   }
 }
