@@ -665,7 +665,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=amx8iqTuIUo&pp=0gcJCdMKAYcqIYzv"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_guardian_geyser_high_jump.webp",
+      "target": "maps/dw3_guardian_geyser_high_jump.webp"
+    }
   },
   "WULLAIL-_HR 2354 3 lap race": {
     "map": {
