@@ -336,7 +336,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=Ezq6saXgw2Y"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_great_wall_of_china.webp",
+      "target": "maps/dw3_great_wall_of_china.webp"
+    }
   },
   "ALEC TURNER-DW3_HQ_ROAD_RACE": {
     "links": [
@@ -603,7 +607,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/DevilsTower.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DEVILS_TOWER_RUN"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/yelXQqRBksg"
+      }
+    ]
   },
   "ALEC TURNER-DRAKHYR_RALLY": {
     "map": {
@@ -938,7 +949,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/TradersRest.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-02092023"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/pRCf9o4qGUQ"
+      }
+    ]
   },
   "RICK RAZZAFRAG-TURNERSRV01": {
     "map": {
