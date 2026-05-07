@@ -24,6 +24,13 @@
   <form method="POST" enctype="multipart/form-data" class="media-form">
     <div class="form-section">
       <h3 class="form-section-heading">Upload Map Image (optional)</h3>
+      {% if existing_media.get('map') %}
+      <div class="current-thumbnail">
+        <p class="form-help">Current map thumbnail:</p>
+        <img src="/{{ existing_media.map.thumbnail }}" alt="Current map thumbnail" style="max-height: 190px; border: 1px solid #444; border-radius: 4px; margin-bottom: 0.5rem;">
+        <p class="form-help" style="margin-top: 0.25rem; font-size: 0.9em; color: #aaa;">Upload a new file to replace</p>
+      </div>
+      {% endif %}
       <input type="file" name="map_image" accept="image/*" id="map-image-input" class="file-input">
       <p class="form-help">Supported formats: PNG, JPG, WEBP, GIF. Thumbnail will be auto-generated.</p>
     </div>
@@ -33,18 +40,19 @@
       <p class="form-help">Add up to 4 links (e.g., YouTube videos, external images)</p>
 
       {% for i in range(4) %}
+      {% set link = existing_media.get('links', [])[i] if i < (existing_media.get('links', []) | length) else {} %}
       <div class="link-input-group">
         <label for="link-label-{{ i }}">Link {{ i + 1 }} Label:</label>
-        <input type="text" name="link_label_{{ i }}" id="link-label-{{ i }}" placeholder="e.g., Demo video" class="form-input">
+        <input type="text" name="link_label_{{ i }}" id="link-label-{{ i }}" placeholder="e.g., Demo video" class="form-input" value="{{ link.get('label', '') }}">
 
         <label for="link-url-{{ i }}">Link {{ i + 1 }} URL:</label>
-        <input type="url" name="link_url_{{ i }}" id="link-url-{{ i }}" placeholder="https://..." class="form-input">
+        <input type="url" name="link_url_{{ i }}" id="link-url-{{ i }}" placeholder="https://..." class="form-input" value="{{ link.get('url', '') }}">
 
         <label for="link-type-{{ i }}">Type:</label>
         <select name="link_type_{{ i }}" id="link-type-{{ i }}" class="form-select">
-          <option value="video">Video</option>
-          <option value="image">Image</option>
-          <option value="link">Link</option>
+          <option value="video" {% if link.get('type') == 'video' %}selected{% endif %}>Video</option>
+          <option value="image" {% if link.get('type') == 'image' %}selected{% endif %}>Image</option>
+          <option value="link" {% if link.get('type') == 'link' %}selected{% endif %}>Link</option>
         </select>
       </div>
       {% endfor %}

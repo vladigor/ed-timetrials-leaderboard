@@ -133,11 +133,16 @@ def update_media_json(race_key: str, media_entry: dict) -> None:
         if "map" in media_entry:
             existing["map"] = media_entry["map"]
         if "links" in media_entry:
-            # Append new links to existing links
-            existing_links = existing.get("links", [])
-            existing_links.extend(media_entry["links"])
-            existing["links"] = existing_links
+            # Replace links (form shows existing links for editing)
+            # Remove links key if empty list
+            if media_entry["links"]:
+                existing["links"] = media_entry["links"]
+            elif "links" in existing:
+                del existing["links"]
     else:
+        # New entry - only include non-empty links
+        if "links" in media_entry and not media_entry["links"]:
+            del media_entry["links"]
         media_data[race_key] = media_entry
 
     # Write back to file with pretty formatting

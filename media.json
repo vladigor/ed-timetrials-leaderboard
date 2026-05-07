@@ -9,7 +9,19 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_empyrean_boomerang.png",
       "target": "maps/dw3_empyrean_boomerang.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Expert video (3m 30s)",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=mf8lkZM3ax4"
+      },
+      {
+        "label": "Expert video (3m 24s)",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=l9iLzfK6e-s"
+      }
+    ]
   },
   "DRODINN-DW3 Empyrean Boomerang _ Ship": {
     "map": {

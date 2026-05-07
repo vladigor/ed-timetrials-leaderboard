@@ -239,6 +239,17 @@ async def add_media_page(request: Request, key: str):
     if race is None:
         raise HTTPException(status_code=404, detail="Race not found")
 
+    # Load existing media data for this race
+    media_file = Path(__file__).parent.parent / "media.json"
+    existing_media = {}
+    if media_file.exists():
+        try:
+            with open(media_file) as f:
+                media_data = json.load(f)
+            existing_media = media_data.get(key, {})
+        except Exception as exc:
+            log.warning("Failed to load media.json: %s", exc)
+
     return templates.TemplateResponse(
         "add-media.html",
         {
@@ -246,6 +257,7 @@ async def add_media_page(request: Request, key: str):
             "v": STATIC_VER,
             "race_key": key,
             "race_name": race["name"],
+            "existing_media": existing_media,
         },
     )
 
@@ -312,8 +324,8 @@ async def add_media_submit(
         if label and url:
             links.append({"label": label, "type": link_type, "url": url})
 
-    if links:
-        media_entry["links"] = links
+    # Always set links in media_entry (even if empty) to allow clearing existing links
+    media_entry["links"] = links
 
     # Update media.json
     if media_entry:
