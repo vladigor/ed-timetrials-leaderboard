@@ -57,4 +57,21 @@
   </form>
 
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('.media-form');
+
+  form.addEventListener('submit', (e) => {
+    const link1Url = document.getElementById('link-url-0');
+    const link1Type = document.getElementById('link-type-0');
+    const link1Label = document.getElementById('link-label-0');
+
+    // Auto-set label to "Demo video" if URL is set, type is video, and label is empty
+    if (link1Url.value.trim() && link1Type.value === 'video' && !link1Label.value.trim()) {
+      link1Label.value = 'Demo video';
+    }
+  });
+});
+</script>
 {% endblock %}
