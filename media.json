@@ -656,7 +656,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/FortAsch.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-FortAsch1Pip"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/YC-2qvi4Htc"
+      }
+    ]
   },
   "ALEC TURNER-DW3_GUARDIAN_GEYSER_HIGH_JUMP": {
     "links": [
