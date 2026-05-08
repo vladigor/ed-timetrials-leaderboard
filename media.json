@@ -1057,5 +1057,18 @@
       "thumbnail": "maps/thumbnails/dw3_isegrims_hammer.png",
       "target": "maps/dw3_isegrims_hammer.png"
     }
+  },
+  "SO MUCH FOR SUBTLETY- DW3 Carriers": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_farewell_tour.png",
+      "target": "maps/dw3_farewell_tour.png"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/EiK9HeljroA"
+      }
+    ]
   }
 }
