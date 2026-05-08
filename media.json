@@ -1044,5 +1044,11 @@
         "url": "/maps/dw3_crater_jump_scenery.webp"
       }
     ]
+  },
+  "DRODINN-DW3 Isegrim's Hammer": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_isegrims_hammer.png",
+      "target": "maps/dw3_isegrims_hammer.png"
+    }
   }
 }
