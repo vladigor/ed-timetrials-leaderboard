@@ -375,6 +375,101 @@ async def api_race(key: str):
     return race
 
 
+@app.get("/api/races/{key}/filtered")
+async def api_race_filtered(
+    key: str,
+    commander: str = Query(..., min_length=1),
+    filter_type: str = Query(..., regex="^(NONE|PERSONAL|SMALL|MEDIUM|LARGE)$"),
+):
+    """
+    Fetch filtered leaderboard results directly from the EDCoPilot API.
+    Does not store results — this is for real-time filtered views only.
+
+    Filters:
+    - NONE: All ships (no filter)
+    - PERSONAL: Commander's own results only
+    - SMALL: Small ships only
+    - MEDIUM: Medium ships only
+    - LARGE: Large ships only
+    """
+    if OFFLINE:
+        raise HTTPException(
+            status_code=503, detail="Filtered leaderboard unavailable in offline mode"
+        )
+
+    from datetime import datetime
+
+    import httpx
+
+    # Build the API URL according to the EDCoPilot API format:
+    # GET /razapis/getTTResults2/{user}<|>{race}<|>{filter}
+    separator = "<|>"
+    url = f"https://razzserver.com/razapis/getTTResults2/{commander}{separator}{key}{separator}{filter_type}"
+
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            resp = await client.get(url)
+            resp.raise_for_status()
+            raw_data = resp.json()
+    except httpx.RequestError as exc:
+        log.warning("Failed to fetch filtered results from EDCoPilot API: %s", exc)
+        raise HTTPException(status_code=502, detail="Failed to fetch filtered results") from exc
+    except httpx.HTTPStatusError as exc:
+        log.warning("EDCoPilot API returned error status %s", exc.response.status_code)
+        raise HTTPException(status_code=502, detail="EDCoPilot API error") from exc
+
+    if not raw_data:
+        return {"results": [], "filter": filter_type, "commander": commander}
+
+    # Parse and format the results
+    # Expected format from API: array of arrays with indices:
+    # [0]=commander, [1]=updated, [2]=ship, [3]=shipname, [4]=time_ms
+    results = []
+    prev_time = 0
+
+    for idx, row in enumerate(raw_data, start=1):
+        # Validate row has minimum required fields
+        if len(row) < 5:
+            log.warning(
+                f"Skipping malformed row {idx}: insufficient fields (got {len(row)}, expected 5)"
+            )
+            continue
+
+        time_ms = int(row[4]) if row[4] else 0
+        delta_ms = time_ms - prev_time if prev_time > 0 else 0
+        prev_time = time_ms
+
+        # Format timestamp (index 1)
+        updated = row[1] if row[1] else None
+        if updated and isinstance(updated, str):
+            try:
+                # Parse and format to match our internal format
+                dt = datetime.strptime(updated, "%Y-%m-%d %H:%M:%S.%f")
+                updated = dt.strftime("%Y-%m-%d %H:%M:%S.%f")
+            except (ValueError, AttributeError):
+                pass
+
+        results.append(
+            {
+                "position": idx,
+                "name": row[0] if row[0] else "Unknown",
+                "ship": row[2] if row[2] else "Unknown",
+                "shipname": row[3] if len(row) > 3 and row[3] else None,
+                "time_ms": time_ms,
+                "delta_ms": delta_ms,
+                "improvement_ms": None,  # Not available in filtered results
+                "updated": updated,
+            }
+        )
+
+    return {
+        "results": results,
+        "filter": filter_type,
+        "commander": commander,
+        "race_key": key,
+    }
+
+
 @app.get("/api/commanders")
 async def api_commanders():
     return await list_commanders()

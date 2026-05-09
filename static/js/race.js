@@ -16,6 +16,7 @@ let poller        = null;
 let isOffline     = false;
 let chartInstance = null;
 let timeUpdater   = null;
+let isFilteredView = false;   // Track if we're viewing filtered results
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const titleEl      = document.getElementById('race-title');
@@ -29,6 +30,8 @@ const rivalryEl    = document.getElementById('race-rivalry');
 const statusDot    = document.getElementById('status-dot');
 const statusText   = document.getElementById('status-text');
 const backLink     = document.getElementById('back-link');
+const filterControls = document.getElementById('leaderboard-controls');
+const filterSelect = document.getElementById('ship-filter');
 
 backLink.href = '/';
 
@@ -37,6 +40,12 @@ async function init() {
   if (!raceKey) {
     showError('No race key in URL.');
     return;
+  }
+
+  // Show filter controls if commander is selected
+  if (selectedCmdr) {
+    filterControls.style.display = 'flex';
+    filterSelect.addEventListener('change', handleFilterChange);
   }
 
   await loadRace();
@@ -48,8 +57,9 @@ async function init() {
   }
 
   // Seed poller – only refresh if this specific race changed
+  // Only enable polling if not in filtered view
   poller = new ChangePoller(60_000, async (snapshot) => {
-    if (snapshot[raceKey] !== undefined) {
+    if (!isFilteredView && snapshot[raceKey] !== undefined) {
       setStatus('updating');
       await loadRace();
       setStatus('live');
@@ -63,11 +73,15 @@ async function init() {
     if (isOffline) {
       setStatus('offline');
     } else {
-      poller.start();
+      if (!isFilteredView) {
+        poller.start();
+      }
       setStatus('live');
     }
   } catch (_) {
-    poller.start();
+    if (!isFilteredView) {
+      poller.start();
+    }
     setStatus('live');
   }
 
@@ -86,6 +100,49 @@ async function loadRace() {
     await loadRaceMap();
   } catch (err) {
     showError('Could not load race data.');
+    setStatus('error');
+  }
+}
+
+// ── Filter handling ────────────────────────────────────────────────────────
+async function handleFilterChange(evt) {
+  const newFilter = evt.target.value;
+
+  if (newFilter === 'NONE') {
+    // Reset to normal view
+    isFilteredView = false;
+    if (!isOffline && poller) {
+      poller.start();
+    }
+    setStatus(isOffline ? 'offline' : 'live');
+    await loadRace();
+  } else {
+    // Load filtered view
+    isFilteredView = true;
+    if (poller) {
+      poller.stop();
+    }
+    setStatus('filtered');
+    await loadFilteredRace(newFilter);
+  }
+}
+
+async function loadFilteredRace(filterType) {
+  try {
+    const url = `/api/races/${encodeURIComponent(raceKey)}/filtered?commander=${encodeURIComponent(selectedCmdr)}&filter_type=${filterType}`;
+    const data = await fetch(url).then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    });
+
+    // Update race results with filtered data
+    race.results = data.results;
+
+    // Re-render with filtered results
+    renderRace();
+  } catch (err) {
+    showError('Could not load filtered results.');
+    console.error('Filtered load error:', err);
     setStatus('error');
   }
 }
@@ -218,7 +275,10 @@ function renderRace() {
 
   if (!race.results || race.results.length === 0) {
     if (chartInstance) { chartInstance.dispose(); chartInstance = null; }
-    layoutEl.innerHTML = '<p class="empty-state">No results recorded yet.</p>';
+    const emptyMsg = isFilteredView
+      ? '<p class="empty-state">No results for this filter.</p>'
+      : '<p class="empty-state">No results recorded yet.</p>';
+    layoutEl.innerHTML = emptyMsg;
     return;
   }
 
@@ -285,7 +345,12 @@ function renderRace() {
   window._chartRO = new ResizeObserver(() => chartInstance && chartInstance.resize());
   window._chartRO.observe(chartEl);
 
-  renderRivalry(race.results, race.rivalry);
+  // Hide rivalry panel in filtered view (rivalry data not available)
+  if (isFilteredView) {
+    rivalryEl.style.display = 'none';
+  } else {
+    renderRivalry(race.results, race.rivalry);
+  }
 }
 
 // ── Rivalry panel ──────────────────────────────────────────────────────────
@@ -636,10 +701,11 @@ function showError(msg) {
 
 function setStatus(state) {
   statusDot.className = 'dot';
-  if (state === 'live')    { statusDot.classList.add('live');    statusText.textContent = 'Live (up to 1min delay)'; }
-  if (state === 'offline') { statusDot.classList.add('offline'); statusText.textContent = 'Offline — local data'; }
-  if (state === 'updating'){ statusText.textContent = 'Updating…'; }
-  if (state === 'error')   { statusDot.classList.add('error');   statusText.textContent = 'Connection error'; }
+  if (state === 'live')     { statusDot.classList.add('live');    statusText.textContent = 'Live (up to 1min delay)'; }
+  if (state === 'offline')  { statusDot.classList.add('offline'); statusText.textContent = 'Offline — local data'; }
+  if (state === 'updating') { statusText.textContent = 'Updating…'; }
+  if (state === 'error')    { statusDot.classList.add('error');   statusText.textContent = 'Connection error'; }
+  if (state === 'filtered') { statusDot.classList.add('filtered'); statusText.textContent = 'Filtered view (not live)'; }
 }
 
 // ── Dynamic time updater ───────────────────────────────────────────────────
@@ -709,9 +775,9 @@ async function handleCopySystemName(evt) {
   }
 }
 
-// Refresh on tab focus (skipped in offline mode)
+// Refresh on tab focus (skipped in offline mode or filtered view)
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && !isOffline) {
+  if (document.visibilityState === 'visible' && !isOffline && !isFilteredView) {
     loadRace(); // immediate refresh on return
   }
 });
