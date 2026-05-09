@@ -12,11 +12,13 @@ function isFresh(ts) {
   return Date.now() - new Date(norm).getTime() < FRESH_MS;
 }
 let race          = null;
+let fullResults   = null;  // Store full unfiltered results for ship type filters
 let poller        = null;
 let isOffline     = false;
 let chartInstance = null;
 let timeUpdater   = null;
 let isFilteredView = false;   // Track if we're viewing filtered results
+let activeFilterType = 'NONE'; // Track current filter type
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const titleEl      = document.getElementById('race-title');
@@ -46,9 +48,42 @@ async function init() {
   if (selectedCmdr) {
     filterControls.style.display = 'flex';
     filterSelect.addEventListener('change', handleFilterChange);
+
+    // Feature flag: only show Personal filter if feature flag is enabled
+    const urlParams = new URLSearchParams(window.location.search);
+    const featureFlags = urlParams.get('featureflags') || '';
+    const personalFilterEnabled = featureFlags.includes('filterpersonal') || featureFlags.includes('personalfilter');
+
+    if (!personalFilterEnabled) {
+      // Remove the Personal option from the dropdown
+      const personalOption = filterSelect.querySelector('option[value="PERSONAL"]');
+      if (personalOption) {
+        personalOption.remove();
+      }
+    }
   }
 
+  // Load race first to get ship types for filter options
   await loadRace();
+  if (selectedCmdr && race) {
+    // Hide filters entirely for OnFoot races
+    if (race.type === 'ONFOOT') {
+      filterControls.style.display = 'none';
+    } else {
+      // For SRV and Fighter races, remove ship size filters (SMALL/MEDIUM/LARGE)
+      if (race.type === 'SRV' || race.type === 'FIGHTER') {
+        ['SMALL', 'MEDIUM', 'LARGE'].forEach(size => {
+          const option = filterSelect.querySelector(`option[value="${size}"]`);
+          if (option) option.remove();
+        });
+      }
+
+      // Populate ship type filters
+      if (race.results) {
+        populateShipTypeFilters();
+      }
+    }
+  }
 
   // Setup add media link handler (if present in dev mode)
   const addMediaLink = document.getElementById('add-media-link');
@@ -92,10 +127,13 @@ async function init() {
 // ── Data loading ───────────────────────────────────────────────────────────
 async function loadRace() {
   try {
+    activeFilterType = 'NONE';  // Reset filter when loading normal race
     race = await fetch(`/api/races/${encodeURIComponent(raceKey)}`).then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return r.json();
     });
+    // Store full results for ship type filtering
+    fullResults = race.results ? [...race.results] : [];
     renderRace();
     await loadRaceMap();
   } catch (err) {
@@ -104,9 +142,58 @@ async function loadRace() {
   }
 }
 
+// ── Populate ship type filters ─────────────────────────────────────────────
+function populateShipTypeFilters() {
+  // Use fullResults (unfiltered) to show all available ship types
+  if (!fullResults || fullResults.length === 0) {
+    return;
+  }
+
+  // Extract unique ship types from full results
+  const shipTypes = new Set();
+  fullResults.forEach(result => {
+    if (result.ship) {
+      shipTypes.add(result.ship);
+    }
+  });
+
+  // Convert to sorted array
+  const sortedShipTypes = Array.from(shipTypes).sort();
+
+  // Find an anchor point: try LARGE, then PERSONAL, then last option
+  let anchorOption = filterSelect.querySelector('option[value="LARGE"]');
+  if (!anchorOption) {
+    anchorOption = filterSelect.querySelector('option[value="PERSONAL"]');
+  }
+  if (!anchorOption) {
+    // Find last option that isn't a ship type
+    const allOptions = Array.from(filterSelect.querySelectorAll('option:not([data-ship-type="true"])'));
+    anchorOption = allOptions[allOptions.length - 1];
+  }
+  if (!anchorOption) {
+    return;
+  }
+
+  // Remove any existing ship type options (in case of re-population)
+  const existingShipOptions = filterSelect.querySelectorAll('option[data-ship-type="true"]');
+  existingShipOptions.forEach(opt => opt.remove());
+
+  // Add ship type options after anchor
+  let lastInserted = anchorOption;
+  sortedShipTypes.forEach(shipType => {
+    const option = document.createElement('option');
+    option.value = shipType;
+    option.textContent = shipType;
+    option.setAttribute('data-ship-type', 'true');
+    lastInserted.insertAdjacentElement('afterend', option);
+    lastInserted = option;
+  });
+}
+
 // ── Filter handling ────────────────────────────────────────────────────────
 async function handleFilterChange(evt) {
   const newFilter = evt.target.value;
+  activeFilterType = newFilter;
 
   if (newFilter === 'NONE') {
     // Reset to normal view
@@ -338,7 +425,8 @@ function renderRace() {
   // Initialise ECharts
   const chartEl = document.getElementById('race-chart');
   chartInstance = window.echarts.init(chartEl, null, { renderer: 'canvas' });
-  chartInstance.setOption(_buildChartOption(results, isOdyssey));
+  const isPersonalView = activeFilterType === 'PERSONAL';
+  chartInstance.setOption(_buildChartOption(results, isOdyssey, isPersonalView));
 
   // Keep chart sized to its container on window resize
   if (window._chartRO) window._chartRO.disconnect();
@@ -622,7 +710,7 @@ function camelToWords(str) {
     .replace(/([0-9])([a-zA-Z])/g, '$1 $2');       // digit→letter
 }
 
-function _buildChartOption(results, isOdyssey) {
+function _buildChartOption(results, isOdyssey, isPersonalView = false) {
   const medals      = ['🥇', '🥈', '🥉'];
   const defaultClr  = isOdyssey ? '#1a6ebd' : '#7b3fa0';
 
@@ -631,7 +719,9 @@ function _buildChartOption(results, isOdyssey) {
 
   const yData = reversed.map(r => {
     const medal = r.position <= 3 ? medals[r.position - 1] + ' ' : `${r.position}. `;
-    return medal + r.name;
+    // In personal view, show ship type instead of commander name
+    const label = isPersonalView ? r.ship : r.name;
+    return medal + label;
   });
 
   const seriesData = reversed.map(r => {

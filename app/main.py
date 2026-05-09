@@ -379,7 +379,7 @@ async def api_race(key: str):
 async def api_race_filtered(
     key: str,
     commander: str = Query(..., min_length=1),
-    filter_type: str = Query(..., regex="^(NONE|PERSONAL|SMALL|MEDIUM|LARGE)$"),
+    filter_type: str = Query(..., min_length=1),
 ):
     """
     Fetch filtered leaderboard results directly from the EDCoPilot API.
@@ -391,6 +391,7 @@ async def api_race_filtered(
     - SMALL: Small ships only
     - MEDIUM: Medium ships only
     - LARGE: Large ships only
+    - Or any specific ship type (e.g., "Anaconda", "Python", "SRV")
     """
     if OFFLINE:
         raise HTTPException(

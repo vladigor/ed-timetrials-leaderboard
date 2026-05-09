@@ -30,6 +30,16 @@
           <div class="dot" id="status-dot"></div>
           <span id="status-text">Loading…</span>
         </div>
+        <div class="leaderboard-controls" id="leaderboard-controls" style="display: none;">
+          <label for="ship-filter" class="filter-label">Filter by ship size:</label>
+          <select id="ship-filter" class="ship-filter-select">
+            <option value="NONE">All Ships</option>
+            <option value="PERSONAL">Personal Results Only</option>
+            <option value="SMALL">Small Ships</option>
+            <option value="MEDIUM">Medium Ships</option>
+            <option value="LARGE">Large Ships</option>
+          </select>
+        </div>
       </div>
       <div class="race-media-wrapper">
         <div class="race-map-container" id="race-map-container" style="display: none;">
@@ -44,17 +54,6 @@
         </div>
         {% endif %}
       </div>
-    </div>
-
-    <div class="leaderboard-controls" id="leaderboard-controls" style="display: none;">
-      <label for="ship-filter" class="filter-label">Filter by ship size:</label>
-      <select id="ship-filter" class="ship-filter-select">
-        <option value="NONE">All Ships</option>
-        <option value="PERSONAL">Personal Results Only</option>
-        <option value="SMALL">Small Ships</option>
-        <option value="MEDIUM">Medium Ships</option>
-        <option value="LARGE">Large Ships</option>
-      </select>
     </div>
 
     <div id="results-layout" class="results-layout">
