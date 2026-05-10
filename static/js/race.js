@@ -82,6 +82,22 @@ async function init() {
       if (race.results) {
         populateShipTypeFilters();
       }
+
+      // Check for ship-filter URL parameter and apply it
+      const urlParams = new URLSearchParams(window.location.search);
+      const shipFilterParam = urlParams.get('ship-filter');
+      if (shipFilterParam && shipFilterParam !== 'NONE') {
+        // Set the select value
+        filterSelect.value = shipFilterParam;
+        // Trigger the filter
+        activeFilterType = shipFilterParam;
+        isFilteredView = true;
+        if (poller) {
+          poller.stop();
+        }
+        setStatus('filtered');
+        await loadFilteredRace(shipFilterParam);
+      }
     }
   }
 
@@ -194,6 +210,15 @@ function populateShipTypeFilters() {
 async function handleFilterChange(evt) {
   const newFilter = evt.target.value;
   activeFilterType = newFilter;
+
+  // Update URL parameter
+  const url = new URL(window.location);
+  if (newFilter === 'NONE') {
+    url.searchParams.delete('ship-filter');
+  } else {
+    url.searchParams.set('ship-filter', newFilter);
+  }
+  window.history.pushState({}, '', url);
 
   if (newFilter === 'NONE') {
     // Reset to normal view
