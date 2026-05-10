@@ -376,7 +376,22 @@ function renderRace() {
   if (race.multi_system) infoBadges.push('<span class="info-badge info-badge-accent">Multi-system</span>');
   if (race.multi_planet) infoBadges.push('<span class="info-badge info-badge-accent">Multi-planet</span>');
   if (race.multi_mode) infoBadges.push('<span class="info-badge info-badge-accent">Multi-mode</span>');
+  (race.tags || '').split(',').map(t => t.trim()).filter(Boolean).forEach(t => {
+    infoBadges.push(`<span class="info-badge info-badge-inactive" title="It's no longer possible to compete in this time trial">${esc(t)}</span>`);
+  });
   infoEl.innerHTML = infoBadges.join('');
+
+  // Inactive notice banner
+  const noticeEl = document.getElementById('race-notice');
+  if (noticeEl) {
+    const tags = (race.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+    if (tags.includes('Inactive')) {
+      noticeEl.textContent = "This time trial is no longer active — it's no longer possible to compete in it.";
+      noticeEl.style.display = '';
+    } else {
+      noticeEl.style.display = 'none';
+    }
+  }
 
   if (race.description) {
     descEl.textContent = race.description;

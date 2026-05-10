@@ -551,6 +551,24 @@ a:hover { text-decoration: underline; }
   font-weight: 600;
 }
 
+.info-badge-inactive {
+  border-color: #888;
+  color: #aaa;
+  background: rgba(128, 128, 128, .15);
+  font-weight: 600;
+}
+
+.race-notice {
+  margin-top: .75rem;
+  padding: .5rem .75rem;
+  font-size: .875rem;
+  color: #aaa;
+  background: rgba(128, 128, 128, .1);
+  border: 1px solid #555;
+  border-radius: .4rem;
+  line-height: 1.5;
+}
+
 .race-description {
   margin-top: .75rem;
   font-size: .875rem;

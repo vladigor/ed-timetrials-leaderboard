@@ -77,6 +77,7 @@ async def list_races(
                 l.multi_mode,
                 l.multi_planet,
                 l.multi_system,
+                l.tags,
                 (SELECT COUNT(DISTINCT name) FROM results
                  WHERE location = l.key)          AS entry_count,
                 MAX(r.updated)                    AS last_activity
@@ -349,6 +350,7 @@ async def get_creator_races(creator: str, commander_pos: str | None = None) -> d
                 l.multi_mode,
                 l.multi_planet,
                 l.multi_system,
+                l.tags,
                 (SELECT COUNT(DISTINCT name) FROM results WHERE location = l.key) AS entry_count,
                 MAX(r.updated) AS last_activity
                 {cmdr_position_sql}

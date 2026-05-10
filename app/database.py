@@ -106,6 +106,7 @@ async def init_db() -> None:
             "ALTER TABLE locations ADD COLUMN coords TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE locations ADD COLUMN created_at TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE locations ADD COLUMN creator TEXT NOT NULL DEFAULT ''",
+            "ALTER TABLE locations ADD COLUMN tags TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE results_history ADD COLUMN position INTEGER",
         ):
             with contextlib.suppress(Exception):

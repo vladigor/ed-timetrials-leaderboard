@@ -265,6 +265,7 @@ function raceCard(r) {
     r.multi_mode ? `<span class="info-badge info-badge-accent">Multi-mode</span>` : '',
     r.multi_planet ? `<span class="info-badge info-badge-accent">Multi-planet</span>` : '',
     r.multi_system ? `<span class="info-badge info-badge-accent">Multi-system</span>` : '',
+    (r.tags || '').split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="info-badge info-badge-inactive" title="It's no longer possible to compete in this time trial">${esc(t)}</span>`).join(''),
   ].join('');
 
   return `
