@@ -1955,6 +1955,8 @@ a:hover { text-decoration: underline; }
   margin-bottom: 1.5rem;
 }
 
+.label-mobile { display: none; }
+
 .stats-table thead {
   background: var(--surface2);
 }
@@ -2072,6 +2074,9 @@ a:hover { text-decoration: underline; }
   .stats-table .stats-rank {
     font-size: 0.95rem;
   }
+
+  .label-desktop { display: none; }
+  .label-mobile  { display: inline; }
 
   /* Make filter inputs full width on mobile when stacked */
   .filter-group {

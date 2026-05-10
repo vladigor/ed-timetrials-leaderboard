@@ -247,7 +247,10 @@ function renderTopNTable(items, nameLabel, countLabel) {
   html += '<thead><tr>';
   html += `<th class="stats-rank">Rank</th>`;
   html += `<th>${esc(nameLabel.charAt(0).toUpperCase() + nameLabel.slice(1))}</th>`;
-  html += `<th class="stats-count">${esc(countLabel.charAt(0).toUpperCase() + countLabel.slice(1))}</th>`;
+  const countHeading = countLabel === 'races participated'
+    ? `<span class="label-desktop">Races Participated</span><span class="label-mobile">Races Done</span>`
+    : esc(countLabel.charAt(0).toUpperCase() + countLabel.slice(1));
+  html += `<th class="stats-count">${countHeading}</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
 
