@@ -90,6 +90,7 @@ templates/
   2. Use `terminal_last_command` (note: may not always capture full output)
 - The proper workflow is: 1) `run_in_terminal` with output redirect 2) `read_file` to see results
 - Always run Python scripts using `.venv/bin/python3` to use the project's virtual environment
+- **The `sqlite3` CLI is not available on the live server.** Any ad-hoc database commands must be issued as a Python one-liner: `python3 -c "import sqlite3; con=sqlite3.connect('leaderboard.sqlite3'); ..."`
 
 ## Reference Documentation
 
