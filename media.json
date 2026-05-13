@@ -544,19 +544,40 @@
     "map": {
       "thumbnail": "maps/thumbnails/BroosCruise.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-_Broo%27s%20Cruise"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/tk5FoqKpvRI"
+      }
+    ]
   },
   "VR247-Broo's Loose Screws": {
     "map": {
       "thumbnail": "maps/thumbnails/BroosLooseScrews.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%27s%20Loose%20Screws"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/sam1-3NWk9U"
+      }
+    ]
   },
   "VR247-Broo's Views": {
     "map": {
       "thumbnail": "maps/thumbnails/BroosViews.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%27s%20Views%20"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/rOPXB6czShM"
+      }
+    ]
   },
   "DUCK0-BUSTOSCANYON": {
     "map": {
@@ -694,7 +715,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/IndraSpireSite.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=SGURR-_Indra%20Spire%20Site%20Scramble"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/tUreWLIzYQM"
+      }
+    ]
   },
   "ALEC TURNER-_Jameson Base Tour": {
     "map": {
@@ -745,7 +773,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/Okorafor8.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-Octorafor_Figure_8"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/__ax4F_b2R4"
+      }
+    ]
   },
   "ELITE RACERS-Okorafor Circuit": {
     "map": {
@@ -783,7 +818,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/SkiffSurveySRVParkour.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-_Skiff%20Survey"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/4twhxfEB6mM"
+      }
+    ]
   },
   "ALEC TURNER-SPARKS_BAR_DASH": {
     "map": {
@@ -929,7 +971,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/KesselBastion15.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG-KESSELSRV15K"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/bc2lZFwKc4Q"
+      }
+    ]
   },
   "RAZZAFRAG04": {
     "map": {

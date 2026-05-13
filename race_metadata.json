@@ -1,0 +1,482 @@
+{
+  "ALEC TURNER-_ARGON_ICE_DESCENT_1": {
+    "difficulty_level": 4,
+    "gravity": "0.14g",
+    "notes": "A metaphor for life: it's downhill all the way. But don't be disheartened: it's only 13km and very few bounces – just don't overshoot the finish line.",
+    "video_records": []
+  },
+  "WALTER WALL-_BridgerTownTour(ODY)": {
+    "difficulty_level": 1,
+    "gravity": "0.08g",
+    "notes": "A basic introduction to SRV driving skills:- when to push hard- when to ease up- when to brake- when not to brake- when to jump and how high.There are also opportunities to try flyving to gain a little speed, but watch out for the uneven ground. We advise a drop to the Main Menu before starting a session to avoid the possibility of graphics anomalies.",
+    "video_records": []
+  },
+  "VR247-_Broo's Cruise": {
+    "difficulty_level": 3,
+    "gravity": "0.22g",
+    "notes": "We have to admit that there are one or two tricky bits on this course: climb a slope then climb a cliff – and watch out for hidden hitboxes on the bridge. To ease your route, try running the rims of the foundries. All offset by a glorious leap off a cliff to the finish.",
+    "video_records": [
+      {
+        "label": "Cmdr Shaye Blackwood",
+        "target": "https://youtu.be/tk5FoqKpvRI"
+      },
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/zrX4TRVzlmc"
+      }
+    ]
+  },
+  "VR247-Broo's Loose Screws": {
+    "difficulty_level": 4,
+    "gravity": "0.22g",
+    "notes": "Don't try this course until you've mastered the Broo's Cruise course because the first half of this TT is the same – then it gets a little squirly. But the final jump is even better.",
+    "video_records": [
+      {
+        "label": "Cmdr Shaye Blackwood",
+        "target": "https://youtu.be/sam1-3NWk9U"
+      }
+    ]
+  },
+  "VR247-Broo's Views": {
+    "difficulty_level": 4,
+    "gravity": "0.22g",
+    "notes": "Set your ship down in front of the Garage in the Valley, pointing at roughly 72°. Then it's three times round some tight bends and long straights, but stay below 400m.",
+    "video_records": [
+      {
+        "label": "Cmdr Shaye Blackwood",
+        "target": "https://youtu.be/rOPXB6czShM"
+      }
+    ]
+  },
+  "DUCK0-BUSTOSCANYON": {
+    "difficulty_level": 3,
+    "gravity": "0.07g",
+    "notes": "There are a lot of tight bends on this course and you go round it three times – pick a ship that's up to the task.Make sure you're below 100m when you go through the Start, and stay below 400m for the rest of the track.",
+    "video_records": []
+  },
+  "ALEC TURNER-02102023": {
+    "difficulty_level": 5,
+    "gravity": "0.03g",
+    "notes": "A challenging course for advanced flyvers. You will have to build up a substantial speed to get from waypoint 1 to waypoint 2 – it's very steep. A word of warning: we don't know what this crater was used for, so don't eat the yellow ice.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/thbGpXnoMCA"
+      },
+      {
+        "label": "Cmdr Duck0",
+        "target": "https://youtu.be/gtQi4BIAmws"
+      }
+    ]
+  },
+  "ALEC TURNER-_Camp_Bucky_1": {
+    "difficulty_level": 2,
+    "gravity": "0.15g",
+    "notes": "Building sites – so tempting. Indulge yourself – take three trips round this one, avoiding everything that looks dangerous and everything that doesn't.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/Tsuu_RNRtPw"
+      }
+    ]
+  },
+  "ALEC TURNER-_Camp_Bucky_hill_climb_1": {
+    "difficulty_level": 3,
+    "gravity": "0.15g",
+    "notes": "Couldn't be simpler: find the arch, get to the top of the mountain, get back as fast as possible.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/LoJVVjAYB8k"
+      }
+    ]
+  },
+  "ALEC TURNER-DEVILS_TOWER_RUN": {
+    "difficulty_level": 2,
+    "gravity": "0.15g",
+    "notes": "With spectacular views across nearly empty wastes, The Devils Tower construction site called out for something different: this course is an on-foot parkour time trial. Brave vertiginous chasms as you leap daringly from one shipping container to the next. Leap heroically into the future. But make sure you do land on each waypoint: fly too high over one and you risk losing the pass.There's just one other rule: don't touch the ground.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/yelXQqRBksg"
+      }
+    ]
+  },
+  "ALEC TURNER-DRAKHYR_RALLY": {
+    "difficulty_level": 5,
+    "gravity": "0.15g",
+    "notes": "Think you're tough enough for the Drakhyr Rally? It's 260km of rough terrain. Just look at it – your SRV isn't big enough to make a single pixel. Inspired by the legendary challenging Dakkar Rally on Earth-that-nearly-wasn't, this course will test your SRV skills and your perseverance – and give you a great deal of satisfaction when you do finish.Tough enough? Prove it.",
+    "video_records": [
+      {
+        "label": "Cmdr Duck0",
+        "target": "https://youtu.be/IZzTViHJiHU"
+      }
+    ]
+  },
+  "ALEC TURNER-DRAKHYRS_TORC_1": {
+    "difficulty_level": 3,
+    "gravity": "0.15g",
+    "notes": "Two left turns, two right turns – but it's the bits in between that demand a variety of skills to beat the clock.And be careful on the flyving buttresses.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/kZCrg9MMvGA"
+      }
+    ]
+  },
+  "ALEC TURNER-FortAsch1Pip": {
+    "difficulty_level": 3,
+    "gravity": "0.18g",
+    "notes": "Fort Asch: a settlement destroyed by the Thargoids, but with enough debris (and ice) to make an interesting course. Set 1 pip to Engines before you start. By lap 3 you'll start to notice where the optimum lines run and learn to use them to your advantage.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/YC-2qvi4Htc"
+      }
+    ]
+  },
+  "WULLAIL-_HR 2354 3 lap race": {
+    "difficulty_level": 1,
+    "gravity": "0.08g",
+    "notes": "Don't be fooled by the apparent simplicity: fine control is essential on this short, fast and fun course between the stacked containers of a building site. Run the straights – drift the bends – feel like a real rally driver.",
+    "video_records": []
+  },
+  "ALICE KNIGHT-COLONIASRV01": {
+    "difficulty_level": null,
+    "gravity": "0.35g",
+    "notes": "",
+    "video_records": []
+  },
+  "SGURR-_Indra Spire Site Scramble": {
+    "difficulty_level": 4,
+    "gravity": "0.4g",
+    "notes": "Four pips to engines may not be the best strategy. The slower and surer turtle beats the skidding hare.Position your SRV to point 180 to 200 degrees before putting on the handbrake.",
+    "video_records": [
+      {
+        "label": "Cmdr Sgurr",
+        "target": "https://youtu.be/tUreWLIzYQM"
+      }
+    ]
+  },
+  "ALEC TURNER-_Jameson Base Tour": {
+    "difficulty_level": 3,
+    "gravity": "1g",
+    "notes": "You must have unlocked Lori Jameson before trying this course. Her base is on a steep and icy terrain, littered with dead ships. Kindly moderate your language while battling the odds.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/Ys8WXJi6ktc"
+      }
+    ]
+  },
+  "ALEC TURNER-_leigongspire1": {
+    "difficulty_level": 4,
+    "gravity": "0.04g",
+    "notes": "A series of hops from one Thargoid landing pad to another, round the main trunk of the largest structure, then across to pads on two more.We promise you that once you get started you'll forget that you're 3km above ground.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/2QWg_-X039E"
+      }
+    ]
+  },
+  "DUCK0-DUCK0_LeopoldCircuit": {
+    "difficulty_level": 2,
+    "gravity": "0.49g",
+    "notes": "Jumping, flyving and, if you're not careful, spinning on ice while side-swiping the odd rock. A comfortably straightforward course to get you started on a distinguished TT career.",
+    "video_records": []
+  },
+  "ALEC TURNER-MAJI_500_SPEEDWAY": {
+    "difficulty_level": 3,
+    "gravity": "0.27g",
+    "notes": "The thrills of NASCAR on the banking of Brooklands – if you follow the track. Most Time Triallers will find the short cuts. A straight line between points? Not always the best answer.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/WTsT97TzE0E"
+      }
+    ]
+  },
+  "ELITE RACERS-Octorafor_Figure_8": {
+    "difficulty_level": 1,
+    "gravity": "0.9g",
+    "notes": "A different take on Kumay's Bridger Town layout: three times round a figure of eight. The gravity is higher and you're restricted to one pip to engines. Flyve wisely.",
+    "video_records": [
+      {
+        "label": "Cmdr Tobias Von Brandt",
+        "target": "https://youtu.be/__ax4F_b2R4"
+      },
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/8SCs3tpy6Lk"
+      }
+    ]
+  },
+  "ELITE RACERS-Okorafor Circuit": {
+    "difficulty_level": 1,
+    "gravity": "0.9g",
+    "notes": "Take a fun trip round the base – so much fun, you do it twice, with an optional short cut on the second lap just for the daring, devil-may-care driver! (Your trespass will not be forgiven: you may get a fine.)The downside? You'll receive a penalty if you don't set one pip to engines, so save your energy for just the right moments.",
+    "video_records": []
+  },
+  "ALEC TURNER-_RAIJIN_RUMBLE": {
+    "difficulty_level": 3,
+    "gravity": "0.46g",
+    "notes": "Career carefully through six citadels of serene, celestial contemplation, left behind by our Thargoid neighbours. There's no ice, but a careless move can have consequences and there are just as many ups as downs.",
+    "video_records": [
+      {
+        "label": "Cmdr Tobias von Brandt",
+        "target": "https://youtu.be/7UKcxfLrYX8"
+      },
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/2MTOQ3hd2rk"
+      }
+    ]
+  },
+  "ALEC TURNER-_raijinspire1": {
+    "difficulty_level": 4,
+    "gravity": "0.04g",
+    "notes": "A helter-skelter ride round the tallest Thargoid spire before careful leaps to two others. Not suitable for those with a fear of heights, or those with a fear of falling. Or landing very hard.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/C7IIwlqdyfc"
+      }
+    ]
+  },
+  "ELITE RACERS-_Skiff Survey": {
+    "difficulty_level": 3,
+    "gravity": "0.11g",
+    "notes": "An exhilarating mix of driving and flyving – knowing when to do which is all part of the challenge. There are two rules:1 Hit all the waypoints2 Don't hit the ground!",
+    "video_records": [
+      {
+        "label": "Cmdr Tobias Von Brandt",
+        "target": "https://youtu.be/4twhxfEB6mM"
+      },
+      {
+        "label": "Cmdr Sgurr",
+        "target": "https://youtu.be/Ug18NyXBWug"
+      }
+    ]
+  },
+  "ALEC TURNER-SPARKS_BAR_DASH": {
+    "difficulty_level": 3,
+    "gravity": "0.19g",
+    "notes": "There are a few route options in this 45km dash: bear off to one side or the other to avoid the craters, or make a beeline for the target?If you're travelling at more than 50 m/s when you reach waypoint 1, you're going too fast.Avoid the landing pad as you make you final approach and take care: there's a 60-second time penalty for every repair.",
+    "video_records": [
+      {
+        "label": "Cmdr Duck0",
+        "target": "https://youtu.be/XFSKWOGIcFI"
+      },
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/5-sV_ENsGVw"
+      }
+    ]
+  },
+  "ALEC TURNER-TARANIS_TUSSLE_3": {
+    "difficulty_level": 4,
+    "gravity": "0.05g",
+    "notes": "It's the SRV on Ice Show! A straightforward trip round the base compounded by an icy surface and gravity 0.05 of Earth standard. Get ready for three trips round the slickest track in the series. And watch out for low-flying skimmers.",
+    "video_records": [
+      {
+        "label": "Cmdr Tobias Von Brandt",
+        "target": "https://youtu.be/z6YJF7rXjsM"
+      }
+    ]
+  },
+  "ALICE KNIGHT-TIRSRV01": {
+    "difficulty_level": null,
+    "gravity": "0.3g",
+    "notes": "",
+    "video_records": []
+  },
+  "ALEC TURNER-VALENTINO_BAR_DASH": {
+    "difficulty_level": 3,
+    "gravity": "0.15g",
+    "notes": "34.5 km of smooth running up hill and down vale: the direct line may not be the best when deep valleys cross your path.If you're travelling at more than 50 m/s when you reach waypoint 1, you're going too fast.Security gets upset if you run over one of their staff, but they might still stop you anyway just for the fun of it; it is an entertainment district.Take care: there's a 60-second time penalty for every repair.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/DAvbRHTauN0"
+      }
+    ]
+  },
+  "ALICE KNIGHT-BEAGLE01": {
+    "difficulty_level": null,
+    "gravity": null,
+    "notes": "",
+    "video_records": []
+  },
+  "ALEC TURNER-_kumay_chimney_stacks": {
+    "difficulty_level": 4,
+    "gravity": "0.08g",
+    "notes": "35km long and sometimes painful, an exciting romp through some of Kumay's beautiful ice landscapes, leading up to some ancient fumaroles.We advise a drop to the Main Menu before starting to avoid the possibility of graphics anomalies.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/bIh5KbGpty0"
+      },
+      {
+        "label": "Cmdr Shaye Blackwood",
+        "target": "https://youtu.be/cF8pC5qPMwQ"
+      }
+    ]
+  },
+  "ALEC TURNER-_kumay_launch_pad": {
+    "difficulty_level": 4,
+    "gravity": "0.08g",
+    "notes": "A long and interesting tour through some of the best features that Kumay has to offer. A chance for flyvers to test their skill on a more-than 30km route.Not a racer? No problem - take your time and enjoy the stupendous scenery.You should move to the start position with your SRV pointing due east (90 degrees).We advise a drop to the Main Menu before starting to avoid the possibility of graphics anomalies.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/TrzfWE8qFVU"
+      }
+    ]
+  },
+  "ALEC TURNER-_kumay_snake": {
+    "difficulty_level": 4,
+    "gravity": "0.08g",
+    "notes": "Ice on Kumay has a strange, ethereal quality, and this shines through on this run. It's an extended course that rewards the SRV driver, whether racer or tourist, with superb views and landscapes.We advise a drop to the Main Menu before starting to avoid the possibility of graphics anomalies.",
+    "video_records": [
+      {
+        "label": "Cmdrs Sgurr & Alec Turner",
+        "target": "https://youtu.be/gfiP-DheaF8"
+      }
+    ]
+  },
+  "ALEC TURNER-_ARGON_ICE_CLIMB_1": {
+    "difficulty_level": 4,
+    "gravity": "0.14g",
+    "notes": "An uphill struggle over gnarly lumps and bumps, charging a 20 second penalty for every repair.But its not as bad as it looks: even if you bunny-hop all the way and carefully select your bouncing places you should be OK. And it's slightly easier if you aim for the left of the peak.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/5hEZ2SExS18"
+      }
+    ]
+  },
+  "ALEC TURNER-_07092023": [
+    {
+      "difficulty_level": 3,
+      "gravity": "0.23g",
+      "notes": "Part 1 of the Cayley Barracks Snow'n'City Tour.Which course do you take to match your skills? The low road round to the left? The high road over the top? The medium way to right then left?Whatever route you choose, it's ice all the way.See Part 2 for the second half of the Time Trial.",
+      "video_records": [
+        {
+          "label": "Cmdr Alec Turner",
+          "target": "https://youtu.be/TATYOqvd3LU"
+        }
+      ]
+    },
+    {
+      "difficulty_level": 2,
+      "gravity": "0.23g",
+      "notes": "The City part of the run. Please observe all local rules and regulations. Unless you can get away with it.",
+      "video_records": [
+        {
+          "label": "Cmdr Alec Turner",
+          "target": "https://youtu.be/TATYOqvd3LU"
+        }
+      ]
+    }
+  ],
+  "ELITE RACERS-_Cayley Cross TT": {
+    "difficulty_level": 2,
+    "gravity": "0.23g",
+    "notes": "A smooth track",
+    "video_records": []
+  },
+  "ALEC TURNER-In_The_Cooler": {
+    "difficulty_level": 2,
+    "gravity": "0.05g",
+    "notes": "You may have to use EDCopilot to get you there – this old prison isn't on the map until you've scanned the planet. And ignore any patrolling Thargoid – he/she/it will go away after a short light show.Few bumps on this track; take Alec's advice: slow is smooth and smooth is fast!Don't believe him – this is a correctional facility – it's an icy personal punishment for something you've done wrong.Justice will be served!",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/Q3b5rbq7eR0"
+      },
+      {
+        "label": "Cmdr Shaye Blackwood",
+        "target": "https://youtu.be/mtmGXoOxuMc"
+      }
+    ]
+  },
+  "RAZZAFRAG-KESSELSRV15K": {
+    "difficulty_level": 2,
+    "gravity": "0.15g",
+    "notes": "Cross-country to the base.",
+    "video_records": [
+      {
+        "label": "Cmdr Duck0",
+        "target": "https://youtu.be/bc2lZFwKc4Q"
+      }
+    ]
+  },
+  "RAZZAFRAG04": {
+    "difficulty_level": 2,
+    "gravity": "0.15g",
+    "notes": "",
+    "video_records": []
+  },
+  "ALOYSIUS BLACK-KOZLOVSRV02": {
+    "difficulty_level": 2,
+    "gravity": "1.25g",
+    "notes": "",
+    "video_records": []
+  },
+  "ALEC TURNER-Spiralizer": {
+    "difficulty_level": 4,
+    "gravity": "0.15g",
+    "notes": "It's got to be a small ship, but be careful which you choose – some of those gaps and underpasses have very little clearance. And do you boost? And if so, where? You've got three laps to thinks about it, with lots of very careful judgement calls to be made.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://www.youtube.com/watch?v=UELsCiAbYXQ"
+      },
+      {
+        "label": "Cmdr Shaye Blackwood",
+        "target": "https://www.youtube.com/watch?v=Hk4x11QGXlk"
+      }
+    ]
+  },
+  "ALEC TURNER-02092023": {
+    "difficulty_level": 2,
+    "gravity": "1.3g",
+    "notes": "You must have access to Lei Cheung (get your shield generator updated while you're here). Up hill and down dale – no ice to be seen, but you have to work hard against the gravity.",
+    "video_records": []
+  },
+  "RICK RAZZAFRAG-TURNERSRV01": {
+    "difficulty_level": 3,
+    "gravity": "0.06g",
+    "notes": "Home to Engineer Bill Turner, who will tweak various bits and pieces of your ship for a price. It's icy and hilly and an interesting tour of drilling emplacements.",
+    "video_records": []
+  },
+  "RAZZAFRAG-BULUSRV02": {
+    "difficulty_level": 3,
+    "gravity": "0.15g",
+    "notes": "Try life on the dark side and take the rough with the smooth. Run around Westerfield on man-made track and nature's way – just pick the right technique.",
+    "video_records": []
+  },
+  "ALEC TURNER-B201C": {
+    "difficulty_level": 4,
+    "gravity": "0.1g",
+    "notes": "Once you've dealt with the Guardian Sentinels and their rockets, prepare yourself for a 38km run over some horrendous icy barriers. Get some good bounces to go over, but sometimes it's easier and quicker to go round.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/x2ScYqoBqFk"
+      }
+    ]
+  },
+  "ALEC TURNER-JACKRABBIT1": {
+    "difficulty_level": 2,
+    "gravity": "0.54g",
+    "notes": "A modest run round The Jackrabbit base – just don't try putting too much power on through the bends.If you've not unlocked Domino Green, this is an engineer's secret base – when you get near the planet, drop from supercruise and tag the 'Human Signal (0)' in the nav panel. You can then return to SC if necessary.",
+    "video_records": [
+      {
+        "label": "Cmdr Alec Turner",
+        "target": "https://youtu.be/d5K955aNxO0"
+      }
+    ]
+  }
+}
