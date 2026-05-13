@@ -5,11 +5,10 @@
 - Race page:
     - Added ability to filter races by ship size / type
 - Cmdr page:
-    - Participation progress bars showing how many of each creator's races you've completed
+    - Participation progress bars showing how many of each type of race you've completed
 - Creator page: New page for race creators!
     - [Creators index page](/creators) showing all race creators with race counts by type (Ship, Fighter, SRV, On Foot)
     - Individual creator pages at `/creator/{name}` displaying all races created by that commander, grouped by race type
-    - Cmdr profile pages now show creator status with race count and link to creator page
 - Recent Thefts page: New page for recent trophy thefts
     - Shows all recent podium thefts.
 
