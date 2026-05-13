@@ -2,6 +2,8 @@
 
 ## 2026-05-10
 
+- Race page:
+    - Added ability to filter races by ship size / type
 - Cmdr page:
     - Participation progress bars showing how many of each creator's races you've completed
 - Creator page: New page for race creators!
@@ -10,6 +12,7 @@
     - Cmdr profile pages now show creator status with race count and link to creator page
 - Recent Thefts page: New page for recent trophy thefts
     - Shows all recent podium thefts.
+
 
 ## 2026-05-03
 
