@@ -1133,5 +1133,11 @@
         "url": "https://youtu.be/EiK9HeljroA"
       }
     ]
+  },
+  "ALEXFIGHTER-_DW3 Supercross_": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_supercross.png",
+      "target": "maps/dw3_supercross.png"
+    }
   }
 }
