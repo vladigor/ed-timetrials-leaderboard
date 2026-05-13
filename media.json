@@ -1024,7 +1024,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_prick_your_belly.webp",
       "target": "maps/dw3_prick_your_belly.webp"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/HJw0orDVatM"
+      }
+    ]
   },
   "GREAVES-DW3 Rendezvous Rally 15": {
     "map": {
@@ -1056,7 +1063,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_isegrims_hammer.png",
       "target": "maps/dw3_isegrims_hammer.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://youtu.be/PtnW7jNZdrM?si=f1BqUY-HpZFrGuaV"
+      }
+    ]
   },
   "SO MUCH FOR SUBTLETY- DW3 Carriers": {
     "map": {
