@@ -1169,5 +1169,31 @@
       "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
       "target": "maps/dw3_end_of_the_line.jpg"
     }
+  },
+  "RAREBEAR77-_DW3 Pylon racing SHIP": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_pylon_racing_course.jpg",
+      "target": "maps/dw3_pylon_racing_course.jpg"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/HngeGVSmWvk"
+      }
+    ]
+  },
+  "RAREBEAR77-_DW3 Pylon racing SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_pylon_racing_course.jpg",
+      "target": "maps/dw3_pylon_racing_course.jpg"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/HngeGVSmWvk"
+      }
+    ]
   }
 }
