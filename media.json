@@ -1139,5 +1139,35 @@
       "thumbnail": "maps/thumbnails/dw3_supercross.png",
       "target": "maps/dw3_supercross.png"
     }
+  },
+  "SO MUCH FOR SUBTLETY-DW3 CraterCross": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_stuemeae_crater_cross.png",
+      "target": "maps/dw3_stuemeae_crater_cross.png"
+    }
+  },
+  "DRODINN-DW3 End of the Line _ Ship": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
+      "target": "maps/dw3_end_of_the_line.jpg"
+    }
+  },
+  "DRODINN-DW3 End of the Line _ SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
+      "target": "maps/dw3_end_of_the_line.jpg"
+    }
+  },
+  "DRODINN-DW3 Terminus _ SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
+      "target": "maps/dw3_end_of_the_line.jpg"
+    }
+  },
+  "DRODINN-DW3 Terminus _ Ship": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
+      "target": "maps/dw3_end_of_the_line.jpg"
+    }
   }
 }
