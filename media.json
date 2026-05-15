@@ -1198,8 +1198,8 @@
   },
   "VR247-DW3 The Race": {
     "map": {
-      "thumbnail": "maps/thumbnails/dw3_the_race.png",
-      "target": "maps/dw3_the_race.png"
+      "thumbnail": "maps/thumbnails/dw3_the_race.jpg",
+      "target": "maps/dw3_the_race.jpg"
     }
   }
 }
