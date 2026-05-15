@@ -312,7 +312,7 @@ Join the Elite Dangerous racing community on [Discord](https://discord.com/invit
 - Watch live racing streams
 - Compare times, lines, and “how did you survive that?” moments
 
-EDCoPilot also has a [Discord](https://discord.com/channels/762683864589271060/1279159937502543912) to help with questions and find help.
+EDCoPilot also has a [Discord](https://discord.gg/DwH3WcMjKa) to help with questions and find help.
 
 And Buckyball racing is on [Discord](https://discord.gg/YwxcsCf) for more interplanetary racing without EDCoPilot.
 
