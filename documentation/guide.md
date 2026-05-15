@@ -304,7 +304,7 @@ EDCoPilot can save race definition (`.txt`) and route trace (`.csv`) files after
 
 ## Racing Community
 
-Join the Elite Dangerous racing community on [Discord](https://discord.com/channels/110284160874082304/744017622424748032) to:
+Join the Elite Dangerous racing community on [Discord](https://discord.com/invite/cvZKNvvj2g) to:
 
 - Hear about new races
 - Ask for tips (and get ten different answers, all correct)
@@ -314,7 +314,7 @@ Join the Elite Dangerous racing community on [Discord](https://discord.com/chann
 
 EDCoPilot also has a [Discord](https://discord.com/channels/762683864589271060/1279159937502543912) to help with questions and find help.
 
-And Buckyball racing is on [Discord](https://discord.com/channels/614710275295412259/614713280900104212) for more interplanetary racing without EDCoPilot.
+And Buckyball racing is on [Discord](https://discord.gg/YwxcsCf) for more interplanetary racing without EDCoPilot.
 
 ## Now Go Race
 
