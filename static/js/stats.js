@@ -60,6 +60,8 @@ function render() {
   html += '<div class="stats-grid">';
 
   html += renderStatCard('Total Races', stats.total_races);
+  html += renderStatCard('DW3 Races', stats.dw3_races, 'Races that were created during the Distant Worlds 3 expedition.');
+  html += renderStatCard('Non-DW3 Races', stats.non_dw3_races, 'Races that were created outside of the Distant Worlds 3 expedition.');
   html += renderStatCard('Active Races', stats.active_races_30d, 'Races that have had at least one time set in the last 30 days');
 
   html += '</div>';
@@ -71,9 +73,9 @@ function render() {
   html += '<div class="stats-grid">';
 
   html += renderStatCard('Total Racers', stats.total_racers, 'Note that this will include some Alt accounts');
-  html += renderStatCard('Active Racers', stats.active_racers_30d, 'Racers who have set at least one time in the last 30 days');
   html += renderStatCard('DW3 Racers', stats.dw3_racers, 'Racers who have set a time on at least one DW3 race');
   html += renderStatCard('Non-DW3 Racers', stats.non_dw3_racers, 'Racers who have set a time on at least one non-DW3 race');
+  html += renderStatCard('Active Racers', stats.active_racers_30d, 'Racers who have set at least one time in the last 30 days');
 
   //html += renderStatCard('Race Creators', stats.total_contributors);
 

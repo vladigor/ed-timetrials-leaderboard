@@ -913,6 +913,18 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         async with db.execute("SELECT COUNT(*) AS cnt FROM locations") as cur:
             stats["total_races"] = (await cur.fetchone())["cnt"]
 
+        # DW3 races
+        async with db.execute(
+            "SELECT COUNT(*) AS cnt FROM locations WHERE name LIKE 'DW3%' OR name LIKE 'The DW3%'"
+        ) as cur:
+            stats["dw3_races"] = (await cur.fetchone())["cnt"]
+
+        # Non-DW3 races
+        async with db.execute(
+            "SELECT COUNT(*) AS cnt FROM locations WHERE name NOT LIKE 'DW3%' AND name NOT LIKE 'The DW3%'"
+        ) as cur:
+            stats["non_dw3_races"] = (await cur.fetchone())["cnt"]
+
         # Total racers (distinct commanders)
         async with db.execute("SELECT COUNT(DISTINCT name) AS cnt FROM results") as cur:
             stats["total_racers"] = (await cur.fetchone())["cnt"]
