@@ -1201,5 +1201,18 @@
       "thumbnail": "maps/thumbnails/dw3_the_race.jpg",
       "target": "maps/dw3_the_race.jpg"
     }
+  },
+  "GREAVES-DW3 Rendezvous Rally 16": {
+    "map": {
+      "thumbnail": "maps/thumbnails/dw3_rendezvous_rally_16.jpg",
+      "target": "maps/dw3_rendezvous_rally_16.jpg"
+    },
+    "links": [
+      {
+        "label": "Alternative map",
+        "type": "image",
+        "url": "/maps/dw3_rendezvous_rally_16_pt2.jpg"
+      }
+    ]
   }
 }
