@@ -1720,6 +1720,11 @@ a:hover { text-decoration: underline; }
   border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
+.dw3-thanks-content img {
+  float: right;
+  margin: 0 0 1.5rem 4.5rem;
+  max-width: 35%;
+}
 .guide-content code {
   background-color: rgba(255, 255, 255, 0.05);
   padding: 0.2rem 0.4rem;
