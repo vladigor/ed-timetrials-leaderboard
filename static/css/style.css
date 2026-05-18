@@ -1723,7 +1723,7 @@ a:hover { text-decoration: underline; }
 .dw3-thanks-content img {
   float: right;
   margin: 0 0 1.5rem 4.5rem;
-  max-width: 35%;
+  width: 35%;
 }
 .guide-content code {
   background-color: rgba(255, 255, 255, 0.05);
