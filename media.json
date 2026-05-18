@@ -1150,25 +1150,53 @@
     "map": {
       "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
       "target": "maps/dw3_end_of_the_line.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=-qKbs9FN9zM"
+      }
+    ]
   },
   "DRODINN-DW3 End of the Line _ SLF": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
       "target": "maps/dw3_end_of_the_line.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=-qKbs9FN9zM"
+      }
+    ]
   },
   "DRODINN-DW3 Terminus _ SLF": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
       "target": "maps/dw3_end_of_the_line.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=tPelPJhdBlQ&t=4s"
+      }
+    ]
   },
   "DRODINN-DW3 Terminus _ Ship": {
     "map": {
       "thumbnail": "maps/thumbnails/dw3_end_of_the_line.jpg",
       "target": "maps/dw3_end_of_the_line.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=tPelPJhdBlQ"
+      }
+    ]
   },
   "RAREBEAR77-_DW3 Pylon racing SHIP": {
     "map": {
