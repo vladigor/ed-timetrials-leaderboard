@@ -282,7 +282,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=EGyIAFGfY14"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/rr5.png",
+      "target": "maps/rr5.png"
+    }
   },
   "ALEC TURNER-ECLIPSION_CRATER_MAKER": {
     "links": [
@@ -300,7 +304,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=zZMSRsRsPjI"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/rr4.jpg",
+      "target": "maps/rr4.jpg"
+    }
   },
   "GREAVES-DW3 Rendezvous Rally 4B": {
     "links": [
@@ -309,7 +317,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=j_aPTbL0rn4"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/rr4_1.jpg",
+      "target": "maps/rr4_1.jpg"
+    }
   },
   "GREAVES-DW3 Rendezvous Rally 3": {
     "links": [
@@ -318,7 +330,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=77fv1UnsNjc"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/rr3.png",
+      "target": "maps/rr3.png"
+    }
   },
   "GREAVES-DW3%20Rendezvous%20Rally%202": {
     "links": [
@@ -430,8 +446,8 @@
   },
   "GREAVES-DW3 Rendezvous Rally 11": {
     "map": {
-      "thumbnail": "maps/thumbnails/dw3_meet_me_in_the_middle.png",
-      "target": "maps/dw3_meet_me_in_the_middle.png"
+      "thumbnail": "maps/thumbnails/rr11.jpg",
+      "target": "maps/rr11.jpg"
     },
     "links": [
       {
@@ -448,7 +464,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=tWcea2ICvqk&pp=0gcJCdMKAYcqIYzv"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/rr9.jpg",
+      "target": "maps/rr9.jpg"
+    }
   },
   "ALEXFIGHTER-DW3 Minigolf 2": {
     "map": {
@@ -1242,5 +1262,47 @@
         "url": "/maps/dw3_rendezvous_rally_16_pt2.jpg"
       }
     ]
+  },
+  "GREAVES-DW3 Rendezvous Rally": {
+    "map": {
+      "thumbnail": "maps/thumbnails/rr1.jpg",
+      "target": "maps/rr1.jpg"
+    }
+  },
+  "GREAVES-DW3 Rendezvous Rally 2": {
+    "map": {
+      "thumbnail": "maps/thumbnails/rr2.png",
+      "target": "maps/rr2.png"
+    }
+  },
+  "GREAVES-DW3 Rendezvous Rally 6": {
+    "map": {
+      "thumbnail": "maps/thumbnails/rr6.jpg",
+      "target": "maps/rr6.jpg"
+    }
+  },
+  "GREAVES-DW3 Rendezvous Rally 7A": {
+    "map": {
+      "thumbnail": "maps/thumbnails/rr7-1.jpg",
+      "target": "maps/rr7-1.jpg"
+    }
+  },
+  "GREAVES-DW3 Rendezvous Rally 7B": {
+    "map": {
+      "thumbnail": "maps/thumbnails/rr7-2.png",
+      "target": "maps/rr7-2.png"
+    }
+  },
+  "GREAVES-DW3 Rendezvous Rally 8": {
+    "map": {
+      "thumbnail": "maps/thumbnails/rr8.jpg",
+      "target": "maps/rr8.jpg"
+    }
+  },
+  "GREAVES-DW3 Rendezvous Rally 10": {
+    "map": {
+      "thumbnail": "maps/thumbnails/rr10.jpg",
+      "target": "maps/rr10.jpg"
+    }
   }
 }
