@@ -183,7 +183,8 @@ a:hover { text-decoration: underline; }
 /* ============================================================
    Race grid (index page)
    ============================================================ */
-#new-races-panel {
+#new-races-panel,
+#notifications-panel {
   background: var(--surface);
   border: 1px solid var(--accent-dim);
   border-radius: .5rem;
