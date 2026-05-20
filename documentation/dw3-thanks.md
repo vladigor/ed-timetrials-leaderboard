@@ -22,6 +22,7 @@
 - For your help and guidance that helped us learn the basics of racing.
 - For the races you created: the mountains we climbed and then dived off, and the craters we dove into.
 - For all the media promotion you have given to the racing community
+- For the many hours you spent compiling the weekly championship spreadsheet.
 - In addition: The Iron and Nickel mining industries thank you too.
 
 
@@ -72,3 +73,5 @@
 ### ***Before DW3 I was a player of Elite.  Now I feel that I'm a member of a community.***
 
 Thank you for including me on the journey, **[vladigor](/cmdr/VLADIGOR)**
+
+[Cest la vie](https://youtu.be/WjQvxORe1NY)
