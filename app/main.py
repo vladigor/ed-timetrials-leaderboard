@@ -23,6 +23,7 @@ from .queries import (
     get_commander_stats,
     get_creator_races,
     get_race,
+    get_race_meta,
     get_stats,
     get_stats_with_limit,
     list_commanders,
@@ -100,8 +101,18 @@ async def webmanifest():
 
 @app.get("/race/{key}", response_class=HTMLResponse)
 async def race_page(request: Request, key: str):
+    meta = await get_race_meta(key)
+    race_name = meta["name"] if meta else key
+    race_description = meta["description"] if meta else ""
     return templates.TemplateResponse(
-        "race.html", {"request": request, "v": STATIC_VER, "is_dev": ENV == "dev"}
+        "race.html",
+        {
+            "request": request,
+            "v": STATIC_VER,
+            "is_dev": ENV == "dev",
+            "race_name": race_name,
+            "race_description": race_description,
+        },
     )
 
 

@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Time Trial — Elite TT Leaderboards{% endblock %}
+{% block title %}{{ race_name }} — Elite TT Leaderboards{% endblock %}
+
+{% block meta_description %}<meta name="description" content="{{ race_description if race_description else 'Community leaderboards for Elite Dangerous time trial racing' }}">{% endblock %}
 
 {% block extra_head %}
+  <meta property="og:title" content="{{ race_name }} — Elite TT Leaderboards">
+  <meta property="og:description" content="{{ race_description if race_description else 'Community leaderboards for Elite Dangerous time trial racing' }}">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 {% endblock %}
 

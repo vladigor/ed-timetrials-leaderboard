@@ -19,6 +19,19 @@ def _row_to_dict(row: aiosqlite.Row) -> dict:
 # ---------------------------------------------------------------------------
 
 
+async def get_race_meta(key: str) -> dict | None:
+    """Return just the name and description for a race (lightweight, for server-rendered head)."""
+    db = await get_db()
+    try:
+        async with db.execute(
+            "SELECT name, description FROM locations WHERE key = ?", (key,)
+        ) as cursor:
+            row = await cursor.fetchone()
+        return _row_to_dict(row) if row else None
+    finally:
+        await db.close()
+
+
 async def list_races(
     active_days: int | None = None,
     commander: str | None = None,
