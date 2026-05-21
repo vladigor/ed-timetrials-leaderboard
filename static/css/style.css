@@ -1500,6 +1500,38 @@ a:hover { text-decoration: underline; }
   color: var(--accent);
   font-weight: 600;
 }
+.tab-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 10px;
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .1rem .45rem;
+  margin-left: .4rem;
+  min-width: 1.4em;
+  text-align: center;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+.nearby-tab.active .tab-badge {
+  background: var(--bg);
+  color: var(--accent);
+}
+.nendy-teaser {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+  padding: .65rem 1rem;
+  background: var(--surface2);
+  border: 1px solid var(--accent-dim);
+  border-radius: .4rem;
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+.nendy-teaser strong { color: var(--text); }
 
 /* ── NEIDY catchability bar ──────────────────────────────────── */
 .neidy-bar-cell { width: 90px; padding-right: .5rem; }

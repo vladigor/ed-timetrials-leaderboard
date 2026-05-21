@@ -933,6 +933,8 @@ async function nearbyFind() {
   _neidyScoredCache = null;
   nendyFiltersEl.style.display = 'none';
   _nendyUndoneCache = null;
+  const badge = document.getElementById('nendy-count-badge');
+  if (badge) badge.style.display = 'none';
 
   let resolvedName, x, y, z;
   try {
@@ -1014,17 +1016,20 @@ async function nearbyFind() {
   }
 
   nearbyTabsEl.style.display = '';
-  renderNeidy(resolvedName, done, raceDetails);
+  renderNeidy(resolvedName, done, raceDetails, true);
   nendyFindBtn.disabled = false;
 }
 
 function renderNendy(resolvedName, undone) {
+  const badge = document.getElementById('nendy-count-badge');
   if (undone.length === 0) {
+    if (badge) badge.style.display = 'none';
     nendyFiltersEl.style.display = '';
     nendyResults.innerHTML = `<p class="empty-state">${isSelf ? "You've" : 'This commander has'} done every race ${nendyTypeFilter ? `(filtered to ${nendyTypeFilter} races) ` : ''}\u2014 nothing left to find!</p>`;
     return;
   }
 
+  if (badge) { badge.textContent = undone.length; badge.style.display = ''; }
   _nendyUndoneCache  = undone;
   nendySourceSystem = resolvedName;
   nendyFiltersEl.style.display = '';
@@ -1065,7 +1070,7 @@ function renderNendy(resolvedName, undone) {
     ${moreNote}`;
 }
 
-function renderNeidy(resolvedName, done, raceDetails) {
+function renderNeidy(resolvedName, done, raceDetails, allowAutoSwitch = false) {
   // Build scored list
   const scored = [];
   for (let i = 0; i < done.length; i++) {
@@ -1095,6 +1100,11 @@ function renderNeidy(resolvedName, done, raceDetails) {
 
   if (scored.length === 0) {
     neidyFiltersEl.style.display = '';
+    const nendyCount = _nendyUndoneCache ? _nendyUndoneCache.length : 0;
+    if (allowAutoSwitch && nendyCount > 0) {
+      switchTab('nendy');
+      return;
+    }
     neidyResults.innerHTML = `<p class="empty-state">No improvement data available for nearby races${neidyTypeFilter ? ` (filtered to ${neidyTypeFilter} races)` : ''}.</p>`;
     return;
   }
@@ -1144,6 +1154,15 @@ function renderNeidy(resolvedName, done, raceDetails) {
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
+
+  const nendyCount = _nendyUndoneCache ? _nendyUndoneCache.length : 0;
+  if (nendyCount > 0) {
+    const teaser = document.createElement('div');
+    teaser.className = 'nendy-teaser';
+    teaser.innerHTML = `<span>Also found <strong>${nendyCount}</strong> race${nendyCount !== 1 ? 's' : ''} nearby you haven\'t tried yet.</span><button class="btn-chip">See Not Done Yet →</button>`;
+    teaser.querySelector('button').addEventListener('click', () => switchTab('nendy'));
+    neidyResults.appendChild(teaser);
+  }
 }
 
 // ── Participation Progress Bars ───────────────────────────────────────────
