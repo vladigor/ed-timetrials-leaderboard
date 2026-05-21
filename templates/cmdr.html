@@ -58,35 +58,11 @@
       </div>
 
       <div class="nearby-tabs" id="nearby-tabs" style="display:none">
-        <button class="nearby-tab active" data-tab="neidy" id="tab-neidy">Improvement Opportunities</button>
-        <button class="nearby-tab" data-tab="nendy" id="tab-nendy">Not Done Yet<span class="tab-badge" id="nendy-count-badge" style="display:none"></span></button>
+        <button class="nearby-tab active" data-tab="nendy" id="tab-nendy">Not Done Yet<span class="tab-badge" id="nendy-count-badge" style="display:none"></span></button>
+        <button class="nearby-tab" data-tab="neidy" id="tab-neidy">Improvement Opportunities</button>
       </div>
 
-      <div id="neidy-panel">
-        <div class="neidy-filters" id="neidy-filters" style="display:none">
-          <div class="cmdr-sort-group">
-            <span class="filter-group-label">Type</span>
-            <div class="btn-toggle-group" id="neidy-type-btns">
-              <button class="btn-toggle active" data-type="">All</button>
-              <button class="btn-toggle" data-type="SHIP">Ship</button>
-              <button class="btn-toggle" data-type="SRV">SRV</button>
-              <button class="btn-toggle" data-type="FIGHTER">Fighter</button>
-              <button class="btn-toggle" data-type="ONFOOT">On Foot</button>
-            </div>
-          </div>
-          <div class="cmdr-sort-group">
-            <span class="filter-group-label">Distance</span>
-            <div class="btn-toggle-group" id="neidy-dist-btns">
-              <button class="btn-toggle active" data-dist="1000">&lt; 1,000 ly</button>
-              <button class="btn-toggle" data-dist="2000">&lt; 2,000 ly</button>
-              <button class="btn-toggle" data-dist="5000">&lt; 5,000 ly</button>
-              <button class="btn-toggle" data-dist="0">Any</button>
-            </div>
-          </div>
-        </div>
-        <div id="neidy-results"></div>
-      </div>
-      <div id="nendy-panel" style="display:none">
+      <div id="nendy-panel">
         <div class="neidy-filters" id="nendy-filters" style="display:none">
           <div class="cmdr-sort-group">
             <span class="filter-group-label">Type</span>
@@ -109,6 +85,30 @@
           </div>
         </div>
         <div id="nendy-results"></div>
+      </div>
+      <div id="neidy-panel" style="display:none">
+        <div class="neidy-filters" id="neidy-filters" style="display:none">
+          <div class="cmdr-sort-group">
+            <span class="filter-group-label">Type</span>
+            <div class="btn-toggle-group" id="neidy-type-btns">
+              <button class="btn-toggle active" data-type="">All</button>
+              <button class="btn-toggle" data-type="SHIP">Ship</button>
+              <button class="btn-toggle" data-type="SRV">SRV</button>
+              <button class="btn-toggle" data-type="FIGHTER">Fighter</button>
+              <button class="btn-toggle" data-type="ONFOOT">On Foot</button>
+            </div>
+          </div>
+          <div class="cmdr-sort-group">
+            <span class="filter-group-label">Distance</span>
+            <div class="btn-toggle-group" id="neidy-dist-btns">
+              <button class="btn-toggle active" data-dist="1000">&lt; 1,000 ly</button>
+              <button class="btn-toggle" data-dist="2000">&lt; 2,000 ly</button>
+              <button class="btn-toggle" data-dist="5000">&lt; 5,000 ly</button>
+              <button class="btn-toggle" data-dist="0">Any</button>
+            </div>
+          </div>
+        </div>
+        <div id="neidy-results"></div>
       </div>
     </div>
 
