@@ -877,7 +877,7 @@ async function rerunOpportunities() {
 
   // ── NENDY (not done) ─────────────────────────────────────────────────────
   let undone = filteredRaces
-    .filter(r => !doneKeys.has(r.key))
+    .filter(r => !doneKeys.has(r.key) && !(r.tags || '').split(',').map(t => t.trim()).includes('Inactive'))
     .map(withDist)
     .sort((a, b) => a.dist - b.dist);
 
@@ -976,7 +976,7 @@ async function nearbyFind() {
 
   // ── NENDY (not done) ─────────────────────────────────────────────────────
   let undone = filteredRaces
-    .filter(r => !doneKeys.has(r.key))
+    .filter(r => !doneKeys.has(r.key) && !(r.tags || '').split(',').map(t => t.trim()).includes('Inactive'))
     .map(withDist)
     .sort((a, b) => a.dist - b.dist);
 
@@ -1156,9 +1156,14 @@ async function renderParticipationBars() {
     if (!res.ok) throw new Error(res.status);
     const allRaces = await res.json();
 
-    // Count total races by type
+    // Build a set of race keys the commander has participated in
+    const cmdrRaceKeys = new Set(stats.races.map(r => r.key));
+
+    // Count total races by type, excluding inactive races the cmdr hasn't participated in
     const totalByType = {};
     for (const race of allRaces) {
+      const isInactive = (race.tags || '').split(',').map(t => t.trim()).includes('Inactive');
+      if (isInactive && !cmdrRaceKeys.has(race.key)) continue;
       const type = race.type || 'UNKNOWN';
       totalByType[type] = (totalByType[type] || 0) + 1;
     }

@@ -289,10 +289,13 @@ async function renderParticipationBars() {
     const cmdrRaceKeys = new Set(cmdrStats.races.map(r => r.key));
 
     // Count creator's races by type and commander's participation by type
+    // Exclude inactive races the commander hasn't participated in
     const creatorTotalByType = {};
     const cmdrParticipationByType = {};
 
     for (const race of allRaces) {
+      const isInactive = (race.tags || '').split(',').map(t => t.trim()).includes('Inactive');
+      if (isInactive && !cmdrRaceKeys.has(race.key)) continue;
       const type = race.type || 'UNKNOWN';
       creatorTotalByType[type] = (creatorTotalByType[type] || 0) + 1;
 
