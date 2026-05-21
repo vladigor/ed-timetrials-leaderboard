@@ -12,13 +12,11 @@ const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 // NEIDY filter state
 let _neidyScoredCache  = null;
-let neidySourceSystem = '';
 let neidyTypeFilter   = '';   // '' = All
 let neidyDistFilter   = 1000; // default < 1000ly
 
 // NENDY filter state
 let _nendyUndoneCache  = null;
-let nendySourceSystem = '';
 let nendyTypeFilter   = '';   // '' = All
 let nendyDistFilter   = 1000; // default < 1000ly
 
@@ -791,7 +789,7 @@ document.getElementById('neidy-type-btns').addEventListener('click', e => {
   if (!btn) return;
   neidyTypeFilter = btn.dataset.type;
   document.querySelectorAll('#neidy-type-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
-  if (neidySourceSystem) rerunOpportunities();
+  if (cachedSystemCoords) rerunOpportunities();
 });
 
 document.getElementById('neidy-dist-btns').addEventListener('click', e => {
@@ -799,7 +797,7 @@ document.getElementById('neidy-dist-btns').addEventListener('click', e => {
   if (!btn) return;
   neidyDistFilter = Number(btn.dataset.dist);
   document.querySelectorAll('#neidy-dist-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
-  if (neidySourceSystem) rerunOpportunities();
+  if (cachedSystemCoords) rerunOpportunities();
 });
 
 document.getElementById('nendy-type-btns').addEventListener('click', e => {
@@ -807,7 +805,7 @@ document.getElementById('nendy-type-btns').addEventListener('click', e => {
   if (!btn) return;
   nendyTypeFilter = btn.dataset.type;
   document.querySelectorAll('#nendy-type-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
-  if (nendySourceSystem) rerunOpportunities();
+  if (cachedSystemCoords) rerunOpportunities();
 });
 
 document.getElementById('nendy-dist-btns').addEventListener('click', e => {
@@ -815,7 +813,7 @@ document.getElementById('nendy-dist-btns').addEventListener('click', e => {
   if (!btn) return;
   nendyDistFilter = Number(btn.dataset.dist);
   document.querySelectorAll('#nendy-dist-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
-  if (nendySourceSystem) rerunOpportunities();
+  if (cachedSystemCoords) rerunOpportunities();
 });
 
 // ── Catchability score ────────────────────────────────────────────────────────
@@ -1031,7 +1029,6 @@ function renderNendy(resolvedName, undone) {
 
   if (badge) { badge.textContent = undone.length; badge.style.display = ''; }
   _nendyUndoneCache  = undone;
-  nendySourceSystem = resolvedName;
   nendyFiltersEl.style.display = '';
 
   const top       = undone.slice(0, 15);
@@ -1114,7 +1111,6 @@ function renderNeidy(resolvedName, done, raceDetails, allowAutoSwitch = false) {
 
   // Cache for reference
   _neidyScoredCache  = scored;
-  neidySourceSystem = resolvedName;
   neidyFiltersEl.style.display = '';
 
   const rows = scored.map((s, i) => {
