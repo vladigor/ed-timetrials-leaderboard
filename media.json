@@ -1025,6 +1025,19 @@
       }
     ]
   },
+  "ALEC TURNER-SpiralizerSLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Spiralizer.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-Spiralizer"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/cciE_XZuvSY"
+      }
+    ]
+  },
   "ALEC TURNER-02092023": {
     "map": {
       "thumbnail": "maps/thumbnails/TradersRest.jpg",
@@ -1303,6 +1316,18 @@
     "map": {
       "thumbnail": "maps/thumbnails/rr10.jpg",
       "target": "maps/rr10.jpg"
+    }
+  },
+  "NASTYNATE1-NRCLookoutPlunge": {
+    "map": {
+      "thumbnail": "maps/thumbnails/nrc_lookout_plunge.png",
+      "target": "maps/nrc_lookout_plunge.png"
+    }
+  },
+  "WALTER WALL-_Openko": {
+    "map": {
+      "thumbnail": "maps/thumbnails/openko_contraflow.webp",
+      "target": "maps/openko_contraflow.webp"
     }
   }
 }
