@@ -20,16 +20,33 @@ One row per time trial race. Populated from `getTTList` and enriched by `getTTDa
 | `station` | TEXT | `''` | Station/settlement/orbital name (may be empty) |
 | `address` | TEXT | `''` | Additional location address/description (may be empty) |
 | `sort` | TEXT | `''` | Sort key used for list ordering: `{TYPE}_{name}` |
-| `coords` | TEXT | `''` | Galactic XYZ coordinates as `"x,y,z"` |
-| `creator` | TEXT | `''` | Race creator name extracted from the race key (e.g. `ALEXFIGHTER` from `ALEXFIGHTER-DW3 Motordrome`). Empty if no pattern match. Matches a known commander ~95% of the time |
-| `created_at` | TEXT | `''` | UTC datetime when this row was first inserted (`%Y-%m-%d %H:%M:%S.%f`) |
 | `description` | TEXT | `''` | Plain-text race description from `getTTData` |
 | `num_checkpoints` | INTEGER | `0` | Number of waypoint checkpoints, derived from `getTTData`. `0` means details not yet fetched |
 | `multi_planet` | BOOLEAN | `0` | `1` if the race spans more than one celestial body |
 | `multi_system` | BOOLEAN | `0` | `1` if the race spans more than one star system |
+| `multi_vessel` | BOOLEAN | `0` | Legacy column. Originally flagged circuit races; superseded by `multi_mode` after a data-quality migration. No longer written by the importer. |
 | `multi_mode` | BOOLEAN | `0` | `1` if the race requires more than one base vehicle type (e.g. Ship + SRV biathlon) |
+| `coords` | TEXT | `''` | Galactic XYZ coordinates as `"x,y,z"` |
+| `created_at` | TEXT | `''` | UTC datetime when this row was first inserted (`%Y-%m-%d %H:%M:%S.%f`) |
+| `creator` | TEXT | `''` | Race creator name extracted from the race key (e.g. `ALEXFIGHTER` from `ALEXFIGHTER-DW3 Motordrome`). Empty if no pattern match. Matches a known commander ~95% of the time |
+| `tags` | TEXT | `''` | Manually-set freeform tag (e.g. `"Inactive"`). Not populated by the importer. |
 
 > Rows whose name contains `"superseded"` or `"do not use"` (case-insensitive) are deleted on import.
+
+---
+
+### `inara_cache`
+
+Cache of Inara profile lookups to avoid hammering the Inara API. Entries expire after `INARA_CACHE_DURATION_DAYS` (default 7 days). The primary key is case-insensitive.
+
+| Column | Type | Description |
+|---|---|---|
+| `commander_name` | TEXT PK COLLATE NOCASE | Commander name (case-insensitive lookup) |
+| `avatar_url` | TEXT | Inara profile avatar image URL |
+| `inara_url` | TEXT | Inara profile page URL |
+| `cached_at` | TEXT | UTC datetime when this entry was cached (`%Y-%m-%d %H:%M:%S.%f`) |
+
+No declared foreign keys. Records are deleted and reinserted on cache refresh.
 
 ---
 
@@ -140,4 +157,4 @@ locations  ──< results            (location → locations.key, CASCADE DELET
 locations  ──< results_history    (location → locations.key, CASCADE DELETE)
 ```
 
-`position_snapshots` and `last_updated_cache` do not use declared foreign keys.
+`position_snapshots`, `last_updated_cache`, and `inara_cache` do not use declared foreign keys.

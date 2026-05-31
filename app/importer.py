@@ -38,6 +38,13 @@ def _normalise_version(raw: str) -> str:
     return "ODYSSEY" if v == "ODY" else v
 
 
+_CREATOR_ALIASES: dict[str, str] = {
+    # Map old creator names (as extracted from race keys) to their current name.
+    # Keys must be uppercase; values should be the canonical display name.
+    "NKIRSE": "NASTYNATE1",
+}
+
+
 def _extract_creator(race_key: str) -> str:
     """Extract potential creator name from race key.
 
@@ -45,18 +52,21 @@ def _extract_creator(race_key: str) -> str:
     Example: ALEXFIGHTER-DW3 Motordrome -> ALEXFIGHTER
 
     Returns the extracted creator name in uppercase, or empty string if no pattern matches.
+    Applies _CREATOR_ALIASES so renamed commanders are resolved to their current name.
     """
     import re
 
     # Strategy 1: Split on hyphen or underscore (most common pattern)
     if "-" in race_key:
-        return race_key.split("-")[0].upper()
+        raw = race_key.split("-")[0].upper()
     elif "_" in race_key:
-        return race_key.split("_")[0].upper()
+        raw = race_key.split("_")[0].upper()
     else:
         # Strategy 2: If no delimiter, try removing trailing numbers
         potential = re.sub(r"\d+$", "", race_key).upper()
-        return potential if potential != race_key.upper() else ""
+        raw = potential if potential != race_key.upper() else ""
+
+    return _CREATOR_ALIASES.get(raw, raw)
 
 
 def _parse_location(row: list[str]) -> dict:
