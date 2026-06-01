@@ -207,6 +207,12 @@ function render() {
   if (currentLimit == 25) {
     message = "Show Me MOOOORE Stats!";
     newLimit = 50;
+  } else if (currentLimit == 50) {
+    message = "WTF is wrong with you? That's a lot of stats. Let's calm down and go back to 10.";
+    newLimit = 10;
+  } else if (currentLimit >= 50) {
+    message = "Well, ain't you clever. You're gonna break the stats page with your insane thirst for data. Let's reset back to 10 before we melt some servers.";
+    newLimit = 10;
   }
   html += `<a href="/stats?limit=${newLimit}" class="btn">${message}</a>`;
 
