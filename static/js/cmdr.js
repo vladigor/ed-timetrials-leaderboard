@@ -875,7 +875,7 @@ async function rerunOpportunities() {
 
   // ── NENDY (not done) ─────────────────────────────────────────────────────
   let undone = filteredRaces
-    .filter(r => !doneKeys.has(r.key) && !(r.tags || '').split(',').map(t => t.trim()).includes('Inactive'))
+    .filter(r => !doneKeys.has(r.key) && !(r.tags || '').split(',').map(t => t.trim()).includes('Inactive') && r.version !== 'HORIZONS')
     .map(withDist)
     .sort((a, b) => a.dist - b.dist);
 
@@ -976,7 +976,7 @@ async function nearbyFind() {
 
   // ── NENDY (not done) ─────────────────────────────────────────────────────
   let undone = filteredRaces
-    .filter(r => !doneKeys.has(r.key) && !(r.tags || '').split(',').map(t => t.trim()).includes('Inactive'))
+    .filter(r => !doneKeys.has(r.key) && !(r.tags || '').split(',').map(t => t.trim()).includes('Inactive') && r.version !== 'HORIZONS')
     .map(withDist)
     .sort((a, b) => a.dist - b.dist);
 
