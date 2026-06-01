@@ -544,9 +544,14 @@
   "ALEC TURNER-_ARGON_ICE_DESCENT_1": {
     "map": {
       "thumbnail": "maps/thumbnails/ArgonDescent.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_ARGON_ICE_DESCENT_1"
+      "target": "maps/ArgonDescent.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_ARGON_ICE_DESCENT_1"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -557,15 +562,27 @@
   "WALTER WALL-_BridgerTownTour(ODY)": {
     "map": {
       "thumbnail": "maps/thumbnails/BridgerTownTour.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=WALTER%20WALL-_BridgerTownTour%28ODY%29"
-    }
+      "target": "maps/BridgerTownTour.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=WALTER%20WALL-_BridgerTownTour%28ODY%29"
+      }
+    ]
   },
   "VR247-_Broo's Cruise": {
     "map": {
       "thumbnail": "maps/thumbnails/BroosCruise.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-_Broo%27s%20Cruise"
+      "target": "maps/BroosCruise.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-_Broo%27s%20Cruise"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -576,9 +593,14 @@
   "VR247-Broo's Loose Screws": {
     "map": {
       "thumbnail": "maps/thumbnails/BroosLooseScrews.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%27s%20Loose%20Screws"
+      "target": "maps/BroosLooseScrews.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%27s%20Loose%20Screws"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -589,9 +611,14 @@
   "VR247-Broo's Views": {
     "map": {
       "thumbnail": "maps/thumbnails/BroosViews.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%27s%20Views%20"
+      "target": "maps/BroosViews.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%27s%20Views%20"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -602,15 +629,27 @@
   "DUCK0-BUSTOSCANYON": {
     "map": {
       "thumbnail": "maps/thumbnails/BustosCanyon.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-BUSTOSCANYON"
-    }
+      "target": "maps/BustosCanyon.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-BUSTOSCANYON"
+      }
+    ]
   },
   "ALEC TURNER-02102023": {
     "map": {
       "thumbnail": "maps/thumbnails/CalicosCrater.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-02102023"
+      "target": "maps/CalicosCrater.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-02102023"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -621,9 +660,14 @@
   "ALEC TURNER-_Camp_Bucky_1": {
     "map": {
       "thumbnail": "maps/thumbnails/CampBucky.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Camp_Bucky_1"
+      "target": "maps/CampBucky.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Camp_Bucky_1"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -634,9 +678,14 @@
   "ALEC TURNER-_Camp_Bucky_hill_climb_1": {
     "map": {
       "thumbnail": "maps/thumbnails/CampBuckyHillClimb.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Camp_Bucky_hill_climb_1"
+      "target": "maps/CampBuckyHillClimb.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Camp_Bucky_hill_climb_1"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -647,9 +696,14 @@
   "ALEC TURNER-DEVILS_TOWER_RUN": {
     "map": {
       "thumbnail": "maps/thumbnails/DevilsTower.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DEVILS_TOWER_RUN"
+      "target": "maps/DevilsTower.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DEVILS_TOWER_RUN"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -660,9 +714,14 @@
   "ALEC TURNER-DRAKHYR_RALLY": {
     "map": {
       "thumbnail": "maps/thumbnails/DrakhyrRally.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DRAKHYR_RALLY"
+      "target": "maps/DrakhyrRally.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DRAKHYR_RALLY"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -683,9 +742,14 @@
   "ALEC TURNER-DRAKHYRS_TORC_1": {
     "map": {
       "thumbnail": "maps/thumbnails/DrakhyrsTorc.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DRAKHYRS_TORC_1"
+      "target": "maps/DrakhyrsTorc.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-DRAKHYRS_TORC_1"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -696,9 +760,14 @@
   "ALEC TURNER-FortAsch1Pip": {
     "map": {
       "thumbnail": "maps/thumbnails/FortAsch.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-FortAsch1Pip"
+      "target": "maps/FortAsch.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-FortAsch1Pip"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -722,21 +791,40 @@
   "WULLAIL-_HR 2354 3 lap race": {
     "map": {
       "thumbnail": "maps/thumbnails/GoatsHole.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=WULLAIL-_HR%202354%203%20lap%20race"
-    }
+      "target": "maps/GoatsHole.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=WULLAIL-_HR%202354%203%20lap%20race"
+      }
+    ]
   },
   "ALICE KNIGHT-COLONIASRV01": {
     "map": {
       "thumbnail": "maps/thumbnails/EliteTimeTrials.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-COLONIASRV01"
-    }
+      "target": "maps/EliteTimeTrials.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-COLONIASRV01"
+      }
+    ]
   },
   "SGURR-_Indra Spire Site Scramble": {
     "map": {
       "thumbnail": "maps/thumbnails/IndraSpireSite.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=SGURR-_Indra%20Spire%20Site%20Scramble"
+      "target": "maps/IndraSpireSite.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=SGURR-_Indra%20Spire%20Site%20Scramble"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -747,9 +835,14 @@
   "ALEC TURNER-_Jameson Base Tour": {
     "map": {
       "thumbnail": "maps/thumbnails/JamesonBase.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Jameson%20Base%20Tour"
+      "target": "maps/JamesonBase.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_Jameson%20Base%20Tour"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -760,9 +853,14 @@
   "ALEC TURNER-_leigongspire1": {
     "map": {
       "thumbnail": "maps/thumbnails/LeigongSpire.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_leigongspire1"
+      "target": "maps/LeigongSpire.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_leigongspire1"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -773,15 +871,27 @@
   "DUCK0-DUCK0_LeopoldCircuit": {
     "map": {
       "thumbnail": "maps/thumbnails/LeopoldCircuit.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-DUCK0_LeopoldCircuit"
-    }
+      "target": "maps/LeopoldCircuit.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-DUCK0_LeopoldCircuit"
+      }
+    ]
   },
   "ALEC TURNER-MAJI_500_SPEEDWAY": {
     "map": {
       "thumbnail": "maps/thumbnails/Maji500Speedway.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-MAJI_500_SPEEDWAY"
+      "target": "maps/Maji500Speedway.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-MAJI_500_SPEEDWAY"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -792,9 +902,14 @@
   "ELITE RACERS-Octorafor_Figure_8": {
     "map": {
       "thumbnail": "maps/thumbnails/Okorafor8.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-Octorafor_Figure_8"
+      "target": "maps/Okorafor8.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-Octorafor_Figure_8"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -805,15 +920,27 @@
   "ELITE RACERS-Okorafor Circuit": {
     "map": {
       "thumbnail": "maps/thumbnails/OkoraforX.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-Okorafor%20Circuit"
-    }
+      "target": "maps/OkoraforX.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-Okorafor%20Circuit"
+      }
+    ]
   },
   "ALEC TURNER-_RAIJIN_RUMBLE": {
     "map": {
       "thumbnail": "maps/thumbnails/RaijinRumble.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_RAIJIN_RUMBLE"
+      "target": "maps/RaijinRumble.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_RAIJIN_RUMBLE"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -824,9 +951,14 @@
   "ALEC TURNER-_raijinspire1": {
     "map": {
       "thumbnail": "maps/thumbnails/LeigongSpire.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_raijinspire1"
+      "target": "maps/LeigongSpire.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_raijinspire1"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -837,9 +969,14 @@
   "ELITE RACERS-_Skiff Survey": {
     "map": {
       "thumbnail": "maps/thumbnails/SkiffSurveySRVParkour.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-_Skiff%20Survey"
+      "target": "maps/SkiffSurveySRVParkour.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-_Skiff%20Survey"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -850,9 +987,14 @@
   "ALEC TURNER-SPARKS_BAR_DASH": {
     "map": {
       "thumbnail": "maps/thumbnails/SparksVoyage.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-SPARKS_BAR_DASH"
+      "target": "maps/SparksVoyage.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-SPARKS_BAR_DASH"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -868,9 +1010,14 @@
   "ALEC TURNER-TARANIS_TUSSLE_3": {
     "map": {
       "thumbnail": "maps/thumbnails/NoctrachIhazevichResearchFacility.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-TARANIS_TUSSLE_3"
+      "target": "maps/NoctrachIhazevichResearchFacility.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-TARANIS_TUSSLE_3"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -881,15 +1028,27 @@
   "ALICE KNIGHT-TIRSRV01": {
     "map": {
       "thumbnail": "maps/thumbnails/EliteTimeTrials.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-TIRSRV01"
-    }
+      "target": "maps/EliteTimeTrials.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-TIRSRV01"
+      }
+    ]
   },
   "ALEC TURNER-VALENTINO_BAR_DASH": {
     "map": {
       "thumbnail": "maps/thumbnails/Valentinos.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-VALENTINO_BAR_DASH"
+      "target": "maps/Valentinos.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-VALENTINO_BAR_DASH"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -900,15 +1059,27 @@
   "ALICE KNIGHT-BEAGLE01": {
     "map": {
       "thumbnail": "maps/thumbnails/EliteTimeTrials.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-BEAGLE01"
-    }
+      "target": "maps/EliteTimeTrials.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-BEAGLE01"
+      }
+    ]
   },
   "ALEC TURNER-_kumay_chimney_stacks": {
     "map": {
       "thumbnail": "maps/thumbnails/KumayChimneyStacks.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_chimney_stacks"
+      "target": "maps/KumayChimneyStacks.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_chimney_stacks"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -919,9 +1090,14 @@
   "ALEC TURNER-_kumay_launch_pad": {
     "map": {
       "thumbnail": "maps/thumbnails/KumayLaunchPad.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_launch_pad"
+      "target": "maps/KumayLaunchPad.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_launch_pad"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -932,9 +1108,14 @@
   "ALEC TURNER-_kumay_snake": {
     "map": {
       "thumbnail": "maps/thumbnails/KumaySnake.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_snake"
+      "target": "maps/KumaySnake.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_kumay_snake"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -945,9 +1126,14 @@
   "ALEC TURNER-_ARGON_ICE_CLIMB_1": {
     "map": {
       "thumbnail": "maps/thumbnails/ArgonAscent.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_ARGON_ICE_CLIMB_1"
+      "target": "maps/ArgonAscent.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_ARGON_ICE_CLIMB_1"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -958,9 +1144,14 @@
   "ALEC TURNER-_07092023": {
     "map": {
       "thumbnail": "maps/thumbnails/CayleyBarracks1.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_07092023"
+      "target": "maps/CayleyBarracks1.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-_07092023"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -971,15 +1162,27 @@
   "ELITE RACERS-_Cayley Cross TT": {
     "map": {
       "thumbnail": "maps/thumbnails/CayleyBarracksXcourse.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-_Cayley%20Cross%20TT"
-    }
+      "target": "maps/CayleyBarracksXcourse.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ELITE%20RACERS-_Cayley%20Cross%20TT"
+      }
+    ]
   },
   "ALEC TURNER-In_The_Cooler": {
     "map": {
       "thumbnail": "maps/thumbnails/Cooler.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-In_The_Cooler"
+      "target": "maps/Cooler.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-In_The_Cooler"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -990,9 +1193,14 @@
   "RAZZAFRAG-KESSELSRV15K": {
     "map": {
       "thumbnail": "maps/thumbnails/KesselBastion15.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG-KESSELSRV15K"
+      "target": "maps/KesselBastion15.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG-KESSELSRV15K"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -1003,21 +1211,40 @@
   "RAZZAFRAG04": {
     "map": {
       "thumbnail": "maps/thumbnails/KesselRun3Lap.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG04"
-    }
+      "target": "maps/KesselRun3Lap.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG04"
+      }
+    ]
   },
   "ALOYSIUS BLACK-KOZLOVSRV02": {
     "map": {
       "thumbnail": "maps/thumbnails/KozlovKeep.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALOYSIUS%20BLACK-KOZLOVSRV02"
-    }
+      "target": "maps/KozlovKeep.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALOYSIUS%20BLACK-KOZLOVSRV02"
+      }
+    ]
   },
   "ALEC TURNER-Spiralizer": {
     "map": {
       "thumbnail": "maps/thumbnails/Spiralizer.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-Spiralizer"
+      "target": "maps/Spiralizer.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-Spiralizer"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -1028,9 +1255,14 @@
   "ALEC TURNER-SpiralizerSLF": {
     "map": {
       "thumbnail": "maps/thumbnails/Spiralizer.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-Spiralizer"
+      "target": "maps/Spiralizer.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-Spiralizer"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -1041,9 +1273,14 @@
   "ALEC TURNER-02092023": {
     "map": {
       "thumbnail": "maps/thumbnails/TradersRest.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-02092023"
+      "target": "maps/TradersRest.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-02092023"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -1054,21 +1291,40 @@
   "RICK RAZZAFRAG-TURNERSRV01": {
     "map": {
       "thumbnail": "maps/thumbnails/TurnerMetallicsTour.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RICK%20RAZZAFRAG-TURNERSRV01"
-    }
+      "target": "maps/TurnerMetallicsTour.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=RICK%20RAZZAFRAG-TURNERSRV01"
+      }
+    ]
   },
   "RAZZAFRAG-BULUSRV02": {
     "map": {
       "thumbnail": "maps/thumbnails/Westerfield.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG-BULUSRV02"
-    }
+      "target": "maps/Westerfield.jpg"
+    },
+    "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG-BULUSRV02"
+      }
+    ]
   },
   "ALEC TURNER-B201C": {
     "map": {
       "thumbnail": "maps/thumbnails/Wregoe.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-B201C"
+      "target": "maps/Wregoe.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-B201C"
+      },
       {
         "label": "Demo video",
         "type": "video",
@@ -1079,9 +1335,14 @@
   "ALEC TURNER-JACKRABBIT1": {
     "map": {
       "thumbnail": "maps/thumbnails/JackRabbit.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-JACKRABBIT1"
+      "target": "maps/JackRabbit.jpg"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-JACKRABBIT1"
+      },
       {
         "label": "Demo video",
         "type": "video",
