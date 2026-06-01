@@ -160,7 +160,9 @@ async function loadCommanders() {
 
 async function loadNewRaces() {
   try {
-    const data = await fetch('/api/races/new').then(r => r.json());
+    const cmdr = localStorage.getItem('tt_filter_cmdr') || '';
+    const url  = cmdr ? `/api/races/new?commander=${encodeURIComponent(cmdr)}` : '/api/races/new';
+    const data = await fetch(url).then(r => r.json());
     const panel = document.getElementById('new-races-panel');
     const list  = document.getElementById('new-races-list');
     if (!data.length) { panel.style.display = 'none'; return; }

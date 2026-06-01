@@ -399,22 +399,36 @@ async def get_creator_races(creator: str, commander_pos: str | None = None) -> d
         await db.close()
 
 
-async def list_new_races(days: int = 7) -> list[dict]:
-    """Return races added within the last N days, ordered newest first."""
+async def list_new_races(days: int = 7, commander: str | None = None) -> list[dict]:
+    """Return races added within the last N days, ordered newest first.
+
+    commander – if set, exclude races the given commander has already participated in.
+    """
     db = await get_db()
     try:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).strftime(
             "%Y-%m-%d %H:%M:%S.%f"
         )
-        async with db.execute(
+        if commander:
+            sql = """
+                SELECT key, name, created_at
+                FROM locations
+                WHERE created_at >= ?
+                  AND key NOT IN (
+                      SELECT DISTINCT location FROM results WHERE name = ?
+                  )
+                ORDER BY created_at DESC
             """
-            SELECT key, name, created_at
-            FROM locations
-            WHERE created_at >= ?
-            ORDER BY created_at DESC
-            """,
-            (cutoff,),
-        ) as cursor:
+            params: tuple = (cutoff, commander)
+        else:
+            sql = """
+                SELECT key, name, created_at
+                FROM locations
+                WHERE created_at >= ?
+                ORDER BY created_at DESC
+            """
+            params = (cutoff,)
+        async with db.execute(sql, params) as cursor:
             rows = await cursor.fetchall()
         return [_row_to_dict(row) for row in rows]
     finally:

@@ -1,5 +1,11 @@
 # Change log
 
+## 2026-06-01
+
+- Index and Activity pages:
+    - New races panel now looks back 30 days.  It only lists races that are new and not yet completed.
+
+
 ## 2026-05-10
 
 - Race page:

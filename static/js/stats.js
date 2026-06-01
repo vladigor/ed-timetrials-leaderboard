@@ -200,6 +200,16 @@ function render() {
     html += '</section>';
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentLimit = urlParams.get('limit') || 10;
+  let newLimit = 25;
+  let message = "Show Me More Stats";
+  if (currentLimit == 25) {
+    message = "Show Me MOOOORE Stats!";
+    newLimit = 50;
+  }
+  html += `<a href="/stats?limit=${newLimit}" class="btn">${message}</a>`;
+
   container.innerHTML = html;
 }
 

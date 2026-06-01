@@ -52,11 +52,31 @@ async function init() {
     setStatus('live');
   }
 
+  await loadNewRaces();
+
   // Start periodic time updater for relative times
   startTimeUpdater();
 }
 
 // ── Data loading ───────────────────────────────────────────────────────────
+async function loadNewRaces() {
+  try {
+    const cmdr = localStorage.getItem('tt_filter_cmdr') || '';
+    const url  = cmdr ? `/api/races/new?commander=${encodeURIComponent(cmdr)}` : '/api/races/new';
+    const data = await fetch(url).then(r => r.json());
+    const panel = document.getElementById('new-races-panel');
+    const list  = document.getElementById('new-races-list');
+    if (!panel) return;
+    if (!data.length) { panel.style.display = 'none'; return; }
+    list.innerHTML = data.map(r =>
+      `<li><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></li>`
+    ).join('');
+    panel.style.display = '';
+  } catch (_) {
+    // Non-fatal
+  }
+}
+
 async function loadActivity() {
   try {
     const url = `/api/activity?limit=${encodeURIComponent(currentLimit)}`;
