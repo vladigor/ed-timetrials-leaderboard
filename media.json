@@ -1590,5 +1590,18 @@
       "thumbnail": "maps/thumbnails/openko_contraflow.webp",
       "target": "maps/openko_contraflow.webp"
     }
+  },
+  "TOBIAS VON BRANDT-CARRASCOCANYON": {
+    "map": {
+      "thumbnail": "maps/thumbnails/carrasco_canyon.webp",
+      "target": "maps/carrasco_canyon.webp"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/yQ0op3mhIDM"
+      }
+    ]
   }
 }
