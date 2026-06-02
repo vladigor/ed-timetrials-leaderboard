@@ -8,6 +8,8 @@
 - Activity page:
     - Added the above races panel here too.
     - Added infinite scroll to enable you to see more activities.
+- About page:
+    - Added links to the Discord servers and other time trials sites.
 
 
 ## 2026-05-10
