@@ -743,6 +743,7 @@ async def get_recent_activity(limit: int = 25, offset: int = 0) -> list[dict]:
             """
             WITH ranked_history AS (
                 SELECT
+                    rh.id,
                     rh.name,
                     rh.location,
                     l.name AS race_name,
@@ -779,7 +780,7 @@ async def get_recent_activity(limit: int = 25, offset: int = 0) -> list[dict]:
                 cp.current_position
             FROM ranked_history rh
             LEFT JOIN current_positions cp ON cp.location = rh.location AND cp.name = rh.name
-            ORDER BY rh.updated DESC
+            ORDER BY rh.updated DESC, rh.id DESC
             LIMIT ? OFFSET ?
             """,
             (limit, offset),
