@@ -3,6 +3,7 @@ import { ChangePoller } from './poller.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
 const FRESH_MS = 60 * 60 * 1000; // 1 hour
+const PAGE_SIZE = 25;
 
 function isFresh(ts) {
   if (!ts) return false;
@@ -10,11 +11,14 @@ function isFresh(ts) {
   return Date.now() - new Date(norm).getTime() < FRESH_MS;
 }
 
-let activity = null;
+let activity = [];
 let poller = null;
 let timeUpdater = null;
-let currentLimit = 20;
+let currentOffset = 0;
+let isLoading = false;
+let hasMore = true;
 let isOffline = false;
+let scrollObserver = null;
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const container = document.getElementById('activity-container');
@@ -23,16 +27,12 @@ const statusText = document.getElementById('status-text');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
-  // Check for limit parameter (default 20)
-  const params = new URLSearchParams(window.location.search);
-  currentLimit = parseInt(params.get('limit') || '20', 10);
-
   await loadActivity();
 
   // Seed poller – refresh when any race changes (since we show recent activity)
   poller = new ChangePoller(60_000, async () => {
     setStatus('updating');
-    await loadActivity();
+    await resetAndReload();
     setStatus('live');
   });
 
@@ -78,33 +78,76 @@ async function loadNewRaces() {
 }
 
 async function loadActivity() {
+  if (isLoading || !hasMore) return;
+  isLoading = true;
+  removeSentinel();
   try {
-    const url = `/api/activity?limit=${encodeURIComponent(currentLimit)}`;
+    const url = `/api/activity?limit=${PAGE_SIZE}&offset=${currentOffset}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(res.status);
-    activity = await res.json();
+    const page = await res.json();
+    if (page.length < PAGE_SIZE) hasMore = false;
+    activity = activity.concat(page);
+    currentOffset += page.length;
     render();
   } catch (err) {
-    container.innerHTML = '<p class="empty-state">Could not load recent activity.</p>';
+    if (activity.length === 0) {
+      container.innerHTML = '<p class="empty-state">Could not load recent activity.</p>';
+    }
+  } finally {
+    isLoading = false;
+    if (hasMore) attachSentinel();
   }
+}
+
+/** Discard loaded data and fetch from the top (used when live data changes). */
+async function resetAndReload() {
+  activity = [];
+  currentOffset = 0;
+  hasMore = true;
+  removeSentinel();
+  await loadActivity();
 }
 
 // ── Render ─────────────────────────────────────────────────────────────────
 function render() {
-  let html = '';
+  container.innerHTML = '';
 
-  html += '<section class="stats-section">';
-  html += '<p style="margin-bottom: 1.5rem; color: var(--text-muted);">Showing all recent race submissions in chronological order. If a commander improves their time multiple times, each submission is shown with the position they achieved at that moment.</p>';
+  const section = document.createElement('section');
+  section.className = 'stats-section';
 
-  if (activity && activity.length > 0) {
-    html += renderActivityTable(activity);
+  const intro = document.createElement('p');
+  intro.style.cssText = 'margin-bottom: 1.5rem; color: var(--text-muted);';
+  intro.textContent = 'Showing all recent race submissions in chronological order. If a commander improves their time multiple times, each submission is shown with the position they achieved at that moment.';
+  section.appendChild(intro);
+
+  if (activity.length > 0) {
+    section.insertAdjacentHTML('beforeend', renderActivityTable(activity));
   } else {
-    html += '<p class="empty-state">No recent activity found.</p>';
+    section.insertAdjacentHTML('beforeend', '<p class="empty-state">No recent activity found.</p>');
   }
 
-  html += '</section>';
+  container.appendChild(section);
+}
 
-  container.innerHTML = html;
+// ── Infinite scroll sentinel ───────────────────────────────────────────────
+function attachSentinel() {
+  removeSentinel();
+  const sentinel = document.createElement('div');
+  sentinel.id = 'scroll-sentinel';
+  sentinel.style.cssText = 'height: 1px; margin-top: 1rem;';
+  container.appendChild(sentinel);
+
+  scrollObserver = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) loadActivity();
+  }, { rootMargin: '200px' });
+  scrollObserver.observe(sentinel);
+}
+
+function removeSentinel() {
+  if (scrollObserver) { scrollObserver.disconnect(); scrollObserver = null; }
+  const existing = document.getElementById('scroll-sentinel');
+  if (existing) existing.remove();
 }
 
 // ── Render helpers ─────────────────────────────────────────────────────────

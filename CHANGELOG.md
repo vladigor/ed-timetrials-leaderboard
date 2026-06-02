@@ -2,8 +2,12 @@
 
 ## 2026-06-01
 
-- Index and Activity pages:
-    - New races panel now looks back 30 days.  It only lists races that are new and not yet completed.
+- Index page:
+    - The New races panel now looks back 30 days.
+    - It only lists races that are both new and not yet completed.
+- Activity page:
+    - Added the above races panel here too.
+    - Added infinite scroll to enable you to see more activities.
 
 
 ## 2026-05-10

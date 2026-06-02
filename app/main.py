@@ -529,11 +529,14 @@ async def api_stats(limit: int | None = Query(None, ge=1, le=100)):
 
 
 @app.get("/api/activity")
-async def api_activity(limit: int = Query(20, ge=1, le=100)):
+async def api_activity(
+    limit: int = Query(25, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
     """Return recent race results with commander, race name, position, and timestamp."""
     from .queries import get_recent_activity
 
-    return await get_recent_activity(limit=limit)
+    return await get_recent_activity(limit=limit, offset=offset)
 
 
 @app.get("/api/thefts")

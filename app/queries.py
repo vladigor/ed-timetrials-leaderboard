@@ -729,7 +729,7 @@ async def get_commander_stats(commander: str) -> dict | None:
 # ---------------------------------------------------------------------------
 
 
-async def get_recent_activity(limit: int = 20) -> list[dict]:
+async def get_recent_activity(limit: int = 25, offset: int = 0) -> list[dict]:
     """
     Return the most recent race results with commander, race name, position, and timestamp.
     Uses results_history table to show ALL submissions (including multiple improvements
@@ -780,9 +780,9 @@ async def get_recent_activity(limit: int = 20) -> list[dict]:
             FROM ranked_history rh
             LEFT JOIN current_positions cp ON cp.location = rh.location AND cp.name = rh.name
             ORDER BY rh.updated DESC
-            LIMIT ?
+            LIMIT ? OFFSET ?
             """,
-            (limit,),
+            (limit, offset),
         ) as cur:
             return [_row_to_dict(r) for r in await cur.fetchall()]
     finally:
