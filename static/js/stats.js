@@ -278,7 +278,7 @@ function renderTopNTable(items, nameLabel, countLabel) {
     if (idx > 0 && item.count !== items[idx - 1].count) {
       currentRank = idx + 1;
     }
-    const medal = currentRank === 1 ? '🥇' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
+    const medal = currentRank === 1 ? '🏆' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
     const nameDisplay = isCmdr ? renderCmdrLink(item.name) : esc(item.name);
     const rowClass = selectedCmdr && item.name === selectedCmdr ? ' class="row-cmdr"' : '';
     html += `<tr${rowClass}>`;

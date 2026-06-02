@@ -751,7 +751,7 @@ function camelToWords(str) {
 }
 
 function _buildChartOption(results, isOdyssey, isPersonalView = false) {
-  const medals      = ['🥇', '🥈', '🥉'];
+  const medals      = ['🏆', '🥈', '🥉'];
   const defaultClr  = isOdyssey ? '#1a6ebd' : '#7b3fa0';
 
   // ECharts category axis goes bottom→top, so reverse so #1 sits at the top
