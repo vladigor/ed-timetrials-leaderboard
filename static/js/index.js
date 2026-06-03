@@ -11,6 +11,7 @@ let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // d
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
 let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
 let filterSearchText = ''; // Not persisted - ephemeral search state
+let sortOrder     = localStorage.getItem('tt_sort_order') || 'activity';
 let poller        = null;
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
@@ -23,6 +24,7 @@ const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
 const checkHideDW3     = document.getElementById('filter-hide-dw3');
 const checkHideHorizons = document.getElementById('filter-hide-horizons');
 const cmdrRacesGroup   = document.getElementById('filter-cmdr-races-group');
+const sortSelect       = document.getElementById('sort-select');
 const countLabel       = document.getElementById('race-count');
 const profileLabel     = document.getElementById('profile-label');
 const btnChangeProfile = document.getElementById('btn-change-profile');
@@ -35,9 +37,9 @@ const modalCloseX      = document.getElementById('modal-close-x');
 async function init() {
   // Sanity check — surface missing elements immediately
   const missing = [grid, statusDot, statusText, searchInput, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, cmdrRacesGroup,
-    countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm, modalCloseX]
+    sortSelect, countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm, modalCloseX]
     .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-search','filter-active',
-      'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-cmdr-races-group','race-count','profile-label',
+      'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-cmdr-races-group','sort-select','race-count','profile-label',
       'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm','modal-close-x'][i])
     .filter(Boolean);
   if (missing.length) {
@@ -49,6 +51,7 @@ async function init() {
   checkCmdrRaces.checked = filterCmdrRaces;
   checkHideDW3.checked   = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
+  sortSelect.value       = sortOrder;
   updateProfileDisplay();
   updateCmdrRacesGroup();
 
@@ -81,6 +84,12 @@ async function init() {
   searchInput.addEventListener('input', () => {
     filterSearchText = searchInput.value;
     renderGrid(); // Client-side only, no need to reload from API
+  });
+
+  sortSelect.addEventListener('change', () => {
+    sortOrder = sortSelect.value;
+    localStorage.setItem('tt_sort_order', sortOrder);
+    renderGrid();
   });
 
   modalConfirm.addEventListener('click', () => {
@@ -221,13 +230,25 @@ function renderGrid() {
       const normalised = r.last_activity.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z';
       return new Date(normalised).getTime() >= cutoff;
     });
+  }
 
-    // Sort by most recent activity first
+  // Sort
+  const activityMs = ts => ts ? new Date(ts.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z').getTime() : 0;
+  if (sortOrder === 'name') {
     races.sort((a, b) => {
-      const aTime = a.last_activity ? new Date(a.last_activity.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z').getTime() : 0;
-      const bTime = b.last_activity ? new Date(b.last_activity.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z').getTime() : 0;
-      return bTime - aTime; // descending order (most recent first)
+      const cmp = (a.name || '').localeCompare(b.name || '');
+      return cmp !== 0 ? cmp : activityMs(b.last_activity) - activityMs(a.last_activity);
     });
+  } else if (sortOrder === 'created') {
+    races.sort((a, b) => {
+      const aMs = activityMs(a.created_at);
+      const bMs = activityMs(b.created_at);
+      if (aMs !== bMs) return bMs - aMs; // newest first; nulls/zeros fall to end
+      return activityMs(b.last_activity) - activityMs(a.last_activity);
+    });
+  } else {
+    // 'activity' — most recent first, races with no activity at the end
+    races.sort((a, b) => activityMs(b.last_activity) - activityMs(a.last_activity));
   }
 
   countLabel.textContent = `${races.length} race${races.length !== 1 ? 's' : ''}`;

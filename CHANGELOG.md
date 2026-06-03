@@ -3,13 +3,18 @@
 ## 2026-06-01
 
 - Index page:
-    - The New races panel now looks back 30 days.
-    - It only lists races that are both new and not yet completed.
+    - Added sort options to the main list of races.
+    - The New races panel now looks back 30 days*.
+        - * at the moment its only 14 days, but I will increase it to 30 days in mid June, once the last of the DW3 races have expired.
+    - It only lists races that are both new and not yet done.
 - Activity page:
     - Added the above races panel here too.
     - Added infinite scroll to enable you to see more activities.
+    - Updated the emoji for 1st place from 🥇 to 🏆 so that it is more visually distinct from the 3rd place medal (🥉).
 - About page:
     - Added links to the Discord servers and other time trials sites.
+
+Thanks to @vr247 and @nastynate1 for these suggestions.
 
 
 ## 2026-05-10
