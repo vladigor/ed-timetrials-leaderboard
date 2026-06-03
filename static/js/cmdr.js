@@ -223,8 +223,8 @@ function renderSummary() {
   summaryEl.innerHTML = `
     <div class="cmdr-overall-pct">
       ${isSelf
-        ? `You've competed in <strong>${raceCount}</strong> race${raceCount !== 1 ? 's' : ''}, finishing ahead of <strong>${overall}%</strong> of all pilots you've raced against.`
-        : `CMDR ${esc(cmdrName)} has competed in <strong>${raceCount}</strong> race${raceCount !== 1 ? 's' : ''}, finishing ahead of <strong>${overall}%</strong> of all pilots they've raced against.`
+        ? `You've competed in <strong>${raceCount}</strong> race${raceCount !== 1 ? 's' : ''}, finishing ahead of <strong>${overall}%</strong> of all cmdrs you've raced against.`
+        : `CMDR ${esc(cmdrName)} has competed in <strong>${raceCount}</strong> race${raceCount !== 1 ? 's' : ''}, finishing ahead of <strong>${overall}%</strong> of all cmdrs they've raced against.`
       }
     </div>
     ${typeStatements ? `<div class="cmdr-type-stats">${typeStatements}</div>` : ''}
