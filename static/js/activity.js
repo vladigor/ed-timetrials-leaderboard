@@ -187,8 +187,8 @@ function renderActivityTable(items) {
     // Display historical position with medal emoji for podium
     let positionDisplay = position === 1 ? '🏆' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
 
-    // If current position differs from historical, show current with emoji
-    if (currentPosition != null && currentPosition !== position) {
+    // If current position has dropped (higher number = worse rank), show current position
+    if (currentPosition != null && currentPosition > position) {
       let currentEmoji;
       if (currentPosition === 1) {
         currentEmoji = '🏆';
