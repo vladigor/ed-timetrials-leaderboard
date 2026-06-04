@@ -19,6 +19,7 @@ let chartInstance = null;
 let timeUpdater   = null;
 let isFilteredView = false;   // Track if we're viewing filtered results
 let activeFilterType = 'NONE'; // Track current filter type
+let daylightData = null;       // Cached daylight API response
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const titleEl      = document.getElementById('race-title');
@@ -34,6 +35,7 @@ const statusText   = document.getElementById('status-text');
 const backLink     = document.getElementById('back-link');
 const filterControls = document.getElementById('leaderboard-controls');
 const filterSelect = document.getElementById('ship-filter');
+const daylightWrapper = document.querySelector('.race-detail-header-wrapper');
 
 backLink.href = '/';
 
@@ -65,6 +67,17 @@ async function init() {
 
   // Load race first to get ship types for filter options
   await loadRace();
+
+  // Preview hook: ?daylight=day|dawn|dusk|night bypasses the real API.
+  // Example: /race/SomeRace?daylight=dusk
+  const _dlPreview = new URLSearchParams(window.location.search).get('daylight');
+  if (_dlPreview && ['day', 'dawn', 'dusk', 'night'].includes(_dlPreview)) {
+    const mockNextMs = { day: 7200000, dawn: 1800000, dusk: 3600000, night: 14400000 }[_dlPreview];
+    const mockNext   = { day: 'sunset', dawn: 'day', dusk: 'night', night: 'sunrise' }[_dlPreview];
+    applyDaylightState({ state: _dlPreview, next_event: mockNext, next_event_ms: mockNextMs });
+  } else {
+    loadDaylightState(); // fire-and-forget; silently skipped until API is live
+  }
   if (selectedCmdr && race) {
     // Hide filters entirely for OnFoot races
     if (race.type === 'ONFOOT') {
@@ -259,6 +272,59 @@ async function loadFilteredRace(filterType) {
   }
 }
 
+// ── Daylight state ─────────────────────────────────────────────────────────
+// loadDaylightState() calls /api/daylight/<key> when that endpoint exists.
+// Expected response shape:
+//   { state: 'day'|'dawn'|'dusk'|'night',
+//     next_event: 'sunset'|'sunrise'|'dawn'|'dusk',
+//     next_event_ms: <milliseconds until event>,
+//     sun_elevation_deg: <number> }
+// A non-OK response (e.g. 404 while the API is still in development) is
+// caught and silently ignored — the page renders normally without the overlay.
+async function loadDaylightState() {
+  try {
+    const data = await fetch(`/api/daylight/${encodeURIComponent(raceKey)}`).then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    });
+    daylightData = data;
+    applyDaylightState(data);
+  } catch (_) {
+    // API not yet available — silently skip
+  }
+}
+
+function applyDaylightState(data) {
+  if (!data || !data.state || !daylightWrapper) return;
+  const { state, next_event, next_event_ms } = data;
+
+  // Drive ambient glow + horizon bar purely via CSS attribute
+  daylightWrapper.dataset.daylight = state;
+
+  // Build the info badge
+  const icons  = { day: '☀️', dawn: '🌅', dusk: '🌇', night: '🌙' };
+  const labels = { day: 'Daytime', dawn: 'Dawn', dusk: 'Dusk', night: 'Night' };
+  const icon   = icons[state]  ?? '🌐';
+  const label  = labels[state] ?? state;
+
+  let suffix = '';
+  if (next_event && next_event_ms != null) {
+    const mins     = Math.round(next_event_ms / 60_000);
+    const h        = Math.floor(mins / 60);
+    const m        = mins % 60;
+    const timeStr  = h > 0 ? `${h}h ${m}m` : `${m}m`;
+    const evtLabel = { sunset: 'Sunset', sunrise: 'Sunrise', dawn: 'Dawn', dusk: 'Dusk' }[next_event] ?? next_event;
+    suffix = ` · ${evtLabel} in ${timeStr}`;
+  }
+
+  // Remove any stale daylight badge then inject the updated one
+  infoEl.querySelector('.info-badge-daylight')?.remove();
+  const badge = document.createElement('span');
+  badge.className = `info-badge info-badge-daylight info-badge-daylight-${state}`;
+  badge.textContent = `${icon} ${label}${suffix}`;
+  infoEl.appendChild(badge);
+}
+
 async function loadRaceMap() {
   try {
     const mediaData = await fetch(`/api/race-map/${encodeURIComponent(raceKey)}`).then(r => r.json());
@@ -380,6 +446,8 @@ function renderRace() {
     infoBadges.push(`<span class="info-badge info-badge-inactive" title="It's no longer possible to compete in this time trial">${esc(t)}</span>`);
   });
   infoEl.innerHTML = infoBadges.join('');
+  // Re-inject the daylight badge after every infoEl rebuild
+  applyDaylightState(daylightData);
 
   // Inactive notice banner
   const noticeEl = document.getElementById('race-notice');

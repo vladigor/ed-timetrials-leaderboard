@@ -341,7 +341,70 @@ a:hover { text-decoration: underline; }
   display: flex;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
+  position: relative;
 }
+
+/* ── Daylight ambient overlay (::before) and horizon bar (::after) ───────── */
+.race-detail-header-wrapper::before,
+.race-detail-header-wrapper::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+/* Ambient glow: covers the whole header block */
+.race-detail-header-wrapper::before {
+  inset: 0;
+  z-index: 0;
+  border-radius: .25rem;
+}
+
+/* Horizon bar: 2px rule along the bottom edge */
+.race-detail-header-wrapper::after {
+  bottom: 0;
+  left: 5%;
+  right: 5%;
+  height: 2px;
+  border-radius: 1px;
+  z-index: 0;
+}
+
+/* Ensure flex children sit above the pseudo-element overlay */
+.race-detail-header-wrapper > * { position: relative; z-index: 1; }
+
+/* Day: clear sky blue tint, blue→amber horizon */
+.race-detail-header-wrapper[data-daylight="day"]::before {
+  background: radial-gradient(ellipse 90% 60% at 50% -10%, rgba(26,110,189,.09) 0%, transparent 70%);
+  opacity: 1;
+}
+.race-detail-header-wrapper[data-daylight="day"]::after {
+  background: linear-gradient(to right, transparent 0%, rgba(26,110,189,.5) 20%, rgba(232,160,32,.7) 50%, rgba(26,110,189,.5) 80%, transparent 100%);
+  opacity: 1;
+}
+
+/* Dawn: purple-magenta into orange */
+.race-detail-header-wrapper[data-daylight="dawn"]::before {
+  background: radial-gradient(ellipse 90% 60% at 50% -10%, rgba(140,45,110,.12) 0%, transparent 70%);
+  opacity: 1;
+}
+.race-detail-header-wrapper[data-daylight="dawn"]::after {
+  background: linear-gradient(to right, transparent 0%, rgba(130,40,110,.5) 20%, rgba(220,100,40,.7) 55%, rgba(232,160,32,.5) 80%, transparent 100%);
+  opacity: 1;
+}
+
+/* Dusk: amber into purple */
+.race-detail-header-wrapper[data-daylight="dusk"]::before {
+  background: radial-gradient(ellipse 90% 60% at 50% -10%, rgba(200,75,30,.11) 0%, transparent 70%);
+  opacity: 1;
+}
+.race-detail-header-wrapper[data-daylight="dusk"]::after {
+  background: linear-gradient(to right, transparent 0%, rgba(232,160,32,.5) 20%, rgba(220,100,40,.7) 45%, rgba(130,40,110,.5) 80%, transparent 100%);
+  opacity: 1;
+}
+
+/* Night: no override — the default dark theme is the correct night state */
 
 .race-detail-header {
   flex: 1;
@@ -558,6 +621,12 @@ a:hover { text-decoration: underline; }
   background: rgba(128, 128, 128, .15);
   font-weight: 600;
 }
+
+/* Daylight state badge variants */
+.info-badge-daylight-day   { border-color: #3a8ec0; color: #7bc4ee; background: rgba(26,110,189,.12); }
+.info-badge-daylight-dawn  { border-color: #c06030; color: #f09050; background: rgba(200,80,30,.12); }
+.info-badge-daylight-dusk  { border-color: #8840a0; color: #c870ee; background: rgba(130,40,150,.12); }
+.info-badge-daylight-night { border-color: #3a4a7a; color: #8898c8; background: rgba(30,40,100,.15); }
 
 .race-notice {
   margin-top: .75rem;
