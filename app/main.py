@@ -374,7 +374,7 @@ async def api_races(
 
 
 @app.get("/api/races/new")
-async def api_new_races(days: int = Query(14, ge=1, le=90), commander: str | None = None):
+async def api_new_races(days: int = Query(18, ge=1, le=90), commander: str | None = None):
     return await list_new_races(days=days, commander=commander)
 
 
