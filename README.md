@@ -74,5 +74,6 @@ All configuration is read from `.env` at startup. Copy `.env` to the deployment 
 | `INARA_APP_VERSION` | `1.0` | App version reported to the Inara API. |
 | `INARA_CACHE_DURATION_DAYS` | `7` | How long to cache Inara profile data in the database before refreshing. |
 | `DAYLIGHT_API_ENABLED` | `true` | Set to `false` to disable the Day/Night Calculator integration entirely. The race page renders without the ambient overlay or daylight badge. |
+| `DAYLIGHT_API_BASE_URL` | `https://eddaynight.de` | Base URL of the Day/Night Calculator service. Override to point at a local instance or a different host. |
 | `DAYLIGHT_API_TIMEOUT` | `15.0` | Seconds to wait for the upstream Day/Night Calculator before giving up. |
 | `DAYLIGHT_CACHE_TTL` | `300` | Seconds to cache a daylight prediction per race key (5 min default). The countdown timer is recalculated on every request; only the upstream fetch is rate-limited by this value. |

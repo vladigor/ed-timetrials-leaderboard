@@ -13,6 +13,7 @@ All daylight settings live in `.env` and are read once at startup via `app/confi
 | Variable | Default | Description |
 |---|---|---|
 | `DAYLIGHT_API_ENABLED` | `true` | Set to `false` to disable the feature entirely. The endpoint returns 503 and the frontend silently shows no badge or overlay. |
+| `DAYLIGHT_API_BASE_URL` | `https://eddaynight.de` | Base URL of the Day/Night Calculator service. Override to point at a local instance or a different host. Trailing slash is stripped automatically. |
 | `DAYLIGHT_API_TIMEOUT` | `15.0` | Seconds to wait for the upstream API before giving up. |
 | `DAYLIGHT_CACHE_TTL` | `300` | Seconds to cache an upstream response per race key before re-fetching (5 minutes). `next_event_ms` is recalculated on every request from the cached timestamps, so the countdown stays accurate without hitting the upstream server. |
 

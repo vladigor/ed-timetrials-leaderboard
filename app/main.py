@@ -17,7 +17,14 @@ from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .config import DAYLIGHT_API_ENABLED, DAYLIGHT_API_TIMEOUT, DAYLIGHT_CACHE_TTL, ENV, OFFLINE
+from .config import (
+    DAYLIGHT_API_BASE_URL,
+    DAYLIGHT_API_ENABLED,
+    DAYLIGHT_API_TIMEOUT,
+    DAYLIGHT_CACHE_TTL,
+    ENV,
+    OFFLINE,
+)
 from .database import init_db
 from .queries import (
     get_commander_stats,
@@ -625,7 +632,7 @@ async def api_daylight(key: str):
         try:
             async with httpx.AsyncClient(timeout=DAYLIGHT_API_TIMEOUT) as client:
                 resp = await client.get(
-                    "https://eddaynight.de/public/api/v1/prediction",
+                    f"{DAYLIGHT_API_BASE_URL}/public/api/v1/prediction",
                     params={"race_key": key},
                 )
         except httpx.RequestError as exc:
@@ -702,8 +709,8 @@ def _eddaynight_link(target: dict) -> str:
     body_id = target.get("body_id")
     poi_id = target.get("poi_id")
     if body_id is not None and poi_id is not None:
-        return f"https://eddaynight.de/bodies/{body_id}?poi={poi_id}"
-    return "https://eddaynight.de/"
+        return f"{DAYLIGHT_API_BASE_URL}/bodies/{body_id}?poi={poi_id}"
+    return DAYLIGHT_API_BASE_URL + "/"
 
 
 @app.get("/api/race-map/{key}")

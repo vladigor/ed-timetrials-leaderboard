@@ -17,5 +17,8 @@ DAYLIGHT_API_ENABLED: bool = os.environ.get("DAYLIGHT_API_ENABLED", "true").stri
     "true",
     "yes",
 )
+DAYLIGHT_API_BASE_URL: str = os.environ.get(
+    "DAYLIGHT_API_BASE_URL", "https://eddaynight.de"
+).rstrip("/")
 DAYLIGHT_API_TIMEOUT: float = float(os.environ.get("DAYLIGHT_API_TIMEOUT", "15.0"))
 DAYLIGHT_CACHE_TTL: int = int(os.environ.get("DAYLIGHT_CACHE_TTL", "300"))
