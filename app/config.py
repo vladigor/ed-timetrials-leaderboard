@@ -10,3 +10,12 @@ INARA_API_KEY: str = os.environ.get("INARA_API_KEY", "")
 INARA_APP_NAME: str = os.environ.get("INARA_APP_NAME", "elitettleaderboard.vladigor.net")
 INARA_APP_VERSION: str = os.environ.get("INARA_APP_VERSION", "1.0")
 INARA_CACHE_DURATION_DAYS: int = int(os.environ.get("INARA_CACHE_DURATION_DAYS", "7"))
+
+# Day/Night Calculator API
+DAYLIGHT_API_ENABLED: bool = os.environ.get("DAYLIGHT_API_ENABLED", "true").strip().lower() in (
+    "1",
+    "true",
+    "yes",
+)
+DAYLIGHT_API_TIMEOUT: float = float(os.environ.get("DAYLIGHT_API_TIMEOUT", "15.0"))
+DAYLIGHT_CACHE_TTL: int = int(os.environ.get("DAYLIGHT_CACHE_TTL", "300"))

@@ -1,8 +1,20 @@
-# Daylight API — Design Specification
+# Daylight API
 
-This document describes the expected contract for the `/api/daylight/{key}` internal endpoint
-and the external API it would consume. It covers what the leaderboard frontend already expects
-today so that your friend can build against a fixed target.
+The leaderboard fetches current daylight state for each race's start location and uses it to
+drive an ambient visual overlay and info badge on the race page. This document describes the
+full stack: configuration, the internal endpoint, the upstream API, and the frontend.
+
+---
+
+## Configuration
+
+All daylight settings live in `.env` and are read once at startup via `app/config.py`.
+
+| Variable | Default | Description |
+|---|---|---|
+| `DAYLIGHT_API_ENABLED` | `true` | Set to `false` to disable the feature entirely. The endpoint returns 503 and the frontend silently shows no badge or overlay. |
+| `DAYLIGHT_API_TIMEOUT` | `15.0` | Seconds to wait for the upstream API before giving up. |
+| `DAYLIGHT_CACHE_TTL` | `300` | Seconds to cache an upstream response per race key before re-fetching (5 minutes). `next_event_ms` is recalculated on every request from the cached timestamps, so the countdown stays accurate without hitting the upstream server. |
 
 ---
 
@@ -10,157 +22,104 @@ today so that your friend can build against a fixed target.
 
 ### `GET /api/daylight/{key}`
 
-Returns the current daylight state at the location of a specific race.
+Implemented in `app/main.py` (`api_daylight`). Proxies to the ED Day/Night Calculator,
+applies twilight zone logic, and returns a normalised response shape.
 
 **Path parameter**
 
 | Parameter | Description |
 |---|---|
-| `key` | Race key (URL-encoded), matching `locations.key` in the database — e.g. `RAZZAFRAG03` |
+| `key` | Race key (URL-encoded) — e.g. `RICK%20RAZZAFRAG-TURNERSHIP02` |
 
 **Success response — HTTP 200**
 
 ```json
 {
-  "state":            "dusk",
-  "next_event":       "night",
-  "next_event_ms":    3720000,
+  "state":             "dusk",
+  "next_event":        "sunrise",
+  "next_event_ms":     3720000,
   "sun_elevation_deg": -4.2
 }
 ```
 
 **Response fields**
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `state` | string | ✓ | Current daylight phase. One of `"day"`, `"dawn"`, `"dusk"`, `"night"` |
-| `next_event` | string | ✓ | The phase transition coming next. One of `"sunrise"`, `"dawn"`, `"dusk"`, `"sunset"`, `"night"` |
-| `next_event_ms` | integer | ✓ | Milliseconds until `next_event` occurs |
-| `sun_elevation_deg` | number | — | Current sun elevation angle in degrees above/below the horizon. Negative = below horizon. Optional but recommended — may be used for future ambient intensity scaling |
-
-**Phase definitions**
-
-| `state` | Sun elevation | Description |
+| Field | Type | Description |
 |---|---|---|
-| `"day"` | > ~6° | Full daylight |
-| `"dawn"` | −6° to +6° (rising) | Civil twilight, pre-sunrise transition |
-| `"dusk"` | −6° to +6° (setting) | Civil twilight, post-sunset transition |
-| `"night"` | < ~−6° | Full night |
+| `state` | string | Current daylight phase: `"day"`, `"dawn"`, `"dusk"`, or `"night"` |
+| `next_event` | string | Next transition: `"sunrise"` or `"sunset"` |
+| `next_event_ms` | integer | Milliseconds until `next_event`. Recalculated fresh on every request. |
+| `sun_elevation_deg` | number | Sun elevation in degrees. Negative = below horizon. |
 
-> These thresholds are guidelines. The external API may use its own definitions; as long as it
-> maps cleanly to one of the four states above, the frontend will handle it correctly.
+**State derivation**
+
+The upstream API returns only `"day"` or `"night"`. We layer on twilight zones:
+
+| Condition | `state` |
+|---|---|
+| upstream `"day"`, altitude ≥ 10°, any motion | `"day"` |
+| upstream `"day"`, altitude < 10°, rising | `"dawn"` |
+| upstream `"day"`, altitude < 10°, setting | `"dusk"` |
+| upstream `"night"` | `"night"` |
 
 **Error responses**
 
-| HTTP status | When to return |
+| HTTP status | Cause |
 |---|---|
-| 404 | Race key not found in the database, or the race has no known coordinates |
-| 503 | External daylight API is unavailable or timed out |
+| 404 | Race key not found in the Day/Night Calculator |
+| 503 | `DAYLIGHT_API_ENABLED=false` |
+| 502 | Upstream unreachable, timed out, or returned an unexpected error |
 
-The frontend silently ignores all non-200 responses — the race page renders normally without
-the ambient overlay when this endpoint is absent or returns an error.
-
----
-
-## Backend implementation notes
-
-### Data source
-
-The system name for a race is stored in `locations.system` and its galactic XYZ coordinates
-in `locations.coords` (format: `"x,y,z"`). The handler needs to:
-
-1. Look up the race by `key` in the database.
-2. Resolve the star system's real-space coordinates to a body/planet body position — the
-   external API (below) may accept the system name directly.
-3. Call the external API and translate its response into the response shape above.
-4. Return the result. Consider a short TTL cache (e.g. 60 s) keyed on `key` to avoid
-   hitting the external API on every page load.
-
-### Suggested handler skeleton (FastAPI)
-
-```python
-@app.get("/api/daylight/{key}")
-async def api_daylight(key: str):
-    """
-    Returns current daylight state at the location of race `key`.
-    Returns 404 if the race is unknown or has no coordinates.
-    Returns 503 if the external daylight API is unavailable.
-    """
-    db = await get_db()
-    try:
-        row = await db.execute_fetchone(
-            "SELECT system, coords FROM locations WHERE key = ?", (key,)
-        )
-        if not row or not row["coords"]:
-            raise HTTPException(status_code=404, detail="Race not found or has no coordinates")
-
-        system = row["system"]
-        coords = row["coords"]  # "x,y,z"
-
-        data = await fetch_daylight(system, coords)   # call external API
-        return data
-    finally:
-        await db.close()
-```
+The frontend silently ignores all non-200 responses — the page renders normally without the
+overlay.
 
 ---
 
-## External API (friend's API)
+## Upstream API — ED Day/Night Calculator
 
-The details below are a proposed contract. If the external API has a different shape, the
-`fetch_daylight()` helper in `main.py` is the only translation layer that needs updating —
-the frontend contract above stays fixed.
+- **Base URL:** `https://eddaynight.de/public/api/v1`
+- **Docs:** `documentation/day-night-calc-api.md`
 
-### Proposed request
-
-```
-GET /daylight?system={system_name}
-```
-
-or, if coordinate-based lookup is preferred:
+We use the race-key lookup method:
 
 ```
-GET /daylight?x={x}&y={y}&z={z}
+GET /public/api/v1/prediction?race_key={key}
 ```
 
-### Proposed response
+Race keys in the Day/Night Calculator correspond directly to race keys in this app. The
+upstream server is a Raspberry Pi behind a Cloudflare tunnel — responses can be slow,
+hence the generous default timeout and the in-memory cache.
 
-```json
-{
-  "state":             "dusk",
-  "sun_elevation_deg": -4.2,
-  "next_sunset_ms":    null,
-  "next_sunrise_ms":   18340000
-}
-```
+**Relevant upstream response fields we consume**
 
-The mapping from this to the internal response shape is straightforward — `next_event` and
-`next_event_ms` are derived from whichever of `next_sunset_ms` / `next_sunrise_ms` is
-non-null and soonest, and `state` maps directly.
-
-> **Note:** Elite Dangerous day lengths vary hugely by body — from a few minutes to many
-> real-world hours. Times-until-event expressed in milliseconds allow sub-minute precision
-> for fast-rotating bodies.
+| Field | Used for |
+|---|---|
+| `prediction.state` | Base day/night state |
+| `prediction.sun_altitude_deg` | Twilight zone detection |
+| `prediction.sun_motion` | `"rising"` / `"setting"` for dawn vs dusk |
+| `prediction.next_sunrise_utc` | Countdown for night/dusk states |
+| `prediction.next_sunset_utc` | Countdown for day/dawn states |
 
 ---
 
-## Frontend consumption (already implemented)
+## Frontend
 
-`static/js/race.js` calls `loadDaylightState()` on page load. This function:
+`static/js/race.js` calls `loadDaylightState()` on page load (fire-and-forget):
 
 1. Fetches `/api/daylight/{raceKey}`.
-2. On success, calls `applyDaylightState(data)` which:
-   - Sets `data-daylight="{state}"` on `.race-detail-header-wrapper` — triggers the CSS
-     ambient glow and horizon-bar overlay.
-   - Injects an info badge (e.g. `☀️ Daytime · Sunset in 2h 15m`) into the race info row.
-3. On any non-200 response, silently does nothing — the page renders without the overlay.
+2. Caches the result in `daylightData` (module-level variable).
+3. Calls `applyDaylightState(data)` which:
+   - Sets `data-daylight="{state}"` on `.race-detail-header-wrapper` — triggers CSS ambient
+     glow (`::before`) and horizon bar (`::after`) overlays.
+   - Injects an info badge (e.g. `🌇 Dusk · Sunrise in 12h 4m`) into the race info row.
+4. On any non-200 response, silently does nothing.
 
-The badge and overlay are re-applied on every `renderRace()` call (e.g. after a filter change
-or poller refresh) using the cached `daylightData` value, so they persist across re-renders.
+`applyDaylightState(daylightData)` is also called at the end of every `renderRace()` so the
+badge and overlay survive filter changes and poller re-renders.
 
-### Preview / testing
+### Preview / testing (no API required)
 
-Append `?daylight=` to any race URL to bypass the API and apply mock data locally:
+Append `?daylight=` to any race URL to apply mock data locally, bypassing the API entirely:
 
 ```
 /race/RAZZAFRAG03?daylight=day
@@ -169,5 +128,4 @@ Append `?daylight=` to any race URL to bypass the API and apply mock data locall
 /race/RAZZAFRAG03?daylight=night
 ```
 
-This works without the external API being live and is safe to use in production (the parameter
-has no server-side effect).
+This is safe in production — the parameter has no server-side effect.

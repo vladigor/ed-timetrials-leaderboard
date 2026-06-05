@@ -623,6 +623,9 @@ a:hover { text-decoration: underline; }
 }
 
 /* Daylight state badge variants */
+a.info-badge { text-decoration: none; }
+a.info-badge:hover { opacity: .8; }
+
 .info-badge-daylight-day   { border-color: #3a8ec0; color: #7bc4ee; background: rgba(26,110,189,.12); }
 .info-badge-daylight-dawn  { border-color: #c06030; color: #f09050; background: rgba(200,80,30,.12); }
 .info-badge-daylight-dusk  { border-color: #8840a0; color: #c870ee; background: rgba(130,40,150,.12); }

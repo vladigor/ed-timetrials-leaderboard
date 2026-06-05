@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .config import ENV, OFFLINE
+from .config import DAYLIGHT_API_ENABLED, DAYLIGHT_API_TIMEOUT, DAYLIGHT_CACHE_TTL, ENV, OFFLINE
 from .database import init_db
 from .queries import (
     get_commander_stats,
@@ -587,6 +587,114 @@ async def api_system_suggest(q: str = Query(..., min_length=1, max_length=100)):
     if resp.status_code != 200:
         raise HTTPException(status_code=502, detail="Spansh returned an error")
     return resp.json()
+
+
+# Cache for daylight predictions: key → (prediction_dict, confidence_dict, fetched_at_monotonic)
+_daylight_cache: dict[str, tuple[dict, dict, float]] = {}
+
+
+@app.get("/api/daylight/{key}")
+async def api_daylight(key: str):
+    """Proxy to the ED Day/Night Calculator for current daylight state at a race start location.
+
+    Responses are cached for 5 minutes per race key to avoid hammering the upstream server.
+
+    Maps the external prediction response to our internal shape:
+        { state, next_event, next_event_ms, sun_elevation_deg }
+
+    State derivation:
+      - External API returns "day" or "night".
+      - We treat sun_altitude_deg < 10° as a twilight zone:
+          day + rising  → "dawn"
+          day + setting → "dusk"
+    """
+    import time
+    from datetime import timezone
+
+    import httpx
+
+    if not DAYLIGHT_API_ENABLED:
+        raise HTTPException(status_code=503, detail="Day/Night API is disabled")
+
+    now_mono = time.monotonic()
+    cached = _daylight_cache.get(key)
+    if cached and (now_mono - cached[2]) < DAYLIGHT_CACHE_TTL:
+        pred, confidence = cached[0], cached[1]
+        log.debug("Daylight cache hit for race %r", key)
+    else:
+        try:
+            async with httpx.AsyncClient(timeout=DAYLIGHT_API_TIMEOUT) as client:
+                resp = await client.get(
+                    "https://eddaynight.de/public/api/v1/prediction",
+                    params={"race_key": key},
+                )
+        except httpx.RequestError as exc:
+            log.warning("Day/Night Calculator unreachable for race %r: %s", key, exc)
+            raise HTTPException(status_code=502, detail="Day/Night Calculator unreachable") from exc
+
+        if resp.status_code == 404:
+            raise HTTPException(status_code=404, detail="Race not found in Day/Night Calculator")
+        if resp.status_code != 200:
+            raise HTTPException(status_code=502, detail="Day/Night Calculator returned an error")
+
+        data = resp.json()
+        if "error" in data:
+            code = data["error"].get("code", "unknown")
+            if code == "not_found":
+                raise HTTPException(
+                    status_code=404, detail="Race not found in Day/Night Calculator"
+                )
+            raise HTTPException(status_code=502, detail=f"Day/Night Calculator error: {code}")
+
+        pred = data.get("prediction", {})
+        confidence = data.get("model_confidence", {})
+        _daylight_cache[key] = (pred, confidence, now_mono)
+        log.debug("Daylight cache miss for race %r — fetched fresh", key)
+
+    # Derive state — add dawn/dusk twilight zones (sun within 10° of horizon)
+    raw_state = pred.get("state", "day")
+    sun_alt = pred.get("sun_altitude_deg", 90.0)
+    sun_motion = pred.get("sun_motion", "")
+
+    if raw_state == "day" and sun_alt < 10.0:
+        state = "dawn" if sun_motion == "rising" else "dusk"
+    else:
+        state = raw_state  # "day" or "night"
+
+    # Re-derive next_event_ms on every request — it counts down in real time
+    now_utc = datetime.now(tz=timezone.utc)
+
+    def _ms_to(utc_str: str | None) -> int | None:
+        if not utc_str:
+            return None
+        try:
+            dt = datetime.fromisoformat(utc_str.replace("Z", "+00:00"))
+            return max(0, int((dt - now_utc).total_seconds() * 1000))
+        except ValueError:
+            return None
+
+    ms_to_sunrise = _ms_to(pred.get("next_sunrise_utc"))
+    ms_to_sunset = _ms_to(pred.get("next_sunset_utc"))
+
+    # day/dawn/dusk → sun above horizon, next event is sunset
+    # night → sun below horizon, next event is sunrise
+    if state in ("day", "dawn", "dusk"):
+        next_event = "sunset"
+        next_event_ms = ms_to_sunset
+    else:
+        next_event = "sunrise"
+        next_event_ms = ms_to_sunrise
+
+    return {
+        "state": state,
+        "next_event": next_event,
+        "next_event_ms": next_event_ms,
+        "sun_elevation_deg": sun_alt,
+        "sun_motion": sun_motion or None,
+        "confidence_score": confidence.get("score"),
+        "confidence_level": confidence.get("level"),
+        "link": "https://eddaynight.de/",
+    }
 
 
 @app.get("/api/race-map/{key}")

@@ -60,3 +60,19 @@ To deploy updates:
 ```bash
 git pull && sudo systemctl restart tt-leaderboard
 ```
+
+## Environment variables (`.env`)
+
+All configuration is read from `.env` at startup. Copy `.env` to the deployment directory and adjust as needed. Changes require a service restart.
+
+| Variable | Default | Description |
+|---|---|---|
+| `ENV` | `prod` | Set to `dev` to enable development-only features (e.g. the add-media link). |
+| `OFFLINE` | `false` | Set to `1` to disable all outbound API calls and serve from the local SQLite cache only. |
+| `INARA_API_KEY` | — | Inara API key for fetching commander avatar/profile data. |
+| `INARA_APP_NAME` | `elitettleaderboard.vladigor.net` | App name reported to the Inara API. |
+| `INARA_APP_VERSION` | `1.0` | App version reported to the Inara API. |
+| `INARA_CACHE_DURATION_DAYS` | `7` | How long to cache Inara profile data in the database before refreshing. |
+| `DAYLIGHT_API_ENABLED` | `true` | Set to `false` to disable the Day/Night Calculator integration entirely. The race page renders without the ambient overlay or daylight badge. |
+| `DAYLIGHT_API_TIMEOUT` | `15.0` | Seconds to wait for the upstream Day/Night Calculator before giving up. |
+| `DAYLIGHT_CACHE_TTL` | `300` | Seconds to cache a daylight prediction per race key (5 min default). The countdown timer is recalculated on every request; only the upstream fetch is rate-limited by this value. |

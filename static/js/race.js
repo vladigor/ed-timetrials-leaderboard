@@ -296,32 +296,52 @@ async function loadDaylightState() {
 
 function applyDaylightState(data) {
   if (!data || !data.state || !daylightWrapper) return;
-  const { state, next_event, next_event_ms } = data;
+  const { state, next_event, next_event_ms, sun_elevation_deg, sun_motion,
+          confidence_score, confidence_level, link } = data;
 
   // Drive ambient glow + horizon bar purely via CSS attribute
   daylightWrapper.dataset.daylight = state;
 
-  // Build the info badge
+  // Build the info badge text as an array of · -separated parts
   const icons  = { day: '☀️', dawn: '🌅', dusk: '🌇', night: '🌙' };
   const labels = { day: 'Daytime', dawn: 'Dawn', dusk: 'Dusk', night: 'Night' };
-  const icon   = icons[state]  ?? '🌐';
-  const label  = labels[state] ?? state;
+  const parts  = [`${icons[state] ?? '🌐'} ${labels[state] ?? state}`];
 
-  let suffix = '';
+  // Sun elevation + motion — day and dawn only
+  if ((state === 'day' || state === 'dawn') && sun_elevation_deg != null) {
+    const sign   = sun_elevation_deg >= 0 ? '+' : '';
+    const motion = sun_motion === 'rising' ? 'rising' : sun_motion === 'setting' ? 'setting' : null;
+    const elevStr = `${sign}${sun_elevation_deg.toFixed(1)}°`;
+    parts.push(motion ? `${elevStr} ${motion}` : elevStr);
+  }
+
+  // Next event countdown
   if (next_event && next_event_ms != null) {
     const mins     = Math.round(next_event_ms / 60_000);
     const h        = Math.floor(mins / 60);
     const m        = mins % 60;
     const timeStr  = h > 0 ? `${h}h ${m}m` : `${m}m`;
     const evtLabel = { sunset: 'Sunset', sunrise: 'Sunrise', dawn: 'Dawn', dusk: 'Dusk' }[next_event] ?? next_event;
-    suffix = ` · ${evtLabel} in ${timeStr}`;
+    parts.push(`${evtLabel} in ${timeStr}`);
+  }
+
+  // Model confidence
+  if (confidence_score != null) {
+    parts.push(`${confidence_score}% confidence`);
+  } else if (confidence_level) {
+    parts.push(`${confidence_level} confidence`);
   }
 
   // Remove any stale daylight badge then inject the updated one
   infoEl.querySelector('.info-badge-daylight')?.remove();
-  const badge = document.createElement('span');
+  const badge = document.createElement(link ? 'a' : 'span');
   badge.className = `info-badge info-badge-daylight info-badge-daylight-${state}`;
-  badge.textContent = `${icon} ${label}${suffix}`;
+  badge.textContent = parts.join(' · ');
+  if (link) {
+    badge.href = link;
+    badge.target = '_blank';
+    badge.rel = 'noopener noreferrer';
+  }
   infoEl.appendChild(badge);
 }
 
