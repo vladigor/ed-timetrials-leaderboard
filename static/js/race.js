@@ -317,10 +317,18 @@ function applyDaylightState(data) {
 
   // Next event countdown
   if (next_event && next_event_ms != null) {
-    const mins     = Math.round(next_event_ms / 60_000);
-    const h        = Math.floor(mins / 60);
-    const m        = mins % 60;
-    const timeStr  = h > 0 ? `${h}h ${m}m` : `${m}m`;
+    const totalMins = Math.round(next_event_ms / 60_000);
+    const totalHours = Math.floor(totalMins / 60);
+    let timeStr;
+    if (totalHours >= 24) {
+      const days = Math.floor(totalHours / 24);
+      const remH = totalHours % 24;
+      timeStr = remH > 0 ? `${days}d ${remH}h` : `${days}d`;
+    } else if (totalHours > 0) {
+      timeStr = `${totalHours}h ${totalMins % 60}m`;
+    } else {
+      timeStr = `${totalMins}m`;
+    }
     const evtLabel = { sunset: 'Sunset', sunrise: 'Sunrise', dawn: 'Dawn', dusk: 'Dusk' }[next_event] ?? next_event;
     parts.push(`${evtLabel} in ${timeStr}`);
   }
