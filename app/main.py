@@ -589,8 +589,8 @@ async def api_system_suggest(q: str = Query(..., min_length=1, max_length=100)):
     return resp.json()
 
 
-# Cache for daylight predictions: key → (prediction_dict, confidence_dict, fetched_at_monotonic)
-_daylight_cache: dict[str, tuple[dict, dict, float]] = {}
+# Cache for daylight predictions: key → (prediction_dict, confidence_dict, target_dict, fetched_at_monotonic)
+_daylight_cache: dict[str, tuple[dict, dict, dict, float]] = {}
 
 
 @app.get("/api/daylight/{key}")
@@ -618,8 +618,8 @@ async def api_daylight(key: str):
 
     now_mono = time.monotonic()
     cached = _daylight_cache.get(key)
-    if cached and (now_mono - cached[2]) < DAYLIGHT_CACHE_TTL:
-        pred, confidence = cached[0], cached[1]
+    if cached and (now_mono - cached[3]) < DAYLIGHT_CACHE_TTL:
+        pred, confidence, target = cached[0], cached[1], cached[2]
         log.debug("Daylight cache hit for race %r", key)
     else:
         try:
@@ -648,7 +648,8 @@ async def api_daylight(key: str):
 
         pred = data.get("prediction", {})
         confidence = data.get("model_confidence", {})
-        _daylight_cache[key] = (pred, confidence, now_mono)
+        target = data.get("target", {})
+        _daylight_cache[key] = (pred, confidence, target, now_mono)
         log.debug("Daylight cache miss for race %r — fetched fresh", key)
 
     # Derive state — add dawn/dusk twilight zones (sun within 10° of horizon)
@@ -693,8 +694,16 @@ async def api_daylight(key: str):
         "sun_motion": sun_motion or None,
         "confidence_score": confidence.get("score"),
         "confidence_level": confidence.get("level"),
-        "link": "https://eddaynight.de/",
+        "link": _eddaynight_link(target),
     }
+
+
+def _eddaynight_link(target: dict) -> str:
+    body_id = target.get("body_id")
+    poi_id = target.get("poi_id")
+    if body_id is not None and poi_id is not None:
+        return f"https://eddaynight.de/bodies/{body_id}?poi={poi_id}"
+    return "https://eddaynight.de/"
 
 
 @app.get("/api/race-map/{key}")
