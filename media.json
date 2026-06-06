@@ -1603,5 +1603,17 @@
         "url": "https://youtu.be/yQ0op3mhIDM"
       }
     ]
+  },
+  "GREAVES-Sitterly Crater Cross": {
+    "map": {
+      "thumbnail": "maps/thumbnails/sittlery_crater_cross.webp",
+      "target": "maps/sittlery_crater_cross.webp"
+    }
+  },
+  "GREAVES-_Penal Rooftop Rampage": {
+    "map": {
+      "thumbnail": "maps/thumbnails/sittlery_crater_cross.webp",
+      "target": "maps/sittlery_crater_cross.webp"
+    }
   }
 }
