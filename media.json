@@ -623,6 +623,11 @@
         "label": "Demo video",
         "type": "video",
         "url": "https://youtu.be/rOPXB6czShM"
+      },
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=tV8RlAkp-eM"
       }
     ]
   },
@@ -1615,5 +1620,14 @@
       "thumbnail": "maps/thumbnails/sittlery_crater_cross.webp",
       "target": "maps/sittlery_crater_cross.webp"
     }
+  },
+  "ALEC TURNER & CMDR RAZZAFRAG-MITTERAND01": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=-nBsJdipYbA"
+      }
+    ]
   }
 }
