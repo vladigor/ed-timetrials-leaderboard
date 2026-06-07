@@ -433,7 +433,7 @@ function drawSunCanvas(canvas) {
   ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill();
 
   // Rising/falling arrow next to sun
-  const trend = String(p.sun_altitude_trend || '').toLowerCase();
+  const trend = String(p.sun_motion || p.sun_altitude_trend || '').toLowerCase();
   let arrow = '→';
   let dy = 0;
   if (trend.includes('rising')) { arrow = '↑'; dy = -22; }
@@ -455,6 +455,10 @@ function drawSunCanvas(canvas) {
   ctx.font = '14px system-ui, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
+  ctx.fillText(
+    `Sun altitude ${alt.toFixed(2)}° · ${trend || 'trend unknown'}`,
+    w / 2, h - 12
+  );
 }
 
 async function loadRaceMap() {

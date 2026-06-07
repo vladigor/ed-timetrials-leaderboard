@@ -651,6 +651,9 @@ a.info-badge:hover { opacity: .8; }
   height: auto;
   border-radius: .35rem;
 }
+@media (max-width: 1023px) {
+  .sun-canvas-wrapper { display: none; }
+}
 
 .race-notice {
   margin-top: .75rem;
