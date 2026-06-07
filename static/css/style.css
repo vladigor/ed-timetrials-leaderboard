@@ -342,7 +342,21 @@ a:hover { text-decoration: underline; }
   gap: 1.5rem;
   margin-bottom: 1.5rem;
   position: relative;
+  border-radius: .35rem;
+  padding: 1rem 1.25rem;
+  transition: background-color 2.4s ease;
 }
+
+.race-detail-header-wrapper[data-daylight="day"],
+.race-detail-header-wrapper[data-daylight="dawn"],
+.race-detail-header-wrapper[data-daylight="dusk"],
+.race-detail-header-wrapper[data-daylight="night"] {
+  margin-bottom: .5rem;
+}
+
+.race-detail-header-wrapper[data-daylight="day"]  { background-color: #141a28; }
+.race-detail-header-wrapper[data-daylight="dawn"] { background-color: #100f1a; }
+.race-detail-header-wrapper[data-daylight="dusk"] { background-color: #100f1a; }
 
 /* ── Daylight ambient overlay (::before) and horizon bar (::after) ───────── */
 .race-detail-header-wrapper::before,
