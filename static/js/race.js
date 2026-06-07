@@ -340,8 +340,10 @@ function applyDaylightState(data) {
     parts.push(`${confidence_level} confidence`);
   }
 
-  // Remove any stale daylight badge then inject the updated one
+  // Remove any stale daylight badge and canvas then inject the updated ones
   infoEl.querySelector('.info-badge-daylight')?.remove();
+  daylightWrapper.querySelector('.sun-canvas-wrapper')?.remove();
+
   const badge = document.createElement(link ? 'a' : 'span');
   badge.className = `info-badge info-badge-daylight info-badge-daylight-${state}`;
   badge.textContent = parts.join(' · ');
@@ -351,6 +353,108 @@ function applyDaylightState(data) {
     badge.rel = 'noopener noreferrer';
   }
   infoEl.appendChild(badge);
+
+  // Sun position canvas — placed after the info row, inside the header wrapper
+  if (data.prediction && Object.keys(data.prediction).length > 0) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sun-canvas-wrapper';
+    const canvas = document.createElement('canvas');
+    canvas.width = 336;
+    canvas.height = 190;
+    canvas.dataset.prediction = JSON.stringify(data.prediction);
+    wrapper.appendChild(canvas);
+    daylightWrapper.querySelector('.race-detail-header').after(wrapper);
+    drawSunCanvas(canvas);
+  }
+}
+
+function drawSunCanvas(canvas) {
+  const p = (() => {
+    try { return JSON.parse(canvas.dataset.prediction || '{}'); } catch { return {}; }
+  })();
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  const left = 56, right = w - 24, top = 20, bottom = h - 44;
+  const chartH = bottom - top;
+  const alt = Math.max(-90, Math.min(90, Number(p.sun_altitude_deg || 0)));
+  const yForAlt = (a) => bottom - ((a + 90) / 180) * chartH;
+  const horizonY = yForAlt(0);
+
+  // Background: sky above horizon, dark below
+  const sky = ctx.createLinearGradient(0, top, 0, horizonY);
+  sky.addColorStop(0, '#24466d');
+  sky.addColorStop(1, '#f7c96a');
+  ctx.fillStyle = sky;
+  ctx.fillRect(left, top, right - left, Math.max(1, horizonY - top));
+  const night = ctx.createLinearGradient(0, horizonY, 0, bottom);
+  night.addColorStop(0, '#172235');
+  night.addColorStop(1, '#070b12');
+  ctx.fillStyle = night;
+  ctx.fillRect(left, horizonY, right - left, Math.max(1, bottom - horizonY));
+
+  // Grid lines and altitude labels
+  ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#9fb0c8';
+  ctx.font = '12px system-ui, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (const mark of [90, 45, 0, -45, -90]) {
+    const y = yForAlt(mark);
+    ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+    ctx.fillText(`${mark > 0 ? '+' : ''}${mark}°`, left - 8, y);
+  }
+
+  // Horizon label
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(left, horizonY); ctx.lineTo(right, horizonY); ctx.stroke();
+  ctx.fillStyle = '#e8eef8';
+  ctx.textAlign = 'left';
+  ctx.fillText('horizon', right - 70, horizonY - 12);
+
+  // Vertical rail at sun's x position
+  const x = left + (right - left) * 0.55;
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
+
+  // Sun marker
+  const y = yForAlt(alt);
+  const sunGrad = ctx.createRadialGradient(x, y, 2, x, y, 18);
+  sunGrad.addColorStop(0, '#fff8bf');
+  sunGrad.addColorStop(0.55, '#ffd37c');
+  sunGrad.addColorStop(1, 'rgba(255,211,124,0.05)');
+  ctx.fillStyle = sunGrad;
+  ctx.beginPath(); ctx.arc(x, y, 18, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fff8bf';
+  ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill();
+
+  // Rising/falling arrow next to sun
+  const trend = String(p.sun_altitude_trend || '').toLowerCase();
+  let arrow = '→';
+  let dy = 0;
+  if (trend.includes('rising')) { arrow = '↑'; dy = -22; }
+  else if (trend.includes('falling')) { arrow = '↓'; dy = 22; }
+  ctx.strokeStyle = trend.includes('falling') ? '#ffcf85' : '#92f0b1';
+  ctx.fillStyle = ctx.strokeStyle;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x + 46, y - dy * 0.35);
+  ctx.lineTo(x + 46, y + dy * 0.65);
+  ctx.stroke();
+  ctx.font = '24px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(arrow, x + 46, y + dy * 0.75);
+
+  // Caption
+  ctx.fillStyle = '#e8eef8';
+  ctx.font = '14px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
 }
 
 async function loadRaceMap() {

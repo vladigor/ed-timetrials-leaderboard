@@ -702,6 +702,7 @@ async def api_daylight(key: str):
         "confidence_score": confidence.get("score"),
         "confidence_level": confidence.get("level"),
         "link": _eddaynight_link(target),
+        "prediction": pred,
     }
 
 

@@ -645,6 +645,13 @@ a.info-badge:hover { opacity: .8; }
 .info-badge-daylight-dusk  { border-color: #8840a0; color: #c870ee; background: rgba(130,40,150,.12); }
 .info-badge-daylight-night { border-color: #3a4a7a; color: #8898c8; background: rgba(30,40,100,.15); }
 
+.sun-canvas-wrapper canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: .35rem;
+}
+
 .race-notice {
   margin-top: .75rem;
   padding: .5rem .75rem;
