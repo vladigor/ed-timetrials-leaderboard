@@ -283,7 +283,8 @@ async function loadFilteredRace(filterType) {
 // caught and silently ignored — the page renders normally without the overlay.
 async function loadDaylightState() {
   try {
-    const data = await fetch(`/api/daylight/${encodeURIComponent(raceKey)}`).then(r => {
+    const cmdrParam = selectedCmdr ? `?commander=${encodeURIComponent(selectedCmdr)}` : '';
+    const data = await fetch(`/api/daylight/${encodeURIComponent(raceKey)}${cmdrParam}`).then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return r.json();
     });

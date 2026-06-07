@@ -20,6 +20,7 @@ from fastapi.templating import Jinja2Templates
 from .config import (
     DAYLIGHT_API_BASE_URL,
     DAYLIGHT_API_ENABLED,
+    DAYLIGHT_API_ENABLED_FOR,
     DAYLIGHT_API_TIMEOUT,
     DAYLIGHT_CACHE_TTL,
     ENV,
@@ -601,7 +602,7 @@ _daylight_cache: dict[str, tuple[dict, dict, dict, float]] = {}
 
 
 @app.get("/api/daylight/{key}")
-async def api_daylight(key: str):
+async def api_daylight(key: str, commander: str = ""):
     """Proxy to the ED Day/Night Calculator for current daylight state at a race start location.
 
     Responses are cached for 5 minutes per race key to avoid hammering the upstream server.
@@ -620,7 +621,8 @@ async def api_daylight(key: str):
 
     import httpx
 
-    if not DAYLIGHT_API_ENABLED:
+    cmdr_allowed = bool(commander and commander.strip().lower() in DAYLIGHT_API_ENABLED_FOR)
+    if not DAYLIGHT_API_ENABLED and not cmdr_allowed:
         raise HTTPException(status_code=503, detail="Day/Night API is disabled")
 
     now_mono = time.monotonic()
