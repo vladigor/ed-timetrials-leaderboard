@@ -1,5 +1,10 @@
 # Change log
 
+## 2026-06-08
+
+- Race page:
+    - Added daylight reporting
+
 ## 2026-06-01
 
 - Index page:
