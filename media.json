@@ -1642,5 +1642,11 @@
         "url": "https://www.youtube.com/watch?v=FspGgaq3DNY"
       }
     ]
+  },
+  "ALEXFIGHTER-LightOfTheGalaxy": {
+    "map": {
+      "thumbnail": "maps/thumbnails/the_light_of_the_galaxy.png",
+      "target": "maps/the_light_of_the_galaxy.png"
+    }
   }
 }
