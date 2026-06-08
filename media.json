@@ -1648,5 +1648,17 @@
       "thumbnail": "maps/thumbnails/the_light_of_the_galaxy.png",
       "target": "maps/the_light_of_the_galaxy.png"
     }
+  },
+  "FOEHAMMERR-Santa": {
+    "map": {
+      "thumbnail": "maps/thumbnails/santas_slayer_of_pilots.png",
+      "target": "maps/santas_slayer_of_pilots.png"
+    }
+  },
+  "FOEHAMMERR-Santa Extended": {
+    "map": {
+      "thumbnail": "maps/thumbnails/santas_slayer_of_pilots.png",
+      "target": "maps/santas_slayer_of_pilots.png"
+    }
   }
 }
