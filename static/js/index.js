@@ -10,6 +10,7 @@ let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
 let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // default on
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
 let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
+let filterDaytimeOnly = localStorage.getItem('tt_filter_daytime_only') === '1'; // default off
 let filterSearchText = ''; // Not persisted - ephemeral search state
 let sortOrder     = localStorage.getItem('tt_sort_order') || 'activity';
 let poller        = null;
@@ -23,6 +24,7 @@ const checkActive      = document.getElementById('filter-active');
 const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
 const checkHideDW3     = document.getElementById('filter-hide-dw3');
 const checkHideHorizons = document.getElementById('filter-hide-horizons');
+const checkDaytimeOnly  = document.getElementById('filter-daytime-only');
 const cmdrRacesGroup   = document.getElementById('filter-cmdr-races-group');
 const sortSelect       = document.getElementById('sort-select');
 const countLabel       = document.getElementById('race-count');
@@ -36,10 +38,10 @@ const modalCloseX      = document.getElementById('modal-close-x');
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
   // Sanity check — surface missing elements immediately
-  const missing = [grid, statusDot, statusText, searchInput, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, cmdrRacesGroup,
+  const missing = [grid, statusDot, statusText, searchInput, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, checkDaytimeOnly, cmdrRacesGroup,
     sortSelect, countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm, modalCloseX]
     .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-search','filter-active',
-      'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-cmdr-races-group','sort-select','race-count','profile-label',
+      'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-daytime-only','filter-cmdr-races-group','sort-select','race-count','profile-label',
       'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm','modal-close-x'][i])
     .filter(Boolean);
   if (missing.length) {
@@ -47,10 +49,11 @@ async function init() {
     return;
   }
 
-  checkActive.checked    = filterActive;
-  checkCmdrRaces.checked = filterCmdrRaces;
-  checkHideDW3.checked   = filterHideDW3;
+  checkActive.checked       = filterActive;
+  checkCmdrRaces.checked    = filterCmdrRaces;
+  checkHideDW3.checked      = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
+  checkDaytimeOnly.checked  = filterDaytimeOnly;
   sortSelect.value       = sortOrder;
   updateProfileDisplay();
   updateCmdrRacesGroup();
@@ -78,6 +81,12 @@ async function init() {
   checkHideHorizons.addEventListener('change', () => {
     filterHideHorizons = checkHideHorizons.checked;
     localStorage.setItem('tt_filter_hide_horizons', filterHideHorizons ? '1' : '0');
+    renderGrid(); // Client-side only, no need to reload from API
+  });
+
+  checkDaytimeOnly.addEventListener('change', () => {
+    filterDaytimeOnly = checkDaytimeOnly.checked;
+    localStorage.setItem('tt_filter_daytime_only', filterDaytimeOnly ? '1' : '0');
     renderGrid(); // Client-side only, no need to reload from API
   });
 
@@ -200,6 +209,11 @@ function renderGrid() {
     races = races.filter(r => r.version !== 'HORIZONS');
   }
 
+  // Client-side filter: daytime only (known current state from cache)
+  if (filterDaytimeOnly) {
+    races = races.filter(r => r.daylight_state === 'day');
+  }
+
   // Client-side filter: search text
   if (filterSearchText.trim()) {
     const searchLower = filterSearchText.toLowerCase();
@@ -283,6 +297,8 @@ function raceCard(r) {
     ? `${ordinal(r.cmdr_position)} of ${entries} finisher${entries !== 1 ? 's' : ''}`
     : `${entries} finisher${entries !== 1 ? 's' : ''}`;
 
+  const daylightEmoji = r.daylight_state === 'day' ? ' ☀️' : r.daylight_state === 'night' ? ' 🌙' : '';
+
   const infoBadges = [
     r.version === 'HORIZONS' ? `<span class="info-badge info-badge-horizons">Horizons</span>` : '',
     r.multi_mode ? `<span class="info-badge info-badge-accent">Multi-mode</span>` : '',
@@ -298,6 +314,7 @@ function raceCard(r) {
     <div class="race-card-meta">
       ${typeBadge(r.type)}
       ${infoBadges}
+      ${daylightEmoji ? `<span class="race-card-daylight-emoji">${daylightEmoji}</span>` : ''}
     </div>
     <div class="race-card-meta">
       <span>${esc(r.system)}</span>

@@ -629,6 +629,7 @@ async def api_daylight(key: str, commander: str = ""):
     cached = _daylight_cache.get(key)
     if cached and (now_mono - cached[3]) < DAYLIGHT_CACHE_TTL:
         pred, confidence, target = cached[0], cached[1], cached[2]
+        query = cached[4] if len(cached) > 4 else {}
         log.debug("Daylight cache hit for race %r", key)
     else:
         try:
@@ -658,7 +659,8 @@ async def api_daylight(key: str, commander: str = ""):
         pred = data.get("prediction", {})
         confidence = data.get("model_confidence", {})
         target = data.get("target", {})
-        _daylight_cache[key] = (pred, confidence, target, now_mono)
+        query = data.get("query", {})
+        _daylight_cache[key] = (pred, confidence, target, now_mono, query)
         log.debug("Daylight cache miss for race %r — fetched fresh", key)
 
     # Derive state — add dawn/dusk twilight zones (sun within 10° of horizon)
@@ -694,6 +696,34 @@ async def api_daylight(key: str, commander: str = ""):
     else:
         next_event = "sunrise"
         next_event_ms = ms_to_sunrise
+
+    # Persist to daylight_cache table (collapsed to day/night only)
+    db_state = "day" if state in ("day", "dawn", "dusk") else "night"
+    until_utc = pred.get("next_sunset_utc") if db_state == "day" else pred.get("next_sunrise_utc")
+    # Fallback: if crossing times aren't in the response (e.g. tidally locked planet),
+    # use prediction_hours from the query stanza as the validity window, or 72h if absent.
+    if not until_utc:
+        from datetime import timedelta
+
+        prediction_hours = query.get("prediction_hours") if query else None
+        hours = float(prediction_hours) if prediction_hours else 72.0
+        until_utc = (now_utc + timedelta(hours=hours)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    from .database import get_db as _get_db
+
+    _db = await _get_db()
+    try:
+        await _db.execute(
+            """INSERT INTO daylight_cache (race_key, state, until_utc, updated_at)
+               VALUES (?, ?, ?, ?)
+               ON CONFLICT(race_key) DO UPDATE SET
+                 state=excluded.state,
+                 until_utc=excluded.until_utc,
+                 updated_at=excluded.updated_at""",
+            (key, db_state, until_utc, now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")),
+        )
+        await _db.commit()
+    finally:
+        await _db.close()
 
     return {
         "state": state,

@@ -1038,10 +1038,11 @@ function renderNendy(resolvedName, undone) {
     const distStr = r.dist === Infinity
       ? '<span class="muted">\u2014</span>'
       : (r.dist < 1 ? '&lt;1 ly' : `${Math.round(r.dist).toLocaleString()} ly`);
+    const daylightEmoji = r.daylight_state === 'day' ? '\u2600\ufe0f' : r.daylight_state === 'night' ? '\ud83c\udf19' : '';
     return `
       <tr>
         <td class="num muted">${i + 1}</td>
-        <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></td>
+        <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a>${daylightEmoji ? `<span style="margin-left:1rem">${daylightEmoji}</span>` : ''}</td>
         <td>${typeBadge(r.type)}</td>
         <td class="muted">${esc(r.system)}</td>
         <td class="num">${distStr}</td>
@@ -1120,10 +1121,11 @@ function renderNeidy(resolvedName, done, raceDetails, allowAutoSwitch = false) {
     const gapStr  = s.gapMs != null ? formatTime(s.gapMs) : '—';
     const leapStr = s.leapable > 0 ? `+${s.leapable}` : '—';
     const barPct  = Math.max(0, Math.min(100, Math.round((1 - Math.max(0, s.score + 0.1) / 0.6) * 100)));
+    const daylightEmoji = s.race.daylight_state === 'day' ? '\u2600\ufe0f' : s.race.daylight_state === 'night' ? '\ud83c\udf19' : '';
     return `
       <tr>
         <td class="num muted">${i + 1}</td>
-        <td><a href="/race/${encodeURIComponent(s.race.key)}">${esc(s.race.name)}</a></td>
+        <td><a href="/race/${encodeURIComponent(s.race.key)}">${esc(s.race.name)}</a>${daylightEmoji ? `<span style="margin-left:1rem">${daylightEmoji}</span>` : ''}</td>
         <td>${typeBadge(s.race.type)}</td>
         <td class="num">${ordinal(s.myPos)} / ${s.total}</td>
         <td class="num neidy-gap">${gapStr}</td>

@@ -93,7 +93,12 @@ async def list_races(
                 l.tags,
                 (SELECT COUNT(DISTINCT name) FROM results
                  WHERE location = l.key)          AS entry_count,
-                MAX(r.updated)                    AS last_activity
+                MAX(r.updated)                    AS last_activity,
+                CASE
+                    WHEN dc.until_utc > strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
+                    THEN dc.state
+                    ELSE NULL
+                END                               AS daylight_state
                 {cmdr_position_sql}
             FROM locations l
             LEFT JOIN (
@@ -101,6 +106,7 @@ async def list_races(
                 FROM results
                 GROUP BY name, location
             ) r ON r.location = l.key
+            LEFT JOIN daylight_cache dc ON dc.race_key = l.key
         """
         params = cmdr_position_params[:]
 

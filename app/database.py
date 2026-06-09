@@ -78,6 +78,13 @@ CREATE TABLE IF NOT EXISTS position_snapshots (
 );
 CREATE INDEX IF NOT EXISTS idx_snapshots_loc_name ON position_snapshots(location, name);
 CREATE INDEX IF NOT EXISTS idx_snapshots_snapped_at ON position_snapshots(snapped_at);
+
+CREATE TABLE IF NOT EXISTS daylight_cache (
+    race_key    TEXT PRIMARY KEY,
+    state       TEXT NOT NULL CHECK(state IN ('day', 'night')),
+    until_utc   TEXT NOT NULL,
+    updated_at  TEXT NOT NULL
+);
 """
 
 

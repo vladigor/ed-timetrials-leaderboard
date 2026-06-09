@@ -287,6 +287,11 @@ a:hover { text-decoration: underline; }
   flex-wrap: wrap;
   gap: .3rem .75rem;
 }
+.race-card-daylight-emoji {
+  margin-left: auto;
+  font-size: 1rem;
+  line-height: 1;
+}
 
 .badge {
   display: inline-block;
