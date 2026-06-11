@@ -87,6 +87,8 @@ async function loadActivity() {
     if (!res.ok) throw new Error(res.status);
     const page = await res.json();
     if (page.length < PAGE_SIZE) hasMore = false;
+    // Only check the first page (most recent) for system inference
+    if (currentOffset === 0) maybeUpdateSystemFromActivity(page);
     activity = activity.concat(page);
     currentOffset += page.length;
     render();
@@ -97,6 +99,16 @@ async function loadActivity() {
   } finally {
     isLoading = false;
     if (hasMore) attachSentinel();
+  }
+}
+
+// ── Update system in localStorage if this commander's most recent result is fresh ──
+function maybeUpdateSystemFromActivity(page) {
+  const cmdr = localStorage.getItem('tt_filter_cmdr') || '';
+  if (!cmdr || !page || !page.length) return;
+  const cmdrItem = page.find(item => item.name === cmdr);
+  if (cmdrItem && cmdrItem.system && !cmdrItem.multi_system && isFresh(cmdrItem.updated)) {
+    localStorage.setItem('tt_nendy_system', cmdrItem.system);
   }
 }
 
