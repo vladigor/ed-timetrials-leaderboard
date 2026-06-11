@@ -164,10 +164,20 @@ async function loadRace() {
     // Store full results for ship type filtering
     fullResults = race.results ? [...race.results] : [];
     renderRace();
+    maybeUpdateSystemFromRace();
     await loadRaceMap();
   } catch (err) {
     showError('Could not load race data.');
     setStatus('error');
+  }
+}
+
+// ── Update system in localStorage if this commander just set a time here ───
+function maybeUpdateSystemFromRace() {
+  if (!selectedCmdr || !race || !race.system || race.multi_system) return;
+  const cmdrResult = race.results?.find(r => r.name === selectedCmdr);
+  if (cmdrResult && isFresh(cmdrResult.updated)) {
+    localStorage.setItem('tt_nendy_system', race.system);
   }
 }
 

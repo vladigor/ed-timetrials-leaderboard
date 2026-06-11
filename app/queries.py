@@ -753,6 +753,8 @@ async def get_recent_activity(limit: int = 25, offset: int = 0) -> list[dict]:
                     rh.name,
                     rh.location,
                     l.name AS race_name,
+                    l.system,
+                    l.multi_system,
                     rh.position,
                     rh.time,
                     rh.updated,
@@ -777,6 +779,8 @@ async def get_recent_activity(limit: int = 25, offset: int = 0) -> list[dict]:
                 rh.name,
                 rh.location,
                 rh.race_name,
+                rh.system,
+                rh.multi_system,
                 rh.position,
                 rh.updated,
                 CASE
