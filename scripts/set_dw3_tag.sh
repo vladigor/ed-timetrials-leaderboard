@@ -1,0 +1,3 @@
+#!/bin/bash
+
+.venv/bin/python3 -c 'import sqlite3; con=sqlite3.connect("leaderboard.sqlite3"); cur=con.cursor(); rows=cur.execute("SELECT key,tags FROM locations WHERE name LIKE ? COLLATE NOCASE OR name LIKE ? COLLATE NOCASE OR name LIKE ? COLLATE NOCASE OR name LIKE ? COLLATE NOCASE", ("DW3%","The Distant Worlds 3%","The DW3%","Khazad-dum Base Camp Biathlon")).fetchall(); norm=lambda s:[x.strip() for x in (s or "").split(",") if x.strip()]; upd=[(", ".join(ts+["DW3"]),k) for k,t in rows for ts in [norm(t)] if "DW3" not in ts]; cur.executemany("UPDATE locations SET tags=? WHERE key=?", upd); con.commit(); print(f"matched={len(rows)} updated={len(upd)}"); con.close()'

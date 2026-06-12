@@ -273,6 +273,20 @@ function versionBadge(version) {
   return '';
 }
 
+function tagsBadges(tags) {
+  if (!tags) return '';
+  return tags
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean)
+    .map(t => {
+      const title = t === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${t}`;
+      const badgeClass = t === 'DW3' ? 'info-badge-dw3' : 'info-badge-inactive';
+      return `<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(t)}</span>`;
+    })
+    .join(' ');
+}
+
 function renderTopNTable(items, nameLabel, countLabel) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
 
@@ -341,7 +355,7 @@ function renderRaceTable(items, countLabel) {
   html += '<tbody>';
 
   items.forEach(item => {
-    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)}`;
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)} ${tagsBadges(item.tags)}`;
     html += '<tr>';
     html += `<td>${renderRaceLink(item.key, item.name)} ${badges}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
@@ -384,7 +398,7 @@ function renderRecentRacesTable(items) {
   html += '<tbody>';
 
   items.forEach(item => {
-    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)}`;
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)} ${tagsBadges(item.tags)}`;
     html += '<tr>';
     html += `<td>${renderRaceLink(item.key, item.name)} ${badges}</td>`;
     html += `<td class="stats-time">${relativeTime(item.last_active)}</td>`;
@@ -443,25 +457,22 @@ function renderLeaderGapTable(items) {
 
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
-  html += `<th class="stats-rank">Rank</th>`;
-  html += `<th>Winner</th>`;
   html += `<th>Race</th>`;
+  html += `<th>Winner</th>`;
+  html += `<th>2nd Place</th>`;
   html += `<th class="stats-time">Lead Time</th>`;
   html += `<th class="stats-count">Lead %</th>`;
   html += '</tr></thead>';
   html += '<tbody>';
 
-  let currentRank = 1;
-  items.forEach((item, idx) => {
-    if (idx > 0 && item.lead_pct !== items[idx - 1].lead_pct) {
-      currentRank = idx + 1;
-    }
-    const medal = currentRank === 1 ? '🏆' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
-    const rowClass = selectedCmdr && item.commander === selectedCmdr ? ' class="row-cmdr"' : '';
+  items.forEach(item => {
+    const isSelectedCmdr = selectedCmdr && (item.commander === selectedCmdr || item.second_commander === selectedCmdr);
+    const rowClass = isSelectedCmdr ? ' class="row-cmdr"' : '';
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)} ${tagsBadges(item.tags)}`;
     html += `<tr${rowClass}>`;
-    html += `<td class="stats-rank">${medal}</td>`;
+    html += `<td>${renderRaceLink(item.key, item.race_name)} ${badges}</td>`;
     html += `<td>${renderCmdrLink(item.commander)}</td>`;
-    html += `<td>${renderRaceLink(item.key, item.race_name)}</td>`;
+    html += `<td>${renderCmdrLink(item.second_commander)}</td>`;
     html += `<td class="stats-time">${formatTime(item.lead_ms)}</td>`;
     html += `<td class="stats-count">${item.lead_pct}%</td>`;
     html += '</tr>';

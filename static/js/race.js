@@ -590,7 +590,9 @@ function renderRace() {
   if (race.multi_planet) infoBadges.push('<span class="info-badge info-badge-accent">Multi-planet</span>');
   if (race.multi_mode) infoBadges.push('<span class="info-badge info-badge-accent">Multi-mode</span>');
   (race.tags || '').split(',').map(t => t.trim()).filter(Boolean).forEach(t => {
-    infoBadges.push(`<span class="info-badge info-badge-inactive" title="It's no longer possible to compete in this time trial">${esc(t)}</span>`);
+    const title = t === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${t}`;
+    const badgeClass = t === 'DW3' ? 'info-badge-dw3' : 'info-badge-inactive';
+    infoBadges.push(`<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(t)}</span>`);
   });
   infoEl.innerHTML = infoBadges.join('');
   // Re-inject the daylight badge after every infoEl rebuild
