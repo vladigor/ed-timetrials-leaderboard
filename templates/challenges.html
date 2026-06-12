@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Challenges — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+  <main class="page-wrapper">
+
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span>Challenges</span>
+    </div>
+
+    <h1 class="page-title">Challenges</h1>
+
+    <section class="challenge-intro">
+      <p>
+        These are optional achievements for fun. Progress is calculated from the
+        current leaderboard state and update automatically as race data changes.
+      </p>
+      <p class="challenge-caveat">
+        Caveat: progress can move backwards over time because this site does not store historical snapshots.
+        Example: if you set a PB in an Anaconda and then beat your own PB in a Viper, the site won't record that you did the Anaconda challenge because it only knows about the current result.
+      </p>
+    </section>
+
+    <section id="challenges-no-cmdr" class="challenge-empty" style="display:none">
+      <h2>Select Your Commander First</h2>
+      <p>
+        Set your commander profile on the home page before viewing challenges.
+      </p>
+      <p>
+        <a href="/">Go to home page</a>
+      </p>
+    </section>
+
+    <div id="challenges-summary" class="status-bar" style="display:none"></div>
+
+    <div id="challenges-filter-bar" class="challenge-filter-bar" style="display:none">
+      <label class="filter-toggle">
+        <input type="checkbox" id="challenge-hide-completed">
+        Hide completed challenges
+      </label>
+    </div>
+
+    <section id="challenges-container" class="challenges-grid" aria-live="polite">
+      <p class="loading-placeholder">Loading challenges…</p>
+    </section>
+
+    <section class="challenge-intro">
+      <p>
+        Got a new challenge idea?  Send a DM to Cmdr Vladigor on Discord and we'll see if we can add it.
+      </p>
+      </section>
+
+  </main>
+
+  <div class="profile-overlay" id="challenge-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="challenge-modal-title" style="display:none">
+    <div class="profile-modal challenge-modal">
+      <button id="challenge-modal-close" class="modal-close-x" aria-label="Close" title="Close">&times;</button>
+      <h2 id="challenge-modal-title" class="profile-modal-title"></h2>
+      <p id="challenge-modal-subtitle" class="profile-modal-intro"></p>
+      <ul id="challenge-modal-list" class="challenge-modal-list"></ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script type="module" src="/static/js/challenges.js?v={{ v }}"></script>
+{% endblock %}
