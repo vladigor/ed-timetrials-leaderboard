@@ -289,26 +289,31 @@ async function loadFilteredRace(filterType) {
 //     next_event: 'sunset'|'sunrise'|'dawn'|'dusk',
 //     next_event_ms: <milliseconds until event>,
 //     sun_elevation_deg: <number> }
-// A non-OK response (e.g. 404 while the API is still in development) is
-// caught and silently ignored — the page renders normally without the overlay.
+// A 404 response indicates the race POI is not yet calibrated; show invitation to submit observation.
+// Other non-OK responses (e.g. network errors) are silently ignored.
 async function loadDaylightState() {
   try {
     const cmdrParam = selectedCmdr ? `?commander=${encodeURIComponent(selectedCmdr)}` : '';
-    const data = await fetch(`/api/daylight/${encodeURIComponent(raceKey)}${cmdrParam}`).then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    });
+    const response = await fetch(`/api/daylight/${encodeURIComponent(raceKey)}${cmdrParam}`);
+    if (!response.ok) {
+      // If 404, race POI not found in daylight model — show invitation to contribute
+      if (response.status === 404) {
+        applyDaylightMissingBadge();
+      }
+      return;
+    }
+    const data = await response.json();
     daylightData = data;
     applyDaylightState(data);
   } catch (_) {
-    // API not yet available — silently skip
+    // Network error — silently skip
   }
 }
 
 function applyDaylightState(data) {
   if (!data || !data.state || !daylightWrapper) return;
   const { state, next_event, next_event_ms, sun_elevation_deg, sun_motion,
-          confidence_score, confidence_level, link } = data;
+          confidence_score, confidence_level } = data;
 
   // Drive ambient glow + horizon bar purely via CSS attribute
   daylightWrapper.dataset.daylight = state;
@@ -355,14 +360,12 @@ function applyDaylightState(data) {
   infoEl.querySelector('.info-badge-daylight')?.remove();
   daylightWrapper.querySelector('.sun-canvas-wrapper')?.remove();
 
-  const badge = document.createElement(link ? 'a' : 'span');
+  const badge = document.createElement('a');
   badge.className = `info-badge info-badge-daylight info-badge-daylight-${state}`;
   badge.textContent = parts.join(' · ');
-  if (link) {
-    badge.href = link;
-    badge.target = '_blank';
-    badge.rel = 'noopener noreferrer';
-  }
+  badge.href = `https://eddaynight.de/race/${encodeURIComponent(raceKey)}`;
+  badge.target = '_blank';
+  badge.rel = 'noopener noreferrer';
   infoEl.appendChild(badge);
 
   // Sun position canvas — placed after the info row, inside the header wrapper
@@ -377,6 +380,21 @@ function applyDaylightState(data) {
     daylightWrapper.querySelector('.race-detail-header').after(wrapper);
     drawSunCanvas(canvas);
   }
+}
+
+function applyDaylightMissingBadge() {
+  if (!infoEl) return;
+  // Remove any stale daylight badge
+  infoEl.querySelector('.info-badge-daylight')?.remove();
+
+  const badge = document.createElement('a');
+  badge.className = 'info-badge info-badge-daylight info-badge-daylight-missing';
+  badge.href = `https://eddaynight.de/race/${encodeURIComponent(raceKey)}`;
+  badge.target = '_blank';
+  badge.rel = 'noopener noreferrer';
+  badge.title = 'Help us calibrate the daylight model by sharing an observation';
+  badge.textContent = '📍 Submit daylight observation';
+  infoEl.appendChild(badge);
 }
 
 function drawSunCanvas(canvas) {
