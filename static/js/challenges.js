@@ -146,8 +146,8 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeContainsAnyNamePercent(
       'rooftop-parkour',
-      'Hey! Kids! Get Down from There!',
-      'Complete every rooftop or parkour race',
+      'Hey! Get Down from There!',
+      'Complete every rooftop and parkour race',
       ['rooftop', 'parkour'],
       doneKeySet,
       allRaces
@@ -167,7 +167,7 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeBool(
       'wind-of-change',
       'The Wind of Change',
-      'Finish an SRV race in a Scorpion',
+      'Either: Follow the Moskva down to Gorky Park. Or: Finish an SRV race in a Scorpion',
       doneRaces.some(r => String(r.type || '').toUpperCase() === 'SRV' && containsAny(r.ship, ['Scorpion'])),
       racesFromDonePredicate(doneRaces, r => String(r.type || '').toUpperCase() === 'SRV' && containsAny(r.ship, ['Scorpion']))
     ),
@@ -217,8 +217,9 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeSystemAreaPercent('colonial-rush', 'Colonial Rush', 'Complete races in the Colonia or Tir systems', ['COLONIA', 'TIR'], doneKeySet, allRaces),
     challengeAnyNInSystems('beagle-landed', 'The Beagle Has Landed', 'Complete any 5 races at Beagle Point', ['BEAGLE POINT'], 5, doneKeySet, allRaces),
     challengeAnyNInSystems('black-hole-sun', 'Black Hole Sun', 'Complete any 5 races at Sag A*', ['STUEMEAE EG-Y D4548'], 5, doneKeySet, allRaces),
+    challengeAnyNInSystems('speak-friend-enter', 'Speak Friend and Enter', "Complete at least 3 races at Rainbow's End", ['ROEFOO ZE-H D10-0'], 3, doneKeySet, allRaces),
 
-    challengeJetsetter('jetsetter', 'Jetsetter', 'Race in Colonia, Beagle Point, and Sag A* regions', doneKeySet, allRaces),
+    challengeJetsetter('jetsetter', 'Jetsetter', "Race in Colonia, Beagle Point, Sag A*, and Rainbow's End regions", doneKeySet, allRaces),
 
     challengeConstraintBool(
       'one-pip-engines',
@@ -348,9 +349,10 @@ function challengeAnyNInSystems(id, label, description, systems, n, doneKeySet, 
 
 function challengeJetsetter(id, label, description, doneKeySet, allRaces) {
   const regions = [
-    { label: 'Colonia/Tir', systems: ['COLONIA', 'TIR'] },
+    { label: 'Colonia', systems: ['COLONIA', 'TIR'] },
     { label: 'Beagle Point', systems: ['BEAGLE POINT'] },
     { label: 'Sag A*', systems: ['STUEMEAE EG-Y D4548'] },
+    { label: "Rainbow's End", systems: ['ROEFOO ZE-H D10-0'] },
   ];
 
   const regionItems = regions.map(region => {
