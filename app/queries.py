@@ -1424,6 +1424,108 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
             for r in rows
         ]
 
+        # Biggest leader (largest gap between 1st and 2nd place, % sorted)
+        async with db.execute(
+            """
+            WITH best_times AS (
+                SELECT location, name, MIN(time) AS best
+                FROM results
+                GROUP BY location, name
+            ),
+            ranked AS (
+                SELECT
+                    location,
+                    name,
+                    best,
+                    RANK() OVER (PARTITION BY location ORDER BY best ASC) AS rank
+                FROM best_times
+            ),
+            participant_counts AS (
+                SELECT location, COUNT(DISTINCT name) AS participants
+                FROM best_times
+                GROUP BY location
+                HAVING COUNT(DISTINCT name) > 5
+            ),
+            first_second AS (
+                SELECT
+                    l.key,
+                    l.name AS race_name,
+                    r1.name AS commander,
+                    r1.best AS first_time,
+                    r2.best AS second_time,
+                    r2.best - r1.best AS lead_ms,
+                    ROUND(100.0 * (r2.best - r1.best) / r2.best, 1) AS lead_pct
+                FROM ranked r1
+                JOIN ranked r2 ON r1.location = r2.location
+                    AND r1.rank = 1 AND r2.rank = 2
+                JOIN locations l ON l.key = r1.location
+                JOIN participant_counts pc ON pc.location = r1.location
+            ),
+            with_rank AS (
+                SELECT *,
+                    DENSE_RANK() OVER (ORDER BY lead_pct DESC) AS rnk
+                FROM first_second
+            )
+            SELECT key, race_name, commander, first_time, second_time, lead_ms, lead_pct
+            FROM with_rank
+            WHERE rnk <= ?
+            ORDER BY lead_pct DESC, race_name ASC
+            """,
+            (limit,),
+        ) as cur:
+            stats["biggest_leaders"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Closest finish (smallest gap between 1st and 2nd place, % sorted)
+        async with db.execute(
+            """
+            WITH best_times AS (
+                SELECT location, name, MIN(time) AS best
+                FROM results
+                GROUP BY location, name
+            ),
+            ranked AS (
+                SELECT
+                    location,
+                    name,
+                    best,
+                    RANK() OVER (PARTITION BY location ORDER BY best ASC) AS rank
+                FROM best_times
+            ),
+            participant_counts AS (
+                SELECT location, COUNT(DISTINCT name) AS participants
+                FROM best_times
+                GROUP BY location
+                HAVING COUNT(DISTINCT name) > 5
+            ),
+            first_second AS (
+                SELECT
+                    l.key,
+                    l.name AS race_name,
+                    r1.name AS commander,
+                    r1.best AS first_time,
+                    r2.best AS second_time,
+                    r2.best - r1.best AS lead_ms,
+                    ROUND(100.0 * (r2.best - r1.best) / r2.best, 2) AS lead_pct
+                FROM ranked r1
+                JOIN ranked r2 ON r1.location = r2.location
+                    AND r1.rank = 1 AND r2.rank = 2
+                JOIN locations l ON l.key = r1.location
+                JOIN participant_counts pc ON pc.location = r1.location
+            ),
+            with_rank AS (
+                SELECT *,
+                    DENSE_RANK() OVER (ORDER BY lead_pct ASC) AS rnk
+                FROM first_second
+            )
+            SELECT key, race_name, commander, first_time, second_time, lead_ms, lead_pct
+            FROM with_rank
+            WHERE rnk <= ?
+            ORDER BY lead_pct ASC, race_name ASC
+            """,
+            (limit,),
+        ) as cur:
+            stats["closest_finishes"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
         return stats
     finally:
         await db.close()

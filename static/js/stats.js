@@ -138,8 +138,25 @@ function render() {
     html += '<h3 class="stats-subsection-heading">Top Contributors</h3>';
     html += renderTopNTable(stats.top_creators, 'creator', 'races created');
   }
-
   html += '</section>';
+
+  // ── Biggest Leaders ─────────────────────────────────────────────────────
+  if (stats.biggest_leaders && stats.biggest_leaders.length > 0) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Biggest Leaders</h2>';
+    html += '<p class="stats-section-description">The largest gaps between 1st and 2nd place — pure dominance!</p>';
+    html += renderLeaderGapTable(stats.biggest_leaders);
+    html += '</section>';
+  }
+
+  // ── Closest Finishes ────────────────────────────────────────────────────
+  if (stats.closest_finishes && stats.closest_finishes.length > 0) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Closest Finishes</h2>';
+    html += '<p class="stats-section-description">The tightest races — where victory hung by a thread!</p>';
+    html += renderLeaderGapTable(stats.closest_finishes);
+    html += '</section>';
+  }
 
   // ── Most Competitive Races ──────────────────────────────────────────────
   if (stats.top_competitive_races && stats.top_competitive_races.length > 0) {
@@ -414,6 +431,39 @@ function renderPopularShipNamesTable(items) {
     html += '<tr>';
     html += `<td>${esc(item.ship_name)}</td>`;
     html += `<td>${cmdrs || '<span class="muted">—</span>'}</td>`;
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderLeaderGapTable(items) {
+  if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
+
+  let html = '<table class="stats-table">';
+  html += '<thead><tr>';
+  html += `<th class="stats-rank">Rank</th>`;
+  html += `<th>Winner</th>`;
+  html += `<th>Race</th>`;
+  html += `<th class="stats-time">Lead Time</th>`;
+  html += `<th class="stats-count">Lead %</th>`;
+  html += '</tr></thead>';
+  html += '<tbody>';
+
+  let currentRank = 1;
+  items.forEach((item, idx) => {
+    if (idx > 0 && item.lead_pct !== items[idx - 1].lead_pct) {
+      currentRank = idx + 1;
+    }
+    const medal = currentRank === 1 ? '🏆' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
+    const rowClass = selectedCmdr && item.commander === selectedCmdr ? ' class="row-cmdr"' : '';
+    html += `<tr${rowClass}>`;
+    html += `<td class="stats-rank">${medal}</td>`;
+    html += `<td>${renderCmdrLink(item.commander)}</td>`;
+    html += `<td>${renderRaceLink(item.key, item.race_name)}</td>`;
+    html += `<td class="stats-time">${formatTime(item.lead_ms)}</td>`;
+    html += `<td class="stats-count">${item.lead_pct}%</td>`;
     html += '</tr>';
   });
 
