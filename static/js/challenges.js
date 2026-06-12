@@ -141,6 +141,34 @@ function buildChallenges(cmdrStats, allRaces) {
       })
     ),
 
+    challengeContainsAnyNamePercent(
+      'rallying-to-new-heights',
+      "Rallying to new heights",
+      'Compete in every DW3 rendezvous rally',
+      ['dw3 rendezvous rally', 'dws rendezvous rally'],
+      doneKeySet,
+      allRaces
+    ),
+
+    challengeContainsNameOrDescriptionPercent(
+      'inspired',
+      'Inspired',
+      'Complete in races at Thargoid spire sites',
+      'thargoid spire',
+      doneKeySet,
+      allRaces,
+      ['Indra Spire Site Scramble']
+    ),
+
+    challengeTaggedPercent(
+      'dw3-completionist',
+      'DW3 Completionist',
+      'Finish every DW3 race',
+      'DW3',
+      doneKeySet,
+      allRaces
+    ),
+
     challengeFixedSetPercent('titan-cup-3311', 'The 3311 Titan Cup', 'Complete every 3311 Titan Cup race', TITAN_CUP_3311, doneRaces, allRaces),
     challengeFixedSetPercent('winter-olympics-3310', 'The 3310 Winter Olympics', 'Complete every 3310 Winter Olympics race', WINTER_OLYMPICS_3310, doneRaces, allRaces),
 
@@ -172,7 +200,7 @@ function buildChallenges(cmdrStats, allRaces) {
       racesFromDonePredicate(doneRaces, r => String(r.type || '').toUpperCase() === 'SRV' && containsAny(r.ship, ['Scorpion']))
     ),
 
-    challengeFixedSetBool('lets-go', "Let's Go!", 'Leap off a mountain in one of the known descent races', [
+    challengeFixedSetBool('lets-go', "Let's Go!", 'Embrace your inner lemming and leap off a mountain.', [
       'Argon Ice Descent',
       'DW3 Rendezvous Rally 4 pt. 2: The Descent',
       'DW3 Syrenthis Verge mountain descent',
@@ -211,7 +239,7 @@ function buildChallenges(cmdrStats, allRaces) {
       racesFromDonePredicate(doneRaces, r => containsAny(r.ship, ['Anaconda']))
     ),
 
-    challengeLetterE('eeee', 'Eeee', 'Complete 4 races that begin with E', doneRaces),
+    challengeLetterE('eeee', 'eeee', 'Complete 4 races that begin with E', doneRaces),
     challengeAlphabet('alphabeteer', 'Alphabeteer', 'Complete races beginning with each letter of the alphabet', doneRaces),
 
     challengeSystemAreaPercent('colonial-rush', 'Colonial Rush', 'Complete races in the Colonia or Tir systems', ['COLONIA', 'TIR'], doneKeySet, allRaces),
@@ -285,6 +313,62 @@ function challengeContainsNameBool(id, label, description, needle, doneRaces, al
 
 function challengeContainsAnyNamePercent(id, label, description, needles, doneKeySet, allRaces) {
   const required = allRaces.filter(r => needles.some(n => normalise(r.name).includes(normalise(n))));
+  const done = required.filter(r => doneKeySet.has(r.key)).length;
+  const total = required.length;
+  return {
+    id,
+    label,
+    description,
+    type: 'percent',
+    count: done,
+    total,
+    percent: total ? Math.round((done / total) * 100) : 0,
+    detailsItems: toRaceItems(required, doneKeySet),
+  };
+}
+
+function challengeContainsNameOrDescriptionPercent(id, label, description, needle, doneKeySet, allRaces, namedRaces = []) {
+  const needleNorm = normalise(needle);
+  const seenKeys = new Set();
+  const required = [];
+
+  // Add specific named races
+  for (const raceName of namedRaces) {
+    const match = allRaces.find(r => normalise(r.name) === normalise(raceName))
+      || allRaces.find(r => normalise(r.name).includes(normalise(raceName)));
+    if (match && !seenKeys.has(match.key)) {
+      seenKeys.add(match.key);
+      required.push(match);
+    }
+  }
+
+  // Add races matching pattern in name or description
+  for (const race of allRaces) {
+    if (seenKeys.has(race.key)) continue;
+    const nameText = normalise(race.name || '');
+    const descriptionText = normalise(race.description || '');
+    if (nameText.includes(needleNorm) || descriptionText.includes(needleNorm)) {
+      seenKeys.add(race.key);
+      required.push(race);
+    }
+  }
+
+  const done = required.filter(r => doneKeySet.has(r.key)).length;
+  const total = required.length;
+  return {
+    id,
+    label,
+    description,
+    type: 'percent',
+    count: done,
+    total,
+    percent: total ? Math.round((done / total) * 100) : 0,
+    detailsItems: toRaceItems(required, doneKeySet),
+  };
+}
+
+function challengeTaggedPercent(id, label, description, tag, doneKeySet, allRaces) {
+  const required = allRaces.filter(r => hasTag(r, tag));
   const done = required.filter(r => doneKeySet.has(r.key)).length;
   const total = required.length;
   return {

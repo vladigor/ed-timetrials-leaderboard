@@ -78,6 +78,7 @@ async def list_races(
             SELECT
                 l.key,
                 l.name,
+                l.description,
                 l.type,
                 l.version,
                 l.system,
