@@ -953,13 +953,13 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
 
         # DW3 races
         async with db.execute(
-            "SELECT COUNT(*) AS cnt FROM locations WHERE name LIKE 'DW3%' OR name LIKE 'The DW3%'"
+            "SELECT COUNT(*) AS cnt FROM locations WHERE tags LIKE '%DW3%'"
         ) as cur:
             stats["dw3_races"] = (await cur.fetchone())["cnt"]
 
         # Non-DW3 races
         async with db.execute(
-            "SELECT COUNT(*) AS cnt FROM locations WHERE name NOT LIKE 'DW3%' AND name NOT LIKE 'The DW3%'"
+            "SELECT COUNT(*) AS cnt FROM locations WHERE tags NOT LIKE '%DW3%'"
         ) as cur:
             stats["non_dw3_races"] = (await cur.fetchone())["cnt"]
 
@@ -973,7 +973,7 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
             SELECT COUNT(DISTINCT r.name) AS cnt
             FROM results r
             JOIN locations l ON r.location = l.key
-            WHERE l.name LIKE 'DW3%' OR l.name LIKE 'The DW3%'
+            WHERE l.tags LIKE '%DW3%'
             """
         ) as cur:
             stats["dw3_racers"] = (await cur.fetchone())["cnt"]
@@ -984,7 +984,7 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
             SELECT COUNT(DISTINCT r.name) AS cnt
             FROM results r
             JOIN locations l ON r.location = l.key
-            WHERE l.name NOT LIKE 'DW3%' AND l.name NOT LIKE 'The DW3%'
+            WHERE l.tags NOT LIKE '%DW3%'
             """
         ) as cur:
             stats["non_dw3_racers"] = (await cur.fetchone())["cnt"]
@@ -1200,13 +1200,14 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                     l.name,
                     l.type,
                     l.version,
+                    l.tags,
                     COUNT(DISTINCT r.name) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) DESC) AS rank
                 FROM locations l
                 JOIN results r ON r.location = l.key
                 GROUP BY l.key
             )
-            SELECT key, name, type, version, count
+            SELECT key, name, type, version, tags, count
             FROM ranked
             WHERE rank <= ?
             ORDER BY count DESC, name ASC
@@ -1224,13 +1225,14 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                     l.name,
                     l.type,
                     l.version,
+                                        l.tags,
                     COUNT(DISTINCT r.name) AS count,
                     DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) ASC) AS rank
                 FROM locations l
                 JOIN results r ON r.location = l.key
                 GROUP BY l.key
             )
-            SELECT key, name, type, version, count
+                        SELECT key, name, type, version, tags, count
             FROM ranked
             WHERE rank <= ?
               AND (? > 6 OR count <= 4)
@@ -1249,13 +1251,14 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                     l.name,
                     l.type,
                     l.version,
+                    l.tags,
                     MAX(r.updated) AS last_active,
                     DENSE_RANK() OVER (ORDER BY MAX(r.updated) ASC) AS rank
                 FROM locations l
                 JOIN results r ON r.location = l.key
                 GROUP BY l.key
             )
-            SELECT key, name, type, version, last_active
+            SELECT key, name, type, version, tags, last_active
             FROM ranked
             WHERE rank <= ?
             ORDER BY last_active ASC, name ASC
@@ -1429,6 +1432,116 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
             }
             for r in rows
         ]
+
+        # Biggest leader (largest gap between 1st and 2nd place, % sorted)
+        async with db.execute(
+            """
+            WITH best_times AS (
+                SELECT location, name, MIN(time) AS best
+                FROM results
+                GROUP BY location, name
+            ),
+            ranked AS (
+                SELECT
+                    location,
+                    name,
+                    best,
+                    RANK() OVER (PARTITION BY location ORDER BY best ASC) AS rank
+                FROM best_times
+            ),
+            participant_counts AS (
+                SELECT location, COUNT(DISTINCT name) AS participants
+                FROM best_times
+                GROUP BY location
+                HAVING COUNT(DISTINCT name) > 5
+            ),
+            first_second AS (
+                SELECT
+                    l.key,
+                    l.name AS race_name,
+                    l.type,
+                    l.version,
+                    l.tags,
+                    r1.name AS commander,
+                    r2.name AS second_commander,
+                    r1.best AS first_time,
+                    r2.best AS second_time,
+                    r2.best - r1.best AS lead_ms,
+                    ROUND(100.0 * (r2.best - r1.best) / r2.best, 1) AS lead_pct
+                FROM ranked r1
+                JOIN ranked r2 ON r1.location = r2.location
+                    AND r1.rank = 1 AND r2.rank = 2
+                JOIN locations l ON l.key = r1.location
+                JOIN participant_counts pc ON pc.location = r1.location
+            ),
+            with_rank AS (
+                SELECT *,
+                    DENSE_RANK() OVER (ORDER BY lead_pct DESC) AS rnk
+                FROM first_second
+            )
+            SELECT key, race_name, type, version, tags, commander, second_commander, first_time, second_time, lead_ms, lead_pct
+            FROM with_rank
+            WHERE rnk <= ?
+            ORDER BY lead_pct DESC, race_name ASC
+            """,
+            (limit,),
+        ) as cur:
+            stats["biggest_leaders"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        # Closest finish (smallest gap between 1st and 2nd place, % sorted)
+        async with db.execute(
+            """
+            WITH best_times AS (
+                SELECT location, name, MIN(time) AS best
+                FROM results
+                GROUP BY location, name
+            ),
+            ranked AS (
+                SELECT
+                    location,
+                    name,
+                    best,
+                    RANK() OVER (PARTITION BY location ORDER BY best ASC) AS rank
+                FROM best_times
+            ),
+            participant_counts AS (
+                SELECT location, COUNT(DISTINCT name) AS participants
+                FROM best_times
+                GROUP BY location
+                HAVING COUNT(DISTINCT name) > 5
+            ),
+            first_second AS (
+                SELECT
+                    l.key,
+                    l.name AS race_name,
+                    l.type,
+                    l.version,
+                    l.tags,
+                    r1.name AS commander,
+                    r2.name AS second_commander,
+                    r1.best AS first_time,
+                    r2.best AS second_time,
+                    r2.best - r1.best AS lead_ms,
+                    ROUND(100.0 * (r2.best - r1.best) / r2.best, 2) AS lead_pct
+                FROM ranked r1
+                JOIN ranked r2 ON r1.location = r2.location
+                    AND r1.rank = 1 AND r2.rank = 2
+                JOIN locations l ON l.key = r1.location
+                JOIN participant_counts pc ON pc.location = r1.location
+            ),
+            with_rank AS (
+                SELECT *,
+                    DENSE_RANK() OVER (ORDER BY lead_pct ASC) AS rnk
+                FROM first_second
+            )
+            SELECT key, race_name, type, version, tags, commander, second_commander, first_time, second_time, lead_ms, lead_pct
+            FROM with_rank
+            WHERE rnk <= ?
+            ORDER BY lead_pct ASC, race_name ASC
+            """,
+            (limit,),
+        ) as cur:
+            stats["closest_finishes"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
         return stats
     finally:

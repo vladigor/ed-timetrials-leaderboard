@@ -229,7 +229,8 @@ function renderTable() {
   // Client-side filter: hide DW3 races
   if (filterHideDW3) {
     races = races.filter(r => {
-      return !r.name.startsWith('DW3') && !r.name.startsWith('The DW3');
+      const hasDW3Tag = (r.tags || '').split(',').map(t => t.trim()).includes('DW3');
+      return !hasDW3Tag;
     });
   }
 

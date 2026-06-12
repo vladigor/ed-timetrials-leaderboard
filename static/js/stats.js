@@ -138,8 +138,25 @@ function render() {
     html += '<h3 class="stats-subsection-heading">Top Contributors</h3>';
     html += renderTopNTable(stats.top_creators, 'creator', 'races created');
   }
-
   html += '</section>';
+
+  // ── Biggest Leaders ─────────────────────────────────────────────────────
+  if (stats.biggest_leaders && stats.biggest_leaders.length > 0) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Biggest Leaders</h2>';
+    html += '<p class="stats-section-description">The largest gaps between 1st and 2nd place — pure dominance!</p>';
+    html += renderLeaderGapTable(stats.biggest_leaders);
+    html += '</section>';
+  }
+
+  // ── Closest Finishes ────────────────────────────────────────────────────
+  if (stats.closest_finishes && stats.closest_finishes.length > 0) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Closest Finishes</h2>';
+    html += '<p class="stats-section-description">The tightest races — where victory hung by a thread!</p>';
+    html += renderLeaderGapTable(stats.closest_finishes);
+    html += '</section>';
+  }
 
   // ── Most Competitive Races ──────────────────────────────────────────────
   if (stats.top_competitive_races && stats.top_competitive_races.length > 0) {
@@ -256,6 +273,20 @@ function versionBadge(version) {
   return '';
 }
 
+function tagsBadges(tags) {
+  if (!tags) return '';
+  return tags
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean)
+    .map(t => {
+      const title = t === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${t}`;
+      const badgeClass = t === 'DW3' ? 'info-badge-dw3' : 'info-badge-inactive';
+      return `<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(t)}</span>`;
+    })
+    .join(' ');
+}
+
 function renderTopNTable(items, nameLabel, countLabel) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
 
@@ -324,7 +355,7 @@ function renderRaceTable(items, countLabel) {
   html += '<tbody>';
 
   items.forEach(item => {
-    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)}`;
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)} ${tagsBadges(item.tags)}`;
     html += '<tr>';
     html += `<td>${renderRaceLink(item.key, item.name)} ${badges}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
@@ -367,7 +398,7 @@ function renderRecentRacesTable(items) {
   html += '<tbody>';
 
   items.forEach(item => {
-    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)}`;
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)} ${tagsBadges(item.tags)}`;
     html += '<tr>';
     html += `<td>${renderRaceLink(item.key, item.name)} ${badges}</td>`;
     html += `<td class="stats-time">${relativeTime(item.last_active)}</td>`;
@@ -414,6 +445,36 @@ function renderPopularShipNamesTable(items) {
     html += '<tr>';
     html += `<td>${esc(item.ship_name)}</td>`;
     html += `<td>${cmdrs || '<span class="muted">—</span>'}</td>`;
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderLeaderGapTable(items) {
+  if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
+
+  let html = '<table class="stats-table">';
+  html += '<thead><tr>';
+  html += `<th>Race</th>`;
+  html += `<th>Winner</th>`;
+  html += `<th>2nd Place</th>`;
+  html += `<th class="stats-time">Lead Time</th>`;
+  html += `<th class="stats-count">Lead %</th>`;
+  html += '</tr></thead>';
+  html += '<tbody>';
+
+  items.forEach(item => {
+    const isSelectedCmdr = selectedCmdr && (item.commander === selectedCmdr || item.second_commander === selectedCmdr);
+    const rowClass = isSelectedCmdr ? ' class="row-cmdr"' : '';
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)} ${tagsBadges(item.tags)}`;
+    html += `<tr${rowClass}>`;
+    html += `<td>${renderRaceLink(item.key, item.race_name)} ${badges}</td>`;
+    html += `<td>${renderCmdrLink(item.commander)}</td>`;
+    html += `<td>${renderCmdrLink(item.second_commander)}</td>`;
+    html += `<td class="stats-time">${formatTime(item.lead_ms)}</td>`;
+    html += `<td class="stats-count">${item.lead_pct}%</td>`;
     html += '</tr>';
   });
 

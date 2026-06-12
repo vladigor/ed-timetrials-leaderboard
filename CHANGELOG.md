@@ -2,8 +2,13 @@
 
 ## 2026-06-08
 
-- Race page:
-    - Added daylight reporting
+- General:
+    - Added DW3 badges to DW3 races
+    - If you've got the site open on the race page or activity page when you complete a race, the "current system" will be updated to the system that the race took place on.
+         - The "current system" drives the "Not Yet Done" races on the cmdr page and the distance on the /races-list page.
+- Stats page:
+    - Added "Biggest leaders" and "Closest finishes" tables
+    - Fixed some misreporting of DW3 races
 
 ## 2026-06-01
 

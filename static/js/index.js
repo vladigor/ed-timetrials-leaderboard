@@ -200,7 +200,8 @@ function renderGrid() {
   // Client-side filter: hide DW3 races
   if (filterHideDW3) {
     races = races.filter(r => {
-      return !r.name.startsWith('DW3') && !r.name.startsWith('The DW3');
+      const hasDW3Tag = (r.tags || '').split(',').map(t => t.trim()).includes('DW3');
+      return !hasDW3Tag;
     });
   }
 
@@ -304,7 +305,11 @@ function raceCard(r) {
     r.multi_mode ? `<span class="info-badge info-badge-accent">Multi-mode</span>` : '',
     r.multi_planet ? `<span class="info-badge info-badge-accent">Multi-planet</span>` : '',
     r.multi_system ? `<span class="info-badge info-badge-accent">Multi-system</span>` : '',
-    (r.tags || '').split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="info-badge info-badge-inactive" title="It's no longer possible to compete in this time trial">${esc(t)}</span>`).join(''),
+    (r.tags || '').split(',').map(t => t.trim()).filter(Boolean).map(t => {
+      const title = t === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${t}`;
+      const badgeClass = t === 'DW3' ? 'info-badge-dw3' : 'info-badge-inactive';
+      return `<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(t)}</span>`;
+    }).join(''),
   ].join('');
 
   return `
