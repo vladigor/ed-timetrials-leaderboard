@@ -118,14 +118,9 @@ function render() {
   html += '<section class="stats-section">';
   html += '<h2 class="cmdr-section-heading">Top Performers</h2>';
 
-  if (stats.top_gold_medals && stats.top_gold_medals.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Gold Medals (1st Place Finishes)</h3>';
-    html += renderTopNTable(stats.top_gold_medals, 'commander', 'gold medals');
-  }
-
   if (stats.top_podium_finishes && stats.top_podium_finishes.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Podium Finishes (In the top 3)</h3>';
-    html += renderTopNTable(stats.top_podium_finishes, 'commander', 'podium finishes');
+    html += '<h3 class="stats-subsection-heading">Medals Table</h3>';
+    html += renderPodiumTable(stats.top_podium_finishes);
   }
 
   if (stats.top_dedicated_racers && stats.top_dedicated_racers.length > 0) {
@@ -316,6 +311,41 @@ function renderTopNTable(items, nameLabel, countLabel) {
     html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${nameDisplay}</td>`;
     html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderPodiumTable(items) {
+  if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
+
+  let html = '<table class="stats-table">';
+  html += '<thead><tr>';
+  html += `<th class="stats-rank">Rank</th>`;
+  html += `<th>Commander</th>`;
+  html += `<th class="stats-count">🥇</th>`;
+  html += `<th class="stats-count">🥈</th>`;
+  html += `<th class="stats-count">🥉</th>`;
+  html += '</tr></thead>';
+  html += '<tbody>';
+
+  let currentRank = 1;
+  items.forEach((item, idx) => {
+    if (idx > 0 && (item.gold !== items[idx - 1].gold || item.silver !== items[idx - 1].silver || item.bronze !== items[idx - 1].bronze)) {
+      currentRank = idx + 1;
+    }
+    const medal = currentRank === 1 ? '🏆' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
+    const nameDisplay = renderCmdrLink(item.name);
+    const rowClass = selectedCmdr && item.name === selectedCmdr ? ' class="row-cmdr"' : '';
+
+    html += `<tr${rowClass}>`;
+    html += `<td class="stats-rank">${medal}</td>`;
+    html += `<td>${nameDisplay}</td>`;
+    html += `<td class="stats-count">${item.gold}</td>`;
+    html += `<td class="stats-count">${item.silver}</td>`;
+    html += `<td class="stats-count">${item.bronze}</td>`;
     html += '</tr>';
   });
 

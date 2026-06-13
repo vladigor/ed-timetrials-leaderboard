@@ -1158,15 +1158,18 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
                 SELECT
                     name,
                     COUNT(*) AS count,
-                    DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+                    SUM(CASE WHEN position = 1 THEN 1 ELSE 0 END) AS gold,
+                    SUM(CASE WHEN position = 2 THEN 1 ELSE 0 END) AS silver,
+                    SUM(CASE WHEN position = 3 THEN 1 ELSE 0 END) AS bronze,
+                    DENSE_RANK() OVER (ORDER BY SUM(CASE WHEN position = 1 THEN 1 ELSE 0 END) DESC, SUM(CASE WHEN position = 2 THEN 1 ELSE 0 END) DESC, SUM(CASE WHEN position = 3 THEN 1 ELSE 0 END) DESC) AS rank
                 FROM positions
                 WHERE position <= 3
                 GROUP BY name
             )
-            SELECT name, count
+            SELECT name, count, gold, silver, bronze
             FROM ranked
             WHERE rank <= ?
-            ORDER BY count DESC, name ASC
+            ORDER BY gold DESC, silver DESC, bronze DESC, name ASC
             """,
             (limit,),
         ) as cur:
