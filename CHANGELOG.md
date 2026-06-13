@@ -3,12 +3,19 @@
 ## 2026-06-08
 
 - General:
+    - Added day/night reporting!
+        - If the day/night state of a race is known it will be displayed on the race page.
+        - Once it has been shown, the value feeds back to the index page. An icon is shown on the race card showing the day/night state. Items on the index page can now be filtered to show just day only.
+        - If the day/night state of a race is unknown a link is shown to enable you to submit an observation and inform the model.
+        - Many thanks to Louish99 for this. Its all his hard work - he just provided the capabilty for this site to display it.  https://eddaynight.de/
     - Added DW3 badges to DW3 races
-    - If you've got the site open on the race page or activity page when you complete a race, the "current system" will be updated to the system that the race took place on.
-         - The "current system" drives the "Not Yet Done" races on the cmdr page and the distance on the /races-list page.
+    - Auto-update of your current system.
+         - If you've got the site open on the race page or activity page when you complete a race the "current system" will be updated to the system that the race took place on.
+         - NB: The "current system" is used for distance-based sorting and filtering on the "Not Yet Done" races on the cmdr page and on the /races-list page.
 - Stats page:
     - Added "Biggest leaders" and "Closest finishes" tables
     - Fixed some misreporting of DW3 races
+    - Updated the golds/podium finishes tables to make a single medals table.
 
 ## 2026-06-01
 
