@@ -129,7 +129,7 @@ async function init() {
   }
 
   // Seed poller with current snapshot, reload races if anything changes
-  poller = new ChangePoller(60_000, async () => {
+  poller = new ChangePoller(30_000, async () => {
     setStatus('updating');
     await loadRaces();
     setStatus('live');
