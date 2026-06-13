@@ -206,7 +206,8 @@ function buildChallenges(cmdrStats, allRaces) {
       'DW3 Syrenthis Verge mountain descent',
       'The Camp Bucky hill climb',
       'The Kumay Chimney Stacks',
-      'The Distant Worlds 3 HQ Crater Cross'
+      'The Distant Worlds 3 HQ Crater Cross',
+      'DW3 Rendezvous Rally 6'
     ], doneRaces, allRaces, false),
 
     challengeMountainTrip('there-and-back', 'There and Back Again', 'Complete at least one climb/descent mountain route pair', MOUNTAIN_GROUPS, allDoneNameNormSet),
@@ -367,8 +368,12 @@ function challengeContainsNameOrDescriptionPercent(id, label, description, needl
   };
 }
 
-function challengeTaggedPercent(id, label, description, tag, doneKeySet, allRaces) {
-  const required = allRaces.filter(r => hasTag(r, tag));
+function challengeTaggedPercent(id, label, description, tag, doneKeySet, allRaces, includeInactive = false) {
+  const required = allRaces.filter(r => {
+    if (!hasTag(r, tag)) return false;
+    if (includeInactive) return true;
+    return isActive(r);
+  });
   const done = required.filter(r => doneKeySet.has(r.key)).length;
   const total = required.length;
   return {
@@ -854,9 +859,20 @@ function racesFromDonePredicate(doneRaces, predicate) {
   return doneRaces.filter(predicate);
 }
 
-function racesInSystems(allRaces, systems) {
+function racesInSystems(allRaces, systems, includeInactive = false) {
   const set = new Set(systems.map(s => normalise(s)));
-  return allRaces.filter(r => set.has(normalise(r.system || '')));
+  return allRaces.filter(r => {
+    const inSystem = set.has(normalise(r.system || ''));
+    if (!inSystem) return false;
+    if (includeInactive) return true;
+    return isActive(r);
+  });
+}
+
+function isActive(race) {
+  const isInactive = hasTag(race, 'Inactive');
+  const isHorizons = String(race.version || '').toUpperCase() === 'HORIZONS';
+  return !isInactive && !isHorizons;
 }
 
 function hasTag(race, tag) {
