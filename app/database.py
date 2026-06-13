@@ -90,10 +90,11 @@ CREATE TABLE IF NOT EXISTS daylight_cache (
 
 async def get_db() -> aiosqlite.Connection:
     """Open a database connection with row_factory set to Row."""
-    db = await aiosqlite.connect(DB_PATH)
+    db = await aiosqlite.connect(DB_PATH, timeout=30)
     db.row_factory = aiosqlite.Row
     await db.execute("PRAGMA foreign_keys=ON")
     await db.execute("PRAGMA journal_mode=WAL")
+    await db.execute("PRAGMA busy_timeout=30000")
     return db
 
 
