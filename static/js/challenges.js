@@ -125,6 +125,15 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeCounterPercent('rookie-numbers', 'Those Are Rookie Numbers', 'Complete at least 50 races', doneRaces.length, 50),
 
+    challengePositionCount(
+      'always-the-bridesmaid',
+      'Always the bridesmaid',
+      'You\'re in 4th place in at least 4 races',
+      4,
+      4,
+      doneRaces
+    ),
+
     challengeBool(
       'unfair-horizons',
       'This Is So Unfair! Screw You Guys!',
@@ -160,6 +169,16 @@ function buildChallenges(cmdrStats, allRaces) {
       ['Indra Spire Site Scramble']
     ),
 
+    challengeContainsAnyNameOrDescriptionCountPercent(
+      'guardians-of-the-galaxy',
+      'Guardians of the galaxy',
+      'Visit 3 guardian sites',
+      ['Guardians', 'Guardian ruin', 'Guardian site'],
+      3,
+      doneKeySet,
+      allRaces
+    ),
+
     challengeTaggedPercent(
       'dw3-completionist',
       'DW3 Completionist',
@@ -181,6 +200,34 @@ function buildChallenges(cmdrStats, allRaces) {
       allRaces
     ),
 
+    challengeContainsNameOrDescriptionPercent(
+      'penal-colonies',
+      'One Piece at a Time',
+      'Complete every penal colony race',
+      'penal',
+      doneKeySet,
+      allRaces
+    ),
+
+    challengeContainsAnyNameCountPercent(
+      'kawasaki',
+      'The Ninja Dash',
+      'Complete 5 Kawasaki races',
+      ['kawasaki'],
+      5,
+      doneKeySet,
+      allRaces
+    ),
+
+    challengeConstraintBool(
+      'bane-of-my-existence',
+      'You are the bane of my existence and the object of all my desires',
+      'Complete a race at Bridgerton, err I mean Bridger Town',
+      allRaces,
+      doneKeySet,
+      (race) => normalise(race.system || '') === normalise('Bridger Town')
+    ),
+
     challengeBool(
       'mouth-breather',
       'Mouth Breather',
@@ -191,6 +238,12 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeContainsNameBool('kessel-run', 'Less Than 12 Parsecs', 'Complete the Kessel run in less than 12 parsecs', 'kessel run', doneRaces, allRaces),
     challengeContainsNameBool('bar-dash', 'Shaken, Not Stirred', 'Complete in a race that ends at a bar', 'bar dash', doneRaces, allRaces),
+
+    challengeFixedSetBool('cliffhanger', 'What do you call a man with a seagull on his head?', 'Climb a sheer cliff or wall', [
+      'NRC Lookout Plunge',
+      'Westerfeld Tower Climb (1 lap)',
+      "Calico's Crater (extreme challenge)"
+    ], doneRaces, allRaces, false),
 
     challengeBool(
       'wind-of-change',
@@ -261,7 +314,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeConstraintBool(
       'no-repairs',
-      "If It Ain't Broke, Don't Fix It",
+      "You will not break me",
       'Compete in a race with repair penalties',
       allRaces,
       doneKeySet,
@@ -298,6 +351,21 @@ function challengeCounterPercent(id, label, description, count, total) {
   };
 }
 
+function challengePositionCount(id, label, description, position, targetCount, doneRaces) {
+  const matching = doneRaces.filter(r => Number(r.position) === Number(position));
+  const bounded = Math.min(matching.length, targetCount);
+  return {
+    id,
+    label,
+    description,
+    type: 'percent',
+    count: bounded,
+    total: targetCount,
+    percent: Math.round((bounded / targetCount) * 100),
+    detailsItems: matching.map(toDoneRaceItem),
+  };
+}
+
 function challengeContainsNameBool(id, label, description, needle, doneRaces, allRaces) {
   const done = doneRaces.filter(r => normalise(r.race_name).includes(normalise(needle)));
   const matches = allRaces.filter(r => normalise(r.name).includes(normalise(needle)));
@@ -312,8 +380,13 @@ function challengeContainsNameBool(id, label, description, needle, doneRaces, al
   };
 }
 
-function challengeContainsAnyNamePercent(id, label, description, needles, doneKeySet, allRaces) {
-  const required = allRaces.filter(r => needles.some(n => normalise(r.name).includes(normalise(n))));
+function challengeContainsAnyNamePercent(id, label, description, needles, doneKeySet, allRaces, includeInactive = false) {
+  const required = allRaces.filter(r => {
+    const nameMatches = needles.some(n => normalise(r.name).includes(normalise(n)));
+    if (!nameMatches) return false;
+    if (includeInactive) return true;
+    return isActive(r);
+  });
   const done = required.filter(r => doneKeySet.has(r.key)).length;
   const total = required.length;
   return {
@@ -324,6 +397,53 @@ function challengeContainsAnyNamePercent(id, label, description, needles, doneKe
     count: done,
     total,
     percent: total ? Math.round((done / total) * 100) : 0,
+    detailsItems: toRaceItems(required, doneKeySet),
+  };
+}
+
+function challengeContainsAnyNameCountPercent(id, label, description, needles, targetCount, doneKeySet, allRaces, includeInactive = false) {
+  const required = allRaces.filter(r => {
+    const nameMatches = needles.some(n => normalise(r.name).includes(normalise(n)));
+    if (!nameMatches) return false;
+    if (includeInactive) return true;
+    return isActive(r);
+  });
+  const done = required.filter(r => doneKeySet.has(r.key)).length;
+  const bounded = Math.min(done, targetCount);
+  return {
+    id,
+    label,
+    description,
+    type: 'percent',
+    count: bounded,
+    total: targetCount,
+    percent: Math.round((bounded / targetCount) * 100),
+    detailsItems: toRaceItems(required, doneKeySet),
+  };
+}
+
+function challengeContainsAnyNameOrDescriptionCountPercent(id, label, description, needles, targetCount, doneKeySet, allRaces, includeInactive = false) {
+  const required = allRaces.filter(r => {
+    const nameText = normalise(r.name || '');
+    const descriptionText = normalise(r.description || '');
+    const matches = needles.some(n => {
+      const needle = normalise(n);
+      return nameText.includes(needle) || descriptionText.includes(needle);
+    });
+    if (!matches) return false;
+    if (includeInactive) return true;
+    return isActive(r);
+  });
+  const done = required.filter(r => doneKeySet.has(r.key)).length;
+  const bounded = Math.min(done, targetCount);
+  return {
+    id,
+    label,
+    description,
+    type: 'percent',
+    count: bounded,
+    total: targetCount,
+    percent: Math.round((bounded / targetCount) * 100),
     detailsItems: toRaceItems(required, doneKeySet),
   };
 }
