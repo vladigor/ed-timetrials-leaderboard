@@ -485,7 +485,7 @@ function drawSunCanvas(canvas) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
   ctx.fillText(
-    `Sun altitude ${alt.toFixed(2)}° · ${trend || 'trend unknown'}`,
+    `Sun elevation ${alt.toFixed(2)}° · ${trend || 'trend unknown'}`,
     w / 2, h - 12
   );
 }

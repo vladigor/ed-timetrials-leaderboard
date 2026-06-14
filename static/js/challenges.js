@@ -47,7 +47,10 @@ const MOUNTAIN_GROUPS = [
   ['DW3 Syrenthis Verge mountain climb', 'DW3 Syrenthis Verge mountain descent'],
   ['The Camp Bucky hill climb'],
   ['The Kumay Chimney Stacks'],
-  ['The Distant Worlds 3 HQ Crater Cross']
+  ['The Distant Worlds 3 HQ Crater Cross'],
+  ['Kawasaki Town Down and Back'],
+  ['Kawasaki Town Uphill Battle', 'Kawasaki Town Downhill Dash'],
+
 ];
 
 const SNAKE_SHIPS = [
@@ -263,7 +266,7 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeContainsNameBool('kessel-run', 'Less Than 12 Parsecs', 'Complete the Kessel run in less than 12 parsecs', 'kessel run', doneRaces, allRaces),
     challengeContainsNameBool('bar-dash', 'Shaken, Not Stirred', 'Complete in a race that ends at a bar', 'bar dash', doneRaces, allRaces),
 
-    challengeFixedSetBool('cliffhanger', 'What do you call a man with a seagull on his head?', 'Climb a sheer cliff or wall', [
+    challengeFixedSetBool('cliffhanger', 'They were so preoccupied with whether or not they *could*, they didn’t stop to think if they *should*', 'Climb a sheer cliff or wall', [
       'NRC Lookout Plunge',
       'Westerfeld Tower Climb (1 lap)',
       "Calico's Crater (extreme challenge)"
@@ -287,9 +290,9 @@ function buildChallenges(cmdrStats, allRaces) {
       'DW3 Rendezvous Rally 6'
     ], doneRaces, allRaces, false),
 
-    challengeMountainTrip('there-and-back', 'There and Back Again', 'Complete at least one climb/descent mountain route pair', MOUNTAIN_GROUPS, allDoneNameNormSet),
+    challengeMountainTrip('there-and-back', 'I\ll Be Back', 'Complete at least one climb/descent mountain route pair', MOUNTAIN_GROUPS, allDoneNameNormSet),
 
-    challengeMountainTripCount('there-and-back-3', 'There and Back Again (3x)', 'Complete three different mountain route groups', MOUNTAIN_GROUPS, allDoneNameNormSet, 3),
+    challengeMountainTripCount('there-and-back-3', 'There and Back Again', 'Complete five different mountain route groups', MOUNTAIN_GROUPS, allDoneNameNormSet, 5),
 
     challengeSnakeEyes('snake-eyes', 'Snake Eyes', 'Set a PB in 5 different snake ships', doneRaces),
 
