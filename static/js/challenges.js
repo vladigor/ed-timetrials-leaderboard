@@ -172,7 +172,7 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeContainsAnyNameOrDescriptionCountPercent(
       'guardians-of-the-galaxy',
       'Guardians of the galaxy',
-      'Visit 3 guardian sites',
+      'Visit 3 Guardian sites',
       ['Guardians', 'Guardian ruin', 'Guardian site'],
       3,
       doneKeySet,
