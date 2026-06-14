@@ -115,7 +115,7 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeBool(
       'guardian-slf',
       "I'll Try Spinning - That's a Good Trick!",
-      'Set a PB time in a Guardian SLF',
+      'Set a PB in a Guardian SLF',
       doneRaces.some(r => String(r.type || '').toUpperCase() === 'FIGHTER' && containsAny(r.ship, ['Lance', 'Javelin', 'Trident'])),
       racesFromDonePredicate(doneRaces, r => String(r.type || '').toUpperCase() === 'FIGHTER' && containsAny(r.ship, ['Lance', 'Javelin', 'Trident']))
     ),
@@ -175,6 +175,15 @@ function buildChallenges(cmdrStats, allRaces) {
       'Visit 3 Guardian sites',
       ['Guardians', 'Guardian ruin', 'Guardian site'],
       3,
+      doneKeySet,
+      allRaces
+    ),
+
+    challengeContainsNameOrDescriptionPercent(
+      'supermassive-blackhole-and-back',
+      'I love you to the supermassive blackhole and back',
+      'Race to the Void Hearts',
+      'voidhearts',
       doneKeySet,
       allRaces
     ),
