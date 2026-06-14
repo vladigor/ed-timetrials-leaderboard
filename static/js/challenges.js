@@ -136,7 +136,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeBool(
       'unfair-horizons',
-      'This Is So Unfair! Screw You Guys!',
+      'I\'m sorry, Dave. I\'m afraid I can\'t do that',
       'Set a time in an inactive or legacy Horizons race',
       doneRaces.some(r => {
         const race = allRaces.find(a => a.key === r.key);
@@ -161,7 +161,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeContainsNameOrDescriptionPercent(
       'inspired',
-      'Inspired',
+      'I\'ve seen things you people wouldn\'t believe',
       'Complete in races at Thargoid spire sites',
       'thargoid spire',
       doneKeySet,
@@ -186,6 +186,21 @@ function buildChallenges(cmdrStats, allRaces) {
       'voidhearts',
       doneKeySet,
       allRaces
+    ),
+
+    challengeConstraintBool(
+      'space-is-big',
+      "Space is big. You just won't believe how vastly, hugely, mind-bogglingly big it is",
+      'Complete "DW3 The Race" or a planetary circumnavigation',
+      allRaces,
+      doneKeySet,
+      (race) => {
+        const nameText = normalise(race.name || '');
+        const descriptionText = normalise(race.description || '');
+        return nameText === normalise('DW3 The Race')
+          || nameText.includes(normalise('circumnavigation'))
+          || descriptionText.includes(normalise('circumnavigation'));
+      }
     ),
 
     challengeTaggedPercent(
