@@ -775,24 +775,11 @@ function applySuggestionHighlight(items) {
   if (acActive >= 0) nendyInput.value = items[acActive].textContent;
 }
 
-// ── Tab switching ─────────────────────────────────────────────────────────────
-const nearbyTabsEl  = document.getElementById('nearby-tabs');
-const neidyPanel    = document.getElementById('neidy-panel');
-const nendyPanel    = document.getElementById('nendy-panel');
+// ── Panel element refs ───────────────────────────────────────────────────────
 const neidyResults  = document.getElementById('neidy-results');
 const nendyResults  = document.getElementById('nendy-results');
 const neidyFiltersEl  = document.getElementById('neidy-filters');
 const nendyFiltersEl  = document.getElementById('nendy-filters');
-
-document.getElementById('tab-neidy').addEventListener('click', () => switchTab('neidy'));
-document.getElementById('tab-nendy').addEventListener('click', () => switchTab('nendy'));
-
-function switchTab(tab) {
-  document.getElementById('tab-neidy').classList.toggle('active', tab === 'neidy');
-  document.getElementById('tab-nendy').classList.toggle('active', tab === 'nendy');
-  neidyPanel.style.display = tab === 'neidy' ? '' : 'none';
-  nendyPanel.style.display = tab === 'nendy' ? '' : 'none';
-}
 
 // ── NEIDY filters ─────────────────────────────────────────────────────────────
 document.getElementById('neidy-type-btns').addEventListener('click', e => {
@@ -858,7 +845,6 @@ async function rerunOpportunities() {
 
   neidyResults.innerHTML = '<p class="empty-state">Re-analysing with current filters…</p>';
   nendyResults.innerHTML = '';
-  nearbyTabsEl.style.display = 'none';
   neidyFiltersEl.style.display = 'none';
   nendyFiltersEl.style.display = 'none';
 
@@ -923,7 +909,6 @@ async function rerunOpportunities() {
     raceDetails.push(...fetched);
   }
 
-  nearbyTabsEl.style.display = '';
   renderNeidy(resolvedName, done, raceDetails);
 }
 
@@ -937,13 +922,10 @@ async function nearbyFind() {
   neidyResults.innerHTML = '<p class="empty-state">Looking up system…</p>';
   nendyResults.innerHTML = '';
   nendyFindBtn.disabled = true;
-  nearbyTabsEl.style.display = 'none';
   neidyFiltersEl.style.display = 'none';
   _neidyScoredCache = null;
   nendyFiltersEl.style.display = 'none';
   _nendyUndoneCache = null;
-  const badge = document.getElementById('nendy-count-badge');
-  if (badge) badge.style.display = 'none';
 
   let resolvedName, x, y, z;
   try {
@@ -1024,21 +1006,17 @@ async function nearbyFind() {
     raceDetails.push(...fetched);
   }
 
-  nearbyTabsEl.style.display = '';
-  renderNeidy(resolvedName, done, raceDetails, true);
+  renderNeidy(resolvedName, done, raceDetails);
   nendyFindBtn.disabled = false;
 }
 
 function renderNendy(resolvedName, undone) {
-  const badge = document.getElementById('nendy-count-badge');
   if (undone.length === 0) {
-    if (badge) badge.style.display = 'none';
     nendyFiltersEl.style.display = '';
     nendyResults.innerHTML = `<p class="empty-state">${isSelf ? "You've" : 'This commander has'} done every race ${nendyTypeFilter ? `(filtered to ${nendyTypeFilter} races) ` : ''}\u2014 nothing left to find!</p>`;
     return;
   }
 
-  if (badge) { badge.textContent = undone.length; badge.style.display = ''; }
   _nendyUndoneCache  = undone;
   nendyFiltersEl.style.display = '';
 
@@ -1088,7 +1066,7 @@ function renderNendy(resolvedName, undone) {
     ${moreNote}`;
 }
 
-function renderNeidy(resolvedName, done, raceDetails, allowAutoSwitch = false) {
+function renderNeidy(resolvedName, done, raceDetails) {
   // Build scored list
   const scored = [];
   for (let i = 0; i < done.length; i++) {
@@ -1118,11 +1096,6 @@ function renderNeidy(resolvedName, done, raceDetails, allowAutoSwitch = false) {
 
   if (scored.length === 0) {
     neidyFiltersEl.style.display = '';
-    const nendyCount = _nendyUndoneCache ? _nendyUndoneCache.length : 0;
-    if (allowAutoSwitch && nendyCount > 0) {
-      switchTab('nendy');
-      return;
-    }
     neidyResults.innerHTML = `<p class="empty-state">No improvement data available for nearby races${neidyTypeFilter ? ` (filtered to ${neidyTypeFilter} races)` : ''}.</p>`;
     return;
   }
@@ -1181,15 +1154,8 @@ function renderNeidy(resolvedName, done, raceDetails, allowAutoSwitch = false) {
       <tbody>${rows}</tbody>
     </table>`;
 
-  const nendyCount = _nendyUndoneCache ? _nendyUndoneCache.length : 0;
-  if (nendyCount > 0) {
-    const teaser = document.createElement('div');
-    teaser.className = 'nendy-teaser';
-    teaser.innerHTML = `<span>Also found <strong>${nendyCount}</strong> race${nendyCount !== 1 ? 's' : ''} nearby you haven\'t tried yet.</span><button class="btn-chip">See Not Done Yet →</button>`;
-    teaser.querySelector('button').addEventListener('click', () => switchTab('nendy'));
-    neidyResults.appendChild(teaser);
-  }
 }
+
 
 // ── Participation Progress Bars ───────────────────────────────────────────
 async function renderParticipationBars() {

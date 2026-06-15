@@ -40,11 +40,11 @@
         <button class="section-intro-close" id="opps-intro-close" aria-label="Close" title="Hide this help text">×</button>
         Enter your current star system to find nearby races worth your attention.
         <br/>
-        The <strong>Improvement Opportunities</strong> tab ranks races you've already competed in
+        <strong>Not Done Yet</strong> lists nearby races you haven't entered, sorted by distance.
+        <br/>
+        <strong>Improvement Opportunities</strong> ranks races you've already competed in
         by how catchable the positions above you are — prioritising small time gaps and races
         where a single good run could vault you past multiple competitors.
-        <br/>
-        The <strong>Not Done Yet</strong> tab lists nearby races you haven't entered, sorted by distance.
       </p>
       <div class="nendy-controls">
         <div class="nendy-input-row">
@@ -57,12 +57,8 @@
         </div>
       </div>
 
-      <div class="nearby-tabs" id="nearby-tabs" style="display:none">
-        <button class="nearby-tab active" data-tab="nendy" id="tab-nendy">Not Done Yet<span class="tab-badge" id="nendy-count-badge" style="display:none"></span></button>
-        <button class="nearby-tab" data-tab="neidy" id="tab-neidy">Improvement Opportunities</button>
-      </div>
-
       <div id="nendy-panel">
+        <h3 class="cmdr-section-subheading">Not Done Yet</h3>
         <div class="neidy-filters" id="nendy-filters" style="display:none">
           <div class="cmdr-sort-group">
             <span class="filter-group-label">Type</span>
@@ -86,7 +82,8 @@
         </div>
         <div id="nendy-results"></div>
       </div>
-      <div id="neidy-panel" style="display:none">
+      <div id="neidy-panel">
+        <h3 class="cmdr-section-subheading">Improvement Opportunities</h3>
         <div class="neidy-filters" id="neidy-filters" style="display:none">
           <div class="cmdr-sort-group">
             <span class="filter-group-label">Type</span>
