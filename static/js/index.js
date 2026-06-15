@@ -1,6 +1,9 @@
 import { formatTime, relativeTime, esc, ordinal } from './utils.js';
 import { ChangePoller } from './poller.js';
 import { updateProfileDisplay } from './profile.js';
+import { getFavState, favDisplay, getAllFavs } from './favourites.js';
+
+const FAVOURITES_ENABLED = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
 
 // ── State ──────────────────────────────────────────────────────────────────
 let allRaces      = [];
@@ -11,6 +14,7 @@ let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // d
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
 let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
 let filterDaytimeOnly = localStorage.getItem('tt_filter_daytime_only') === '1'; // default off
+let filterHideIgnored = localStorage.getItem('tt_filter_hide_ignored') === '1'; // default off
 let filterSearchText = ''; // Not persisted - ephemeral search state
 let sortOrder     = localStorage.getItem('tt_sort_order') || 'activity';
 let poller        = null;
@@ -25,7 +29,9 @@ const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
 const checkHideDW3     = document.getElementById('filter-hide-dw3');
 const checkHideHorizons = document.getElementById('filter-hide-horizons');
 const checkDaytimeOnly  = document.getElementById('filter-daytime-only');
+const checkHideIgnored  = document.getElementById('filter-hide-ignored');   // may be null if flag off
 const cmdrRacesGroup   = document.getElementById('filter-cmdr-races-group');
+const hideIgnoredGroup = document.getElementById('filter-hide-ignored-group'); // may be null if flag off
 const sortSelect       = document.getElementById('sort-select');
 const countLabel       = document.getElementById('race-count');
 const profileLabel     = document.getElementById('profile-label');
@@ -54,9 +60,11 @@ async function init() {
   checkHideDW3.checked      = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
   checkDaytimeOnly.checked  = filterDaytimeOnly;
+  if (checkHideIgnored) checkHideIgnored.checked = filterHideIgnored;
   sortSelect.value       = sortOrder;
   updateProfileDisplay();
   updateCmdrRacesGroup();
+  updateHideIgnoredGroup();
 
   await Promise.all([loadRaces(), loadCommanders(), loadNewRaces()]);
 
@@ -89,6 +97,14 @@ async function init() {
     localStorage.setItem('tt_filter_daytime_only', filterDaytimeOnly ? '1' : '0');
     renderGrid(); // Client-side only, no need to reload from API
   });
+
+  if (checkHideIgnored) {
+    checkHideIgnored.addEventListener('change', () => {
+      filterHideIgnored = checkHideIgnored.checked;
+      localStorage.setItem('tt_filter_hide_ignored', filterHideIgnored ? '1' : '0');
+      renderGrid();
+    });
+  }
 
   searchInput.addEventListener('input', () => {
     filterSearchText = searchInput.value;
@@ -215,6 +231,11 @@ function renderGrid() {
     races = races.filter(r => r.daylight_state === 'day');
   }
 
+  // Client-side filter: hide 💔 races (favourites feature)
+  if (FAVOURITES_ENABLED && filterHideIgnored) {
+    races = races.filter(r => getFavState(r.key) !== 'ignored');
+  }
+
   // Client-side filter: search text
   if (filterSearchText.trim()) {
     const searchLower = filterSearchText.toLowerCase();
@@ -260,6 +281,15 @@ function renderGrid() {
       const bMs = activityMs(b.created_at);
       if (aMs !== bMs) return bMs - aMs; // newest first; nulls/zeros fall to end
       return activityMs(b.last_activity) - activityMs(a.last_activity);
+    });
+  } else if (FAVOURITES_ENABLED && sortOrder === 'favourites') {
+    // Favourites first, then activity; ignored races sink to the bottom
+    const order = { fav: 0, null: 1, ignored: 2 };
+    races.sort((a, b) => {
+      const fa = getFavState(a.key);
+      const fb = getFavState(b.key);
+      const cmp = (order[fa] ?? 1) - (order[fb] ?? 1);
+      return cmp !== 0 ? cmp : activityMs(b.last_activity) - activityMs(a.last_activity);
     });
   } else {
     // 'activity' — most recent first, races with no activity at the end
@@ -312,9 +342,19 @@ function raceCard(r) {
     }).join(''),
   ].join('');
 
+  let favBtn = '';
+  if (FAVOURITES_ENABLED) {
+    const state = getFavState(r.key);
+    if (state) {
+      const { icon, title } = favDisplay(state);
+      favBtn = `<span class="fav-indicator" title="${title}" aria-label="${title}">${icon}</span>`;
+    }
+  }
+
   return `
-  <a class="race-card" href="/race/${encodeURIComponent(r.key)}"
+  <a class="race-card${FAVOURITES_ENABLED ? ' race-card--has-fav' : ''}" href="/race/${encodeURIComponent(r.key)}"
      aria-label="View ${esc(r.name)} leaderboard">
+    ${favBtn}
     <div class="race-card-name">${esc(r.name)}</div>
     <div class="race-card-meta">
       ${typeBadge(r.type)}
@@ -341,6 +381,14 @@ function updateCmdrRacesGroup() {
   } else {
     cmdrRacesGroup.style.display = 'none';
   }
+}
+
+function updateHideIgnoredGroup() {
+  if (!FAVOURITES_ENABLED || !hideIgnoredGroup) return;
+  // Only show the "Hide 💔 races" checkbox when there are any ignored races
+  const prefs = getAllFavs();
+  const hasIgnored = Object.values(prefs).some(v => v === 'ignored');
+  hideIgnoredGroup.style.display = hasIgnored ? '' : 'none';
 }
 
 function populateModalSelect() {

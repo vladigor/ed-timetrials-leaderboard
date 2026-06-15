@@ -22,6 +22,13 @@ DAYLIGHT_API_BASE_URL: str = os.environ.get(
 ).rstrip("/")
 DAYLIGHT_API_TIMEOUT: float = float(os.environ.get("DAYLIGHT_API_TIMEOUT", "15.0"))
 DAYLIGHT_CACHE_TTL: int = int(os.environ.get("DAYLIGHT_CACHE_TTL", "300"))
+
+# Favourites / Ignored feature flag
+FAVOURITES_ENABLED: bool = os.environ.get("FAVOURITES_ENABLED", "").strip().lower() in (
+    "1",
+    "true",
+    "yes",
+)
 # Comma-separated list of commanders who can access the daylight API even when DAYLIGHT_API_ENABLED=false
 DAYLIGHT_API_ENABLED_FOR: frozenset[str] = frozenset(
     c.strip().lower()

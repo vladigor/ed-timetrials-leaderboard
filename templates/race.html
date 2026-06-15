@@ -26,7 +26,12 @@
 
     <div class="race-detail-header-wrapper">
       <div class="race-detail-header">
-        <h1 id="race-title">Loading…</h1>
+        <div class="race-title-row">
+          <h1 id="race-title">Loading…</h1>
+          {% if favourites_enabled %}
+          <div id="race-fav-btn-container"></div>
+          {% endif %}
+        </div>
         <div class="meta" id="race-meta"></div>
         <div class="constraints-list" id="race-constraints"></div>
         <div class="race-info-row" id="race-info"></div>
@@ -72,6 +77,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
+  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_enabled | tojson }} };</script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script type="module" src="/static/js/race.js?v={{ v }}"></script>
 {% endblock %}

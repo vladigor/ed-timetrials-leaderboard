@@ -325,6 +325,55 @@ a:hover { text-decoration: underline; }
 .entry-count { font-weight: 600; color: var(--text); }
 .activity-fresh { color: var(--good); }
 
+/* ── Fav indicator (display-only heart on race cards) ───────────────── */
+.race-card--has-fav {
+  position: relative;
+}
+
+.fav-indicator {
+  position: absolute;
+  top: .6rem;
+  right: .6rem;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: .7;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Interactive fav button — race detail page only */
+.fav-btn {
+  background: none;
+  border: none;
+  padding: .2rem .4rem;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  border-radius: .25rem;
+  opacity: .65;
+  transition: opacity .15s, transform .1s;
+  text-decoration: none !important;
+  align-self: flex-start;
+  margin-top: .15rem;
+}
+
+.fav-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* Row on race detail page: title + fav button side-by-side */
+.race-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+}
+
+.race-title-row h1 {
+  flex: 1;
+  margin: 0;
+}
+
 .th-sortable { cursor: pointer; user-select: none; }
 .th-sortable:hover { color: var(--accent); }
 .th-sortable.th-active { color: var(--text); }

@@ -1,4 +1,7 @@
 import { formatTime, formatImprovement, relativeTime, esc, ordinal } from './utils.js';
+import { getFavState } from './favourites.js';
+
+const FAVOURITES_ENABLED = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
 
 // ── State ──────────────────────────────────────────────────────────────────
 const cmdrName   = decodeURIComponent(location.pathname.split('/cmdr/')[1] ?? '');
@@ -279,6 +282,12 @@ function renderTables() {
       return sortDir === 'desc' ? -cmp : cmp;
     });
 
+    // Favourites feature: float favs to top, sink 💔 to bottom
+    if (FAVOURITES_ENABLED) {
+      const favOrder = { fav: -1, null: 0, ignored: 1 };
+      typeRaces.sort((a, b) => (favOrder[getFavState(a.key)] ?? 0) - (favOrder[getFavState(b.key)] ?? 0));
+    }
+
     const rows = typeRaces.map(r => {
       // For table display, convert back to "top X%" format
       const topPct = 100 - r.percentile;
@@ -287,9 +296,11 @@ function renderTables() {
       const isOpportunity = typeAvgTop !== undefined && topPct > typeAvgTop;
       const imp = r.improvement_ms != null ? formatImprovement(r.improvement_ms) : null;
       const shipLabel = [r.ship, r.shipname].filter(Boolean).join(' — ');
+      const favState = FAVOURITES_ENABLED ? getFavState(r.key) : null;
+      const favMarker = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
       return `
         <tr class="${isOpportunity ? 'row-opportunity' : ''}">
-          <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.race_name)}</a></td>
+          <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.race_name)}${favMarker}</a></td>
           <td class="num">${ordinal(r.position)} of ${r.total_entries}</td>
           <td class="num ${percentileClass(topPct)}">${r.position === 1 ? '#1 — top' : `top ${topPct.toFixed(1)}%`}</td>
           <td class="num ${imp ? imp.cls : ''}">${imp ? imp.text : '—'}</td>
@@ -1031,6 +1042,15 @@ function renderNendy(resolvedName, undone) {
   _nendyUndoneCache  = undone;
   nendyFiltersEl.style.display = '';
 
+  // Favourites feature: exclude 💔 races from NENDY suggestions
+  if (FAVOURITES_ENABLED) {
+    undone = undone.filter(r => getFavState(r.key) !== 'ignored');
+  }
+  if (undone.length === 0) {
+    nendyResults.innerHTML = `<p class="empty-state">${isSelf ? "You've" : 'This commander has'} done every race ${nendyTypeFilter ? `(filtered to ${nendyTypeFilter} races) ` : ''}— nothing left to find!</p>`;
+    return;
+  }
+
   const top       = undone.slice(0, 15);
   const remaining = undone.length - top.length;
 
@@ -1110,6 +1130,12 @@ function renderNeidy(resolvedName, done, raceDetails, allowAutoSwitch = false) {
   // Lower score = better opportunity
   scored.sort((a, b) => a.score - b.score);
 
+  // Favourites feature: sink 💔 races to the bottom
+  if (FAVOURITES_ENABLED) {
+    const favOrder = { fav: -1, null: 0, ignored: 1 };
+    scored.sort((a, b) => (favOrder[getFavState(a.race.key)] ?? 0) - (favOrder[getFavState(b.race.key)] ?? 0));
+  }
+
   // Cache for reference
   _neidyScoredCache  = scored;
   neidyFiltersEl.style.display = '';
@@ -1122,10 +1148,12 @@ function renderNeidy(resolvedName, done, raceDetails, allowAutoSwitch = false) {
     const leapStr = s.leapable > 0 ? `+${s.leapable}` : '—';
     const barPct  = Math.max(0, Math.min(100, Math.round((1 - Math.max(0, s.score + 0.1) / 0.6) * 100)));
     const daylightEmoji = s.race.daylight_state === 'day' ? '\u2600\ufe0f' : s.race.daylight_state === 'night' ? '\ud83c\udf19' : '';
+    const favState = FAVOURITES_ENABLED ? getFavState(s.race.key) : null;
+    const favMarker = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
     return `
       <tr>
         <td class="num muted">${i + 1}</td>
-        <td><a href="/race/${encodeURIComponent(s.race.key)}">${esc(s.race.name)}</a>${daylightEmoji ? `<span style="margin-left:1rem">${daylightEmoji}</span>` : ''}</td>
+        <td><a href="/race/${encodeURIComponent(s.race.key)}">${esc(s.race.name)}${favMarker}</a>${daylightEmoji ? `<span style="margin-left:1rem">${daylightEmoji}</span>` : ''}</td>
         <td>${typeBadge(s.race.type)}</td>
         <td class="num">${ordinal(s.myPos)} / ${s.total}</td>
         <td class="num neidy-gap">${gapStr}</td>

@@ -24,6 +24,7 @@ from .config import (
     DAYLIGHT_API_TIMEOUT,
     DAYLIGHT_CACHE_TTL,
     ENV,
+    FAVOURITES_ENABLED,
     OFFLINE,
 )
 from .database import init_db
@@ -94,7 +95,10 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "v": STATIC_VER})
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request, "v": STATIC_VER, "favourites_enabled": FAVOURITES_ENABLED},
+    )
 
 
 @app.get("/favicon.ico")
@@ -118,6 +122,7 @@ async def race_page(request: Request, key: str):
             "request": request,
             "v": STATIC_VER,
             "is_dev": ENV == "dev",
+            "favourites_enabled": FAVOURITES_ENABLED,
             "race_name": race_name,
             "race_description": race_description,
         },
@@ -126,7 +131,9 @@ async def race_page(request: Request, key: str):
 
 @app.get("/cmdr/{name}", response_class=HTMLResponse)
 async def cmdr_page(request: Request, name: str):
-    return templates.TemplateResponse("cmdr.html", {"request": request, "v": STATIC_VER})
+    return templates.TemplateResponse(
+        "cmdr.html", {"request": request, "v": STATIC_VER, "favourites_enabled": FAVOURITES_ENABLED}
+    )
 
 
 @app.get("/creator/{name}", response_class=HTMLResponse)

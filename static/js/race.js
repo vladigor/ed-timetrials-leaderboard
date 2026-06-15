@@ -1,5 +1,8 @@
 import { ordinal, formatTime, formatImprovement, formatDelta, relativeTime, esc } from './utils.js';
 import { ChangePoller } from './poller.js';
+import { getFavState, cycleFavState, favDisplay } from './favourites.js';
+
+const FAVOURITES_ENABLED = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
 
 // ── State ──────────────────────────────────────────────────────────────────
 const raceKey        = decodeURIComponent(location.pathname.split('/race/')[1] || '');
@@ -569,6 +572,11 @@ function renderRace() {
   titleEl.textContent      = race.name;
   breadcrumbEl.textContent = race.name;
 
+  // Fav button (favourites feature)
+  if (FAVOURITES_ENABLED) {
+    renderFavBtn();
+  }
+
   const _versionCls = race.version === 'ODYSSEY' ? 'badge-odyssey' : 'badge-horizons';
   const creatorHtml = race.creator
     ? (race.creator_is_cmdr
@@ -1058,6 +1066,22 @@ function _buildChartOption(results, isOdyssey, isPersonalView = false) {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
+function renderFavBtn() {
+  const container = document.getElementById('race-fav-btn-container');
+  if (!container || !race) return;
+  const state = getFavState(raceKey);
+  const { icon, title } = favDisplay(state);
+  container.innerHTML = `<button class="fav-btn" data-race-key="${esc(raceKey)}" data-fav-state="${state ?? ''}" title="${title}" aria-label="${title}">${icon}</button>`;
+  container.querySelector('.fav-btn').addEventListener('click', () => {
+    const newState = cycleFavState(raceKey);
+    const { icon: ni, title: nt } = favDisplay(newState);
+    const btn = container.querySelector('.fav-btn');
+    btn.textContent      = ni;
+    btn.title            = nt;
+    btn.dataset.favState = newState ?? '';
+  });
+}
+
 function showError(msg) {
   titleEl.textContent = 'Error';
   if (breadcrumbEl) breadcrumbEl.textContent = 'Error';

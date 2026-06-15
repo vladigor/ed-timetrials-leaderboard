@@ -38,6 +38,12 @@
           <input type="checkbox" id="filter-daytime-only">
           Daylight only
         </label>
+        {% if favourites_enabled %}
+        <label class="filter-toggle" id="filter-hide-ignored-group" style="display:none">
+          <input type="checkbox" id="filter-hide-ignored">
+          Hide 💔 races
+        </label>
+        {% endif %}
       </div>
 
       <div class="filter-group">
@@ -46,6 +52,9 @@
           <option value="activity">Recent activity</option>
           <option value="name">Name</option>
           <option value="created">Date added</option>
+          {% if favourites_enabled %}
+          <option value="favourites">Favourites first</option>
+          {% endif %}
         </select>
       </div>
 
@@ -87,5 +96,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
+  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_enabled | tojson }} };</script>
   <script type="module" src="/static/js/index.js?v={{ v }}"></script>
 {% endblock %}
