@@ -352,7 +352,7 @@ function raceCard(r) {
   }
 
   return `
-  <a class="race-card${FAVOURITES_ENABLED ? ' race-card--has-fav' : ''}" href="/race/${encodeURIComponent(r.key)}"
+  <a class="race-card" href="/race/${encodeURIComponent(r.key)}"
      aria-label="View ${esc(r.name)} leaderboard">
     ${favBtn}
     <div class="race-card-name">${esc(r.name)}</div>
