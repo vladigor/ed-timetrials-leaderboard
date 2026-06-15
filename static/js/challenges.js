@@ -251,7 +251,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeTaggedPercent(
       'dw3-completionist',
-      'Oh great. Yet another place to add to our ever-growing list of places with no Wi-Fi',
+      'Congratulations, Commander! We’ve found another system to add to our growing collection of places with no Wi-Fi',
       'Finish every DW3 race',
       'DW3',
       doneKeySet,
