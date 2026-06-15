@@ -236,6 +236,63 @@ function buildChallenges(cmdrStats, allRaces) {
       allRaces
     ),
 
+    challengeConstraintBool(
+      'jedi-reflexes',
+      'You must have Jedi reflexes if you race pods',
+      'Take part in a pod race',
+      allRaces,
+      doneKeySet,
+      (race) => {
+        if (!isActive(race)) return false;
+        const nameText = normalise(race.name || '');
+        const descriptionText = normalise(race.description || '');
+        return nameText.includes(normalise('pod race')) || nameText.includes(normalise('pod racing')) || descriptionText.includes(normalise('pod race')) || descriptionText.includes(normalise('pod racing'));
+      }
+    ),
+
+    challengeConstraintCountPercent(
+      'gotta-hurt',
+      "I don't care what universe you're from. That's gotta hurt!",
+      'Dive off the edge of 3 craters',
+      allRaces,
+      doneKeySet,
+      3,
+      (race) => {
+        if (!isActive(race)) return false;
+        const nameText = normalise(race.name || '');
+        const descriptionText = normalise(race.description || '');
+        const explicitCraterRaces = [
+          "Calico's Crater (extreme challenge)",
+          'Sitterly Crater Cross',
+          'DW3 Stuemeae crater traverse',
+        ];
+        const isExplicitCraterRace = explicitCraterRaces.some(name => nameText.includes(normalise(name)));
+        return isExplicitCraterRace
+          || nameText.includes(normalise('dive'))
+          || descriptionText.includes(normalise('dive'))
+          || nameText.includes(normalise('plung'))
+          || descriptionText.includes(normalise('plung'));
+      }
+    ),
+
+    challengeConstraintBool(
+      'ludicrous-speed',
+      'No, no, no, light speed is too slow! We\'re gonna have to go right to... Ludicrous Speed!',
+      'Complete a multi-system race',
+      allRaces,
+      doneKeySet,
+      (race) => isActive(race) && !!race.multi_system
+    ),
+
+    challengeConstraintBool(
+      'fly-higher-dead',
+      "You fly any higher, you're dead",
+      'Complete a low altitude canyon race',
+      allRaces,
+      doneKeySet,
+      (race) => isActive(race) && isCanyonRaceWithLowHeightLimit(race)
+    ),
+
     challengeContainsAnyNameCountPercent(
       'kawasaki',
       'The Ninja Dash',
@@ -323,7 +380,7 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeLetterE('eeee', 'eeee', 'Complete 4 races that begin with E', doneRaces),
     challengeAlphabet('alphabeteer', 'Alphabeteer', 'Complete races beginning with each letter of the alphabet', doneRaces),
 
-    challengeSystemAreaPercent('colonial-rush', 'Colonial Rush', 'Complete races in the Colonia or Tir systems', ['COLONIA', 'TIR'], doneKeySet, allRaces),
+    challengeSystemAreaPercent('colonial-rush', 'Colonial Rush', 'Complete races in Colonia', ['COLONIA', 'TIR'], doneKeySet, allRaces),
     challengeAnyNInSystems('beagle-landed', 'The Beagle Has Landed', 'Complete any 5 races at Beagle Point', ['BEAGLE POINT'], 5, doneKeySet, allRaces),
     challengeAnyNInSystems('black-hole-sun', 'Black Hole Sun', 'Complete any 5 races at Sag A*', ['STUEMEAE EG-Y D4548'], 5, doneKeySet, allRaces),
     challengeAnyNInSystems('speak-friend-enter', 'Speak Friend and Enter', "Complete at least 3 races at Rainbow's End", ['ROEFOO ZE-H D10-0'], 3, doneKeySet, allRaces),
@@ -620,6 +677,22 @@ function challengeConstraintBool(id, label, description, allRaces, doneKeySet, p
     type: 'bool',
     done: done.length > 0,
     progressText: done.length > 0 ? 'Completed' : 'Not completed',
+    detailsItems: toRaceItems(required, doneKeySet),
+  };
+}
+
+function challengeConstraintCountPercent(id, label, description, allRaces, doneKeySet, targetCount, predicate) {
+  const required = allRaces.filter(predicate);
+  const done = required.filter(r => doneKeySet.has(r.key)).length;
+  const bounded = Math.min(done, targetCount);
+  return {
+    id,
+    label,
+    description,
+    type: 'percent',
+    count: bounded,
+    total: targetCount,
+    percent: Math.round((bounded / targetCount) * 100),
     detailsItems: toRaceItems(required, doneKeySet),
   };
 }
@@ -1038,6 +1111,20 @@ function hasConstraintKey(race, key) {
 function hasConstraintValue(race, key, value) {
   const constraints = race.constraints || [];
   return constraints.some(c => String(c.key || '').toUpperCase() === String(key || '').toUpperCase() && Number(c.value) === Number(value));
+}
+
+function isCanyonRaceWithLowHeightLimit(race) {
+  const nameText = normalise(race.name || '');
+  const descriptionText = normalise(race.description || '');
+  const isCanyon = nameText.includes('canyon') || descriptionText.includes('canyon');
+  if (!isCanyon) return false;
+
+  const hasLowAltitudeHint = nameText.includes('low altitude')
+    || descriptionText.includes('low altitude')
+    || descriptionText.includes('200m')
+    || descriptionText.includes('100m');
+
+  return hasLowAltitudeHint;
 }
 
 function containsAny(source, options) {

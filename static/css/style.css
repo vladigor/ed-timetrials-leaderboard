@@ -1837,10 +1837,14 @@ a.info-badge:hover { opacity: .8; }
 }
 .challenge-check,
 .challenge-pct {
-  color: var(--good);
+  color: var(--accent);
   font-weight: 700;
   font-size: .92rem;
   white-space: nowrap;
+}
+.challenge-card.is-complete .challenge-check,
+.challenge-card.is-complete .challenge-pct {
+  color: var(--good);
 }
 .challenge-actions,
 .challenge-card-footer {
