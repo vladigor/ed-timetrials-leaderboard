@@ -113,14 +113,14 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeContainsNameBool(
       'cant-park-there-mate',
-      "You Can't Park There Mate",
+      "You can't park there mate",
       'Race at The Light of the Galaxy',
       'the light of the galaxy',
       doneRaces,
       allRaces
     ),
 
-    challengeSystemCoverage('souped-up-racer', 'The Torque of the Galaxy', 'Complete every race in engineer inhabited systems', ENGINEER_SYSTEMS, doneKeySet, allRaces),
+    challengeSystemCoverage('souped-up-racer', 'The torque of the galaxy', 'Complete every race in engineer inhabited systems', ENGINEER_SYSTEMS, doneKeySet, allRaces),
 
     challengeSystemCoverage('multipass', 'Multipass?', 'Complete every race in permit-locked systems', PERMIT_SYSTEMS, doneKeySet, allRaces),
 
@@ -132,10 +132,10 @@ function buildChallenges(cmdrStats, allRaces) {
       racesFromDonePredicate(doneRaces, r => String(r.type || '').toUpperCase() === 'FIGHTER' && containsAny(r.ship, ['Lance', 'Javelin', 'Trident']))
     ),
 
-    challengeContainsNameBool('hole-in-one', 'Hole in One', 'Use your SRV as a golf ball', 'golf', doneRaces, allRaces),
-    challengeContainsNameBool('squeaky-clean', 'Squeaky Clean', 'Clean the muck off your SRV using a geyser', 'geyser', doneRaces, allRaces),
+    challengeContainsNameBool('hole-in-one', 'Hole in one', 'Use your SRV as a golf ball', 'golf', doneRaces, allRaces),
+    challengeContainsNameBool('squeaky-clean', 'Squeaky clean', 'Clean the muck off your SRV using a geyser', 'geyser', doneRaces, allRaces),
 
-    challengeCounterPercent('rookie-numbers', 'Those Are Rookie Numbers', 'Complete at least 50 races', doneRaces.length, 50),
+    challengeCounterPercent('rookie-numbers', 'Those are rookie numbers', 'Complete at least 50 races', doneRaces.length, 50),
 
     challengePositionCount(
       'always-the-bridesmaid',
@@ -164,7 +164,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeContainsAnyNamePercent(
       'rallying-to-new-heights',
-      "Rallying to new heights",
+      'Rallying to new heights',
       'Compete in every DW3 rendezvous rally',
       ['dw3 rendezvous rally', 'dws rendezvous rally'],
       doneKeySet,
@@ -265,7 +265,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeContainsAnyNamePercent(
       'rooftop-parkour',
-      'Hey! Get Down from There!',
+      'Hey! Get down from there!',
       'Complete every rooftop and parkour race',
       ['rooftop', 'parkour'],
       doneKeySet,
@@ -274,7 +274,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeContainsNameOrDescriptionPercent(
       'penal-colonies',
-      'One Piece at a Time',
+      'One piece at a time',
       'Complete every penal colony race',
       'penal',
       doneKeySet,
@@ -340,7 +340,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeContainsAnyNameCountPercent(
       'kawasaki',
-      'The Ninja Dash',
+      'The ninja dash',
       'Complete 5 Kawasaki races',
       ['kawasaki'],
       5,
@@ -359,14 +359,14 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeBool(
       'mouth-breather',
-      'Mouth Breather',
+      'Mouth breather',
       'Complete an on-foot race',
       doneRaces.some(r => String(r.type || '').toUpperCase() === 'ONFOOT'),
       racesFromDonePredicate(doneRaces, r => String(r.type || '').toUpperCase() === 'ONFOOT')
     ),
 
-    challengeContainsNameBool('kessel-run', 'Less Than 12 Parsecs', 'Complete the Kessel run in less than 12 parsecs', 'kessel run', doneRaces, allRaces),
-    challengeContainsNameBool('bar-dash', 'Shaken, Not Stirred', 'Complete in a race that ends at a bar', 'bar dash', doneRaces, allRaces),
+    challengeContainsNameBool('kessel-run', 'Less than 12 parsecs', 'Complete the Kessel run in less than 12 parsecs', 'kessel run', doneRaces, allRaces),
+    challengeContainsNameBool('bar-dash', 'Shaken, not stirred', 'Complete in a race that ends at a bar', 'bar dash', doneRaces, allRaces),
 
     challengeFixedSetBool('cliffhanger', 'They were so preoccupied with whether or not they *could*, they didn’t stop to think if they *should*', 'Climb a sheer cliff or wall', [
       'NRC Lookout Plunge',
@@ -376,13 +376,13 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeBool(
       'wind-of-change',
-      'The Wind of Change',
+      'The wind of change',
       'Either: Follow the Moskva down to Gorky Park. Or: Finish an SRV race in a Scorpion',
       doneRaces.some(r => String(r.type || '').toUpperCase() === 'SRV' && containsAny(r.ship, ['Scorpion'])),
       racesFromDonePredicate(doneRaces, r => String(r.type || '').toUpperCase() === 'SRV' && containsAny(r.ship, ['Scorpion']))
     ),
 
-    challengeFixedSetBool('lets-go', "Let's Go!", 'Embrace your inner lemming and leap off a mountain.', [
+    challengeFixedSetBool('lets-go', "Let's go!", 'Embrace your inner lemming and leap off a mountain.', [
       'Argon Ice Descent',
       'DW3 Rendezvous Rally 4 pt. 2: The Descent',
       'DW3 Syrenthis Verge mountain descent',
@@ -392,15 +392,15 @@ function buildChallenges(cmdrStats, allRaces) {
       'DW3 Rendezvous Rally 6'
     ], doneRaces, allRaces, false),
 
-    challengeMountainTrip('there-and-back', 'I\'ll Be Back', 'Complete at least one climb/descent mountain route pair', MOUNTAIN_GROUPS, allDoneNameNormSet),
+    challengeMountainTrip('there-and-back', 'I\'ll be back', 'Complete at least one climb/descent mountain route pair', MOUNTAIN_GROUPS, allDoneNameNormSet),
 
-    challengeMountainTripCount('there-and-back-3', 'There and Back Again', 'Complete five different mountain route groups', MOUNTAIN_GROUPS, allDoneNameNormSet, 5),
+    challengeMountainTripCount('there-and-back-3', 'There and back again', 'Complete five different mountain route groups', MOUNTAIN_GROUPS, allDoneNameNormSet, 5),
 
-    challengeSnakeEyes('snake-eyes', 'Snake Eyes', 'Set a PB in 5 different snake ships', doneRaces),
+    challengeSnakeEyes('snake-eyes', 'Snake eyes', 'Set a PB in 5 different snake ships', doneRaces),
 
     challengeBool(
       'bigger-fish',
-      "There's Always a Bigger Fish",
+      "There's always a bigger fish",
       'Set a PB in a Dolphin, Orca, or Beluga Liner',
       doneRaces.some(r => containsAny(r.ship, ['Dolphin', 'Orca', 'Beluga'])),
       racesFromDonePredicate(doneRaces, r => containsAny(r.ship, ['Dolphin', 'Orca', 'Beluga']))
@@ -408,7 +408,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeBool(
       'bigger-boat',
-      "We're Gonna Need a Bigger Boat",
+      "We're gonna need a bigger boat",
       'Set a PB in an Anaconda',
       doneRaces.some(r => containsAny(r.ship, ['Anaconda'])),
       racesFromDonePredicate(doneRaces, r => containsAny(r.ship, ['Anaconda']))
@@ -417,16 +417,16 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeLetterE('eeee', 'eeee', 'Complete 4 races that begin with E', doneRaces),
     challengeAlphabet('alphabeteer', 'Alphabeteer', 'Complete races beginning with each letter of the alphabet', doneRaces),
 
-    challengeSystemAreaPercent('colonial-rush', 'Colonial Rush', 'Complete races in Colonia', ['COLONIA', 'TIR'], doneKeySet, allRaces),
-    challengeAnyNInSystems('beagle-landed', 'The Beagle Has Landed', 'Complete any 5 races at Beagle Point', ['BEAGLE POINT'], 5, doneKeySet, allRaces),
-    challengeAnyNInSystems('black-hole-sun', 'Black Hole Sun', 'Complete any 5 races at Sag A*', ['STUEMEAE EG-Y D4548'], 5, doneKeySet, allRaces),
-    challengeAnyNInSystems('speak-friend-enter', 'Speak Friend and Enter', "Complete at least 3 races at Rainbow's End", ['ROEFOO ZE-H D10-0'], 3, doneKeySet, allRaces),
+    challengeSystemAreaPercent('colonial-rush', 'Colonial rush', 'Complete races in Colonia', ['COLONIA', 'TIR'], doneKeySet, allRaces),
+    challengeAnyNInSystems('beagle-landed', 'The beagle has landed', 'Complete any 5 races at Beagle Point', ['BEAGLE POINT'], 5, doneKeySet, allRaces),
+    challengeAnyNInSystems('black-hole-sun', 'Black hole sun', 'Complete any 5 races at Sag A*', ['STUEMEAE EG-Y D4548'], 5, doneKeySet, allRaces),
+    challengeAnyNInSystems('speak-friend-enter', 'Speak friend and enter', "Complete at least 3 races at Rainbow's End", ['ROEFOO ZE-H D10-0'], 3, doneKeySet, allRaces),
 
     challengeJetsetter('jetsetter', 'Jetsetter', "Race in Colonia, Beagle Point, Sag A*, and Rainbow's End regions", doneKeySet, allRaces),
 
     challengeConstraintBool(
       'one-pip-engines',
-      'Are We Nearly There Yet?',
+      'Are we nearly there yet?',
       'Compete in a race with 1 pip to engines',
       allRaces,
       doneKeySet,
