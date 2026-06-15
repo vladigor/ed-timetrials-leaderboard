@@ -1837,7 +1837,7 @@ a.info-badge:hover { opacity: .8; }
 }
 .challenge-check,
 .challenge-pct {
-  color: var(--accent);
+  color: var(--good);
   font-weight: 700;
   font-size: .92rem;
   white-space: nowrap;
