@@ -111,7 +111,16 @@ function buildChallenges(cmdrStats, allRaces) {
       allRaces
     ),
 
-    challengeSystemCoverage('souped-up-racer', 'Souped Up Racer', 'Complete every race in engineer inhabited systems', ENGINEER_SYSTEMS, doneKeySet, allRaces),
+    challengeContainsNameBool(
+      'cant-park-there-mate',
+      "You Can't Park There Mate",
+      'Race at The Light of the Galaxy',
+      'the light of the galaxy',
+      doneRaces,
+      allRaces
+    ),
+
+    challengeSystemCoverage('souped-up-racer', 'The Torque of the Galaxy', 'Complete every race in engineer inhabited systems', ENGINEER_SYSTEMS, doneKeySet, allRaces),
 
     challengeSystemCoverage('multipass', 'Multipass?', 'Complete every race in permit-locked systems', PERMIT_SYSTEMS, doneKeySet, allRaces),
 
@@ -131,7 +140,7 @@ function buildChallenges(cmdrStats, allRaces) {
     challengePositionCount(
       'always-the-bridesmaid',
       'Always the bridesmaid',
-      'You\'re in 4th place in at least 4 races',
+      'Be in 4th place in at least 4 races',
       4,
       4,
       doneRaces
@@ -165,7 +174,7 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeContainsNameOrDescriptionPercent(
       'inspired',
       'I\'ve seen things you people wouldn\'t believe',
-      'Complete in races at Thargoid spire sites',
+      'Race at Thargoid spire sites',
       'thargoid spire',
       doneKeySet,
       allRaces,
@@ -206,17 +215,53 @@ function buildChallenges(cmdrStats, allRaces) {
       }
     ),
 
+    challengeConstraintBool(
+      'goddammit-donut',
+      'Goddammit Donut!',
+      'Complete a motordrome or death wall circuit',
+      allRaces,
+      doneKeySet,
+      (race) => {
+        if (!isActive(race)) return false;
+        const nameText = normalise(race.name || '');
+        const descriptionText = normalise(race.description || '');
+        return nameText.includes(normalise('motordrome'))
+          || descriptionText.includes(normalise('motordrome'))
+          || nameText.includes(normalise('death wall'))
+          || descriptionText.includes(normalise('death wall'))
+          || nameText.includes(normalise('wall of death'))
+          || descriptionText.includes(normalise('wall of death'));
+      }
+    ),
+
+    challengeConstraintBool(
+      'womp-rats-speedball',
+      "It's not impossible. I used to bullseye womp rats in my T-16 back home, they're not much bigger than two meters",
+      'Complete a speedbowling race',
+      allRaces,
+      doneKeySet,
+      (race) => {
+        if (!isActive(race)) return false;
+        const nameText = normalise(race.name || '');
+        const descriptionText = normalise(race.description || '');
+        return nameText.includes(normalise('speedbowl'))
+          || descriptionText.includes(normalise('speedbowl'));
+      }
+    ),
+
     challengeTaggedPercent(
       'dw3-completionist',
-      'DW3 Completionist',
+      'Oh great. Yet another place to add to our ever-growing list of places with no Wi-Fi',
       'Finish every DW3 race',
       'DW3',
       doneKeySet,
-      allRaces
+      allRaces,
+      false,
+      ['DW3 - The Race', 'DW3 The Race']
     ),
 
-    challengeFixedSetPercent('titan-cup-3311', 'The 3311 Titan Cup', 'Complete every 3311 Titan Cup race', TITAN_CUP_3311, doneRaces, allRaces),
-    challengeFixedSetPercent('winter-olympics-3310', 'The 3310 Winter Olympics', 'Complete every 3310 Winter Olympics race', WINTER_OLYMPICS_3310, doneRaces, allRaces),
+    challengeFixedSetPercent('titan-cup-3311', 'The 3311 Titan Cup', 'Relive the 3311 Titan Cup races that are available as time trials', TITAN_CUP_3311, doneRaces, allRaces),
+    challengeFixedSetPercent('winter-olympics-3310', 'The 3310 Winter Olympics', 'Relive the 3310 Winter Olympics races that are available as time trials', WINTER_OLYMPICS_3310, doneRaces, allRaces),
 
     challengeContainsAnyNamePercent(
       'rooftop-parkour',
@@ -347,19 +392,11 @@ function buildChallenges(cmdrStats, allRaces) {
       'DW3 Rendezvous Rally 6'
     ], doneRaces, allRaces, false),
 
-    challengeMountainTrip('there-and-back', 'I\ll Be Back', 'Complete at least one climb/descent mountain route pair', MOUNTAIN_GROUPS, allDoneNameNormSet),
+    challengeMountainTrip('there-and-back', 'I\'ll Be Back', 'Complete at least one climb/descent mountain route pair', MOUNTAIN_GROUPS, allDoneNameNormSet),
 
     challengeMountainTripCount('there-and-back-3', 'There and Back Again', 'Complete five different mountain route groups', MOUNTAIN_GROUPS, allDoneNameNormSet, 5),
 
     challengeSnakeEyes('snake-eyes', 'Snake Eyes', 'Set a PB in 5 different snake ships', doneRaces),
-
-    challengeBool(
-      'space-truckin',
-      "Space Truckin'",
-      'Set a PB in a Panther Clipper',
-      doneRaces.some(r => containsAny(r.ship, ['Panther Clipper'])),
-      racesFromDonePredicate(doneRaces, r => containsAny(r.ship, ['Panther Clipper']))
-    ),
 
     challengeBool(
       'bigger-fish',
@@ -572,9 +609,11 @@ function challengeContainsNameOrDescriptionPercent(id, label, description, needl
   };
 }
 
-function challengeTaggedPercent(id, label, description, tag, doneKeySet, allRaces, includeInactive = false) {
+function challengeTaggedPercent(id, label, description, tag, doneKeySet, allRaces, includeInactive = false, excludedNames = []) {
+  const excludedNormSet = new Set(excludedNames.map(n => normalise(n)));
   const required = allRaces.filter(r => {
     if (!hasTag(r, tag)) return false;
+    if (excludedNormSet.has(normalise(r.name || ''))) return false;
     if (includeInactive) return true;
     return isActive(r);
   });
