@@ -8,7 +8,6 @@ const FAVOURITES_ENABLED = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favou
 // ── State ──────────────────────────────────────────────────────────────────
 let allRaces      = [];
 let commanders    = [];
-let filterActive  = localStorage.getItem('tt_filter_active') === '1';
 let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
 let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // default on
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
@@ -24,7 +23,6 @@ const grid             = document.getElementById('races-grid');
 const statusDot        = document.getElementById('status-dot');
 const statusText       = document.getElementById('status-text');
 const searchInput      = document.getElementById('filter-search');
-const checkActive      = document.getElementById('filter-active');
 const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
 const checkHideDW3     = document.getElementById('filter-hide-dw3');
 const checkHideHorizons = document.getElementById('filter-hide-horizons');
@@ -43,10 +41,13 @@ const modalCloseX      = document.getElementById('modal-close-x');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
+  // Migration: active filter was deprecated and removed; clear any persisted state.
+  localStorage.removeItem('tt_filter_active');
+
   // Sanity check — surface missing elements immediately
-  const missing = [grid, statusDot, statusText, searchInput, checkActive, checkCmdrRaces, checkHideDW3, checkHideHorizons, checkDaytimeOnly, cmdrRacesGroup,
+  const missing = [grid, statusDot, statusText, searchInput, checkCmdrRaces, checkHideDW3, checkHideHorizons, checkDaytimeOnly, cmdrRacesGroup,
     sortSelect, countLabel, profileLabel, btnChangeProfile, profileOverlay, modalCmdrSelect, modalConfirm, modalCloseX]
-    .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-search','filter-active',
+    .map((el, i) => el ? null : ['races-grid','status-dot','status-text','filter-search',
       'filter-cmdr-races','filter-hide-dw3','filter-hide-horizons','filter-daytime-only','filter-cmdr-races-group','sort-select','race-count','profile-label',
       'btn-change-profile','profile-overlay','modal-cmdr-select','modal-confirm','modal-close-x'][i])
     .filter(Boolean);
@@ -55,7 +56,6 @@ async function init() {
     return;
   }
 
-  checkActive.checked       = filterActive;
   checkCmdrRaces.checked    = filterCmdrRaces;
   checkHideDW3.checked      = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
@@ -67,12 +67,6 @@ async function init() {
   updateHideIgnoredGroup();
 
   await Promise.all([loadRaces(), loadCommanders(), loadNewRaces()]);
-
-  checkActive.addEventListener('change', () => {
-    filterActive = checkActive.checked;
-    localStorage.setItem('tt_filter_active', filterActive ? '1' : '0');
-    loadRaces();
-  });
 
   checkCmdrRaces.addEventListener('change', () => {
     filterCmdrRaces = checkCmdrRaces.checked;
@@ -170,7 +164,6 @@ async function init() {
 async function loadRaces() {
   try {
     const url = new URL('/api/races', location.origin);
-    if (filterActive)                  url.searchParams.set('active_days', '7');
     if (filterCmdr && filterCmdrRaces) url.searchParams.set('commander', filterCmdr);
     else if (filterCmdr)               url.searchParams.set('commander_pos', filterCmdr);
     const data = await fetch(url).then(r => r.json());
@@ -255,16 +248,6 @@ function renderGrid() {
       if (r.multi_planet && 'multi-planet'.includes(searchLower)) return true;
       if (r.multi_system && 'multi-system'.includes(searchLower)) return true;
       return false;
-    });
-  }
-
-  // Client-side filter: active in last 7 days
-  if (filterActive) {
-    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    races = races.filter(r => {
-      if (!r.last_activity) return false;
-      const normalised = r.last_activity.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z';
-      return new Date(normalised).getTime() >= cutoff;
     });
   }
 
