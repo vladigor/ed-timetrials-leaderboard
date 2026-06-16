@@ -24,6 +24,10 @@ let isFilteredView = false;   // Track if we're viewing filtered results
 let activeFilterType = 'NONE'; // Track current filter type
 let daylightData = null;       // Cached daylight API response
 
+function isHorizonsRace() {
+  return race?.version === 'HORIZONS';
+}
+
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const titleEl      = document.getElementById('race-title');
 const breadcrumbEl = document.getElementById('race-breadcrumb');
@@ -71,15 +75,19 @@ async function init() {
   // Load race first to get ship types for filter options
   await loadRace();
 
-  // Preview hook: ?daylight=day|dawn|dusk|night bypasses the real API.
-  // Example: /race/SomeRace?daylight=dusk
-  const _dlPreview = new URLSearchParams(window.location.search).get('daylight');
-  if (_dlPreview && ['day', 'dawn', 'dusk', 'night'].includes(_dlPreview)) {
-    const mockNextMs = { day: 7200000, dawn: 1800000, dusk: 3600000, night: 14400000 }[_dlPreview];
-    const mockNext   = { day: 'sunset', dawn: 'day', dusk: 'night', night: 'sunrise' }[_dlPreview];
-    applyDaylightState({ state: _dlPreview, next_event: mockNext, next_event_ms: mockNextMs });
+  if (isHorizonsRace()) {
+    applyDaylightHorizonsBadge();
   } else {
-    loadDaylightState(); // fire-and-forget; silently skipped until API is live
+    // Preview hook: ?daylight=day|dawn|dusk|night bypasses the real API.
+    // Example: /race/SomeRace?daylight=dusk
+    const _dlPreview = new URLSearchParams(window.location.search).get('daylight');
+    if (_dlPreview && ['day', 'dawn', 'dusk', 'night'].includes(_dlPreview)) {
+      const mockNextMs = { day: 7200000, dawn: 1800000, dusk: 3600000, night: 14400000 }[_dlPreview];
+      const mockNext   = { day: 'sunset', dawn: 'day', dusk: 'night', night: 'sunrise' }[_dlPreview];
+      applyDaylightState({ state: _dlPreview, next_event: mockNext, next_event_ms: mockNextMs });
+    } else {
+      loadDaylightState(); // fire-and-forget; silently skipped until API is live
+    }
   }
   if (selectedCmdr && race) {
     // Hide filters entirely for OnFoot races
@@ -295,6 +303,10 @@ async function loadFilteredRace(filterType) {
 // A 404 response indicates the race POI is not yet calibrated; show invitation to submit observation.
 // Other non-OK responses (e.g. network errors) are silently ignored.
 async function loadDaylightState() {
+  if (isHorizonsRace()) {
+    applyDaylightHorizonsBadge();
+    return;
+  }
   try {
     const cmdrParam = selectedCmdr ? `?commander=${encodeURIComponent(selectedCmdr)}` : '';
     const response = await fetch(`/api/daylight/${encodeURIComponent(raceKey)}${cmdrParam}`);
@@ -314,7 +326,7 @@ async function loadDaylightState() {
 }
 
 function applyDaylightState(data) {
-  if (!data || !data.state || !daylightWrapper) return;
+  if (isHorizonsRace() || !data || !data.state || !daylightWrapper) return;
   const { state, next_event, next_event_ms, sun_elevation_deg, sun_motion,
           confidence_score, confidence_level } = data;
 
@@ -386,6 +398,10 @@ function applyDaylightState(data) {
 }
 
 function applyDaylightMissingBadge() {
+  if (isHorizonsRace()) {
+    applyDaylightHorizonsBadge();
+    return;
+  }
   if (!infoEl) return;
   // Remove any stale daylight badge
   infoEl.querySelector('.info-badge-daylight')?.remove();
@@ -397,6 +413,18 @@ function applyDaylightMissingBadge() {
   badge.rel = 'noopener noreferrer';
   badge.title = 'Help us calibrate the daylight model by sharing an observation';
   badge.textContent = '📍 Submit daylight observation';
+  infoEl.appendChild(badge);
+}
+
+function applyDaylightHorizonsBadge() {
+  if (!infoEl) return;
+  daylightWrapper?.removeAttribute('data-daylight');
+  daylightWrapper?.querySelector('.sun-canvas-wrapper')?.remove();
+  infoEl.querySelector('.info-badge-daylight')?.remove();
+
+  const badge = document.createElement('span');
+  badge.className = 'info-badge info-badge-daylight info-badge-daylight-horizons';
+  badge.textContent = 'Daylight unknown for Horizons';
   infoEl.appendChild(badge);
 }
 
@@ -622,7 +650,11 @@ function renderRace() {
   });
   infoEl.innerHTML = infoBadges.join('');
   // Re-inject the daylight badge after every infoEl rebuild
-  applyDaylightState(daylightData);
+  if (isHorizonsRace()) {
+    applyDaylightHorizonsBadge();
+  } else {
+    applyDaylightState(daylightData);
+  }
 
   // Inactive notice banner
   const noticeEl = document.getElementById('race-notice');

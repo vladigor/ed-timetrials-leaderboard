@@ -26,24 +26,24 @@
           <input type="checkbox" id="filter-hide-horizons">
           Hide Horizons races
         </label>
-        <label class="filter-toggle" id="filter-cmdr-races-group" style="display:none">
-          <input type="checkbox" id="filter-cmdr-races">
-          Only races I've done
-        </label>
-        <label class="filter-toggle">
-          <input type="checkbox" id="filter-active">
-          Only races with activity in the last 7 days
-        </label>
-        <label class="filter-toggle">
-          <input type="checkbox" id="filter-daytime-only">
-          Daylight only
-        </label>
         {% if favourites_enabled %}
         <label class="filter-toggle" id="filter-hide-ignored-group" style="display:none">
           <input type="checkbox" id="filter-hide-ignored">
           Hide 💔 races
         </label>
         {% endif %}
+        <label class="filter-toggle" id="filter-cmdr-races-group" style="display:none">
+          <input type="checkbox" id="filter-cmdr-races">
+          Only races I've done
+        </label>
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-active">
+          Only active races
+        </label>
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-daytime-only">
+          Only Daylight
+        </label>
       </div>
 
       <div class="filter-group">
