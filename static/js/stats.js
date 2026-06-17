@@ -63,6 +63,10 @@ function render() {
   html += renderStatCard('DW3 Races', stats.dw3_races, 'Races that were created during the Distant Worlds 3 expedition.');
   html += renderStatCard('Non-DW3 Races', stats.non_dw3_races, 'Races that were created outside of the Distant Worlds 3 expedition.');
   html += renderStatCard('Active Races', stats.active_races_30d, 'Races that have had at least one time set in the last 30 days');
+  html += renderStatCard('SRV Races', stats.srv_races, 'Races with SRV as the primary race type');
+  html += renderStatCard('Ship Races', stats.ship_races, 'Races with ship as the primary race type');
+  html += renderStatCard('Fighter Races', stats.fighter_races, 'Races with fighter as the primary race type');
+  html += renderStatCard('On Foot Races', stats.onfoot_races, 'Races with on-foot as the primary race type');
 
   html += '</div>';
   html += '</section>';

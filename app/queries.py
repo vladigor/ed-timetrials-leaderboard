@@ -973,19 +973,35 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
 
         # ── Single-value stats ─────────────────────────────────────────────
 
-        # Total races
-        async with db.execute("SELECT COUNT(*) AS cnt FROM locations") as cur:
+        # Total races (excluding races tagged as Inactive)
+        async with db.execute(
+            """
+            SELECT COUNT(*) AS cnt
+            FROM locations
+            WHERE tags IS NULL OR tags NOT LIKE '%Inactive%'
+            """
+        ) as cur:
             stats["total_races"] = (await cur.fetchone())["cnt"]
 
-        # DW3 races
+        # DW3 races (excluding races tagged as Inactive)
         async with db.execute(
-            "SELECT COUNT(*) AS cnt FROM locations WHERE tags LIKE '%DW3%'"
+            """
+            SELECT COUNT(*) AS cnt
+            FROM locations
+            WHERE tags LIKE '%DW3%'
+              AND (tags IS NULL OR tags NOT LIKE '%Inactive%')
+            """
         ) as cur:
             stats["dw3_races"] = (await cur.fetchone())["cnt"]
 
-        # Non-DW3 races
+        # Non-DW3 races (excluding races tagged as Inactive)
         async with db.execute(
-            "SELECT COUNT(*) AS cnt FROM locations WHERE tags NOT LIKE '%DW3%'"
+            """
+            SELECT COUNT(*) AS cnt
+            FROM locations
+            WHERE tags NOT LIKE '%DW3%'
+              AND (tags IS NULL OR tags NOT LIKE '%Inactive%')
+            """
         ) as cur:
             stats["non_dw3_races"] = (await cur.fetchone())["cnt"]
 
@@ -1021,19 +1037,62 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         ) as cur:
             stats["total_contributors"] = (await cur.fetchone())["cnt"]
 
-        # Active races (activity in last 30 days)
+        # Active races (activity in last 30 days, excluding races tagged as Inactive)
         cutoff_30d = (datetime.now(timezone.utc) - timedelta(days=30)).strftime(
             "%Y-%m-%d %H:%M:%S.%f"
         )
         async with db.execute(
             """
             SELECT COUNT(DISTINCT location) AS cnt
-            FROM results
-            WHERE updated >= ?
+            FROM results r
+            JOIN locations l ON l.key = r.location
+            WHERE r.updated >= ?
+              AND (l.tags IS NULL OR l.tags NOT LIKE '%Inactive%')
             """,
             (cutoff_30d,),
         ) as cur:
             stats["active_races_30d"] = (await cur.fetchone())["cnt"]
+
+            # Race counts by vehicle type, excluding races tagged as Inactive
+        async with db.execute(
+            """
+                        SELECT COUNT(*) AS cnt
+                        FROM locations l
+                        WHERE l.type = 'SRV'
+                            AND (l.tags IS NULL OR l.tags NOT LIKE '%Inactive%')
+            """,
+        ) as cur:
+            stats["srv_races"] = (await cur.fetchone())["cnt"]
+
+        async with db.execute(
+            """
+                        SELECT COUNT(*) AS cnt
+                        FROM locations l
+                        WHERE l.type = 'SHIP'
+                            AND (l.tags IS NULL OR l.tags NOT LIKE '%Inactive%')
+            """,
+        ) as cur:
+            stats["ship_races"] = (await cur.fetchone())["cnt"]
+
+        async with db.execute(
+            """
+                        SELECT COUNT(*) AS cnt
+                        FROM locations l
+                        WHERE l.type = 'FIGHTER'
+                            AND (l.tags IS NULL OR l.tags NOT LIKE '%Inactive%')
+            """,
+        ) as cur:
+            stats["fighter_races"] = (await cur.fetchone())["cnt"]
+
+        async with db.execute(
+            """
+                        SELECT COUNT(*) AS cnt
+                        FROM locations l
+                        WHERE l.type = 'ONFOOT'
+                            AND (l.tags IS NULL OR l.tags NOT LIKE '%Inactive%')
+            """,
+        ) as cur:
+            stats["onfoot_races"] = (await cur.fetchone())["cnt"]
 
         # Active racers (distinct commanders with activity in last 30 days)
         async with db.execute(
