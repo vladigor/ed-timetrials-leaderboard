@@ -1672,5 +1672,23 @@
       "thumbnail": "maps/thumbnails/santas_slayer_of_pilots.png",
       "target": "maps/santas_slayer_of_pilots.png"
     }
+  },
+  "RICK RAZZAFRAG-TURNERSHIP02": {
+    "links": [
+      {
+        "label": "Video",
+        "type": "video",
+        "url": "https://youtu.be/U4PViSzWX_I"
+      },
+      {
+        "label": "Video",
+        "type": "video",
+        "url": "https://youtu.be/x-cbil8qclU"
+      }
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/Alioth-4 a (20260617-200043).png",
+      "target": "maps/Alioth-4 a (20260617-200043).png"
+    }
   }
 }
