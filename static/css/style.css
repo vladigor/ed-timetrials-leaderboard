@@ -473,6 +473,7 @@ a:hover { text-decoration: underline; }
 
 .race-detail-header {
   flex: 1;
+  max-width: 480px;
 }
 
 .race-detail-header h1 {
@@ -703,10 +704,16 @@ a.info-badge:hover { opacity: .8; }
 .info-badge-daylight-dusk  { border-color: #8840a0; color: #c870ee; background: rgba(130,40,150,.12); }
 .info-badge-daylight-night { border-color: #3a4a7a; color: #8898c8; background: rgba(30,40,100,.15); }
 
+.sun-canvas-wrapper {
+  width: 336px;
+  height: 190px;
+  margin: 1rem 0;
+}
+
 .sun-canvas-wrapper canvas {
   display: block;
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 100%;
   border-radius: .35rem;
 }
 @media (max-width: 1023px) {

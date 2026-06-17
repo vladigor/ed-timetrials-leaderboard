@@ -373,7 +373,8 @@ function applyDaylightState(data) {
 
   // Remove any stale daylight badge and canvas then inject the updated ones
   infoEl.querySelector('.info-badge-daylight')?.remove();
-  daylightWrapper.querySelector('.sun-canvas-wrapper')?.remove();
+  const sunWrapper = daylightWrapper.querySelector('.sun-canvas-wrapper');
+  if (sunWrapper) sunWrapper.innerHTML = '';
 
   const badge = document.createElement('a');
   badge.className = `info-badge info-badge-daylight info-badge-daylight-${state}`;
@@ -383,17 +384,16 @@ function applyDaylightState(data) {
   badge.rel = 'noopener noreferrer';
   infoEl.appendChild(badge);
 
-  // Sun position canvas — placed after the info row, inside the header wrapper
+  // Sun position canvas — reuse the placeholder wrapper, just add the canvas to it
   if (data.prediction && Object.keys(data.prediction).length > 0) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'sun-canvas-wrapper';
-    const canvas = document.createElement('canvas');
-    canvas.width = 336;
-    canvas.height = 190;
-    canvas.dataset.prediction = JSON.stringify(data.prediction);
-    wrapper.appendChild(canvas);
-    daylightWrapper.querySelector('.race-detail-header').after(wrapper);
-    drawSunCanvas(canvas);
+    if (sunWrapper) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 336;
+      canvas.height = 190;
+      canvas.dataset.prediction = JSON.stringify(data.prediction);
+      sunWrapper.appendChild(canvas);
+      drawSunCanvas(canvas);
+    }
   }
 }
 
@@ -419,7 +419,8 @@ function applyDaylightMissingBadge() {
 function applyDaylightHorizonsBadge() {
   if (!infoEl) return;
   daylightWrapper?.removeAttribute('data-daylight');
-  daylightWrapper?.querySelector('.sun-canvas-wrapper')?.remove();
+  const sunWrapper = daylightWrapper?.querySelector('.sun-canvas-wrapper');
+  if (sunWrapper) sunWrapper.innerHTML = '';
   infoEl.querySelector('.info-badge-daylight')?.remove();
 
   const badge = document.createElement('span');

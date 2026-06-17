@@ -1619,7 +1619,19 @@
     "map": {
       "thumbnail": "maps/thumbnails/sitterly_rooftop_rampage.png",
       "target": "maps/sitterly_rooftop_rampage.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Group video",
+        "type": "video",
+        "url": "https://youtu.be/qqYiZOVANUs"
+      },
+      {
+        "label": "Group video",
+        "type": "video",
+        "url": "https://youtu.be/S66QJ4ToPJ0"
+      }
+    ]
   },
   "ALEC TURNER & CMDR RAZZAFRAG-MITTERAND01": {
     "links": [
