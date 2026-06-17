@@ -47,6 +47,7 @@ export function formatDelta(ms) {
 
 /**
  * Return relative time string e.g. "3 days ago".
+ * For times > 365 days, format as "Xyr Ymo ago".
  * @param {string} isoOrDatetime  datetime string from the API / DB
  * @returns {string}
  */
@@ -62,7 +63,17 @@ export function relativeTime(isoOrDatetime) {
   const hours = Math.floor(minutes / 60);
   if (hours < 24)    return `${hours}h ago`;
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  if (days < 365)    return `${days}d ago`;
+
+  // For > 365 days, format as years and months
+  const years = Math.floor(days / 365);
+  const remainingDays = days % 365;
+  const months = Math.floor(remainingDays / 30);
+
+  if (months === 0) {
+    return `${years}yr ago`;
+  }
+  return `${years}yr ${months}mo ago`;
 }
 
 /**

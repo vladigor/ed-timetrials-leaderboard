@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Active Racers — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+  <main class="page-wrapper">
+
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span>Active Racers</span>
+    </div>
+
+    <h1 class="page-title">Active Racers</h1>
+
+    <div class="status-bar">
+      <div class="dot" id="status-dot"></div>
+      <span id="status-text">Loading…</span>
+    </div>
+
+    <div id="racers-container">
+      <p class="loading-placeholder">Loading active racers…</p>
+    </div>
+
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script type="module" src="/static/js/active-racers.js?v={{ v }}"></script>
+{% endblock %}

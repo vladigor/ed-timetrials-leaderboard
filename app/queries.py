@@ -924,6 +924,31 @@ async def get_recent_thefts(days: int = 30) -> list[dict]:
         await db.close()
 
 
+async def get_active_racers(limit: int = 25, offset: int = 0) -> list[dict]:
+    """
+    Return a distinct list of commanders ordered by when they last set a time on any race.
+    Shows the commander name and their most recent submission timestamp across all races.
+    """
+    db = await get_db()
+    try:
+        async with db.execute(
+            """
+            SELECT
+                rh.name,
+                MAX(rh.updated) AS last_active
+            FROM results_history rh
+            WHERE rh.position IS NOT NULL
+            GROUP BY rh.name
+            ORDER BY MAX(rh.updated) DESC
+            LIMIT ? OFFSET ?
+            """,
+            (limit, offset),
+        ) as cur:
+            return [_row_to_dict(r) for r in await cur.fetchall()]
+    finally:
+        await db.close()
+
+
 # ---------------------------------------------------------------------------
 # Leaderboard statistics
 # ---------------------------------------------------------------------------

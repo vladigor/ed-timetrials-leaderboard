@@ -2246,6 +2246,23 @@ a.info-badge:hover { opacity: .8; }
   margin-top: .5rem;
 }
 
+.stat-card-link,
+.stat-card-link:hover,
+.stat-card-link:focus-visible {
+  text-decoration: none;
+}
+.stat-card-link:hover .stat-card-value,
+.stat-card-link:focus-visible .stat-card-value {
+  color: #ffc14d; /* example */
+}
+
+.stat-card-link:hover .stat-card-label,
+.stat-card-link:focus-visible .stat-card-label,
+.stat-card-link:hover .stat-card-value,
+.stat-card-link:focus-visible .stat-card-value {
+  text-decoration: underline; /* if you want label to react */
+}
+
 .stats-subsection-heading {
   font-size: 1.1rem;
   font-weight: 600;

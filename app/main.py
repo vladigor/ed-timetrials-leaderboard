@@ -166,6 +166,11 @@ async def activity_page(request: Request):
     return templates.TemplateResponse("activity.html", {"request": request, "v": STATIC_VER})
 
 
+@app.get("/active-racers", response_class=HTMLResponse)
+async def active_racers_page(request: Request):
+    return templates.TemplateResponse("active-racers.html", {"request": request, "v": STATIC_VER})
+
+
 @app.get("/thefts", response_class=HTMLResponse)
 async def thefts_page(request: Request):
     return templates.TemplateResponse("thefts.html", {"request": request, "v": STATIC_VER})
@@ -557,6 +562,17 @@ async def api_activity(
     from .queries import get_recent_activity
 
     return await get_recent_activity(limit=limit, offset=offset)
+
+
+@app.get("/api/active-racers")
+async def api_active_racers(
+    limit: int = Query(25, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
+    """Return a distinct list of commanders ordered by their most recent race submission."""
+    from .queries import get_active_racers
+
+    return await get_active_racers(limit=limit, offset=offset)
 
 
 @app.get("/api/thefts")
