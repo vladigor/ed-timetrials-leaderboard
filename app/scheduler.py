@@ -22,6 +22,16 @@ log = logging.getLogger(__name__)
 # Updated after every poll so the /api/poll endpoint can return it inexpensively.
 _last_updated_snapshot: dict[str, datetime] = {}
 
+# In-memory diagnostics for poll loop health.
+_poll_runs = 0
+_poll_successes = 0
+_poll_errors = 0
+_last_poll_started_at: datetime | None = None
+_last_poll_finished_at: datetime | None = None
+_last_poll_success_at: datetime | None = None
+_last_poll_error: str | None = None
+_scheduler_started_at: datetime | None = None
+
 POLL_INTERVAL_SECONDS = 60
 
 
@@ -105,33 +115,62 @@ async def _sync_changed(old: dict[str, datetime], new: dict[str, datetime]) -> N
 async def poll() -> None:
     """One polling cycle: refresh locations, check last-updated, fetch changed results, persist cache."""
     global _last_updated_snapshot
+    global _poll_runs, _poll_successes, _poll_errors
+    global _last_poll_started_at, _last_poll_finished_at, _last_poll_success_at, _last_poll_error
+
+    _poll_runs += 1
+    _last_poll_started_at = datetime.utcnow()
+    cycle_errors: list[str] = []
 
     # Refresh the locations list to detect new races
     try:
         await fetch_and_store_locations()
     except Exception as exc:
         log.error("Failed to fetch locations during poll: %s", exc)
+        cycle_errors.append(f"fetch_and_store_locations: {exc}")
 
     # Fetch details for any new races
     try:
         await fetch_and_store_race_details()
     except Exception as exc:
         log.error("Failed to fetch race details during poll: %s", exc)
+        cycle_errors.append(f"fetch_and_store_race_details: {exc}")
 
     try:
         fresh = await fetch_last_updated()
     except Exception as exc:
         log.error("Failed to fetch last-updated: %s", exc)
+        cycle_errors.append(f"fetch_last_updated: {exc}")
+        _poll_errors += 1
+        _last_poll_error = "; ".join(cycle_errors)
+        _last_poll_finished_at = datetime.utcnow()
         return
 
     # Backfill: fetch results for any races that are in locations but have zero results.
     # This handles cases where races were added while the location list wasn't being
     # refreshed, causing foreign key constraint failures on result inserts.
-    await _backfill_missing_results()
+    try:
+        await _backfill_missing_results()
+    except Exception as exc:
+        log.error("Failed during backfill cycle: %s", exc)
+        cycle_errors.append(f"_backfill_missing_results: {exc}")
 
-    await _sync_changed(_last_updated_snapshot, fresh)
-    await _save_cache(fresh)
-    _last_updated_snapshot = fresh
+    try:
+        await _sync_changed(_last_updated_snapshot, fresh)
+        await _save_cache(fresh)
+        _last_updated_snapshot = fresh
+    except Exception as exc:
+        log.error("Failed to persist poll cycle: %s", exc)
+        cycle_errors.append(f"persist_cycle: {exc}")
+
+    if cycle_errors:
+        _poll_errors += 1
+        _last_poll_error = "; ".join(cycle_errors)
+    else:
+        _poll_successes += 1
+        _last_poll_success_at = datetime.utcnow()
+
+    _last_poll_finished_at = datetime.utcnow()
 
 
 async def full_refresh() -> None:
@@ -184,11 +223,49 @@ def get_last_updated_snapshot() -> dict[str, str]:
     return {k: v.isoformat() for k, v in _last_updated_snapshot.items()}
 
 
+def get_poll_debug_status() -> dict[str, object]:
+    """Return in-memory scheduler diagnostics for the poll loop."""
+    return {
+        "poll_interval_seconds": POLL_INTERVAL_SECONDS,
+        "scheduler_started_at": _scheduler_started_at.isoformat()
+        if _scheduler_started_at
+        else None,
+        "poll_runs": _poll_runs,
+        "poll_successes": _poll_successes,
+        "poll_errors": _poll_errors,
+        "last_poll_started_at": _last_poll_started_at.isoformat()
+        if _last_poll_started_at
+        else None,
+        "last_poll_finished_at": _last_poll_finished_at.isoformat()
+        if _last_poll_finished_at
+        else None,
+        "last_poll_success_at": _last_poll_success_at.isoformat()
+        if _last_poll_success_at
+        else None,
+        "last_poll_error": _last_poll_error,
+        "snapshot_keys": len(_last_updated_snapshot),
+    }
+
+
 def start_scheduler() -> AsyncIOScheduler:
+    global _scheduler_started_at
+
     if OFFLINE:
         log.warning("OFFLINE MODE — scheduler not started.")
         return None
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(poll, "interval", seconds=POLL_INTERVAL_SECONDS, id="poll_loop")
+    # The host can occasionally run jobs 1-3 seconds late.
+    # Without a grace window APScheduler marks these as misfires and skips the
+    # poll cycle, which can make /api/poll appear stale until a restart.
+    scheduler.add_job(
+        poll,
+        "interval",
+        seconds=POLL_INTERVAL_SECONDS,
+        id="poll_loop",
+        misfire_grace_time=30,
+        coalesce=True,
+        max_instances=1,
+    )
     scheduler.start()
+    _scheduler_started_at = datetime.utcnow()
     return scheduler

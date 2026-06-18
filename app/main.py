@@ -40,7 +40,12 @@ from .queries import (
     list_new_races,
     list_races,
 )
-from .scheduler import full_refresh, get_last_updated_snapshot, start_scheduler
+from .scheduler import (
+    full_refresh,
+    get_last_updated_snapshot,
+    get_poll_debug_status,
+    start_scheduler,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -826,3 +831,12 @@ async def api_poll():
     The browser uses this to detect data changes and to set the status indicator.
     """
     return {"offline": OFFLINE, "last_updated": get_last_updated_snapshot()}
+
+
+@app.get("/api/poll/debug")
+async def api_poll_debug():
+    """Return poll loop diagnostics to help troubleshoot stale live updates."""
+    return {
+        "offline": OFFLINE,
+        "poll": get_poll_debug_status(),
+    }
