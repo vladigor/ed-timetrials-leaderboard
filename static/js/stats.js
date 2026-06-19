@@ -59,7 +59,7 @@ async function init() {
     const needPodiumTop10 = !safeLimit || safeLimit < 10;
     const [res, podiumRes] = await Promise.all([
       fetch(url),
-      needPodiumTop10 ? fetch('/api/stats?limit=10') : Promise.resolve(null),
+      needPodiumTop10 ? fetch('/api/stats?limit=12') : Promise.resolve(null),
     ]);
     if (!res.ok) throw new Error(res.status);
     stats = await res.json();
@@ -146,14 +146,14 @@ function render() {
 
   html += '<section class="stats-section">';
     html += '<h2 class="cmdr-section-heading">Rivalry Intensity</h2>';
-    html += '<p class="stats-section-description">Scores reflect how competitive races are: based on position changes in the top 3 and how close their times are. Higher scores = more intense competition.</p>';
+    html += '<p class="stats-section-description">Scores reflect how competitive races are: based on position changes in the top 3 and how close their times are. Higher scores = more intense competition. <span class="stats-inline-tooltip"><button type="button" class="stats-inline-tooltip-toggle" aria-label="How rivalry intensity is calculated" title="How rivalry intensity is calculated">ⓘ</button><span class="stats-section-tooltip">The numbers (0-100 scale) are calculated from:<br>- 60%: How many times the top 3 finishers\' positions changed in the last 30 days<br>- 40%: How tight the time gap is between 1st and 3rd place (smaller gap = higher score)<br>So higher intensity scores indicate races where the competition is tight and positions are constantly shifting.</span></span></p>';
     html += '<div id="rivalry-container" class="trend-composition-panel"><p class="loading-placeholder">Loading rivalry intensity...</p></div>';
   html += '</section>';
 
 
   // ── Race Records ────────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Race Records</h2>';
+  html += '<h2 class="cmdr-section-heading">Race Extremes</h2>';
   html += '<div class="stats-grid">';
 
   if (stats.longest_race) {

@@ -2194,6 +2194,7 @@ a.info-badge:hover { opacity: .8; }
    ============================================================ */
 .stats-section {
   margin-bottom: 3rem;
+  --stats-bar-label-width: 230px;
 }
 
 .stats-section-description {
@@ -2201,6 +2202,64 @@ a.info-badge:hover { opacity: .8; }
   color: var(--text-dim);
   margin: .5rem 0 1rem 0;
   line-height: 1.5;
+}
+
+.stats-inline-tooltip {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  margin-left: .3rem;
+}
+
+.stats-inline-tooltip-toggle {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-muted);
+  font-size: .78rem;
+  line-height: 1;
+  user-select: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.stats-inline-tooltip-toggle:hover,
+.stats-inline-tooltip-toggle:focus-visible {
+  color: var(--text);
+  border-color: var(--accent-dim);
+  outline: none;
+}
+
+.stats-section-tooltip {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + .45rem);
+  transform: translateX(-50%);
+  width: min(92vw, 560px);
+  z-index: 20;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  padding: .65rem .75rem;
+  color: var(--text-muted);
+  font-size: .82rem;
+  line-height: 1.5;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .35);
+}
+
+.stats-inline-tooltip .stats-section-tooltip {
+  display: none;
+}
+
+.stats-inline-tooltip:hover .stats-section-tooltip,
+.stats-inline-tooltip:focus-within .stats-section-tooltip {
+  display: block;
 }
 
 .stats-grid {
@@ -2388,8 +2447,9 @@ a.info-badge:hover { opacity: .8; }
 }
 
 .stacked-track {
-  width: 100%;
-  height: 18px;
+  width: calc(100% - var(--stats-bar-label-width));
+  margin-left: var(--stats-bar-label-width);
+  height: 10px;
   border-radius: 999px;
   overflow: hidden;
   background: #12151f;
@@ -2444,7 +2504,7 @@ a.info-badge:hover { opacity: .8; }
 
 .hbar-row {
   display: grid;
-  grid-template-columns: minmax(130px, 1fr) minmax(120px, 3fr) auto;
+  grid-template-columns: var(--stats-bar-label-width) minmax(120px, 1fr) auto;
   align-items: center;
   gap: 0.6rem;
 }
@@ -2664,6 +2724,11 @@ a.info-badge:hover { opacity: .8; }
 
   .trend-composition-panel {
     padding: 0.75rem;
+  }
+
+  .stacked-track {
+    width: 100%;
+    margin-left: 0;
   }
 
   .hbar-row {

@@ -1,5 +1,12 @@
 # Change log
 
+## 2026-06-20
+- Challenges:
+    - Added a "challenges" page that gives an achievements style list of stuff you can do.
+- Stats page:
+    - Added graphs and other visual elements.
+
+
 ## 2026-06-08
 
 - General:
