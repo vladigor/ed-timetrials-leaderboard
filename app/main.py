@@ -176,6 +176,16 @@ async def active_racers_page(request: Request):
     return templates.TemplateResponse("active-racers.html", {"request": request, "v": STATIC_VER})
 
 
+@app.get("/visual-stats", response_class=HTMLResponse)
+async def active_racers_graph_page(request: Request):
+    return templates.TemplateResponse("visual-stats.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/active-racers-graph")
+async def active_racers_graph_redirect():
+    return RedirectResponse(url="/visual-stats", status_code=307)
+
+
 @app.get("/thefts", response_class=HTMLResponse)
 async def thefts_page(request: Request):
     return templates.TemplateResponse("thefts.html", {"request": request, "v": STATIC_VER})
@@ -558,6 +568,17 @@ async def api_stats(limit: int | None = Query(None, ge=1, le=100)):
     return await get_stats()
 
 
+@app.get("/api/visual-stats-extras")
+async def api_visual_stats_extras(
+    days: int = Query(365, ge=30, le=3650),
+    months: int = Query(12, ge=3, le=60),
+):
+    """Return additional aggregated datasets used by the visual stats page."""
+    from .queries import get_visual_stats_extras
+
+    return await get_visual_stats_extras(days=days, months=months)
+
+
 @app.get("/api/activity")
 async def api_activity(
     limit: int = Query(25, ge=1, le=100),
@@ -578,6 +599,14 @@ async def api_active_racers(
     from .queries import get_active_racers
 
     return await get_active_racers(limit=limit, offset=offset)
+
+
+@app.get("/api/active-racers-graph")
+async def api_active_racers_graph(days: int = Query(180, ge=7, le=3650)):
+    """Return daily active racer counts for the requested time window."""
+    from .queries import get_active_racers_timeseries
+
+    return await get_active_racers_timeseries(days=days)
 
 
 @app.get("/api/thefts")
