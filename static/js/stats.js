@@ -111,7 +111,7 @@ function render() {
     html += renderPodiumTable(podiumRows);
   }
 
-  html += '<h3 class="stats-subsection-heading">Active Racers 7-Day Rolling Average</h3>';
+  html += '<h3 class="stats-subsection-heading">Active Racers</h3>';
   html += '<div class="active-racers-graph-controls">';
   html += '<label for="stats-graph-range-days">Time range</label>';
   html += '<select id="stats-graph-range-days">';
@@ -787,7 +787,7 @@ function renderActiveRacersChartVisual(data) {
   const xTicks = buildXTicksVisual(data.length, xFor, height, pad.bottom);
   const lastIdx = data.length - 1;
   graphContainer.innerHTML = `
-    <svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Active racers 7-day rolling average line chart">
+    <svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Active racers line chart">
       <rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>
       ${yTicks.grid}
       <path d="${areaPath}" class="trend-area"></path>
