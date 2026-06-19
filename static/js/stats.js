@@ -28,6 +28,7 @@ function formatLongDuration(ms) {
 let stats = null;
 let points = [];
 let extras = null;
+let podiumRows = [];
 let visualDays = 180;
 const selectedCmdr = localStorage.getItem('tt_filter_cmdr') || '';
 
@@ -50,12 +51,25 @@ async function init() {
   try {
     // Check for secret limit parameter
     const params = new URLSearchParams(window.location.search);
-    const limit = params.get('limit');
-    const url = limit ? `/api/stats?limit=${encodeURIComponent(limit)}` : '/api/stats';
+    const rawLimit = params.get('limit');
+    const requestedLimit = rawLimit ? Number(rawLimit) : null;
+    const safeLimit = Number.isFinite(requestedLimit) ? requestedLimit : null;
+    const url = safeLimit ? `/api/stats?limit=${encodeURIComponent(String(safeLimit))}` : '/api/stats';
 
-    const res = await fetch(url);
+    const needPodiumTop10 = !safeLimit || safeLimit < 10;
+    const [res, podiumRes] = await Promise.all([
+      fetch(url),
+      needPodiumTop10 ? fetch('/api/stats?limit=10') : Promise.resolve(null),
+    ]);
     if (!res.ok) throw new Error(res.status);
     stats = await res.json();
+
+    if (podiumRes && podiumRes.ok) {
+      const podiumStats = await podiumRes.json();
+      podiumRows = podiumStats?.top_podium_finishes || stats?.top_podium_finishes || [];
+    } else {
+      podiumRows = stats?.top_podium_finishes || [];
+    }
 
     await loadVisualData();
   } catch (err) {
@@ -83,53 +97,20 @@ async function loadVisualData() {
 function render() {
   let html = '';
 
-  // ── Races ──────────────────────────────────────────────────────
-  html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Locations</h2>';
-  html += '<div class="stats-grid">';
-
-  html += renderStatCard('Total Races', stats.total_races);
-  html += renderStatCard('DW3 Races', stats.dw3_races, 'Races that were created during the Distant Worlds 3 expedition.');
-  html += renderStatCard('Non-DW3 Races', stats.non_dw3_races, 'Races that were created outside of the Distant Worlds 3 expedition.');
-  html += renderStatCard('Active Races', stats.active_races_30d, 'Races that have had at least one time set in the last 30 days');
-  html += renderStatCard('SRV Races', stats.srv_races, 'Races with SRV as the primary race type');
-  html += renderStatCard('Ship Races', stats.ship_races, 'Races with ship as the primary race type');
-  html += renderStatCard('Fighter Races', stats.fighter_races, 'Races with fighter as the primary race type');
-  html += renderStatCard('On Foot Races', stats.onfoot_races, 'Races with on-foot as the primary race type');
-
-  html += '</div>';
-  html += '</section>';
-
-  html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Location Visuals</h2>';
-  html += '<div id="composition-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race composition...</p></div>';
-  html += '<div id="freshness-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race freshness...</p></div>';
-  html += '</section>';
-
   // ── Racers ────────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Participants</h2>';
-  html += '<div class="stats-grid">';
+  html += '<h2 class="cmdr-section-heading">Racers</h2>';
+  html += '<p class="stats-section-description">Participation breadth, active racer trend, and activity timing.</p>';
 
-  html += renderStatCard('Total Racers', stats.total_racers, 'Note that this will include some Alt accounts');
-  html += renderStatCard('DW3 Racers', stats.dw3_racers, 'Racers who have set a time on at least one DW3 race');
-  html += renderStatCard('Non-DW3 Racers', stats.non_dw3_racers, 'Racers who have set a time on at least one non-DW3 race');
-  html += '<a href="/active-racers" class="stat-card-link">';
-  html += renderStatCard('Active Racers', stats.active_racers_30d, 'Racers who have set at least one time in the last 30 days');
-  html += '</a>';
-  html += '<a href="/visual-stats" class="stat-card-link">';
-  html += renderStatCard('Active Racers Trend', 'View Graph', 'Daily active racers over time');
-  html += '</a>';
+  // ── Top Performers ──────────────────────────────────────────────────────
 
-  //html += renderStatCard('Race Creators', stats.total_contributors);
+  if (podiumRows && podiumRows.length > 0) {
+    html += '<h3 class="stats-subsection-heading">Medals</h3>';
+    html += '<div id="medals-container" class="trend-composition-panel"><p class="loading-placeholder">Loading medals chart...</p></div>';
+    html += '<h3 class="stats-subsection-heading">Medals Table</h3>';
+    html += renderPodiumTable(podiumRows);
+  }
 
-  html += '</div>';
-  html += '</section>';
-
-  html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Participant Visuals</h2>';
-  html += '<div id="racer-composition-container" class="trend-composition-panel"><p class="loading-placeholder">Loading racer composition...</p></div>';
-  html += '<div id="participation-container" class="trend-composition-panel"><p class="loading-placeholder">Loading participation depth...</p></div>';
   html += '<h3 class="stats-subsection-heading">Active Racers 7-Day Rolling Average</h3>';
   html += '<div class="active-racers-graph-controls">';
   html += '<label for="stats-graph-range-days">Time range</label>';
@@ -141,9 +122,34 @@ function render() {
   html += '</select>';
   html += '</div>';
   html += '<div id="graph-container" class="trend-chart-panel"><p class="loading-placeholder">Loading active racers graph...</p></div>';
+
   html += '<h3 class="stats-subsection-heading">Activity Time-of-Week Heatmap</h3>';
   html += '<div id="heatmap-container" class="trend-composition-panel"><p class="loading-placeholder">Loading activity heatmap...</p></div>';
+
+  if (stats.top_dedicated_racers && stats.top_dedicated_racers.length > 0) {
+    html += '<h3 class="stats-subsection-heading">Most Dedicated Racers (Participated in Most Races)</h3>';
+    html += renderTopNTable(stats.top_dedicated_racers, 'commander', 'races participated');
+  }
+
+  html += '<div id="participation-container" class="trend-composition-panel"><p class="loading-placeholder">Loading participation depth...</p></div>';
+  html += '<div id="racer-composition-container" class="trend-composition-panel"><p class="loading-placeholder">Loading racer composition...</p></div>';
   html += '</section>';
+
+
+  // ── Races ──────────────────────────────────────────────────────
+  html += '<section class="stats-section">';
+  html += '<h2 class="cmdr-section-heading">Races</h2>';
+  html += '<p class="stats-section-description">Composition and freshness views for race coverage and activity.</p>';
+  html += '<div id="composition-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race composition...</p></div>';
+  html += '<div id="freshness-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race freshness...</p></div>';
+  html += '</section>';
+
+  html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Rivalry Intensity</h2>';
+    html += '<p class="stats-section-description">Scores reflect how competitive races are: based on position changes in the top 3 and how close their times are. Higher scores = more intense competition.</p>';
+    html += '<div id="rivalry-container" class="trend-composition-panel"><p class="loading-placeholder">Loading rivalry intensity...</p></div>';
+  html += '</section>';
+
 
   // ── Race Records ────────────────────────────────────────────────────────
   html += '<section class="stats-section">';
@@ -177,33 +183,6 @@ function render() {
   html += '</div>';
   html += '</section>';
 
-  // ── Top Performers ──────────────────────────────────────────────────────
-  html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Top Performers</h2>';
-
-  if (stats.top_podium_finishes && stats.top_podium_finishes.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Medals Table</h3>';
-    html += renderPodiumTable(stats.top_podium_finishes);
-    html += '<h3 class="stats-subsection-heading">Medals Visual</h3>';
-    html += '<div id="medals-container" class="trend-composition-panel"><p class="loading-placeholder">Loading medals chart...</p></div>';
-  }
-
-  if (stats.top_dedicated_racers && stats.top_dedicated_racers.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Dedicated Racers (Participated in Most Races)</h3>';
-    html += renderTopNTable(stats.top_dedicated_racers, 'commander', 'races participated');
-  }
-
-    // ── Top Contributors ────────────────────────────────────────────────────
-  if (stats.top_creators && stats.top_creators.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Top Contributors</h3>';
-    html += renderTopNTable(stats.top_creators, 'creator', 'races created');
-    html += '<h3 class="stats-subsection-heading">Top Creators & Systems Visual</h3>';
-    html += '<div id="leaders-container" class="trend-grid-2">';
-    html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading top creators...</p></div>';
-    html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading top systems...</p></div>';
-    html += '</div>';
-  }
-  html += '</section>';
 
   // ── Biggest Leaders ─────────────────────────────────────────────────────
   if (stats.biggest_leaders && stats.biggest_leaders.length > 0) {
@@ -220,9 +199,6 @@ function render() {
     html += '<h2 class="cmdr-section-heading">Closest Finishes</h2>';
     html += '<p class="stats-section-description">The tightest races — where victory hung by a thread!</p>';
     html += renderLeaderGapTable(stats.closest_finishes);
-    html += '<h3 class="stats-subsection-heading">Rivalry Intensity</h3>';
-    html += '<p class="stats-section-description">Scores reflect how competitive races are: based on position changes in the top 3 and how close their times are. Higher scores = more intense competition.</p>';
-    html += '<div id="rivalry-container" class="trend-composition-panel"><p class="loading-placeholder">Loading rivalry intensity...</p></div>';
     html += '</section>';
   }
 
@@ -252,44 +228,34 @@ function render() {
     html += '</section>';
   }
 
+  // ── Top Contributors ────────────────────────────────────────────────────
+  if ((stats.top_creators && stats.top_creators.length > 0) || (stats.top_systems && stats.top_systems.length > 0)) {
+    html += '<section class="stats-section">';
+    html += '<h2 class="cmdr-section-heading">Top Creators & Systems</h2>';
+    html += '<div id="leaders-container" class="trend-grid-2">';
+    html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading top creators...</p></div>';
+    html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading top systems...</p></div>';
+    html += '</div>';
+    html += '</section>';
+  }
+
   // ── Popular Vehicles ────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Popular Vehicles</h2>';
-
-  if (stats.top_ship_types && stats.top_ship_types.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Popular Ships</h3>';
-    html += renderVehicleTable(stats.top_ship_types);
-  }
-
-  if (stats.top_fighter_types && stats.top_fighter_types.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Popular Fighters</h3>';
-    html += renderVehicleTable(stats.top_fighter_types);
-  }
-
-  html += '<h3 class="stats-subsection-heading">Vehicle Popularity Visual</h3>';
+  html += '<h2 class="cmdr-section-heading">Ships</h2>';
+  html += '<h3 class="stats-subsection-heading">Vehicle Popularity</h3>';
   html += '<div id="vehicles-container" class="trend-grid-2">';
   html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading ship popularity...</p></div>';
   html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading fighter popularity...</p></div>';
   html += '</div>';
 
-  html += '</section>';
-
-  // ── Top Systems ─────────────────────────────────────────────────────────
-  if (stats.top_systems && stats.top_systems.length > 0) {
-    html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Systems That Host The Most Races</h2>';
-    html += renderSystemTable(stats.top_systems);
-    html += '</section>';
-  }
 
   // ── Popular Ship Names ─────────────────────────────────────────────────
   if (stats.popular_ship_names && stats.popular_ship_names.length > 0) {
-    html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Popular Ship Names</h2>';
+    html += '<h3 class="stats-subsection-heading">Popular Ship Names</h3>';
     html += '<p class="stats-section-description">Ship names used by more than one cmdr.</p>';
     html += renderPopularShipNamesTable(stats.popular_ship_names);
-    html += '</section>';
   }
+  html += '</section>';
 
   const urlParams = new URLSearchParams(window.location.search);
   const currentLimit = urlParams.get('limit') || 10;
@@ -418,50 +384,35 @@ function renderPodiumTable(items) {
 
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
-  html += `<th class="stats-rank">Rank</th>`;
-  html += `<th>Commander</th>`;
-  html += `<th class="stats-count">🥇</th>`;
-  html += `<th class="stats-count">🥈</th>`;
-  html += `<th class="stats-count">🥉</th>`;
+  html += '<th class="stats-rank">Rank</th>';
+  html += '<th>Commander</th>';
+  html += '<th class="stats-count">🥇</th>';
+  html += '<th class="stats-count">🥈</th>';
+  html += '<th class="stats-count">🥉</th>';
   html += '</tr></thead>';
   html += '<tbody>';
 
   let currentRank = 1;
   items.forEach((item, idx) => {
-    if (idx > 0 && (item.gold !== items[idx - 1].gold || item.silver !== items[idx - 1].silver || item.bronze !== items[idx - 1].bronze)) {
+    if (
+      idx > 0
+      && (
+        item.gold !== items[idx - 1].gold
+        || item.silver !== items[idx - 1].silver
+        || item.bronze !== items[idx - 1].bronze
+      )
+    ) {
       currentRank = idx + 1;
     }
     const medal = currentRank === 1 ? '🏆' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
-    const nameDisplay = renderCmdrLink(item.name);
     const rowClass = selectedCmdr && item.name === selectedCmdr ? ' class="row-cmdr"' : '';
 
     html += `<tr${rowClass}>`;
     html += `<td class="stats-rank">${medal}</td>`;
-    html += `<td>${nameDisplay}</td>`;
+    html += `<td>${renderCmdrLink(item.name)}</td>`;
     html += `<td class="stats-count">${item.gold}</td>`;
     html += `<td class="stats-count">${item.silver}</td>`;
     html += `<td class="stats-count">${item.bronze}</td>`;
-    html += '</tr>';
-  });
-
-  html += '</tbody></table>';
-  return html;
-}
-
-function renderSystemTable(items) {
-  if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-
-  let html = '<table class="stats-table">';
-  html += '<thead><tr>';
-  html += `<th>System</th>`;
-  html += `<th class="stats-count">Races</th>`;
-  html += '</tr></thead>';
-  html += '<tbody>';
-
-  items.forEach(item => {
-    html += '<tr>';
-    html += `<td>${esc(item.system)}</td>`;
-    html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
   });
 
@@ -527,27 +478,6 @@ function renderRecentRacesTable(items) {
     html += '<tr>';
     html += `<td>${renderRaceLink(item.key, item.name)} ${badges}</td>`;
     html += `<td class="stats-time">${relativeTime(item.last_active)}</td>`;
-    html += '</tr>';
-  });
-
-  html += '</tbody></table>';
-  return html;
-}
-
-function renderVehicleTable(items) {
-  if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
-
-  let html = '<table class="stats-table">';
-  html += '<thead><tr>';
-  html += `<th>Vehicle</th>`;
-  html += `<th class="stats-count">Times Set</th>`;
-  html += '</tr></thead>';
-  html += '<tbody>';
-
-  items.forEach(item => {
-    html += '<tr>';
-    html += `<td>${esc(item.ship)}</td>`;
-    html += `<td class="stats-count">${item.count.toLocaleString()}</td>`;
     html += '</tr>';
   });
 
@@ -630,7 +560,7 @@ function renderVisualCharts() {
   renderRivalryIntensityVisual(extras.rivalry_intensity || []);
   renderSubmissionHeatmapVisual(extras.submission_heatmap || []);
   renderTopCreatorsSystemsVisual(stats);
-  renderMedalsChartVisual(stats);
+  renderMedalsChartVisual(podiumRows || []);
   renderVehiclePopularityVisual(stats);
   renderActiveRacersChartVisual(points || []);
 }
@@ -648,10 +578,6 @@ function renderCompositionVisual(data, participantGroups) {
 
   compositionContainer.innerHTML = [
     '<div class="stacked-bars">',
-    renderStackedBarVisual('DW3 vs Non-DW3', [
-      { label: 'DW3', value: Number(data.dw3_races || 0), className: 'seg-dw3' },
-      { label: 'Non-DW3', value: Number(data.non_dw3_races || 0), className: 'seg-nondw3' },
-    ]),
     renderStackedBarVisual('Race Types', [
       { label: 'SRV', value: Number(data.srv_races || 0), className: 'seg-srv' },
       { label: 'Ship', value: Number(data.ship_races || 0), className: 'seg-ship' },
@@ -675,11 +601,9 @@ function renderCompositionVisual(data, participantGroups) {
 
 function renderRacerCompositionVisual(data) {
   if (!racerCompositionContainer || !data) return;
-  const totalRacers = Number(data.total_racers || 0);
   const activeRacers = Number(data.active_racers_30d || 0);
+  const totalRacers = Number(data.total_racers || 0);
   const inactiveRacers = Math.max(totalRacers - activeRacers, 0);
-  const dw3Racers = Number(data.dw3_racers || 0);
-  const nonDw3Racers = Number(data.non_dw3_racers || 0);
 
   racerCompositionContainer.innerHTML = [
     '<div class="stacked-bars">',
@@ -687,10 +611,7 @@ function renderRacerCompositionVisual(data) {
       { label: 'Active (30d)', value: activeRacers, className: 'seg-active' },
       { label: 'Inactive (30d)', value: inactiveRacers, className: 'seg-inactive' },
     ]),
-    renderScaledBarsVisual('DW3 Participation (of total racers)', totalRacers, [
-      { label: 'DW3 Racers', value: dw3Racers, className: 'seg-dw3' },
-      { label: 'Non-DW3 Racers', value: nonDw3Racers, className: 'seg-nondw3' },
-    ], 'Commanders can be counted in both groups.'),
+    '<p><a href="/active-racers">Active racers table</a></p>',
     '</div>',
   ].join('');
 }
@@ -768,15 +689,15 @@ function renderTopCreatorsSystemsVisual(data) {
   ].join('');
 }
 
-function renderMedalsChartVisual(data) {
+function renderMedalsChartVisual(rows) {
   if (!medalsContainer) return;
-  const rows = (data?.top_podium_finishes || []).slice(0, 15);
-  if (!rows.length) {
+  const safeRows = (rows || []).slice(0, 15);
+  if (!safeRows.length) {
     medalsContainer.innerHTML = '<p class="empty-state">No medals data available.</p>';
     return;
   }
-  const maxTotal = Math.max(...rows.map(r => Number(r.count || 0)), 1);
-  const bars = rows.map(row => {
+  const maxTotal = Math.max(...safeRows.map(r => Number(r.count || 0)), 1);
+  const bars = safeRows.map(row => {
     const total = Number(row.count || 0);
     const totalSafe = Math.max(total, 1);
     const scale = (total / maxTotal) * 100;
@@ -829,16 +750,6 @@ function renderHorizontalBarsCardVisual(title, rows, labelFn, valueFn, colorClas
     return `<li class="hbar-row"><span class="hbar-label">${labelFn(row)}</span><span class="hbar-track"><span class="hbar-fill ${colorClass}" style="width:${pct.toFixed(2)}%"></span></span><span class="hbar-value">${value}</span></li>`;
   }).join('');
   return `<div class="trend-composition-panel"><h3 class="stacked-title">${title}</h3><ul class="hbar-list">${bars}</ul></div>`;
-}
-
-function renderScaledBarsVisual(title, total, rows, note = '') {
-  const totalSafe = Math.max(Number(total || 0), 1);
-  const bars = rows.map(row => {
-    const value = Number(row.value || 0);
-    const pct = (value / totalSafe) * 100;
-    return `<li class="hbar-row"><span class="hbar-label">${row.label}</span><span class="hbar-track"><span class="hbar-fill ${row.className}" style="width:${Math.min(pct, 100).toFixed(2)}%"></span></span><span class="hbar-value">${value} (${pct.toFixed(1)}%)</span></li>`;
-  }).join('');
-  return `<article class="stacked-card"><h3 class="stacked-title">${title}</h3><ul class="hbar-list">${bars}</ul>${note ? `<p class="chart-note">${note}</p>` : ''}</article>`;
 }
 
 function renderStackedBarVisual(title, segments) {

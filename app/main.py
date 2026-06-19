@@ -176,16 +176,6 @@ async def active_racers_page(request: Request):
     return templates.TemplateResponse("active-racers.html", {"request": request, "v": STATIC_VER})
 
 
-@app.get("/visual-stats", response_class=HTMLResponse)
-async def active_racers_graph_page(request: Request):
-    return templates.TemplateResponse("visual-stats.html", {"request": request, "v": STATIC_VER})
-
-
-@app.get("/active-racers-graph")
-async def active_racers_graph_redirect():
-    return RedirectResponse(url="/visual-stats", status_code=307)
-
-
 @app.get("/thefts", response_class=HTMLResponse)
 async def thefts_page(request: Request):
     return templates.TemplateResponse("thefts.html", {"request": request, "v": STATIC_VER})
