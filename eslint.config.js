@@ -21,7 +21,7 @@ export default [
     rules: {
       'linebreak-style': 'off',  // Handled by pre-commit's end-of-file-fixer
       'semi': ['error', 'always'],
-      'no-unused-vars': ['warn', {
+      'no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
         caughtErrorsIgnorePattern: '^_|err'
