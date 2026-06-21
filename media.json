@@ -1690,5 +1690,11 @@
       "thumbnail": "maps/thumbnails/Alioth-4 a (20260617-200043).png",
       "target": "maps/Alioth-4 a (20260617-200043).png"
     }
+  },
+  "SON OF THUNDER-1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Thunderpark_TripleJump.png",
+      "target": "maps/Thunderpark_TripleJump.png"
+    }
   }
 }
