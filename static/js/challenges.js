@@ -354,7 +354,7 @@ function buildChallenges(cmdrStats, allRaces) {
       'Complete a race at Bridgerton, err I mean Bridger Town',
       allRaces,
       doneKeySet,
-      (race) => normalise(race.system || '') === normalise('Bridger Town')
+      (race) => normalise(race.station || '') === normalise('Bridger Town')
     ),
 
     challengeBool(
