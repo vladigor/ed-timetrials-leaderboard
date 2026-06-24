@@ -697,11 +697,46 @@ function renderThievses(thefts) {
 // ── Nearby Races (NENDY + NEIDY) ───────────────────────────────────────────
 let allRacesCache = null;
 
+// Bulk day/night data — loaded once when NENDY/NEIDY is first triggered.
+let _daynightBulkData = null;
+
+async function _loadDaynightBulk() {
+  if (_daynightBulkData !== null) return _daynightBulkData;
+  try {
+    _daynightBulkData = await fetch('/api/daynight-bulk').then(r => r.json());
+  } catch (_) {
+    _daynightBulkData = {}; // Empty so we don't retry and fall back to stop-gap data
+  }
+  return _daynightBulkData;
+}
+
+function _computeDaynightState(dn) {
+  const now   = Date.now();
+  const until = dn.until ? new Date(dn.until).getTime() : Infinity;
+  if (now < until) return dn.state;
+  const intervals = dn.upcoming_intervals || [];
+  for (const iv of intervals) {
+    const from    = new Date(iv.from).getTime();
+    const ivUntil = new Date(iv.until).getTime();
+    if (now >= from && now < ivUntil) return iv.state;
+  }
+  return null;
+}
+
 async function fetchAllRaces() {
   if (allRacesCache) return allRacesCache;
-  const res = await fetch('/api/races');
-  if (!res.ok) throw new Error('Failed to fetch race list');
-  allRacesCache = await res.json();
+  const [races, dn] = await Promise.all([
+    fetch('/api/races').then(r => { if (!r.ok) throw new Error('Failed to fetch race list'); return r.json(); }),
+    _loadDaynightBulk(),
+  ]);
+  // Overlay bulk day/night state; fall back to stop-gap daylight_state for uncovered races
+  for (const race of races) {
+    const dnEntry = dn[race.key];
+    if (!dnEntry) continue;
+    const computed = _computeDaynightState(dnEntry);
+    if (computed !== null) race.daylight_state = computed;
+  }
+  allRacesCache = races;
   return allRacesCache;
 }
 

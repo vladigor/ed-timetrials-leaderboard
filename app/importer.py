@@ -477,3 +477,64 @@ async def fetch_and_store_race_details() -> None:
                 await db.close()
 
     log.info("Race detail fetch complete for %d races.", len(keys))
+
+
+async def fetch_and_store_daynight_bulk() -> int:
+    """Fetch current day/night state for all known races from the bulk endpoint.
+
+    Calls the eddaynight.de /public/api/v1/races/daynight endpoint (allow ~60 s),
+    then upserts each result into the daynight_bulk_cache table.
+
+    Returns the number of race rows stored.
+    """
+    import json
+
+    from .config import DAYLIGHT_API_BASE_URL, DAYLIGHT_BULK_API_TIMEOUT
+
+    log.info("Fetching bulk day/night data from %s …", DAYLIGHT_API_BASE_URL)
+    try:
+        async with httpx.AsyncClient(timeout=DAYLIGHT_BULK_API_TIMEOUT) as client:
+            resp = await client.get(f"{DAYLIGHT_API_BASE_URL}/public/api/v1/races/daynight")
+        resp.raise_for_status()
+    except httpx.RequestError as exc:
+        log.error("Bulk day/night fetch failed (network): %s", exc)
+        raise
+    except httpx.HTTPStatusError as exc:
+        log.error("Bulk day/night API returned status %s", exc.response.status_code)
+        raise
+
+    data = resp.json()
+    results = data.get("results", [])
+    if not results:
+        log.warning("Bulk day/night API returned empty results")
+        return 0
+
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    db = await get_db()
+    try:
+        for entry in results:
+            race_key = entry.get("race_key")
+            if not race_key:
+                continue
+            state = entry.get("state", "")
+            until_utc = entry.get("until")  # may be None for permanent states
+            upcoming = entry.get("upcoming_intervals", [])
+            await db.execute(
+                """
+                INSERT INTO daynight_bulk_cache
+                    (race_key, state, until_utc, upcoming_intervals, fetched_at)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(race_key) DO UPDATE SET
+                    state               = excluded.state,
+                    until_utc           = excluded.until_utc,
+                    upcoming_intervals  = excluded.upcoming_intervals,
+                    fetched_at          = excluded.fetched_at
+                """,
+                (race_key, state, until_utc, json.dumps(upcoming), now_utc),
+            )
+        await db.commit()
+    finally:
+        await db.close()
+
+    log.info("Bulk day/night data stored for %d races.", len(results))
+    return len(results)

@@ -85,6 +85,14 @@ CREATE TABLE IF NOT EXISTS daylight_cache (
     until_utc   TEXT NOT NULL,
     updated_at  TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS daynight_bulk_cache (
+    race_key             TEXT PRIMARY KEY,
+    state                TEXT NOT NULL,
+    until_utc            TEXT,
+    upcoming_intervals   TEXT NOT NULL DEFAULT '[]',
+    fetched_at           TEXT NOT NULL
+);
 """
 
 

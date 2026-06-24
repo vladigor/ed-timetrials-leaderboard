@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from .config import OFFLINE
 from .database import get_db
 from .importer import (
+    fetch_and_store_daynight_bulk,
     fetch_and_store_locations,
     fetch_and_store_race_details,
     fetch_and_store_results,
@@ -72,6 +73,41 @@ async def _save_cache(snapshot: dict[str, datetime]) -> None:
 # ---------------------------------------------------------------------------
 # Scheduler jobs
 # ---------------------------------------------------------------------------
+
+
+async def _refresh_daynight_bulk() -> None:
+    """Fetch and store bulk day/night data.  Called daily at 05:00 UTC."""
+    try:
+        count = await fetch_and_store_daynight_bulk()
+        log.info("Day/night bulk refresh complete: %d races updated.", count)
+    except Exception as exc:
+        log.error("Day/night bulk refresh failed: %s", exc)
+
+
+async def _maybe_refresh_daynight_bulk() -> None:
+    """Refresh bulk day/night data on startup if missing or older than 23 hours."""
+    db = await get_db()
+    try:
+        async with db.execute(
+            "SELECT MAX(fetched_at) AS last_fetched FROM daynight_bulk_cache"
+        ) as cursor:
+            row = await cursor.fetchone()
+        last_fetched = row["last_fetched"] if row else None
+    finally:
+        await db.close()
+
+    if last_fetched:
+        try:
+            dt = datetime.fromisoformat(last_fetched.replace("Z", "+00:00"))
+            age_hours = (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+            if age_hours < 23:
+                log.info("Day/night bulk data is %.1f h old — skipping startup refresh.", age_hours)
+                return
+        except ValueError:
+            pass
+
+    log.info("Day/night bulk data missing or stale — refreshing on startup…")
+    await _refresh_daynight_bulk()
 
 
 async def _backfill_missing_results() -> None:
@@ -217,6 +253,12 @@ async def full_refresh() -> None:
         changed,
     )
 
+    # Refresh bulk day/night data if missing or stale (runs in background, non-blocking startup)
+    try:
+        await _maybe_refresh_daynight_bulk()
+    except Exception as exc:
+        log.error("Startup day/night bulk check failed: %s", exc)
+
 
 def get_last_updated_snapshot() -> dict[str, str]:
     """Return the current snapshot as ISO strings (safe to serialise to JSON)."""
@@ -263,6 +305,16 @@ def start_scheduler() -> AsyncIOScheduler:
         seconds=POLL_INTERVAL_SECONDS,
         id="poll_loop",
         misfire_grace_time=30,
+        coalesce=True,
+        max_instances=1,
+    )
+    scheduler.add_job(
+        _refresh_daynight_bulk,
+        "cron",
+        hour=5,
+        minute=0,
+        id="daynight_bulk_refresh",
+        misfire_grace_time=3600,
         coalesce=True,
         max_instances=1,
     )

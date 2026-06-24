@@ -653,6 +653,40 @@ async def api_system_suggest(q: str = Query(..., min_length=1, max_length=100)):
 _daylight_cache: dict[str, tuple[dict, dict, dict, float]] = {}
 
 
+@app.get("/api/daynight-bulk")
+async def api_daynight_bulk():
+    """Return the stored bulk day/night data for all races, keyed by race_key.
+
+    Data is populated once per day at 05:00 UTC by the background scheduler.
+    Clients should apply the following algorithm to determine current state:
+      - If now < until (or until is null), the state field is current.
+      - Otherwise, search upcoming_intervals for the interval where from <= now < until.
+    """
+    import json as _json
+
+    from .database import get_db as _get_db
+
+    db = await _get_db()
+    try:
+        async with db.execute(
+            "SELECT race_key, state, until_utc, upcoming_intervals, fetched_at"
+            " FROM daynight_bulk_cache"
+        ) as cursor:
+            rows = await cursor.fetchall()
+    finally:
+        await db.close()
+
+    return {
+        row["race_key"]: {
+            "state": row["state"],
+            "until": row["until_utc"],
+            "upcoming_intervals": _json.loads(row["upcoming_intervals"] or "[]"),
+            "fetched_at": row["fetched_at"],
+        }
+        for row in rows
+    }
+
+
 @app.get("/api/daylight/{key}")
 async def api_daylight(key: str, commander: str = ""):
     """Proxy to the ED Day/Night Calculator for current daylight state at a race start location.

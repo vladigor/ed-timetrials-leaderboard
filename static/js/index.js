@@ -18,6 +18,10 @@ let filterSearchText = ''; // Not persisted - ephemeral search state
 let sortOrder     = localStorage.getItem('tt_sort_order') || 'activity';
 let poller        = null;
 
+// Bulk day/night data loaded once per session from /api/daynight-bulk.
+// Keyed by race_key: { state, until, upcoming_intervals, fetched_at }
+let daynightBulkData = null;
+
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const grid             = document.getElementById('races-grid');
 const statusDot        = document.getElementById('status-dot');
@@ -66,7 +70,11 @@ async function init() {
   updateCmdrRacesGroup();
   updateHideIgnoredGroup();
 
-  await Promise.all([loadRaces(), loadCommanders(), loadNewRaces()]);
+  await Promise.all([loadRaces(), loadCommanders(), loadNewRaces(), loadDaynightBulk()]);
+  // Re-apply bulk day/night data now that both datasets are guaranteed to be loaded,
+  // then re-render so the correct state is shown even if loadRaces() finished first.
+  applyDaynightBulkToRaces();
+  renderGrid();
 
   checkCmdrRaces.addEventListener('change', () => {
     filterCmdrRaces = checkCmdrRaces.checked;
@@ -168,10 +176,56 @@ async function loadRaces() {
     else if (filterCmdr)               url.searchParams.set('commander_pos', filterCmdr);
     const data = await fetch(url).then(r => r.json());
     allRaces = data;
+    applyDaynightBulkToRaces();
     renderGrid();
   } catch (err) {
     setStatus('error');
     grid.innerHTML = `<p class="empty-state">Could not load races. Please try again later.</p>`;
+  }
+}
+
+async function loadDaynightBulk() {
+  try {
+    const data = await fetch('/api/daynight-bulk').then(r => r.json());
+    daynightBulkData = data;
+  } catch (_) {
+    // Non-fatal — fall back to stop-gap daylight_state from /api/races
+  }
+}
+
+/**
+ * Compute the current day/night state from a bulk data entry.
+ * Returns 'day', 'night', or null if no current interval can be found.
+ *
+ * Algorithm:
+ *   If until is null (permanent state) or now < until → use state.
+ *   Otherwise search upcoming_intervals for the interval containing now.
+ */
+function computeDaynightState(dn) {
+  const now = Date.now();
+  const until = dn.until ? new Date(dn.until).getTime() : Infinity;
+  if (now < until) return dn.state;
+  const intervals = dn.upcoming_intervals || [];
+  for (const iv of intervals) {
+    const from    = new Date(iv.from).getTime();
+    const ivUntil = new Date(iv.until).getTime();
+    if (now >= from && now < ivUntil) return iv.state;
+  }
+  return null;
+}
+
+/**
+ * Overlay computed day/night state from the bulk cache onto allRaces.
+ * Races not covered by the bulk API keep whatever daylight_state came from
+ * the server (populated by the per-race stop-gap mechanism).
+ */
+function applyDaynightBulkToRaces() {
+  if (!daynightBulkData) return;
+  for (const race of allRaces) {
+    const dn = daynightBulkData[race.key];
+    if (!dn) continue;
+    const computed = computeDaynightState(dn);
+    if (computed !== null) race.daylight_state = computed;
   }
 }
 
