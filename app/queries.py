@@ -2142,6 +2142,31 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         ) as cur:
             stats["one_timer_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
+        # Longest finish times (slowest times ever recorded)
+        async with db.execute(
+            """
+            WITH ranked AS (
+                SELECT
+                    r.name AS commander,
+                    l.key,
+                    l.name AS race_name,
+                    l.type,
+                    l.version,
+                    l.tags,
+                    r.time,
+                    DENSE_RANK() OVER (ORDER BY r.time DESC) AS rank
+                FROM results r
+                JOIN locations l ON l.key = r.location
+            )
+            SELECT commander, key, race_name, type, version, tags, time
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY time DESC, race_name ASC
+            """,
+            (limit,),
+        ) as cur:
+            stats["longest_times"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
         # Least recently active races (by last result submitted, oldest first)
         async with db.execute(
             """

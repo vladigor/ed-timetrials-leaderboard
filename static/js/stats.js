@@ -243,6 +243,15 @@ function render() {
     html += '</section>';
   }
 
+  // ── Longest Finish Times ─────────────────────────────────────────────────
+  if (stats.longest_times && stats.longest_times.length > 0) {
+    html += '<section class="stats-section">';
+    html += sectionHeading('Longest Finish Times');
+    html += '<p class="stats-section-description">The slowest times recorded — either truly epic endurance races, or someone who really took their time.</p>';
+    html += renderLongestTimesTable(stats.longest_times);
+    html += '</section>';
+  }
+
   // ── Least Recently Active Races ─────────────────────────────────────────
   if (stats.least_recently_active_races && stats.least_recently_active_races.length > 0) {
     html += '<section class="stats-section">';
@@ -520,6 +529,32 @@ function renderPopularShipNamesTable(items) {
     html += '<tr>';
     html += `<td>${esc(item.ship_name)}</td>`;
     html += `<td>${cmdrs || '<span class="muted">—</span>'}</td>`;
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderLongestTimesTable(items) {
+  if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
+
+  let html = '<table class="stats-table">';
+  html += '<thead><tr>';
+  html += '<th>Commander</th>';
+  html += '<th>Race</th>';
+  html += '<th class="stats-time">Finish Time</th>';
+  html += '</tr></thead>';
+  html += '<tbody>';
+
+  items.forEach(item => {
+    const isSelected = selectedCmdr && item.commander === selectedCmdr;
+    const rowClass = isSelected ? ' class="row-cmdr"' : '';
+    const badges = `${typeBadge(item.type)} ${versionBadge(item.version)} ${tagsBadges(item.tags)}`;
+    html += `<tr${rowClass}>`;
+    html += `<td>${renderCmdrLink(item.commander)}</td>`;
+    html += `<td>${renderRaceLink(item.key, item.race_name)} ${badges}</td>`;
+    html += `<td class="stats-time">${formatLongDuration(item.time)}</td>`;
     html += '</tr>';
   });
 
