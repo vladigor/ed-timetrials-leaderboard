@@ -307,9 +307,10 @@ function renderGrid() {
 
   // Sort
   const activityMs = ts => ts ? new Date(ts.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z').getTime() : 0;
+  const sortName = name => (name || '').trimStart().replace(/^The\s+/i, '');
   if (sortOrder === 'name') {
     races.sort((a, b) => {
-      const cmp = (a.name || '').localeCompare(b.name || '');
+      const cmp = sortName(a.name).localeCompare(sortName(b.name));
       return cmp !== 0 ? cmp : activityMs(b.last_activity) - activityMs(a.last_activity);
     });
   } else if (sortOrder === 'created') {
@@ -392,7 +393,7 @@ function raceCard(r) {
   <a class="race-card" href="/race/${encodeURIComponent(r.key)}"
      aria-label="View ${esc(r.name)} leaderboard">
     ${favBtn}
-    <div class="race-card-name">${esc(r.name)}</div>
+    <div class="race-card-name">${esc((r.name || '').trimStart())}</div>
     <div class="race-card-meta">
       ${typeBadge(r.type)}
       ${infoBadges}
