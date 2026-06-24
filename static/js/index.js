@@ -194,24 +194,25 @@ async function loadDaynightBulk() {
 }
 
 /**
- * Compute the current day/night state from a bulk data entry.
- * Returns 'day', 'night', or null if no current interval can be found.
+ * Compute the current day/night state and end time from a bulk data entry.
+ * Returns { state, until } where state is 'day', 'night', or null, and
+ * until is an ISO string or null (null means permanent/unknown end time).
  *
  * Algorithm:
  *   If until is null (permanent state) or now < until → use state.
  *   Otherwise search upcoming_intervals for the interval containing now.
  */
-function computeDaynightState(dn) {
+function computeDaynightInfo(dn) {
   const now = Date.now();
-  const until = dn.until ? new Date(dn.until).getTime() : Infinity;
-  if (now < until) return dn.state;
+  const untilMs = dn.until ? new Date(dn.until).getTime() : Infinity;
+  if (now < untilMs) return { state: dn.state, until: dn.until ?? null };
   const intervals = dn.upcoming_intervals || [];
   for (const iv of intervals) {
     const from    = new Date(iv.from).getTime();
     const ivUntil = new Date(iv.until).getTime();
-    if (now >= from && now < ivUntil) return iv.state;
+    if (now >= from && now < ivUntil) return { state: iv.state, until: iv.until };
   }
-  return null;
+  return { state: null, until: null };
 }
 
 /**
@@ -224,8 +225,11 @@ function applyDaynightBulkToRaces() {
   for (const race of allRaces) {
     const dn = daynightBulkData[race.key];
     if (!dn) continue;
-    const computed = computeDaynightState(dn);
-    if (computed !== null) race.daylight_state = computed;
+    const info = computeDaynightInfo(dn);
+    if (info.state !== null) {
+      race.daylight_state = info.state;
+      race.daylight_until = info.until;
+    }
   }
 }
 
@@ -367,6 +371,17 @@ function raceCard(r) {
     : `${entries} finisher${entries !== 1 ? 's' : ''}`;
 
   const daylightEmoji = r.daylight_state === 'day' ? ' ☀️' : r.daylight_state === 'night' ? ' 🌙' : '';
+  let daylightDuration = '';
+  if (daylightEmoji && r.daylight_until) {
+    const msLeft = new Date(r.daylight_until).getTime() - Date.now();
+    if (msLeft > 24 * 3_600_000) {
+      const daysLeft = Math.round(msLeft / 86_400_000);
+      daylightDuration = ` for ${daysLeft}d`;
+    } else {
+      const hoursLeft = Math.round(msLeft / 3_600_000);
+      if (hoursLeft >= 1) daylightDuration = ` for ${hoursLeft}h`;
+    }
+  }
 
   const infoBadges = [
     r.version === 'HORIZONS' ? `<span class="info-badge info-badge-horizons">Horizons</span>` : '',
@@ -397,7 +412,7 @@ function raceCard(r) {
     <div class="race-card-meta">
       ${typeBadge(r.type)}
       ${infoBadges}
-      ${daylightEmoji ? `<span class="race-card-daylight-emoji">${daylightEmoji}</span>` : ''}
+      ${daylightEmoji ? `<span class="race-card-daylight-emoji">${daylightEmoji}${daylightDuration ? `<span class="daylight-duration">${daylightDuration}</span>` : ''}</span>` : ''}
     </div>
     <div class="race-card-meta">
       <span>${esc(r.system)}</span>

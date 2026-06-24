@@ -293,6 +293,10 @@ a:hover { text-decoration: underline; }
   font-size: 1rem;
   line-height: 1;
 }
+.daylight-duration {
+  color: #a89f82;
+  font-size: .8em;
+}
 
 /* ── Fav indicator (display-only heart on race cards) ───────────────── */
 .fav-indicator {
