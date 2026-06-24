@@ -1328,6 +1328,7 @@ a.info-badge:hover { opacity: .8; }
   display: flex;
   align-items: baseline;
   gap: .75rem;
+  scroll-margin-top: 1.5rem;
 }
 
 .section-anchor {
@@ -2359,6 +2360,7 @@ a.info-badge:hover { opacity: .8; }
   display: flex;
   align-items: baseline;
   gap: .5rem;
+  scroll-margin-top: 1.5rem;
 }
 
 .stats-table {

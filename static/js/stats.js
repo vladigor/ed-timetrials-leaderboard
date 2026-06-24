@@ -299,6 +299,16 @@ function render() {
 
   container.innerHTML = html;
 
+  // Scroll to hash anchor now that the DOM is populated.
+  // Double rAF ensures layout is fully computed before scrolling.
+  if (window.location.hash) {
+    const id = window.location.hash.slice(1);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+  }
+
   const graphRangeSelect = document.getElementById('stats-graph-range-days');
   if (graphRangeSelect) {
     graphRangeSelect.value = String(visualDays);
