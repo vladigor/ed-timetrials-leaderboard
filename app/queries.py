@@ -1026,17 +1026,23 @@ async def get_visual_stats_extras(days: int = 365, months: int = 12) -> dict:
                 SELECT
                     CASE
                         WHEN races_entered = 1 THEN '1'
-                        WHEN races_entered BETWEEN 2 AND 5 THEN '2-5'
+                        WHEN races_entered = 2 THEN '2'
+                        WHEN races_entered BETWEEN 3 AND 5 THEN '3-5'
                         WHEN races_entered BETWEEN 6 AND 10 THEN '6-10'
                         WHEN races_entered BETWEEN 11 AND 20 THEN '11-20'
-                        ELSE '21+'
+                        WHEN races_entered BETWEEN 21 AND 50 THEN '21-50'
+                        WHEN races_entered BETWEEN 51 AND 100 THEN '51-100'
+                        ELSE '101+'
                     END AS bucket,
                     CASE
                         WHEN races_entered = 1 THEN 1
-                        WHEN races_entered BETWEEN 2 AND 5 THEN 2
-                        WHEN races_entered BETWEEN 6 AND 10 THEN 3
-                        WHEN races_entered BETWEEN 11 AND 20 THEN 4
-                        ELSE 5
+                        WHEN races_entered = 2 THEN 2
+                        WHEN races_entered BETWEEN 3 AND 5 THEN 3
+                        WHEN races_entered BETWEEN 6 AND 10 THEN 4
+                        WHEN races_entered BETWEEN 11 AND 20 THEN 5
+                        WHEN races_entered BETWEEN 21 AND 50 THEN 6
+                        WHEN races_entered BETWEEN 51 AND 100 THEN 7
+                        ELSE 8
                     END AS sort_order
                 FROM per_cmdr
             )
