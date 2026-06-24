@@ -70,51 +70,107 @@
   },
   "VR247-Kawasaki Town Uphill Battle": {
     "map": {
-      "thumbnail": "maps/thumbnails/Kawasaki_Town_Uphill_Battle.jpg",
-      "target": "maps/Kawasaki_Town_Uphill_Battle.jpg"
-    }
+      "thumbnail": "maps/thumbnails/KawasakiUphillBattle.jpg",
+      "target": "maps/KawasakiUphillBattle.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Uphill%20Battle"
+      }
+    ]
   },
   "VR247-Kawasaki Town UpDown": {
     "map": {
-      "thumbnail": "maps/thumbnails/Kawasaki_Town_UpDown.jpg",
-      "target": "maps/Kawasaki_Town_UpDown.jpg"
-    }
+      "thumbnail": "maps/thumbnails/KawasakiUpDown.jpg",
+      "target": "maps/KawasakiUpDown.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20UpDown"
+      }
+    ]
   },
   "VR247-Kawasaki Town Showdown Crown": {
     "map": {
-      "thumbnail": "maps/thumbnails/Kawasaki_Town_Showdown.jpg",
-      "target": "maps/Kawasaki_Town_Showdown.jpg"
-    }
+      "thumbnail": "maps/thumbnails/KawasakiShowdownCrown.jpg",
+      "target": "maps/KawasakiShowdownCrown.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Showdown%20Crown"
+      }
+    ]
   },
   "VR247-Kawasaki Town Showdown": {
     "map": {
-      "thumbnail": "maps/thumbnails/Kawasaki_Town_Showdown.jpg",
-      "target": "maps/Kawasaki_Town_Showdown.jpg"
-    }
+      "thumbnail": "maps/thumbnails/KawasakiShowdown.jpg",
+      "target": "maps/KawasakiShowdown.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Showdown"
+      }
+    ]
   },
   "VR247-Kawasaki Town Hoedown": {
     "map": {
-      "thumbnail": "maps/thumbnails/Kawasaki_Town_Hoedown.jpg",
-      "target": "maps/Kawasaki_Town_Hoedown.jpg"
-    }
+      "thumbnail": "maps/thumbnails/KawasakiHoedown.jpg",
+      "target": "maps/KawasakiHoedown.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Hoedown"
+      }
+    ]
   },
   "VR247-Kawasaki Town Hoedown Crown": {
     "map": {
-      "thumbnail": "maps/thumbnails/Kawasaki_Town_Hoedown.jpg",
-      "target": "maps/Kawasaki_Town_Hoedown.jpg"
-    }
+      "thumbnail": "maps/thumbnails/KawasakiHoedownCrown.jpg",
+      "target": "maps/KawasakiHoedownCrown.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Hoedown%20Crown"
+      }
+    ]
   },
   "VR247-Kawasaki Town Downhill Dash": {
     "map": {
-      "thumbnail": "maps/thumbnails/Kawasaki_Town_Downhill_Dash.jpg",
-      "target": "maps/Kawasaki_Town_Downhill_Dash.jpg"
-    }
+      "thumbnail": "maps/thumbnails/KawasakiDownhillDash.jpg",
+      "target": "maps/KawasakiDownhillDash.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Downhill%20Dash"
+      }
+    ]
   },
   "VR247-Kawasaki Town Down and Back": {
     "map": {
-      "thumbnail": "maps/thumbnails/Kawasaki_Town_Down_and_Back.jpg",
-      "target": "maps/Kawasaki_Town_Down_and_Back.jpg"
-    }
+      "thumbnail": "maps/thumbnails/KawasakiDownBack.jpg",
+      "target": "maps/KawasakiDownBack.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Down%20and%20Back"
+      }
+    ]
   },
   "VR247-DW3 Rendezvous Round_a_Butte": {
     "map": {
@@ -1592,9 +1648,16 @@
   },
   "WALTER WALL-_Openko": {
     "map": {
-      "thumbnail": "maps/thumbnails/openco_contraflow_v2.webp",
-      "target": "maps/openco_contraflow_v2.webp"
-    }
+      "thumbnail": "maps/thumbnails/OpenkoContra.jpg",
+      "target": "maps/OpenkoContra.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=WALTER%20WALL-_Openko"
+      }
+    ]
   },
   "TOBIAS VON BRANDT-CARRASCOCANYON": {
     "map": {
@@ -1621,6 +1684,11 @@
       "target": "maps/sitterly_rooftop_rampage.png"
     },
     "links": [
+      {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=GREAVES-_Penal%20Rooftop%20Rampage"
+      },
       {
         "label": "Group video",
         "type": "video",
