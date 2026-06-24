@@ -384,31 +384,17 @@ function renderPodiumTable(items) {
 
   let html = '<table class="stats-table">';
   html += '<thead><tr>';
-  html += '<th class="stats-rank">Rank</th>';
   html += '<th>Commander</th>';
-  html += '<th class="stats-count">🥇</th>';
+  html += '<th class="stats-count">🏆</th>';
   html += '<th class="stats-count">🥈</th>';
   html += '<th class="stats-count">🥉</th>';
   html += '</tr></thead>';
   html += '<tbody>';
 
-  let currentRank = 1;
-  items.forEach((item, idx) => {
-    if (
-      idx > 0
-      && (
-        item.gold !== items[idx - 1].gold
-        || item.silver !== items[idx - 1].silver
-        || item.bronze !== items[idx - 1].bronze
-      )
-    ) {
-      currentRank = idx + 1;
-    }
-    const medal = currentRank === 1 ? '🏆' : currentRank === 2 ? '🥈' : currentRank === 3 ? '🥉' : currentRank.toString();
+  items.forEach((item) => {
     const rowClass = selectedCmdr && item.name === selectedCmdr ? ' class="row-cmdr"' : '';
 
     html += `<tr${rowClass}>`;
-    html += `<td class="stats-rank">${medal}</td>`;
     html += `<td>${renderCmdrLink(item.name)}</td>`;
     html += `<td class="stats-count">${item.gold}</td>`;
     html += `<td class="stats-count">${item.silver}</td>`;
