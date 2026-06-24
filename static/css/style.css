@@ -1330,6 +1330,22 @@ a.info-badge:hover { opacity: .8; }
   gap: .75rem;
 }
 
+.section-anchor {
+  font-size: .85rem;
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+.cmdr-section-heading:hover .section-anchor,
+.cmdr-section-heading:focus-within .section-anchor,
+.stats-subsection-heading:hover .section-anchor,
+.stats-subsection-heading:focus-within .section-anchor {
+  opacity: 1;
+}
+
 .cmdr-type-heading {
   font-size: 1.15rem;
   font-weight: 700;
@@ -2340,6 +2356,9 @@ a.info-badge:hover { opacity: .8; }
   color: var(--text);
   margin-top: 1.5rem;
   margin-bottom: .75rem;
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
 }
 
 .stats-table {

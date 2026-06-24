@@ -2110,6 +2110,38 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         ) as cur:
             stats["least_competitive_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
+        # Races most popular with one-time participants (cmdrs who entered only one race ever)
+        async with db.execute(
+            """
+            WITH one_timers AS (
+                SELECT name
+                FROM results
+                GROUP BY name
+                HAVING COUNT(DISTINCT location) = 1
+            ),
+            ranked AS (
+                SELECT
+                    l.key,
+                    l.name,
+                    l.type,
+                    l.version,
+                    l.tags,
+                    COUNT(DISTINCT r.name) AS count,
+                    DENSE_RANK() OVER (ORDER BY COUNT(DISTINCT r.name) DESC) AS rank
+                FROM results r
+                JOIN one_timers ot ON r.name = ot.name
+                JOIN locations l ON l.key = r.location
+                GROUP BY r.location
+            )
+            SELECT key, name, type, version, tags, count
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY count DESC, name ASC
+            """,
+            (limit,),
+        ) as cur:
+            stats["one_timer_races"] = [_row_to_dict(r) for r in await cur.fetchall()]
+
         # Least recently active races (by last result submitted, oldest first)
         async with db.execute(
             """

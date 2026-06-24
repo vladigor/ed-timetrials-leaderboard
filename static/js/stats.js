@@ -3,6 +3,21 @@ import { formatTime, relativeTime, esc } from './utils.js';
 // ── Utilities ──────────────────────────────────────────────────────────────
 
 /**
+ * Render a section <h2> with an id and a self-referencing anchor link.
+ * @param {string} text - Heading text
+ * @returns {string} HTML string
+ */
+function sectionHeading(text) {
+  const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return `<h2 id="${id}" class="cmdr-section-heading">${esc(text)}<a href="#${id}" class="section-anchor" title="Link to this section">#</a></h2>`;
+}
+
+function subSectionHeading(text) {
+  const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return `<h3 id="${id}" class="stats-subsection-heading">${esc(text)}<a href="#${id}" class="section-anchor" title="Link to this section">#</a></h3>`;
+}
+
+/**
  * Format long durations as "NN days YY hrs MM mins"
  * @param {number} ms - milliseconds
  * @returns {string}
@@ -99,19 +114,19 @@ function render() {
 
   // ── Racers ────────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Racers</h2>';
+  html += sectionHeading('Racers');
   html += '<p class="stats-section-description">Participation breadth, active racer trend, and activity timing.</p>';
 
   // ── Top Performers ──────────────────────────────────────────────────────
 
   if (podiumRows && podiumRows.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Medals</h3>';
+    html += subSectionHeading('Medals');
     html += '<div id="medals-container" class="trend-composition-panel"><p class="loading-placeholder">Loading medals chart...</p></div>';
-    html += '<h3 class="stats-subsection-heading">Medals Table</h3>';
+    html += subSectionHeading('Medals Table');
     html += renderPodiumTable(podiumRows);
   }
 
-  html += '<h3 class="stats-subsection-heading">Active Racers</h3>';
+  html += subSectionHeading('Active Racers');
   html += '<div class="active-racers-graph-controls">';
   html += '<label for="stats-graph-range-days">Time range</label>';
   html += '<select id="stats-graph-range-days">';
@@ -123,11 +138,11 @@ function render() {
   html += '</div>';
   html += '<div id="graph-container" class="trend-chart-panel"><p class="loading-placeholder">Loading active racers graph...</p></div>';
 
-  html += '<h3 class="stats-subsection-heading">Activity Time-of-Week Heatmap</h3>';
+  html += subSectionHeading('Activity Time-of-Week Heatmap');
   html += '<div id="heatmap-container" class="trend-composition-panel"><p class="loading-placeholder">Loading activity heatmap...</p></div>';
 
   if (stats.top_dedicated_racers && stats.top_dedicated_racers.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Most Dedicated Racers (Participated in Most Races)</h3>';
+    html += subSectionHeading('Most Dedicated Racers (Participated in Most Races)');
     html += renderTopNTable(stats.top_dedicated_racers, 'commander', 'races participated');
   }
 
@@ -138,14 +153,14 @@ function render() {
 
   // ── Races ──────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Races</h2>';
+  html += sectionHeading('Races');
   html += '<p class="stats-section-description">Composition and freshness views for race coverage and activity.</p>';
   html += '<div id="composition-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race composition...</p></div>';
   html += '<div id="freshness-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race freshness...</p></div>';
   html += '</section>';
 
   html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Rivalry Intensity</h2>';
+    html += sectionHeading('Rivalry Intensity');
     html += '<p class="stats-section-description">Scores reflect how competitive races are: based on position changes in the top 3 and how close their times are. Higher scores = more intense competition. <span class="stats-inline-tooltip"><button type="button" class="stats-inline-tooltip-toggle" aria-label="How rivalry intensity is calculated" title="How rivalry intensity is calculated">ⓘ</button><span class="stats-section-tooltip">The numbers (0-100 scale) are calculated from:<br>- 60%: How many times the top 3 finishers\' positions changed in the last 30 days<br>- 40%: How tight the time gap is between 1st and 3rd place (smaller gap = higher score)<br>So higher intensity scores indicate races where the competition is tight and positions are constantly shifting.</span></span></p>';
     html += '<div id="rivalry-container" class="trend-composition-panel"><p class="loading-placeholder">Loading rivalry intensity...</p></div>';
   html += '</section>';
@@ -153,7 +168,7 @@ function render() {
 
   // ── Race Records ────────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Race Extremes</h2>';
+  html += sectionHeading('Race Extremes');
   html += '<div class="stats-grid">';
 
   if (stats.longest_race) {
@@ -187,7 +202,7 @@ function render() {
   // ── Biggest Leaders ─────────────────────────────────────────────────────
   if (stats.biggest_leaders && stats.biggest_leaders.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Biggest Leaders</h2>';
+    html += sectionHeading('Biggest Leaders');
     html += '<p class="stats-section-description">The largest gaps between 1st and 2nd place — pure dominance!</p>';
     html += renderLeaderGapTable(stats.biggest_leaders);
     html += '</section>';
@@ -196,7 +211,7 @@ function render() {
   // ── Closest Finishes ────────────────────────────────────────────────────
   if (stats.closest_finishes && stats.closest_finishes.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Closest Finishes</h2>';
+    html += sectionHeading('Closest Finishes');
     html += '<p class="stats-section-description">The tightest races — where victory hung by a thread!</p>';
     html += renderLeaderGapTable(stats.closest_finishes);
     html += '</section>';
@@ -205,7 +220,7 @@ function render() {
   // ── Most Competitive Races ──────────────────────────────────────────────
   if (stats.top_competitive_races && stats.top_competitive_races.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Races with the Most Participants</h2>';
+    html += sectionHeading('Races with the Most Participants');
     html += renderRaceTable(stats.top_competitive_races, 'participants');
     html += '</section>';
   }
@@ -213,16 +228,25 @@ function render() {
   // ── Least Competitive Races ─────────────────────────────────────────────
   if (stats.least_competitive_races && stats.least_competitive_races.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Races with the Fewest Participants</h2>';
+    html += sectionHeading('Races with the Fewest Participants');
     html += '<p class="stats-section-description">Want to bag a sneaky trophy? These races haven\'t had much love — maybe you can pad out the numbers and sneak a trophy while no-one is looking?</p>';
     html += renderRaceTable(stats.least_competitive_races, 'participants');
+    html += '</section>';
+  }
+
+  // ── Races with the Most One-Timers ──────────────────────────────────────
+  if (stats.one_timer_races && stats.one_timer_races.length > 0) {
+    html += '<section class="stats-section">';
+    html += sectionHeading('Races That Attracted the Most One-Timers');
+    html += '<p class="stats-section-description">These are the races most entered by commanders who only ever participated in a single race. They attract newcomers or curious explorers who never came back for more.</p>';
+    html += renderRaceTable(stats.one_timer_races, 'one-timers');
     html += '</section>';
   }
 
   // ── Least Recently Active Races ─────────────────────────────────────────
   if (stats.least_recently_active_races && stats.least_recently_active_races.length > 0) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Most Neglected Races (Longest Time Since Activity)</h2>';
+    html += sectionHeading('Most Neglected Races (Longest Time Since Activity)');
     html += '<p class="stats-section-description">These races are gathering dust in the hangar. Show them some love and be the first to set a new time in ages!</p>';
     html += renderRecentRacesTable(stats.least_recently_active_races);
     html += '</section>';
@@ -231,7 +255,7 @@ function render() {
   // ── Top Contributors ────────────────────────────────────────────────────
   if ((stats.top_creators && stats.top_creators.length > 0) || (stats.top_systems && stats.top_systems.length > 0)) {
     html += '<section class="stats-section">';
-    html += '<h2 class="cmdr-section-heading">Top Creators & Systems</h2>';
+    html += sectionHeading('Top Creators & Systems');
     html += '<div id="leaders-container" class="trend-grid-2">';
     html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading top creators...</p></div>';
     html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading top systems...</p></div>';
@@ -241,8 +265,8 @@ function render() {
 
   // ── Popular Vehicles ────────────────────────────────────────────────────
   html += '<section class="stats-section">';
-  html += '<h2 class="cmdr-section-heading">Ships</h2>';
-  html += '<h3 class="stats-subsection-heading">Vehicle Popularity</h3>';
+  html += sectionHeading('Ships');
+  html += subSectionHeading('Vehicle Popularity');
   html += '<div id="vehicles-container" class="trend-grid-2">';
   html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading ship popularity...</p></div>';
   html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading fighter popularity...</p></div>';
@@ -251,7 +275,7 @@ function render() {
 
   // ── Popular Ship Names ─────────────────────────────────────────────────
   if (stats.popular_ship_names && stats.popular_ship_names.length > 0) {
-    html += '<h3 class="stats-subsection-heading">Popular Ship Names</h3>';
+    html += subSectionHeading('Popular Ship Names');
     html += '<p class="stats-section-description">Ship names used by more than one cmdr.</p>';
     html += renderPopularShipNamesTable(stats.popular_ship_names);
   }
