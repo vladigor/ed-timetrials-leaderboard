@@ -166,37 +166,37 @@ function render() {
   html += '</section>';
 
 
-  // ── Race Records ────────────────────────────────────────────────────────
-  html += '<section class="stats-section">';
-  html += sectionHeading('Race Extremes');
-  html += '<div class="stats-grid">';
+  // // ── Race Records ────────────────────────────────────────────────────────
+  // html += '<section class="stats-section">';
+  // html += sectionHeading('Race Extremes');
+  // html += '<div class="stats-grid">';
 
-  if (stats.longest_race) {
-    html += renderStatCard(
-      'Longest Race',
-      renderRaceLink(stats.longest_race.key, stats.longest_race.name),
-      `Fastest time on this race: ${formatLongDuration(stats.longest_race.fastest_time_ms)}`
-    );
-  }
+  // if (stats.longest_race) {
+  //   html += renderStatCard(
+  //     'Longest Race',
+  //     renderRaceLink(stats.longest_race.key, stats.longest_race.name),
+  //     `Fastest time on this race: ${formatLongDuration(stats.longest_race.fastest_time_ms)}`
+  //   );
+  // }
 
-  if (stats.shortest_race) {
-    html += renderStatCard(
-      'Shortest Race',
-      renderRaceLink(stats.shortest_race.key, stats.shortest_race.name),
-      `Fastest time on this race: ${formatTime(stats.shortest_race.fastest_time_ms)}`
-    );
-  }
+  // if (stats.shortest_race) {
+  //   html += renderStatCard(
+  //     'Shortest Race',
+  //     renderRaceLink(stats.shortest_race.key, stats.shortest_race.name),
+  //     `Fastest time on this race: ${formatTime(stats.shortest_race.fastest_time_ms)}`
+  //   );
+  // }
 
-  if (stats.most_perseverance) {
-    html += renderStatCard(
-      'Most Perseverance',
-      renderCmdrLink(stats.most_perseverance.name),
-      `${formatLongDuration(stats.most_perseverance.time_ms)} on ${renderRaceLink(stats.most_perseverance.location, stats.most_perseverance.race_name)}`
-    );
-  }
+  // if (stats.most_perseverance) {
+  //   html += renderStatCard(
+  //     'Most Perseverance',
+  //     renderCmdrLink(stats.most_perseverance.name),
+  //     `${formatLongDuration(stats.most_perseverance.time_ms)} on ${renderRaceLink(stats.most_perseverance.location, stats.most_perseverance.race_name)}`
+  //   );
+  // }
 
-  html += '</div>';
-  html += '</section>';
+  // html += '</div>';
+  // html += '</section>';
 
 
   // ── Biggest Leaders ─────────────────────────────────────────────────────
@@ -337,17 +337,17 @@ function render() {
 
 // ── Render helpers ─────────────────────────────────────────────────────────
 
-function renderStatCard(label, value, subtitle = '') {
-  const valueHtml = typeof value === 'number' ? value.toLocaleString() : value;
-  const subtitleHtml = subtitle ? `<div class="stat-card-subtitle">${subtitle}</div>` : '';
-  return `
-    <div class="stat-card">
-      <div class="stat-card-label">${esc(label)}</div>
-      <div class="stat-card-value">${valueHtml}</div>
-      ${subtitleHtml}
-    </div>
-  `;
-}
+// function renderStatCard(label, value, subtitle = '') {
+//   const valueHtml = typeof value === 'number' ? value.toLocaleString() : value;
+//   const subtitleHtml = subtitle ? `<div class="stat-card-subtitle">${subtitle}</div>` : '';
+//   return `
+//     <div class="stat-card">
+//       <div class="stat-card-label">${esc(label)}</div>
+//       <div class="stat-card-value">${valueHtml}</div>
+//       ${subtitleHtml}
+//     </div>
+//   `;
+// }
 
 function renderCmdrLink(name) {
   return `<a href="/cmdr/${encodeURIComponent(name)}">${esc(name)}</a>`;
@@ -673,24 +673,30 @@ function renderRacerCompositionVisual(data) {
 
 function renderParticipationDepthVisual(rows) {
   if (!participationContainer) return;
-  participationContainer.innerHTML = renderHorizontalBarsCardVisual(
+  participationContainer.innerHTML = [
+    renderHorizontalBarsCardVisual(
     'How many races each commander has entered',
     rows,
     row => `${row.bucket} race${String(row.bucket) === '1' ? '' : 's'}`,
     row => row.count,
     'seg-onfoot',
-  );
+  ),
+  '<p><a href="#races-that-attracted-the-most-one-timers">More details about the 1 race entrants</a></p>'
+  ].join('');
 }
 
 function renderRaceFreshnessVisual(rows) {
   if (!freshnessContainer) return;
-  freshnessContainer.innerHTML = renderHorizontalBarsCardVisual(
+  freshnessContainer.innerHTML = [
+    renderHorizontalBarsCardVisual(
     'Races by days since last activity',
     rows,
     row => row.bucket,
     row => row.count,
     'seg-nondw3',
-  );
+  ),
+  '<p><a href="#most-neglected-races-longest-time-since-activity">More details on races with longest time since activity</a></p>'
+].join('');
 }
 
 function renderRivalryIntensityVisual(rows) {
