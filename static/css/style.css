@@ -279,6 +279,7 @@ a:hover { text-decoration: underline; }
   font-size: 1rem;
   font-weight: 600;
   color: var(--text);
+  margin-right: 8px;
 }
 
 .race-card-meta {
@@ -320,6 +321,11 @@ a:hover { text-decoration: underline; }
   border-radius: 1rem;
   text-transform: uppercase;
 }
+
+.race-card-meta .badge {
+  margin-left: 0;
+}
+
 
 .badge-odyssey  { background: rgba(26,110,189,.25);  color: #5aabf0; border: 1px solid #1a6ebd; }
 .badge-horizons { background: rgba(123,63,160,.25);  color: #c47eff; border: 1px solid #7b3fa0; }
