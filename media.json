@@ -1764,5 +1764,18 @@
       "thumbnail": "maps/thumbnails/Thunderpark_TripleJump.png",
       "target": "maps/Thunderpark_TripleJump.png"
     }
+  },
+  "RAZZAFRAG03": {
+    "map": {
+      "thumbnail": "maps/thumbnails/KesselRun1Lap_1.jpg",
+      "target": "maps/KesselRun1Lap_1.jpg"
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=RAZZAFRAG03"
+      }
+    ]
   }
 }
