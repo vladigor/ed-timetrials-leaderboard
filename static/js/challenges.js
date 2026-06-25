@@ -949,12 +949,12 @@ function challengeAlphabet(id, label, description, doneRaces) {
 }
 
 function renderSummary(challenges) {
-  const completeBool = challenges.filter(c => c.type === 'bool' && c.done).length;
-  const totalBool = challenges.filter(c => c.type === 'bool').length;
+  const complete = challenges.filter(c => c.done || c.percent >= 100).length;
+  const total = challenges.length;
 
   summaryBar.style.display = '';
   summaryBar.innerHTML = `
-    <span><strong>${completeBool}/${totalBool}</strong> checkbox challenges complete</span>
+    <span><strong>${complete}/${total}</strong> challenges complete</span>
   `;
 }
 
