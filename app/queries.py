@@ -1668,7 +1668,7 @@ async def get_visual_stats_extras(days: int = 365, months: int = 12) -> dict:
             switches = switches_by_location.get(race_key, 0)
             switch_score = min(switches / 5.0, 1.0)
             compression_score = max(0.0, 1.0 - ((t3 - t1) / max(t1, 1)))
-            intensity = round((switch_score * 0.6 + compression_score * 0.4) * 100, 1)
+            intensity = round((switch_score * 0.6 + compression_score * 0.4) * 100, 0)
             rivalry_intensity.append(
                 {
                     "race_key": race_key,

@@ -126,7 +126,32 @@ function render() {
     html += renderPodiumTable(podiumRows);
   }
 
+  html += '<section class="stats-section">';
+  html += sectionHeading('Rivalry');
+  html += '<p class="stats-section-description">Scores reflect how competitive races are: based on position changes in the top 3 and how close their times are. Higher scores = more intense competition. <span class="stats-inline-tooltip"><button type="button" class="stats-inline-tooltip-toggle" aria-label="How rivalry intensity is calculated" title="How rivalry intensity is calculated">ⓘ</button><span class="stats-section-tooltip">The numbers (0-100 scale) are calculated from:<br>- 60%: How many times the top 3 finishers\' positions changed in the last 30 days<br>- 40%: How tight the time gap is between 1st and 3rd place (smaller gap = higher score)<br>So higher intensity scores indicate races where the competition is tight and positions are constantly shifting.</span></span></p>';
+  html += '<div id="rivalry-container" class="trend-composition-panel"><p class="loading-placeholder">Loading rivalry intensity...</p></div>';
+
+  // ── Biggest Leaders ─────────────────────────────────────────────────────
+  if (stats.biggest_leaders && stats.biggest_leaders.length > 0) {
+    html += '<section class="stats-subsection">';
+    html += subSectionHeading('Biggest Leaders');
+    html += '<p class="stats-section-description">The largest gaps between 1st and 2nd place — pure dominance!</p>';
+    html += renderLeaderGapTable(stats.biggest_leaders);
+    html += '</section>';
+  }
+
+  // ── Closest Finishes ────────────────────────────────────────────────────
+  if (stats.closest_finishes && stats.closest_finishes.length > 0) {
+    html += '<section class="stats-subsection">';
+    html += subSectionHeading('Closest Finishes');
+    html += '<p class="stats-section-description">The tightest races — where victory hung by a thread!</p>';
+    html += renderLeaderGapTable(stats.closest_finishes);
+    html += '</section>';
+  }
+  html += '</section>';
+
   html += subSectionHeading('Active Racers');
+  // html += '<div id="racer-composition-container" class="trend-composition-panel"><p class="loading-placeholder">Loading racer composition...</p></div>';
   html += '<div class="active-racers-graph-controls">';
   html += '<label for="stats-graph-range-days">Time range</label>';
   html += '<select id="stats-graph-range-days">';
@@ -147,22 +172,13 @@ function render() {
   }
 
   html += '<div id="participation-container" class="trend-composition-panel"><p class="loading-placeholder">Loading participation depth...</p></div>';
-  html += '<div id="racer-composition-container" class="trend-composition-panel"><p class="loading-placeholder">Loading racer composition...</p></div>';
   html += '</section>';
-
 
   // ── Races ──────────────────────────────────────────────────────
   html += '<section class="stats-section">';
   html += sectionHeading('Races');
   html += '<p class="stats-section-description">Composition and freshness views for race coverage and activity.</p>';
   html += '<div id="composition-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race composition...</p></div>';
-  html += '<div id="freshness-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race freshness...</p></div>';
-  html += '</section>';
-
-  html += '<section class="stats-section">';
-    html += sectionHeading('Rivalry Intensity');
-    html += '<p class="stats-section-description">Scores reflect how competitive races are: based on position changes in the top 3 and how close their times are. Higher scores = more intense competition. <span class="stats-inline-tooltip"><button type="button" class="stats-inline-tooltip-toggle" aria-label="How rivalry intensity is calculated" title="How rivalry intensity is calculated">ⓘ</button><span class="stats-section-tooltip">The numbers (0-100 scale) are calculated from:<br>- 60%: How many times the top 3 finishers\' positions changed in the last 30 days<br>- 40%: How tight the time gap is between 1st and 3rd place (smaller gap = higher score)<br>So higher intensity scores indicate races where the competition is tight and positions are constantly shifting.</span></span></p>';
-    html += '<div id="rivalry-container" class="trend-composition-panel"><p class="loading-placeholder">Loading rivalry intensity...</p></div>';
   html += '</section>';
 
 
@@ -199,36 +215,22 @@ function render() {
   // html += '</section>';
 
 
-  // ── Biggest Leaders ─────────────────────────────────────────────────────
-  if (stats.biggest_leaders && stats.biggest_leaders.length > 0) {
     html += '<section class="stats-section">';
-    html += sectionHeading('Biggest Leaders');
-    html += '<p class="stats-section-description">The largest gaps between 1st and 2nd place — pure dominance!</p>';
-    html += renderLeaderGapTable(stats.biggest_leaders);
-    html += '</section>';
-  }
-
-  // ── Closest Finishes ────────────────────────────────────────────────────
-  if (stats.closest_finishes && stats.closest_finishes.length > 0) {
-    html += '<section class="stats-section">';
-    html += sectionHeading('Closest Finishes');
-    html += '<p class="stats-section-description">The tightest races — where victory hung by a thread!</p>';
-    html += renderLeaderGapTable(stats.closest_finishes);
-    html += '</section>';
-  }
+    html += sectionHeading('Race Participation');
+    html += renderParticipantsPerRaceCard(extras?.race_participant_groups || []);
 
   // ── Most Competitive Races ──────────────────────────────────────────────
   if (stats.top_competitive_races && stats.top_competitive_races.length > 0) {
-    html += '<section class="stats-section">';
-    html += sectionHeading('Races with the Most Participants');
+    html += '<section class="stats-subsection">';
+    html += subSectionHeading('Races with the Most Participants');
     html += renderRaceTable(stats.top_competitive_races, 'participants');
     html += '</section>';
   }
 
   // ── Least Competitive Races ─────────────────────────────────────────────
   if (stats.least_competitive_races && stats.least_competitive_races.length > 0) {
-    html += '<section class="stats-section">';
-    html += sectionHeading('Races with the Fewest Participants');
+    html += '<section class="stats-subsection">';
+    html += subSectionHeading('Races with the Fewest Participants');
     html += '<p class="stats-section-description">Want to bag a sneaky trophy? These races haven\'t had much love — maybe you can pad out the numbers and sneak a trophy while no-one is looking?</p>';
     html += renderRaceTable(stats.least_competitive_races, 'participants');
     html += '</section>';
@@ -236,8 +238,8 @@ function render() {
 
   // ── Races with the Most One-Timers ──────────────────────────────────────
   if (stats.one_timer_races && stats.one_timer_races.length > 0) {
-    html += '<section class="stats-section">';
-    html += sectionHeading('Races That Attracted the Most One-Timers');
+    html += '<section class="stats-subsection">';
+    html += subSectionHeading('Races That Attracted the Most One-Timers');
     html += '<p class="stats-section-description">These are the races most entered by commanders who only ever participated in a single race. They attract newcomers or curious explorers who never came back for more.</p>';
     html += renderRaceTable(stats.one_timer_races, 'one-timers');
     html += '</section>';
@@ -245,19 +247,24 @@ function render() {
 
   // ── Longest Finish Times ─────────────────────────────────────────────────
   if (stats.longest_times && stats.longest_times.length > 0) {
-    html += '<section class="stats-section">';
-    html += sectionHeading('Longest Finish Times');
+    html += '<section class="stats-subsection">';
+    html += subSectionHeading('Longest Finish Times');
     html += '<p class="stats-section-description">The slowest times recorded — either truly epic endurance races, or someone who really took their time.</p>';
     html += renderLongestTimesTable(stats.longest_times);
     html += '</section>';
   }
+    html += '</section>';
 
   // ── Least Recently Active Races ─────────────────────────────────────────
   if (stats.least_recently_active_races && stats.least_recently_active_races.length > 0) {
     html += '<section class="stats-section">';
-    html += sectionHeading('Most Neglected Races (Longest Time Since Activity)');
+    html += sectionHeading('Race Activity');
+    html += '<section class="stats-subsection">';
+    html += '<div id="freshness-container" class="trend-composition-panel"><p class="loading-placeholder">Loading race freshness...</p></div>';
+    html += subSectionHeading('Most Neglected Races (Longest Time Since Activity)');
     html += '<p class="stats-section-description">These races are gathering dust in the hangar. Show them some love and be the first to set a new time in ages!</p>';
     html += renderRecentRacesTable(stats.least_recently_active_races);
+    html += '</section>';
     html += '</section>';
   }
 
@@ -608,7 +615,7 @@ function renderVisualCharts() {
     return;
   }
 
-  renderCompositionVisual(stats, extras.race_participant_groups || []);
+  renderCompositionVisual(stats);
   renderRacerCompositionVisual(stats);
   renderParticipationDepthVisual(extras.participation_depth || []);
   renderRaceFreshnessVisual(extras.race_freshness_distribution || []);
@@ -620,16 +627,12 @@ function renderVisualCharts() {
   renderActiveRacersChartVisual(points || []);
 }
 
-function renderCompositionVisual(data, participantGroups) {
+function renderCompositionVisual(data) {
   if (!compositionContainer || !data) return;
 
   const totalRaces = Number(data.total_races || 0);
   const activeRaces = Number(data.active_races_30d || 0);
   const inactiveRaces = Math.max(totalRaces - activeRaces, 0);
-  const groupLookup = {};
-  (Array.isArray(participantGroups) ? participantGroups : []).forEach(row => {
-    groupLookup[String(row.bucket)] = Number(row.count || 0);
-  });
 
   compositionContainer.innerHTML = [
     '<div class="stacked-bars">',
@@ -643,15 +646,23 @@ function renderCompositionVisual(data, participantGroups) {
       { label: 'Active (30d)', value: activeRaces, className: 'seg-active' },
       { label: 'Inactive', value: inactiveRaces, className: 'seg-inactive' },
     ]),
-    renderStackedBarVisual('Participants per Race', [
-      { label: '0', value: groupLookup['0'] || 0, className: 'seg-part-0' },
-      { label: '1', value: groupLookup['1'] || 0, className: 'seg-part-1' },
-      { label: '2-4', value: groupLookup['2-4'] || 0, className: 'seg-part-2-4' },
-      { label: '5-9', value: groupLookup['5-9'] || 0, className: 'seg-part-5-9' },
-      { label: '10+', value: groupLookup['10+'] || 0, className: 'seg-part-10p' },
-    ]),
     '</div>',
   ].join('');
+}
+
+function renderParticipantsPerRaceCard(participantGroups) {
+  const groupLookup = {};
+  (Array.isArray(participantGroups) ? participantGroups : []).forEach(row => {
+    groupLookup[String(row.bucket)] = Number(row.count || 0);
+  });
+
+  return renderStackedBarVisual('Participants per Race', [
+    { label: '0', value: groupLookup['0'] || 0, className: 'seg-part-0' },
+    { label: '1', value: groupLookup['1'] || 0, className: 'seg-part-1' },
+    { label: '2-4', value: groupLookup['2-4'] || 0, className: 'seg-part-2-4' },
+    { label: '5-9', value: groupLookup['5-9'] || 0, className: 'seg-part-5-9' },
+    { label: '10+', value: groupLookup['10+'] || 0, className: 'seg-part-10p' },
+  ]);
 }
 
 function renderRacerCompositionVisual(data) {
@@ -694,8 +705,7 @@ function renderRaceFreshnessVisual(rows) {
     row => row.bucket,
     row => row.count,
     'seg-nondw3',
-  ),
-  '<p><a href="#most-neglected-races-longest-time-since-activity">More details on races with longest time since activity</a></p>'
+  )
 ].join('');
 }
 
@@ -746,7 +756,7 @@ function renderTopCreatorsSystemsVisual(data) {
   const systems = (data?.top_systems || []).filter(row => Number(row.count || 0) > 1).slice(0, 10);
   leadersContainer.innerHTML = [
     renderHorizontalBarsCardVisual('Top Creators', creators, row => row.name, row => row.count, 'seg-dw3'),
-    renderHorizontalBarsCardVisual('Top Systems', systems, row => row.system, row => row.count, 'seg-ship'),
+    renderHorizontalBarsCardVisual('Top Systems (hosting the most races)', systems, row => row.system, row => row.count, 'seg-ship'),
   ].join('');
 }
 
