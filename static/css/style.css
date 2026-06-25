@@ -2637,6 +2637,10 @@ a.info-badge:hover { opacity: .8; }
   fill: rgba(232, 160, 32, 0.18);
 }
 
+.trend-overlay-dw3 {
+  fill: rgba(106, 28, 16, 0.18);
+}
+
 .trend-dot {
   fill: var(--good);
   stroke: var(--surface);
