@@ -92,6 +92,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
-  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_enabled | tojson }} };</script>
+  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }} };</script>
   <script type="module" src="/static/js/index.js?v={{ v }}"></script>
 {% endblock %}

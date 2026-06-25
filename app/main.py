@@ -25,6 +25,7 @@ from .config import (
     DAYLIGHT_CACHE_TTL,
     ENV,
     FAVOURITES_ENABLED,
+    FAVOURITES_ENABLED_FOR,
     OFFLINE,
 )
 from .database import init_db
@@ -102,7 +103,13 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 async def index(request: Request):
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "v": STATIC_VER, "favourites_enabled": FAVOURITES_ENABLED},
+        {
+            "request": request,
+            "v": STATIC_VER,
+            "favourites_enabled": FAVOURITES_ENABLED or bool(FAVOURITES_ENABLED_FOR),
+            "favourites_flag": FAVOURITES_ENABLED,
+            "favourites_enabled_for": sorted(FAVOURITES_ENABLED_FOR),
+        },
     )
 
 
@@ -127,7 +134,9 @@ async def race_page(request: Request, key: str):
             "request": request,
             "v": STATIC_VER,
             "is_dev": ENV == "dev",
-            "favourites_enabled": FAVOURITES_ENABLED,
+            "favourites_enabled": FAVOURITES_ENABLED or bool(FAVOURITES_ENABLED_FOR),
+            "favourites_flag": FAVOURITES_ENABLED,
+            "favourites_enabled_for": sorted(FAVOURITES_ENABLED_FOR),
             "race_name": race_name,
             "race_description": race_description,
         },
@@ -137,7 +146,14 @@ async def race_page(request: Request, key: str):
 @app.get("/cmdr/{name}", response_class=HTMLResponse)
 async def cmdr_page(request: Request, name: str):
     return templates.TemplateResponse(
-        "cmdr.html", {"request": request, "v": STATIC_VER, "favourites_enabled": FAVOURITES_ENABLED}
+        "cmdr.html",
+        {
+            "request": request,
+            "v": STATIC_VER,
+            "favourites_enabled": FAVOURITES_ENABLED or bool(FAVOURITES_ENABLED_FOR),
+            "favourites_flag": FAVOURITES_ENABLED,
+            "favourites_enabled_for": sorted(FAVOURITES_ENABLED_FOR),
+        },
     )
 
 

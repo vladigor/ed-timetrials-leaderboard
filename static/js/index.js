@@ -3,7 +3,12 @@ import { ChangePoller } from './poller.js';
 import { updateProfileDisplay } from './profile.js';
 import { getFavState, favDisplay, getAllFavs } from './favourites.js';
 
-const FAVOURITES_ENABLED = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
+const _favGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
+const _favFor    = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites_for) || [];
+const _favCmdr   = (localStorage.getItem('tt_filter_cmdr') || '').toLowerCase();
+const FAVOURITES_ENABLED = _favGlobal || (_favFor.length > 0 && !!_favCmdr && _favFor.includes(_favCmdr));
+// console.debug('[favourites] FEATURE_FLAGS:', window.FEATURE_FLAGS);
+// console.debug('[favourites] _favGlobal:', _favGlobal, '| _favFor:', _favFor, '| _favCmdr:', _favCmdr, '| FAVOURITES_ENABLED:', FAVOURITES_ENABLED);
 
 // ── State ──────────────────────────────────────────────────────────────────
 let allRaces      = [];
@@ -66,6 +71,15 @@ async function init() {
   checkDaytimeOnly.checked  = filterDaytimeOnly;
   if (checkHideIgnored) checkHideIgnored.checked = filterHideIgnored;
   sortSelect.value       = sortOrder;
+  if (!FAVOURITES_ENABLED) {
+    const favOpt = sortSelect.querySelector('option[value="favourites"]');
+    if (favOpt) favOpt.remove();
+    if (sortOrder === 'favourites') {
+      sortOrder = 'activity';
+      localStorage.setItem('tt_sort_order', sortOrder);
+      sortSelect.value = sortOrder;
+    }
+  }
   updateProfileDisplay();
   updateCmdrRacesGroup();
   updateHideIgnoredGroup();

@@ -78,7 +78,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
-  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_enabled | tojson }} };</script>
+  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }} };</script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script type="module" src="/static/js/race.js?v={{ v }}"></script>
 {% endblock %}

@@ -30,6 +30,10 @@ FAVOURITES_ENABLED: bool = os.environ.get("FAVOURITES_ENABLED", "").strip().lowe
     "true",
     "yes",
 )
+# Comma-separated list of commanders for whom favourites is enabled even when FAVOURITES_ENABLED=false
+FAVOURITES_ENABLED_FOR: frozenset[str] = frozenset(
+    c.strip().lower() for c in os.environ.get("FAVOURITES_ENABLED_FOR", "").split(",") if c.strip()
+)
 # Comma-separated list of commanders who can access the daylight API even when DAYLIGHT_API_ENABLED=false
 DAYLIGHT_API_ENABLED_FOR: frozenset[str] = frozenset(
     c.strip().lower()

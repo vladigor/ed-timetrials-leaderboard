@@ -1,7 +1,9 @@
 import { formatTime, formatImprovement, relativeTime, esc, ordinal } from './utils.js';
 import { getFavState } from './favourites.js';
 
-const FAVOURITES_ENABLED = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
+const _favGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
+const _favFor    = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites_for) || [];
+const FAVOURITES_ENABLED = _favGlobal || (_favFor.length > 0 && !!(localStorage.getItem('tt_filter_cmdr')) && _favFor.includes(localStorage.getItem('tt_filter_cmdr').toLowerCase()));
 
 // ── State ──────────────────────────────────────────────────────────────────
 const cmdrName   = decodeURIComponent(location.pathname.split('/cmdr/')[1] ?? '');
