@@ -1,4 +1,4 @@
-import { formatTime, relativeTime, esc, ordinal } from './utils.js';
+import { formatTime, relativeTime, esc, ordinal, computeDaynightInfo } from './utils.js';
 import { ChangePoller } from './poller.js';
 import { updateProfileDisplay } from './profile.js';
 import { getFavState, favDisplay, getAllFavs } from './favourites.js';
@@ -195,27 +195,7 @@ async function loadDaynightBulk() {
   }
 }
 
-/**
- * Compute the current day/night state and end time from a bulk data entry.
- * Returns { state, until } where state is 'day', 'night', or null, and
- * until is an ISO string or null (null means permanent/unknown end time).
- *
- * Algorithm:
- *   If until is null (permanent state) or now < until → use state.
- *   Otherwise search upcoming_intervals for the interval containing now.
- */
-function computeDaynightInfo(dn) {
-  const now = Date.now();
-  const untilMs = dn.until ? new Date(dn.until).getTime() : Infinity;
-  if (now < untilMs) return { state: dn.state, until: dn.until ?? null };
-  const intervals = dn.upcoming_intervals || [];
-  for (const iv of intervals) {
-    const from    = new Date(iv.from).getTime();
-    const ivUntil = new Date(iv.until).getTime();
-    if (now >= from && now < ivUntil) return { state: iv.state, until: iv.until };
-  }
-  return { state: null, until: null };
-}
+
 
 /**
  * Overlay computed day/night state from the bulk cache onto allRaces.

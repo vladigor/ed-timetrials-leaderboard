@@ -89,3 +89,26 @@ export function esc(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
+
+/**
+ * Compute the current day/night state and active-until time for a race,
+ * using data from the /api/daynight-bulk endpoint.
+ *
+ * Returns { state: 'day'|'night'|null, until: string|null }
+ * where `state` is null when no current or upcoming interval is known.
+ *
+ * @param {{ state: string, until: string|null, upcoming_intervals: Array }} dn
+ * @returns {{ state: string|null, until: string|null }}
+ */
+export function computeDaynightInfo(dn) {
+  const now = Date.now();
+  const untilMs = dn.until ? new Date(dn.until).getTime() : Infinity;
+  if (now < untilMs) return { state: dn.state, until: dn.until ?? null };
+  const intervals = dn.upcoming_intervals || [];
+  for (const iv of intervals) {
+    const from    = new Date(iv.from).getTime();
+    const ivUntil = new Date(iv.until).getTime();
+    if (now >= from && now < ivUntil) return { state: iv.state, until: iv.until };
+  }
+  return { state: null, until: null };
+}

@@ -52,14 +52,19 @@
           <input type="checkbox" id="filter-hide-horizons">
           Hide Horizons races
         </label>
-        <label class="filter-toggle" id="filter-cmdr-races-group" style="display:none">
-          <input type="checkbox" id="filter-cmdr-races">
-          Only races I've done
-        </label>
         <label class="filter-toggle">
-          <input type="checkbox" id="filter-active">
-          Only races with activity in the last 7 days
+          <input type="checkbox" id="filter-daytime-only">
+          Only Daylight
         </label>
+      </div>
+
+      <div class="filter-group">
+        <label for="sort-select" style="white-space:nowrap">Sort by</label>
+        <select id="sort-select">
+          <option value="activity">Recent activity</option>
+          <option value="name">Name</option>
+          <option value="created">Date added</option>
+        </select>
       </div>
 
     </section>

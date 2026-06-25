@@ -1,25 +1,26 @@
-import { relativeTime, esc, ordinal } from './utils.js';
+import { relativeTime, esc, ordinal, computeDaynightInfo } from './utils.js';
 import { ChangePoller } from './poller.js';
 import { updateProfileDisplay } from './profile.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
 let allRaces      = [];
 let _commanders   = [];
-let filterActive  = localStorage.getItem('tt_filter_active') === '1';
+let sortOrder     = localStorage.getItem('tt_sort_order') || 'activity';
 let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
-let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // default on
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
 let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
+let filterDaytimeOnly = localStorage.getItem('tt_filter_daytime_only') === '1'; // default off
 let filterSearchText = ''; // Not persisted - ephemeral search state
+let daynightBulkData = null;
 let currentSystem = localStorage.getItem('tt_nendy_system') || '';
 let currentCoords = null; // { x, y, z, name }
 let poller        = null;
 let acDebounce    = null;
 let acActive      = -1;
 
-// Sorting state
-let sortBy     = 'distance';
-let sortDir    = 'asc';
+// Sorting state (default overridden by applySortOrder in init)
+let sortBy     = 'last_activity';
+let sortDir    = 'desc';
 const SORT_DEFAULTS = {
   name: 'asc',
   type: 'asc',
@@ -33,11 +34,10 @@ const SORT_DEFAULTS = {
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const searchInput      = document.getElementById('filter-search');
-const checkActive      = document.getElementById('filter-active');
-const checkCmdrRaces   = document.getElementById('filter-cmdr-races');
-const checkHideDW3     = document.getElementById('filter-hide-dw3');
+const sortSelect       = document.getElementById('sort-select');
+const checkHideDW3      = document.getElementById('filter-hide-dw3');
 const checkHideHorizons = document.getElementById('filter-hide-horizons');
-const cmdrRacesGroup   = document.getElementById('filter-cmdr-races-group');
+const checkDaytimeOnly  = document.getElementById('filter-daytime-only');
 const countLabel       = document.getElementById('race-count');
 const tableContainer   = document.getElementById('races-table-container');
 const systemInput      = document.getElementById('current-system');
@@ -46,10 +46,14 @@ const suggestionsList  = document.getElementById('system-suggestions');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
-  checkActive.checked    = filterActive;
-  checkCmdrRaces.checked = filterCmdrRaces;
-  checkHideDW3.checked   = filterHideDW3;
+  // Migrate: clear deprecated storage key
+  localStorage.removeItem('tt_filter_cmdr_races');
+
+  sortSelect.value = sortOrder;
+  applySortOrder(sortOrder);
+  checkHideDW3.checked      = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
+  checkDaytimeOnly.checked  = filterDaytimeOnly;
 
   if (currentSystem) {
     systemInput.value = currentSystem;
@@ -57,20 +61,22 @@ async function init() {
   }
 
   updateProfileDisplay();
-  updateCmdrRacesGroup();
 
-  await Promise.all([loadRaces(), loadCommanders()]);
+  await Promise.all([loadRaces(), loadCommanders(), loadDaynightBulk()]);
+  applyDaynightBulkToRaces();
+  renderTable();
 
-  checkActive.addEventListener('change', () => {
-    filterActive = checkActive.checked;
-    localStorage.setItem('tt_filter_active', filterActive ? '1' : '0');
-    loadRaces();
+  sortSelect.addEventListener('change', () => {
+    sortOrder = sortSelect.value;
+    localStorage.setItem('tt_sort_order', sortOrder);
+    applySortOrder(sortOrder);
+    renderTable();
   });
 
-  checkCmdrRaces.addEventListener('change', () => {
-    filterCmdrRaces = checkCmdrRaces.checked;
-    localStorage.setItem('tt_filter_cmdr_races', filterCmdrRaces ? '1' : '0');
-    loadRaces();
+  checkDaytimeOnly.addEventListener('change', () => {
+    filterDaytimeOnly = checkDaytimeOnly.checked;
+    localStorage.setItem('tt_filter_daytime_only', filterDaytimeOnly ? '1' : '0');
+    renderTable();
   });
 
   checkHideDW3.addEventListener('change', () => {
@@ -186,11 +192,10 @@ async function init() {
 async function loadRaces() {
   try {
     const url = new URL('/api/races', location.origin);
-    if (filterActive)                  url.searchParams.set('active_days', '7');
-    if (filterCmdr && filterCmdrRaces) url.searchParams.set('commander', filterCmdr);
-    else if (filterCmdr)               url.searchParams.set('commander_pos', filterCmdr);
+    if (filterCmdr) url.searchParams.set('commander_pos', filterCmdr);
     const data = await fetch(url).then(r => r.json());
     allRaces = data;
+    applyDaynightBulkToRaces();
     renderTable();
   } catch (err) {
     setStatus('error');
@@ -237,6 +242,11 @@ function renderTable() {
   // Client-side filter: hide Horizons races
   if (filterHideHorizons) {
     races = races.filter(r => r.version !== 'HORIZONS');
+  }
+
+  // Client-side filter: only daylight races
+  if (filterDaytimeOnly) {
+    races = races.filter(r => r.daylight_state === 'day');
   }
 
   // Client-side filter: search text
@@ -471,13 +481,31 @@ async function handleCopySystemName(btn) {
   }
 }
 
-// ── Profile helpers ────────────────────────────────────────────────────────
-function updateCmdrRacesGroup() {
-  if (filterCmdr) {
-    cmdrRacesGroup.style.display = '';
-    checkCmdrRaces.checked = filterCmdrRaces;
-  } else {
-    cmdrRacesGroup.style.display = 'none';
+// ── Sort helpers ─────────────────────────────────────────────────────────
+function applySortOrder(order) {
+  switch (order) {
+    case 'name':    sortBy = 'name';          sortDir = 'asc';  break;
+    case 'created': sortBy = 'created_at';    sortDir = 'desc'; break;
+    default:        sortBy = 'last_activity'; sortDir = 'desc'; break;
+  }
+}
+
+// ── Day/night helpers ─────────────────────────────────────────────────────
+async function loadDaynightBulk() {
+  try {
+    const res = await fetch('/api/daynight-bulk');
+    if (!res.ok) return;
+    daynightBulkData = await res.json();
+  } catch { /* non-fatal */ }
+}
+
+function applyDaynightBulkToRaces() {
+  if (!daynightBulkData) return;
+  for (const race of allRaces) {
+    const dn = daynightBulkData[race.key];
+    if (!dn) continue;
+    const { state } = computeDaynightInfo(dn);
+    if (state !== null) race.daylight_state = state;
   }
 }
 

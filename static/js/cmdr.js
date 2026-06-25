@@ -1,4 +1,4 @@
-import { formatTime, formatImprovement, relativeTime, esc, ordinal } from './utils.js';
+import { formatTime, formatImprovement, relativeTime, esc, ordinal, computeDaynightInfo } from './utils.js';
 import { getFavState } from './favourites.js';
 
 const _favGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
@@ -712,19 +712,6 @@ async function _loadDaynightBulk() {
   return _daynightBulkData;
 }
 
-function _computeDaynightState(dn) {
-  const now   = Date.now();
-  const until = dn.until ? new Date(dn.until).getTime() : Infinity;
-  if (now < until) return dn.state;
-  const intervals = dn.upcoming_intervals || [];
-  for (const iv of intervals) {
-    const from    = new Date(iv.from).getTime();
-    const ivUntil = new Date(iv.until).getTime();
-    if (now >= from && now < ivUntil) return iv.state;
-  }
-  return null;
-}
-
 async function fetchAllRaces() {
   if (allRacesCache) return allRacesCache;
   const [races, dn] = await Promise.all([
@@ -735,7 +722,7 @@ async function fetchAllRaces() {
   for (const race of races) {
     const dnEntry = dn[race.key];
     if (!dnEntry) continue;
-    const computed = _computeDaynightState(dnEntry);
+    const computed = computeDaynightInfo(dnEntry).state;
     if (computed !== null) race.daylight_state = computed;
   }
   allRacesCache = races;

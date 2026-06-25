@@ -1,4 +1,4 @@
-import { relativeTime, esc, ordinal } from './utils.js';
+import { relativeTime, esc, ordinal, computeDaynightInfo } from './utils.js';
 import { ChangePoller } from './poller.js';
 import { updateProfileDisplay } from './profile.js';
 
@@ -9,12 +9,13 @@ const isCreator = !!creatorName && creatorName.toUpperCase() === currentCmdr;
 
 let allRaces      = [];
 let mediaData     = {};
-let filterActive  = localStorage.getItem('tt_filter_active') === '1';
+let sortOrder     = localStorage.getItem('tt_sort_order') || 'activity';
 let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
-let filterCmdrRaces = localStorage.getItem('tt_filter_cmdr_races') !== '0'; // default on
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
 let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
+let filterDaytimeOnly = localStorage.getItem('tt_filter_daytime_only') === '1'; // default off
 let filterSearchText = ''; // Not persisted - ephemeral search state
+let daynightBulkData = null;
 let currentSystem = localStorage.getItem('tt_nendy_system') || '';
 let currentCoords = null; // { x, y, z, name }
 let poller        = null;
@@ -47,11 +48,10 @@ const titleLink           = document.getElementById('creator-title-link');
 const summaryEl           = document.getElementById('creator-summary');
 const instructionsEl      = document.getElementById('creator-instructions');
 const searchInput         = document.getElementById('filter-search');
-const checkActive         = document.getElementById('filter-active');
-const checkCmdrRaces      = document.getElementById('filter-cmdr-races');
+const sortSelect          = document.getElementById('sort-select');
 const checkHideDW3        = document.getElementById('filter-hide-dw3');
 const checkHideHorizons   = document.getElementById('filter-hide-horizons');
-const cmdrRacesGroup      = document.getElementById('filter-cmdr-races-group');
+const checkDaytimeOnly    = document.getElementById('filter-daytime-only');
 const countLabel          = document.getElementById('race-count');
 const racesByTypeContainer = document.getElementById('races-by-type');
 const systemInput         = document.getElementById('current-system');
@@ -71,10 +71,14 @@ async function init() {
   titleLink.textContent  = `CMDR ${creatorName}`;
   titleLink.href         = `/cmdr/${encodeURIComponent(creatorName)}`;
 
-  checkActive.checked    = filterActive;
-  checkCmdrRaces.checked = filterCmdrRaces;
-  checkHideDW3.checked   = filterHideDW3;
+  // Migrate: clear deprecated storage key
+  localStorage.removeItem('tt_filter_cmdr_races');
+
+  sortSelect.value = sortOrder;
+  applySortOrder(sortOrder);
+  checkHideDW3.checked      = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
+  checkDaytimeOnly.checked  = filterDaytimeOnly;
 
   if (currentSystem) {
     systemInput.value = currentSystem;
@@ -82,21 +86,23 @@ async function init() {
   }
 
   updateProfileDisplay();
-  updateCmdrRacesGroup();
 
-  // Load creator races and media data
-  await Promise.all([loadCreatorRaces(), loadMediaData()]);
+  // Load creator races, media data, and day/night bulk in parallel
+  await Promise.all([loadCreatorRaces(), loadMediaData(), loadDaynightBulk()]);
+  applyDaynightBulkToRaces();
+  renderTables();
 
   // Event listeners
-  checkActive.addEventListener('change', () => {
-    filterActive = checkActive.checked;
-    localStorage.setItem('tt_filter_active', filterActive ? '1' : '0');
+  sortSelect.addEventListener('change', () => {
+    sortOrder = sortSelect.value;
+    localStorage.setItem('tt_sort_order', sortOrder);
+    applySortOrder(sortOrder);
     renderTables();
   });
 
-  checkCmdrRaces.addEventListener('change', () => {
-    filterCmdrRaces = checkCmdrRaces.checked;
-    localStorage.setItem('tt_filter_cmdr_races', filterCmdrRaces ? '1' : '0');
+  checkDaytimeOnly.addEventListener('change', () => {
+    filterDaytimeOnly = checkDaytimeOnly.checked;
+    localStorage.setItem('tt_filter_daytime_only', filterDaytimeOnly ? '1' : '0');
     renderTables();
   });
 
@@ -211,7 +217,6 @@ async function loadCreatorRaces() {
     const url = new URL(`/api/creator/${encodeURIComponent(creatorName)}`, location.origin);
 
     // Always fetch position data if a commander is set
-    // The filterCmdrRaces checkbox will control whether we filter to only those races
     if (filterCmdr) {
       url.searchParams.set('commander_pos', filterCmdr);
     }
@@ -243,6 +248,7 @@ async function loadCreatorRaces() {
       instructionsEl.style.display = 'none';
     }
 
+    applyDaynightBulkToRaces();
     renderTables();
   } catch (err) {
     racesByTypeContainer.innerHTML = `<p class="empty-state">This commander hasn't created any races yet.</p>`;
@@ -359,13 +365,8 @@ function renderTables() {
     races = races.filter(r => r.version !== 'HORIZONS');
   }
 
-  if (filterActive) {
-    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    races = races.filter(r => {
-      if (!r.last_activity) return false;
-      const activityDate = new Date(r.last_activity.replace(' ', 'T') + 'Z');
-      return activityDate.getTime() >= cutoff;
-    });
+  if (filterDaytimeOnly) {
+    races = races.filter(r => r.daylight_state === 'day');
   }
 
   if (filterSearchText.trim()) {
@@ -381,11 +382,6 @@ function renderTables() {
       if (r.multi_system && 'multi-system'.includes(searchLower)) return true;
       return false;
     });
-  }
-
-  // Filter to only races the commander has participated in
-  if (filterCmdr && filterCmdrRaces) {
-    races = races.filter(r => r.cmdr_position != null);
   }
 
   // Calculate distances if system is set
@@ -668,16 +664,39 @@ async function handleCopySystemName(btn) {
   }
 }
 
-// ── Profile helpers ────────────────────────────────────────────────────────
-function updateCmdrRacesGroup() {
-  if (filterCmdr) {
-    cmdrRacesGroup.style.display = '';
-    checkCmdrRaces.checked = filterCmdrRaces;
-  } else {
-    cmdrRacesGroup.style.display = 'none';
+// ── Sort helpers ─────────────────────────────────────────────────────
+function applySortOrder(order) {
+  let by, dir;
+  switch (order) {
+    case 'name':    by = 'name';          dir = 'asc';  break;
+    case 'created': by = 'created_at';    dir = 'desc'; break;
+    default:        by = 'last_activity'; dir = 'desc'; break;
+  }
+  for (const type of Object.keys(sortState)) {
+    sortState[type] = { by, dir };
   }
 }
 
+// ── Day/night helpers ─────────────────────────────────────────────────────
+async function loadDaynightBulk() {
+  try {
+    const res = await fetch('/api/daynight-bulk');
+    if (!res.ok) return;
+    daynightBulkData = await res.json();
+  } catch { /* non-fatal */ }
+}
+
+function applyDaynightBulkToRaces() {
+  if (!daynightBulkData) return;
+  for (const race of allRaces) {
+    const dn = daynightBulkData[race.key];
+    if (!dn) continue;
+    const { state } = computeDaynightInfo(dn);
+    if (state !== null) race.daylight_state = state;
+  }
+}
+
+// ── Profile helpers ────────────────────────────────────────────────────────
 // ── Autocomplete ───────────────────────────────────────────────────────────
 async function fetchSuggestions(q) {
   try {
