@@ -36,6 +36,7 @@ async def list_races(
     active_days: int | None = None,
     commander: str | None = None,
     commander_pos: str | None = None,
+    rival_pos: str | None = None,
 ) -> list[dict]:
     """
     Return locations with a summary (latest result timestamp, entry count).
@@ -46,6 +47,7 @@ async def list_races(
     commander_pos – if set, annotate each race with that commander's position
                     (without filtering the race list to their races). Ignored when
                     commander is also set (commander implies commander_pos).
+    rival_pos     – if set, annotate each race with that rival commander's position.
     """
     db = await get_db()
     try:
@@ -74,6 +76,27 @@ async def list_races(
                 ) ELSE NULL END AS cmdr_position"""
             cmdr_position_params = [pos_cmdr, pos_cmdr]
 
+        rival_position_sql = ""
+        rival_position_params: list[Any] = []
+        if rival_pos:
+            rival_position_sql = """,
+                CASE WHEN EXISTS(
+                    SELECT 1 FROM results WHERE location = l.key AND name = ?
+                ) THEN (
+                    SELECT COUNT(*) + 1
+                    FROM (
+                        SELECT name, MIN(time) AS best
+                        FROM results
+                        WHERE location = l.key
+                        GROUP BY name
+                    ) t
+                    WHERE t.best < (
+                        SELECT MIN(time) FROM results
+                        WHERE location = l.key AND name = ?
+                    )
+                ) ELSE NULL END AS rival_position"""
+            rival_position_params = [rival_pos, rival_pos]
+
         base_sql = f"""
             SELECT
                 l.key,
@@ -101,6 +124,7 @@ async def list_races(
                     ELSE NULL
                 END                               AS daylight_state
                 {cmdr_position_sql}
+                {rival_position_sql}
             FROM locations l
             LEFT JOIN (
                 SELECT name, location, MIN(time) AS time, MAX(updated) AS updated
@@ -109,7 +133,7 @@ async def list_races(
             ) r ON r.location = l.key
             LEFT JOIN daylight_cache dc ON dc.race_key = l.key
         """
-        params = cmdr_position_params[:]
+        params = cmdr_position_params[:] + rival_position_params[:]
 
         if active_days is not None:
             cutoff = (datetime.now(timezone.utc) - timedelta(days=active_days)).strftime(

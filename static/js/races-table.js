@@ -1,22 +1,32 @@
 import { relativeTime, esc, ordinal, computeDaynightInfo } from './utils.js';
 import { ChangePoller } from './poller.js';
 import { updateProfileDisplay } from './profile.js';
+import { getFavState, getAllFavs } from './favourites.js';
+
+const _favGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
+const _favFor    = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites_for) || [];
+const _favCmdr   = (localStorage.getItem('tt_filter_cmdr') || '').toLowerCase();
+const FAVOURITES_ENABLED = _favGlobal || (_favFor.length > 0 && !!_favCmdr && _favFor.includes(_favCmdr));
 
 // ── State ──────────────────────────────────────────────────────────────────
 let allRaces      = [];
-let _commanders   = [];
+let commanders    = [];
 let sortOrder     = localStorage.getItem('tt_sort_order') || 'activity';
 let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
 let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
 let filterDaytimeOnly = localStorage.getItem('tt_filter_daytime_only') === '1'; // default off
+let filterHideIgnored = localStorage.getItem('tt_filter_hide_ignored') === '1'; // default off
 let filterSearchText = ''; // Not persisted - ephemeral search state
+let filterRival   = localStorage.getItem('tt_filter_rival') || '';
 let daynightBulkData = null;
 let currentSystem = localStorage.getItem('tt_nendy_system') || '';
 let currentCoords = null; // { x, y, z, name }
 let poller        = null;
 let acDebounce    = null;
 let acActive      = -1;
+let rivalAcDebounce = null;
+let rivalAcActive   = -1;
 
 // Sorting state (default overridden by applySortOrder in init)
 let sortBy     = 'last_activity';
@@ -38,11 +48,18 @@ const sortSelect       = document.getElementById('sort-select');
 const checkHideDW3      = document.getElementById('filter-hide-dw3');
 const checkHideHorizons = document.getElementById('filter-hide-horizons');
 const checkDaytimeOnly  = document.getElementById('filter-daytime-only');
+const checkHideIgnored  = document.getElementById('filter-hide-ignored');        // null if flag off
+const hideIgnoredGroup  = document.getElementById('filter-hide-ignored-group'); // null if flag off
 const countLabel       = document.getElementById('race-count');
 const tableContainer   = document.getElementById('races-table-container');
 const systemInput      = document.getElementById('current-system');
 const findSystemBtn    = document.getElementById('find-system-btn');
 const suggestionsList  = document.getElementById('system-suggestions');
+const rivalInput       = document.getElementById('rival-input');
+const rivalSuggestions = document.getElementById('rival-suggestions');
+const rivalApplyBtn    = document.getElementById('rival-apply-btn');
+const rivalClearBtn    = document.getElementById('rival-clear-btn');
+const rivalPanel       = document.getElementById('rival-panel');
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
@@ -54,10 +71,29 @@ async function init() {
   checkHideDW3.checked      = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
   checkDaytimeOnly.checked  = filterDaytimeOnly;
+  if (checkHideIgnored) checkHideIgnored.checked = filterHideIgnored;
+  updateHideIgnoredGroup();
 
   if (currentSystem) {
     systemInput.value = currentSystem;
     await resolveSystemCoords(currentSystem);
+  }
+
+  if (filterRival) {
+    rivalInput.value = filterRival;
+    rivalClearBtn.style.display = '';
+    rivalApplyBtn.style.display = 'none';
+    rivalPanel.classList.add('filter-bar--active');
+  }
+
+  // Hide rival panel entirely when no commander profile is selected
+  if (!filterCmdr) {
+    rivalPanel.style.display = 'none';
+    // Clear any stale rival filter so it doesn't silently affect results
+    if (filterRival) {
+      filterRival = '';
+      localStorage.removeItem('tt_filter_rival');
+    }
   }
 
   updateProfileDisplay();
@@ -78,6 +114,14 @@ async function init() {
     localStorage.setItem('tt_filter_daytime_only', filterDaytimeOnly ? '1' : '0');
     renderTable();
   });
+
+  if (checkHideIgnored) {
+    checkHideIgnored.addEventListener('change', () => {
+      filterHideIgnored = checkHideIgnored.checked;
+      localStorage.setItem('tt_filter_hide_ignored', filterHideIgnored ? '1' : '0');
+      renderTable();
+    });
+  }
 
   checkHideDW3.addEventListener('change', () => {
     filterHideDW3 = checkHideDW3.checked;
@@ -133,6 +177,55 @@ async function init() {
   });
 
   systemInput.addEventListener('blur', () => setTimeout(hideSuggestions, 150));
+
+  // ── Rival CMDR autocomplete & filter ──────────────────────────────────
+  rivalInput.addEventListener('input', () => {
+    clearTimeout(rivalAcDebounce);
+    const q = rivalInput.value.trim();
+    if (q.length < 1) { hideRivalSuggestions(); return; }
+    rivalAcDebounce = setTimeout(() => showRivalSuggestions(q), 150);
+  });
+
+  rivalInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      hideRivalSuggestions();
+      applyRivalFilter(rivalInput.value.trim());
+      return;
+    }
+    if (e.key === 'Escape') {
+      hideRivalSuggestions();
+      return;
+    }
+    const items = [...rivalSuggestions.querySelectorAll('li')];
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      rivalAcActive = Math.min(rivalAcActive + 1, items.length - 1);
+      applyRivalSuggestionHighlight(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      rivalAcActive = Math.max(rivalAcActive - 1, -1);
+      applyRivalSuggestionHighlight(items);
+    }
+  });
+
+  rivalInput.addEventListener('blur', () => setTimeout(hideRivalSuggestions, 150));
+
+  rivalApplyBtn.addEventListener('click', () => {
+    hideRivalSuggestions();
+    applyRivalFilter(rivalInput.value.trim());
+  });
+
+  rivalClearBtn.addEventListener('click', () => {
+    rivalInput.value = '';
+    rivalClearBtn.style.display = 'none';
+    rivalApplyBtn.style.display = '';
+    rivalPanel.classList.remove('filter-bar--active');
+    filterRival = '';
+    localStorage.removeItem('tt_filter_rival');
+    loadRaces();
+  });
 
   findSystemBtn.addEventListener('click', async () => {
     hideSuggestions();
@@ -193,6 +286,7 @@ async function loadRaces() {
   try {
     const url = new URL('/api/races', location.origin);
     if (filterCmdr) url.searchParams.set('commander_pos', filterCmdr);
+    if (filterRival) url.searchParams.set('rival_pos', filterRival);
     const data = await fetch(url).then(r => r.json());
     allRaces = data;
     applyDaynightBulkToRaces();
@@ -208,7 +302,7 @@ async function loadCommanders() {
     const data = await fetch('/api/commanders').then(r => r.json());
     commanders = data;
   } catch (_) {
-    // Non-fatal
+    // Non-fatal — commanders list stays empty, autocomplete won't show suggestions
   }
 }
 
@@ -247,6 +341,20 @@ function renderTable() {
   // Client-side filter: only daylight races
   if (filterDaytimeOnly) {
     races = races.filter(r => r.daylight_state === 'day');
+  }
+
+  // Client-side filter: hide 💔 races
+  if (FAVOURITES_ENABLED && filterHideIgnored) {
+    races = races.filter(r => getFavState(r.key) !== 'ignored');
+  }
+
+  // Client-side filter: rivalry — show only races where the rival is ahead of (or tied ahead of) you
+  if (filterRival) {
+    races = races.filter(r => {
+      if (r.rival_position == null) return false; // rival hasn't competed here
+      if (r.cmdr_position == null) return false;  // you haven't competed here
+      return r.rival_position < r.cmdr_position;  // rival has a better (lower) rank
+    });
   }
 
   // Client-side filter: search text
@@ -395,9 +503,14 @@ function renderRow(r, _idx) {
   const created = r.created_at ? formatDate(r.created_at) : '—';
   const creator = r.creator ? esc(r.creator) : '—';
 
+  const favState    = FAVOURITES_ENABLED ? getFavState(r.key) : null;
+  const favMarker   = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
+  const dayEmoji    = r.daylight_state === 'day' ? '☀️' : r.daylight_state === 'night' ? '🌙' : '';
+  const dayBadge    = dayEmoji ? `<span style="margin-left:0.5rem">${dayEmoji}</span>` : '';
+
   return `
     <tr>
-      <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></td>
+      <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}${favMarker}</a>${dayBadge}</td>
       <td class="num">${typeBadge(r.type)}</td>
       <td>${location} ${copyBtn}</td>
       <td class="num">${distance}</td>
@@ -514,6 +627,14 @@ function setStatus(_state) {
   // Status display removed - function kept to avoid breaking existing calls
 }
 
+// ── Favourites helpers ────────────────────────────────────────────────────
+function updateHideIgnoredGroup() {
+  if (!FAVOURITES_ENABLED || !hideIgnoredGroup) return;
+  const prefs = getAllFavs();
+  const hasIgnored = Object.values(prefs).some(v => v === 'ignored');
+  hideIgnoredGroup.style.display = hasIgnored ? '' : 'none';
+}
+
 // ── Autocomplete ───────────────────────────────────────────────────────────
 async function fetchSuggestions(q) {
   try {
@@ -550,6 +671,49 @@ function hideSuggestions() {
 function applySuggestionHighlight(items) {
   items.forEach((li, i) => li.classList.toggle('active', i === acActive));
   if (acActive >= 0) systemInput.value = items[acActive].textContent;
+}
+
+// ── Rival autocomplete helpers ─────────────────────────────────────────────
+function showRivalSuggestions(q) {
+  const lower = q.toLowerCase();
+  const ownName = filterCmdr.toLowerCase();
+  const matches = commanders
+    .filter(name => name.toLowerCase().includes(lower) && name.toLowerCase() !== ownName)
+    .slice(0, 8);
+  if (!matches.length) { hideRivalSuggestions(); return; }
+  rivalAcActive = -1;
+  rivalSuggestions.innerHTML = matches.map(n => `<li>${esc(n)}</li>`).join('');
+  rivalSuggestions.querySelectorAll('li').forEach((li, i) => {
+    li.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      rivalInput.value = matches[i];
+      hideRivalSuggestions();
+      applyRivalFilter(matches[i]);
+    });
+  });
+  rivalSuggestions.hidden = false;
+}
+
+function hideRivalSuggestions() {
+  rivalSuggestions.hidden = true;
+  rivalAcActive = -1;
+}
+
+function applyRivalSuggestionHighlight(items) {
+  items.forEach((li, i) => li.classList.toggle('active', i === rivalAcActive));
+  if (rivalAcActive >= 0) rivalInput.value = items[rivalAcActive].textContent;
+}
+
+async function applyRivalFilter(name) {
+  if (!name) return;
+  if (name.toLowerCase() === filterCmdr.toLowerCase()) return; // can't rival yourself
+  filterRival = name;
+  localStorage.setItem('tt_filter_rival', filterRival);
+  rivalInput.value = filterRival;
+  rivalClearBtn.style.display = '';
+  rivalApplyBtn.style.display = 'none';
+  rivalPanel.classList.add('filter-bar--active');
+  await loadRaces();
 }
 
 init();

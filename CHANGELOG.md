@@ -1,5 +1,17 @@
 # Change log
 
+## 2026-06-27
+- Index page:
+    - Now has coverage showing all races' current day/night state (where known).  There's no need to go to a race page first.  Thanks to @LouisH99 for implementing the buik races API that drives this.
+    - You can also see how long it is day/night for on the index cards.  eg.  "☀️ for 16h"  or  "🌙 for 3h".
+- Races list page:
+    - Added rival filter to the the /races-list page.
+        - Do you have a rival who has no right to be ahead of you in any races? Then this is the tool for you.
+- Stats page:
+    - Various layout tweaks / reordering.
+    - Added a table about one-time racers as I was curious to see if any particular races were associated with people not returning.
+
+
 ## 2026-06-20
 - Challenges:
     - Added a "challenges" page that gives an achievements style list of stuff you can do.

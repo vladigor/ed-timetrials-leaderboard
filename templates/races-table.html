@@ -20,6 +20,12 @@
           <input type="checkbox" id="filter-hide-horizons">
           Hide Horizons races
         </label>
+        {% if favourites_enabled %}
+        <label class="filter-toggle" id="filter-hide-ignored-group" style="display:none">
+          <input type="checkbox" id="filter-hide-ignored">
+          Hide 💔 races
+        </label>
+        {% endif %}
         <label class="filter-toggle">
           <input type="checkbox" id="filter-daytime-only">
           Only Daylight
@@ -35,6 +41,20 @@
         </select>
       </div>
 
+    </section>
+
+    <section id="rival-panel" class="filter-bar" aria-label="Rivalry filter" style="margin-top: 0.5rem">
+      <div class="filter-group">
+        <label for="rival-input" style="margin-right: 0.5rem; white-space: nowrap;">⚔️ Rival CMDR:</label>
+        <div class="nendy-autocomplete">
+          <input type="text" id="rival-input" class="nendy-input" placeholder="Commander name..."
+                 aria-label="Rival commander" autocomplete="off" spellcheck="false" style="min-width:240px">
+          <ul class="nendy-suggestions" id="rival-suggestions" hidden></ul>
+        </div>
+        <button id="rival-apply-btn" class="btn-chip">Filter</button>
+        <button id="rival-clear-btn" class="btn-chip" style="display:none">✕ Clear</button>
+        <span class="muted" style="font-size:0.85rem">Use this filter to only show races where this CMDR is ahead of you</span>
+      </div>
     </section>
 
     <section class="filter-bar" aria-label="Current System" style="margin-top: 0.5rem">
@@ -61,5 +81,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
+  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }} };</script>
   <script type="module" src="/static/js/races-table.js?v={{ v }}"></script>
 {% endblock %}

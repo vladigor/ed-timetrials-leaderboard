@@ -199,7 +199,16 @@ async def thefts_page(request: Request):
 
 @app.get("/races-list", response_class=HTMLResponse)
 async def races_table_page(request: Request):
-    return templates.TemplateResponse("races-table.html", {"request": request, "v": STATIC_VER})
+    return templates.TemplateResponse(
+        "races-table.html",
+        {
+            "request": request,
+            "v": STATIC_VER,
+            "favourites_enabled": FAVOURITES_ENABLED or bool(FAVOURITES_ENABLED_FOR),
+            "favourites_flag": FAVOURITES_ENABLED,
+            "favourites_enabled_for": sorted(FAVOURITES_ENABLED_FOR),
+        },
+    )
 
 
 @app.get("/guide", response_class=HTMLResponse)
@@ -409,13 +418,18 @@ async def api_races(
     active_days: int | None = Query(None, ge=1),
     commander: str | None = Query(None),
     commander_pos: str | None = Query(None),
+    rival_pos: str | None = Query(None),
 ):
     # commander      → filter to that cmdr's races AND show their position
     # commander_pos  → show all races but still annotate with that cmdr's position
+    # rival_pos      → annotate each race with that rival cmdr's position (for rivalry filter)
     effective_cmdr = commander or commander_pos
     filter_cmdr = commander  # only restrict to their races when 'commander' is set
     return await list_races(
-        active_days=active_days, commander=filter_cmdr, commander_pos=effective_cmdr
+        active_days=active_days,
+        commander=filter_cmdr,
+        commander_pos=effective_cmdr,
+        rival_pos=rival_pos,
     )
 
 
