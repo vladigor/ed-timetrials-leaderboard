@@ -743,6 +743,28 @@ async def get_commander_stats(commander: str) -> dict | None:
             creator_row = await cur.fetchone()
         created_race_count = creator_row["count"] if creator_row else 0
 
+        # Historical ship evidence used by challenge unlock logic.
+        async with db.execute(
+            """
+            SELECT DISTINCT
+                rh.ship,
+                UPPER(l.type) AS type
+            FROM results_history rh
+            JOIN locations l ON l.key = rh.location
+            WHERE rh.name = ?
+              AND rh.ship IS NOT NULL
+              AND TRIM(rh.ship) != ''
+            ORDER BY rh.ship COLLATE NOCASE ASC
+            """,
+            (commander,),
+        ) as cur:
+            ever_ship_rows = [_row_to_dict(r) for r in await cur.fetchall()]
+
+        ever_ships = sorted(
+            {str(r.get("ship") or "") for r in ever_ship_rows if str(r.get("ship") or "").strip()},
+            key=lambda s: s.lower(),
+        )
+
         return {
             "commander": commander,
             "overall_percentile": overall_pct,
@@ -750,6 +772,8 @@ async def get_commander_stats(commander: str) -> dict | None:
             "races": races,
             "podium_thefts": podium_thefts,
             "created_race_count": created_race_count,
+            "ever_ships": ever_ships,
+            "ever_ship_entries": ever_ship_rows,
         }
     finally:
         await db.close()

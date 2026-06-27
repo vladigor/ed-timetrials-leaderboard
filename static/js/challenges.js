@@ -93,6 +93,7 @@ async function init() {
 
 function buildChallenges(cmdrStats, allRaces) {
   const doneRaces = cmdrStats.races || [];
+  const everShipEntries = normaliseEverShipEntries(cmdrStats, doneRaces);
   const doneKeySet = new Set(doneRaces.map(r => r.key));
   const doneNames = doneRaces.map(r => r.race_name || '');
   const allDoneNameNormSet = new Set(doneNames.map(normalise));
@@ -128,7 +129,7 @@ function buildChallenges(cmdrStats, allRaces) {
       'guardian-slf',
       "I'll Try Spinning - That's a Good Trick!",
       'Set a PB in a Guardian SLF',
-      doneRaces.some(r => String(r.type || '').toUpperCase() === 'FIGHTER' && containsAny(r.ship, ['Lance', 'Javelin', 'Trident'])),
+      hasAnyEverShip(everShipEntries, ['Lance', 'Javelin', 'Trident'], 'FIGHTER'),
       racesFromDonePredicate(doneRaces, r => String(r.type || '').toUpperCase() === 'FIGHTER' && containsAny(r.ship, ['Lance', 'Javelin', 'Trident']))
     ),
 
@@ -396,13 +397,13 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeMountainTripCount('there-and-back-3', 'There and back again', 'Complete five different mountain route groups', MOUNTAIN_GROUPS, allDoneNameNormSet, 5),
 
-    challengeSnakeEyes('snake-eyes', 'Snake eyes', 'Set a PB in 5 different snake ships', doneRaces),
+    challengeSnakeEyes('snake-eyes', 'Snake eyes', 'Set a PB in 5 different snake ships', everShipEntries),
 
     challengeBool(
       'bigger-fish',
       "There's always a bigger fish",
       'Set a PB in a Dolphin, Orca, or Beluga Liner',
-      doneRaces.some(r => containsAny(r.ship, ['Dolphin', 'Orca', 'Beluga'])),
+      hasAnyEverShip(everShipEntries, ['Dolphin', 'Orca', 'Beluga']),
       racesFromDonePredicate(doneRaces, r => containsAny(r.ship, ['Dolphin', 'Orca', 'Beluga']))
     ),
 
@@ -410,7 +411,7 @@ function buildChallenges(cmdrStats, allRaces) {
       'bigger-boat',
       "We're gonna need a bigger boat",
       'Set a PB in an Anaconda',
-      doneRaces.some(r => containsAny(r.ship, ['Anaconda'])),
+      hasAnyEverShip(everShipEntries, ['Anaconda']),
       racesFromDonePredicate(doneRaces, r => containsAny(r.ship, ['Anaconda']))
     ),
 
@@ -881,14 +882,14 @@ function challengeMountainTripCount(id, label, description, groups, doneNameNorm
   };
 }
 
-function challengeSnakeEyes(id, label, description, doneRaces) {
+function challengeSnakeEyes(id, label, description, everShipEntries) {
   const shipMap = new Map();
   for (const shipName of SNAKE_SHIPS) {
     shipMap.set(shipName, false);
   }
 
-  for (const race of doneRaces) {
-    const raceShip = normalise(race.ship || '');
+  for (const entry of everShipEntries) {
+    const raceShip = normalise(entry.ship || '');
     for (const shipName of SNAKE_SHIPS) {
       if (raceShip.includes(normalise(shipName))) {
         shipMap.set(shipName, true);
@@ -1169,6 +1170,30 @@ function isCanyonRaceWithLowHeightLimit(race) {
 function containsAny(source, options) {
   const src = normalise(source || '');
   return options.some(opt => src.includes(normalise(opt)));
+}
+
+function normaliseEverShipEntries(cmdrStats, doneRaces) {
+  const apiEntries = cmdrStats?.ever_ship_entries;
+  if (Array.isArray(apiEntries) && apiEntries.length) {
+    return apiEntries.map(entry => ({
+      ship: String(entry.ship || ''),
+      type: String(entry.type || '').toUpperCase(),
+    }));
+  }
+
+  return doneRaces.map(race => ({
+    ship: String(race.ship || ''),
+    type: String(race.type || '').toUpperCase(),
+  }));
+}
+
+function hasAnyEverShip(entries, options, requiredType = null) {
+  return entries.some(entry => {
+    if (requiredType && String(entry.type || '').toUpperCase() !== String(requiredType || '').toUpperCase()) {
+      return false;
+    }
+    return containsAny(entry.ship, options);
+  });
 }
 
 function normalise(value) {
