@@ -25,6 +25,7 @@ let timeUpdater   = null;
 let isFilteredView = false;   // Track if we're viewing filtered results
 let activeFilterType = 'NONE'; // Track current filter type
 let daylightData = null;       // Cached daylight API response
+let daylightMissing = false;   // True when daylight API returned 404 (no data, show invite badge)
 
 function isHorizonsRace() {
   return race?.version === 'HORIZONS';
@@ -315,11 +316,13 @@ async function loadDaylightState() {
     if (!response.ok) {
       // If 404, race POI not found in daylight model — show invitation to contribute
       if (response.status === 404) {
+        daylightMissing = true;
         applyDaylightMissingBadge();
       }
       return;
     }
     const data = await response.json();
+    daylightMissing = false;
     daylightData = data;
     applyDaylightState(data);
   } catch (_) {
@@ -655,6 +658,8 @@ function renderRace() {
   // Re-inject the daylight badge after every infoEl rebuild
   if (isHorizonsRace()) {
     applyDaylightHorizonsBadge();
+  } else if (daylightMissing) {
+    applyDaylightMissingBadge();
   } else {
     applyDaylightState(daylightData);
   }
