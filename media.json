@@ -1712,14 +1712,19 @@
   },
   "NASTYNATE1-HHRKarpenkoCircuit1": {
     "map": {
-      "thumbnail": "maps/thumbnails/karpenko_circuit.png",
-      "target": "maps/karpenko_circuit.png"
+      "thumbnail": "maps/thumbnails/karpenko_circuit_1.png",
+      "target": "maps/karpenko_circuit_1.png"
     },
     "links": [
       {
         "label": "Demo video",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=FspGgaq3DNY"
+      },
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=Jk94pR_8NQ4"
       }
     ]
   },
