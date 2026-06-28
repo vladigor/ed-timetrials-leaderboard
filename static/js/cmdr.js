@@ -8,6 +8,7 @@ const FAVOURITES_ENABLED = _favGlobal || (_favFor.length > 0 && !!(localStorage.
 // ── State ──────────────────────────────────────────────────────────────────
 const cmdrName   = decodeURIComponent(location.pathname.split('/cmdr/')[1] ?? '');
 const isSelf     = !!cmdrName && cmdrName.toUpperCase() === (localStorage.getItem('tt_filter_cmdr') || '').toUpperCase();
+const APPLY_FAVOURITES = FAVOURITES_ENABLED && isSelf;
 let   stats      = null;   // full API response
 let   sortBy     = 'percentile';
 let   sortDir    = 'asc';         // 'asc' | 'desc'
@@ -285,7 +286,7 @@ function renderTables() {
     });
 
     // Favourites feature: float favs to top, sink 💔 to bottom
-    if (FAVOURITES_ENABLED) {
+    if (APPLY_FAVOURITES) {
       const favOrder = { fav: -1, null: 0, ignored: 1 };
       typeRaces.sort((a, b) => (favOrder[getFavState(a.key)] ?? 0) - (favOrder[getFavState(b.key)] ?? 0));
     }
@@ -298,7 +299,7 @@ function renderTables() {
       const isOpportunity = typeAvgTop !== undefined && topPct > typeAvgTop;
       const imp = r.improvement_ms != null ? formatImprovement(r.improvement_ms) : null;
       const shipLabel = [r.ship, r.shipname].filter(Boolean).join(' — ');
-      const favState = FAVOURITES_ENABLED ? getFavState(r.key) : null;
+      const favState = APPLY_FAVOURITES ? getFavState(r.key) : null;
       const favMarker = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
       return `
         <tr class="${isOpportunity ? 'row-opportunity' : ''}">
@@ -1045,7 +1046,7 @@ function renderNendy(resolvedName, undone) {
   nendyFiltersEl.style.display = '';
 
   // Favourites feature: exclude 💔 races from NENDY suggestions
-  if (FAVOURITES_ENABLED) {
+  if (APPLY_FAVOURITES) {
     undone = undone.filter(r => getFavState(r.key) !== 'ignored');
   }
   if (undone.length === 0) {
@@ -1128,7 +1129,7 @@ function renderNeidy(resolvedName, done, raceDetails) {
   scored.sort((a, b) => a.score - b.score);
 
   // Favourites feature: sink 💔 races to the bottom
-  if (FAVOURITES_ENABLED) {
+  if (APPLY_FAVOURITES) {
     const favOrder = { fav: -1, null: 0, ignored: 1 };
     scored.sort((a, b) => (favOrder[getFavState(a.race.key)] ?? 0) - (favOrder[getFavState(b.race.key)] ?? 0));
   }
@@ -1145,7 +1146,7 @@ function renderNeidy(resolvedName, done, raceDetails) {
     const leapStr = s.leapable > 0 ? `+${s.leapable}` : '—';
     const barPct  = Math.max(0, Math.min(100, Math.round((1 - Math.max(0, s.score + 0.1) / 0.6) * 100)));
     const daylightEmoji = s.race.daylight_state === 'day' ? '\u2600\ufe0f' : s.race.daylight_state === 'night' ? '\ud83c\udf19' : '';
-    const favState = FAVOURITES_ENABLED ? getFavState(s.race.key) : null;
+    const favState = APPLY_FAVOURITES ? getFavState(s.race.key) : null;
     const favMarker = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
     return `
       <tr>
