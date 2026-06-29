@@ -1791,5 +1791,18 @@
         "url": "https://www.youtube.com/watch?v=e1GKZeSNEEM"
       }
     ]
+  },
+  "ALEC TURNER-CONTRAIL_GEYSER_HIGH_JUMP": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Contrail_Geyser_High_Jump_Challenge.png",
+      "target": "maps/Contrail_Geyser_High_Jump_Challenge.png"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/h56N2xYoo60"
+      }
+    ]
   }
 }
