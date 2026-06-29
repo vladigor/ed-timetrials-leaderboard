@@ -41,6 +41,10 @@ const WINTER_OLYMPICS_3310 = [
   'Carrasco Canyon'
 ];
 
+const DRAKHYR_RALLY_3311 = [
+  'The Drakhyr Rally'
+];
+
 const MOUNTAIN_GROUPS = [
   ['Argon Ice Climb', 'Argon Ice Descent'],
   ['DW3 Rendezvous Rally 4 pt. 1: The Climb', 'DW3 Rendezvous Rally 4 pt. 2: The Descent'],
@@ -263,6 +267,7 @@ function buildChallenges(cmdrStats, allRaces) {
 
     challengeFixedSetPercent('titan-cup-3311', 'The 3311 Titan Cup', 'Relive the 3311 Titan Cup races that are available as time trials', TITAN_CUP_3311, doneRaces, allRaces),
     challengeFixedSetPercent('winter-olympics-3310', 'The 3310 Winter Olympics', 'Relive the 3310 Winter Olympics races that are available as time trials', WINTER_OLYMPICS_3310, doneRaces, allRaces),
+    challengeFixedSetPercent('drakhyr-rally-3311', 'The 3311 Drakhyr Rally', 'Take part in the time trial version of the 3311 Drakhyr Rally', DRAKHYR_RALLY_3311, doneRaces, allRaces),
 
     challengeContainsAnyNamePercent(
       'rooftop-parkour',
