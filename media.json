@@ -1708,7 +1708,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=-nBsJdipYbA"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/mitterand hollow.jpg",
+      "target": "maps/mitterand hollow.jpg"
+    }
   },
   "NASTYNATE1-HHRKarpenkoCircuit1": {
     "map": {
