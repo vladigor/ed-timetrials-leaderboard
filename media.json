@@ -1808,5 +1808,17 @@
         "url": "https://youtu.be/h56N2xYoo60"
       }
     ]
+  },
+  "FOEHAMMERR-Figure Eight": {
+    "map": {
+      "thumbnail": "maps/thumbnails/bifrost.png",
+      "target": "maps/bifrost.png"
+    }
+  },
+  "FOEHAMMERR-Figure Eight SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/bifrost.png",
+      "target": "maps/bifrost.png"
+    }
   }
 }
