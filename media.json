@@ -1820,5 +1820,11 @@
       "thumbnail": "maps/thumbnails/bifrost.png",
       "target": "maps/bifrost.png"
     }
+  },
+  "KIRLLU-_Cresent Neb RimRace": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Crescent Sector BQ-Y d24-A 7 c (20260705-155543).png",
+      "target": "maps/Crescent Sector BQ-Y d24-A 7 c (20260705-155543).png"
+    }
   }
 }
