@@ -1833,5 +1833,43 @@
         "url": "/maps/Crescent Sector BQ-Y d24-A 7 c (20260705-172315).png"
       }
     ]
+  },
+  "ALEXFIGHTER-_WeberLegacySpeedbowl4O": {
+    "map": {
+      "thumbnail": "maps/thumbnails/WeberLegacy_Speedbowl_4_Open.png",
+      "target": "maps/WeberLegacy_Speedbowl_4_Open.png"
+    },
+    "links": [
+      {
+        "label": "Speedbowl tutorial",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=BHkI9idSjSQ"
+      }
+    ]
+  },
+  "ALEXFIGHTER-_WeberLegacySpeedbowl3C": {
+    "map": {
+      "thumbnail": "maps/thumbnails/WeberLegacy_Speedbowl_3_Club.png",
+      "target": "maps/WeberLegacy_Speedbowl_3_Club.png"
+    },
+    "links": [
+      {
+        "label": "Speedbowl tutorial",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=BHkI9idSjSQ"
+      }
+    ]
+  },
+  "ALEXFIGHTER-_WeberLegacySpeedbowl2A": {
+    "map": {
+      "thumbnail": "maps/thumbnails/WeberLegacy_Speedbowl_2_Adv.png",
+      "target": "maps/WeberLegacy_Speedbowl_2_Adv.png"
+    }
+  },
+  "ALEXFIGHTER-_WeberLegacySpeedbowl1P": {
+    "map": {
+      "thumbnail": "maps/thumbnails/WeberLegacy_Speedbowl_1_Pro.png",
+      "target": "maps/WeberLegacy_Speedbowl_1_Pro.png"
+    }
   }
 }
