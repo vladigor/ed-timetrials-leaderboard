@@ -230,10 +230,11 @@ async function loadNewRaces() {
     const cmdr = localStorage.getItem('tt_filter_cmdr') || '';
     const url  = cmdr ? `/api/races/new?commander=${encodeURIComponent(cmdr)}` : '/api/races/new';
     const data = await fetch(url).then(r => r.json());
+    const visibleRaces = data.filter(r => getFavState(r.key) !== 'ignored');
     const panel = document.getElementById('new-races-panel');
     const list  = document.getElementById('new-races-list');
-    if (!data.length) { panel.style.display = 'none'; return; }
-    list.innerHTML = data.map(r =>
+    if (!visibleRaces.length) { panel.style.display = 'none'; return; }
+    list.innerHTML = visibleRaces.map(r =>
       `<li><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a></li>`
     ).join('');
     panel.style.display = '';
