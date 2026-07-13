@@ -1883,5 +1883,18 @@
       "thumbnail": "maps/thumbnails/Majhiat_Motordrome_Wall_of_Death.png",
       "target": "maps/Majhiat_Motordrome_Wall_of_Death.png"
     }
+  },
+  "VLADIGOR-_Fuca Round in an SRV": {
+    "map": {
+      "thumbnail": "maps/thumbnails/LHS 200-Al’Ameira Dua (20260619-085914).png",
+      "target": "maps/LHS 200-Al’Ameira Dua (20260619-085914).png"
+    },
+    "links": [
+      {
+        "label": "Demo Video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=0qb4sl14vQs"
+      }
+    ]
   }
 }
