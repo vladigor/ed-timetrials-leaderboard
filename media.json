@@ -1560,5 +1560,11 @@
         "url": "https://www.youtube.com/watch?v=0qb4sl14vQs"
       }
     ]
+  },
+  "GREAVES-Mitterand Mania": {
+    "map": {
+      "thumbnail": "maps/thumbnails/mitterand_mania.jpg",
+      "target": "maps/mitterand_mania.jpg"
+    }
   }
 }
