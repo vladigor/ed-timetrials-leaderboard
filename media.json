@@ -1721,6 +1721,11 @@
     },
     "links": [
       {
+        "label": "Course Notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=NASTYNATE1-HHRKarpenkoCircuit1"
+      },
+      {
         "label": "Demo video",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=FspGgaq3DNY"
@@ -1772,7 +1777,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/ThunderparkTriple.jpg",
       "target": "maps/ThunderparkTriple.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=SON%20OF%20THUNDER-1"
+      }
+    ]
   },
   "RAZZAFRAG03": {
     "map": {
@@ -1813,13 +1825,27 @@
     "map": {
       "thumbnail": "maps/thumbnails/Bifrost.jpg",
       "target": "maps/Bifrost.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=FOEHAMMERR-Figure%20Eight"
+      }
+    ]
   },
   "FOEHAMMERR-Figure Eight SLF": {
     "map": {
       "thumbnail": "maps/thumbnails/Bifrost.jpg",
       "target": "maps/Bifrost.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Course notes",
+        "type": "link",
+        "url": "https://frinkbottle.uk/TimeTrials/index.html?map=FOEHAMMERR-Figure%20Eight%20SLF"
+      }
+    ]
   },
   "KIRLLU-_Cresent Neb RimRace": {
     "map": {
