@@ -1811,14 +1811,14 @@
   },
   "FOEHAMMERR-Figure Eight": {
     "map": {
-      "thumbnail": "maps/thumbnails/bifrost.png",
-      "target": "maps/bifrost.png"
+      "thumbnail": "maps/thumbnails/Bifrost.jpg",
+      "target": "maps/Bifrost.jpg"
     }
   },
   "FOEHAMMERR-Figure Eight SLF": {
     "map": {
-      "thumbnail": "maps/thumbnails/bifrost.png",
-      "target": "maps/bifrost.png"
+      "thumbnail": "maps/thumbnails/Bifrost.jpg",
+      "target": "maps/Bifrost.jpg"
     }
   },
   "KIRLLU-_Cresent Neb RimRace": {
