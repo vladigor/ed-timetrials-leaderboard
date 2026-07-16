@@ -610,6 +610,12 @@
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-BUSTOSCANYON"
     }
   },
+  "TOBIAS VON BRANDT-BUSTOSCANYONSLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BustosCanyon.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-BUSTOSCANYON"
+    }
+  },
   "ALEC TURNER-02102023": {
     "map": {
       "thumbnail": "maps/thumbnails/CalicosCrater.jpg",
