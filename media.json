@@ -1572,5 +1572,11 @@
       "thumbnail": "maps/thumbnails/mitterand_mania.jpg",
       "target": "maps/mitterand_mania.jpg"
     }
+  },
+  "GREAVES-The Interpolar Express": {
+    "map": {
+      "thumbnail": "maps/thumbnails/interpolar_express.jpg",
+      "target": "maps/interpolar_express.jpg"
+    }
   }
 }
