@@ -613,7 +613,7 @@
   "TOBIAS VON BRANDT-BUSTOSCANYONSLF": {
     "map": {
       "thumbnail": "maps/thumbnails/BustosCanyon.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=DUCK0-BUSTOSCANYON"
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=TOBIAS%20VON%20BRANDT-BUSTOSCANYONSLF"
     }
   },
   "ALEC TURNER-02102023": {
@@ -1039,7 +1039,7 @@
   "ALEC TURNER-SpiralizerSLF": {
     "map": {
       "thumbnail": "maps/thumbnails/Spiralizer.jpg",
-      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-Spiralizer"
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-SpiralizerSLF"
     },
     "links": [
       {
@@ -1545,13 +1545,13 @@
   "ALEXFIGHTER-MajhiatMinigolfB2": {
     "map": {
       "thumbnail": "maps/thumbnails/Majhiat_Minigolf.png",
-      "target": "maps/Majhiat_Minigolf.png"
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEXFIGHTER-MajhiatMinigolfB2"
     }
   },
   "ALEXFIGHTER-_MajhiatMotordrome_WoD": {
     "map": {
       "thumbnail": "maps/thumbnails/Majhiat_Motordrome_Wall_of_Death.png",
-      "target": "maps/Majhiat_Motordrome_Wall_of_Death.png"
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEXFIGHTER-_MajhiatMotordrome_WoD"
     }
   },
   "VLADIGOR-_Fuca Round in an SRV": {
