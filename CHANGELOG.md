@@ -1,5 +1,9 @@
 # Change log
 
+## 2026-07-21
+- General:
+    - Added [Cafe Saturday Daylight Planner](/cafe=saturday) page, which lists all the races that are predicted to be in daylight on the next Saturday at 4pm.
+
 ## 2026-06-27
 - Index page:
     - Now has coverage showing all races' current day/night state (where known).  There's no need to go to a race page first.  Thanks to @LouisH99 for implementing the buik races API that drives this.

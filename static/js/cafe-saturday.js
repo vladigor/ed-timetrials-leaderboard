@@ -215,7 +215,7 @@ function renderTable() {
 
   if (eventWindow.startsInMs > SUPPRESSION_WINDOW_MS) {
     countLabel.textContent = 'Predictions unavailable yet';
-    tableContainer.innerHTML = '<p class="empty-state">This page only shows results when we are within 48 hours of the next event window.</p>';
+    tableContainer.innerHTML = '<p class="empty-state">This page only shows results when we are within 48 hours of the next session window.</p>';
     return;
   }
 
@@ -361,9 +361,9 @@ function renderWindowText(eventWindow) {
     : `This page lists only races predicted to be in daylight at both ${startLabel} and ${endLabel}. Current system is fixed to Sol for distance estimates.`;
 
   if (eventWindow.startsInMs > SUPPRESSION_WINDOW_MS) {
-    windowWarning.textContent = `Predictions are intentionally hidden until we are within 48 hours of the event.`;
+    windowWarning.textContent = `Predictions are intentionally hidden until we are within 48 hours of the session so as to maintain accuracy.`;
   } else {
-    windowWarning.textContent = `The event starts in ${formatDuration(eventWindow.startsInMs)}.`;
+    windowWarning.textContent = `The session starts in ${formatDuration(eventWindow.startsInMs)}.`;
   }
 }
 
