@@ -211,6 +211,20 @@ async def races_table_page(request: Request):
     )
 
 
+@app.get("/cafe-saturday", response_class=HTMLResponse)
+async def cafe_saturday_page(request: Request):
+    return templates.TemplateResponse(
+        "cafe-saturday.html",
+        {
+            "request": request,
+            "v": STATIC_VER,
+            "favourites_enabled": FAVOURITES_ENABLED or bool(FAVOURITES_ENABLED_FOR),
+            "favourites_flag": FAVOURITES_ENABLED,
+            "favourites_enabled_for": sorted(FAVOURITES_ENABLED_FOR),
+        },
+    )
+
+
 @app.get("/guide", response_class=HTMLResponse)
 async def guide_page(request: Request):
     """Render the racing beginners guide from markdown."""

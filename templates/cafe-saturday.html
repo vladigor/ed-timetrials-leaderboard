@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main class="page-wrapper">
+
+    <h1 style="margin-bottom: 1rem">Cafe Saturday Daylight Planner</h1>
+
+    <section class="filter-bar" style="margin-bottom: 1rem">
+      <p id="window-description" class="muted" style="margin: 0 0 0.5rem 0"></p>
+      <p id="window-warning" class="muted" style="margin: 0"></p>
+    </section>
+
+    <section class="filter-bar" aria-label="Event timing" style="margin-bottom: 0.5rem">
+      <div class="filter-group">
+        <label for="event-day" style="white-space:nowrap">Event day (UTC)</label>
+        <select id="event-day">
+          <option value="0">Sun</option>
+          <option value="1">Mon</option>
+          <option value="2">Tue</option>
+          <option value="3">Wed</option>
+          <option value="4">Thu</option>
+          <option value="5">Fri</option>
+          <option value="6" selected>Sat</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="event-start" style="white-space:nowrap">Start (UTC)</label>
+        <input type="time" id="event-start" value="16:00" step="60" aria-label="Event start time UTC">
+      </div>
+
+      <div class="filter-group">
+        <label for="event-duration" style="white-space:nowrap">Duration (hours)</label>
+        <input type="number" id="event-duration" min="1" max="8" step="1" value="2" style="width:5rem" aria-label="Event duration in hours">
+      </div>
+    </section>
+
+    <section class="filter-bar" aria-label="Filters">
+
+      <div class="filter-group">
+        <input type="text" id="filter-search" placeholder="Filter by name, system, type..." aria-label="Search races" style="min-width:240px">
+      </div>
+
+      <div class="filter-group" style="justify-content:flex-end">
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-hide-dw3">
+          Hide DW3 races
+        </label>
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-hide-horizons">
+          Hide Horizons races
+        </label>
+        {% if favourites_enabled %}
+        <label class="filter-toggle" id="filter-hide-ignored-group" style="display:none">
+          <input type="checkbox" id="filter-hide-ignored">
+          Hide 💔 races
+        </label>
+        {% endif %}
+      </div>
+
+      <div class="filter-group">
+        <label for="sort-select" style="white-space:nowrap">Sort by</label>
+        <select id="sort-select">
+          <option value="activity">Recent activity</option>
+          <option value="name">Name</option>
+          <option value="created">Date added</option>
+        </select>
+      </div>
+
+    </section>
+
+    <div class="status-bar">
+      <span id="race-count" style="font-weight: bold; color: var(--text)"></span>
+    </div>
+
+    <div id="races-table-container">
+      <p class="loading-placeholder">Loading time trials…</p>
+    </div>
+
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }} };</script>
+  <script type="module" src="/static/js/cafe-saturday.js?v={{ v }}"></script>
+{% endblock %}
