@@ -1,4 +1,4 @@
-import { relativeTime, esc, ordinal } from './utils.js';
+import { relativeTime, esc } from './utils.js';
 import { ChangePoller } from './poller.js';
 import { updateProfileDisplay } from './profile.js';
 import { getFavState, getAllFavs } from './favourites.js';
@@ -330,7 +330,7 @@ function renderTable() {
     return;
   }
 
-  const rows = races.map((r, idx) => renderRow(r, idx)).join('');
+  const rows = races.map((r, idx) => renderRow(r, idx, eventWindow)).join('');
   tableContainer.innerHTML = `
     <table class="results-table" style="width: 100%">
       <thead>
@@ -339,11 +339,11 @@ function renderTable() {
           ${thSort('type', 'Type', 'num')}
           ${thSort('location', 'Location')}
           ${currentCoords ? thSort('distance', 'Distance', 'num') : '<th class="num">Distance</th>'}
-          ${filterCmdr ? thSort('position', 'Position', 'num') : '<th class="num">Participants</th>'}
           ${thSort('last_activity', 'Last Activity')}
           ${thSort('created_at', 'Created')}
-          ${thSort('creator', 'Creator')}
           <th>Restrictions</th>
+          <th class="num">☀️ Sunrise</th>
+          <th class="num">🌙 Sunset</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -356,9 +356,9 @@ function renderWindowText(eventWindow) {
   const endLabel = formatUtcDateTime(eventWindow.endMs);
   const isDefaultCafe = Number(eventDayInput.value) === 6 && eventStartInput.value === '16:00' && Number(eventDurationInput.value) === 2;
 
-  windowDescription.textContent = isDefaultCafe
-    ? `Cafe Saturdays default to Saturday 16:00-18:00 UTC. This page lists only races predicted to be in daylight at both ${startLabel} and ${endLabel}. Current system is fixed to Sol for distance estimates.`
-    : `This page lists only races predicted to be in daylight at both ${startLabel} and ${endLabel}. Current system is fixed to Sol for distance estimates.`;
+  windowDescription.innerHTML = isDefaultCafe
+    ? `This page lists only races predicted to be in daylight at both ${startLabel} and ${endLabel}.<br>Current system is fixed to Sol for distance estimates.<br>If no Sunrise/Sunset time is listed, the Sunrise has already occurred and the Sunset is many days away.`
+    : `This page lists only races predicted to be in daylight at both ${startLabel} and ${endLabel}.<br>Current system is fixed to Sol for distance estimates.<br>If no Sunrise/Sunset time is listed, the Sunrise has already occurred and the Sunset is many days away.`;
 
   if (eventWindow.startsInMs > SUPPRESSION_WINDOW_MS) {
     windowWarning.textContent = `Predictions are intentionally hidden until we are within 48 hours of the session so as to maintain accuracy.`;
@@ -374,9 +374,10 @@ function thSort(col, label, extraClass = '') {
   return `<th class="${cls}" data-sort="${col}">${label}${indicator}</th>`;
 }
 
-function renderRow(r, _idx) {
+function renderRow(r, _idx, eventWindow) {
   const restrictions = formatConstraintsSummary(r.constraints || []);
   const location = r.station ? `${esc(r.system)} • ${esc(r.station)}` : esc(r.system);
+  const { sunrise, sunset } = getSunriseSunset(daynightBulkData && daynightBulkData[r.key], eventWindow);
 
   const copyBtn = `<button class="copy-btn" data-copy="${esc(r.system)}" title="Copy system name" aria-label="Copy system name">
     <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="12" height="12">
@@ -388,14 +389,8 @@ function renderRow(r, _idx) {
     ? `${Math.round(r.distance).toLocaleString()} ly`
     : currentCoords ? '—' : '';
 
-  const entries = Number(r.entry_count) || 0;
-  const positionText = (filterCmdr && r.cmdr_position != null)
-    ? `${ordinal(r.cmdr_position)} of ${entries}`
-    : `${entries.toString()} finishers`;
-
   const activity = r.last_activity ? relativeTime(r.last_activity) : '—';
   const created = r.created_at ? formatDate(r.created_at) : '—';
-  const creator = r.creator ? esc(r.creator) : '—';
 
   const favState = FAVOURITES_ENABLED ? getFavState(r.key) : null;
   const favMarker = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
@@ -406,13 +401,49 @@ function renderRow(r, _idx) {
       <td class="num">${typeBadge(r.type)}</td>
       <td>${location} ${copyBtn}</td>
       <td class="num">${distance}</td>
-      <td class="num">${positionText}</td>
       <td class="muted">${activity}</td>
       <td class="muted">${created}</td>
-      <td>${creator}</td>
       <td class="muted">${restrictions}</td>
+      <td class="num muted">${sunrise}</td>
+      <td class="num muted">${sunset}</td>
     </tr>
   `;
+}
+
+function getSunriseSunset(dn, eventWindow) {
+  if (!dn || !eventWindow) return { sunrise: '—', sunset: '—' };
+
+  const { startMs } = eventWindow;
+  const currentUntilMs = dn.until ? Date.parse(dn.until) : Infinity;
+  const intervals = Array.isArray(dn.upcoming_intervals) ? dn.upcoming_intervals : [];
+
+  // Case 1: current interval is already "day" and covers the event start
+  if (dn.state === 'day' && currentUntilMs > startMs) {
+    const sunset = Number.isFinite(currentUntilMs) ? formatUtcTime(currentUntilMs) : '—';
+    return { sunrise: '—', sunset }; // sunrise is in the past, not available
+  }
+
+  // Case 2: find the upcoming "day" interval that covers the event start
+  for (const iv of intervals) {
+    if (iv.state !== 'day') continue;
+    const fromMs = Date.parse(iv.from);
+    const ivUntilMs = Date.parse(iv.until);
+    if (!Number.isFinite(fromMs) || !Number.isFinite(ivUntilMs)) continue;
+    if (fromMs <= startMs && ivUntilMs > startMs) {
+      return { sunrise: formatUtcTime(fromMs), sunset: formatUtcTime(ivUntilMs) };
+    }
+  }
+
+  return { sunrise: '—', sunset: '—' };
+}
+
+function formatUtcTime(ms) {
+  if (!ms || !Number.isFinite(ms)) return '—';
+  const d = new Date(ms);
+  const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getUTCDay()];
+  const hh = String(d.getUTCHours()).padStart(2, '0');
+  const mm = String(d.getUTCMinutes()).padStart(2, '0');
+  return `${weekday} ${hh}:${mm} UTC`;
 }
 
 function typeBadge(type) {
