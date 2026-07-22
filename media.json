@@ -1578,5 +1578,11 @@
       "thumbnail": "maps/thumbnails/interpolar_express.jpg",
       "target": "maps/interpolar_express.jpg"
     }
+  },
+  "ALEXFIGHTER-_Prick Your Belly": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Prick_Your_Belly.png",
+      "target": "maps/Prick_Your_Belly.png"
+    }
   }
 }
