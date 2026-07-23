@@ -710,6 +710,13 @@ a:hover { text-decoration: underline; }
   font-weight: 600;
 }
 
+.info-badge-circuit {
+  border-color: #4f7f59;
+  color: #7fa889;
+  background: rgba(79, 127, 89, .12);
+  font-weight: 600;
+}
+
 /* Daylight state badge variants */
 a.info-badge { text-decoration: none; }
 a.info-badge:hover { opacity: .8; }
