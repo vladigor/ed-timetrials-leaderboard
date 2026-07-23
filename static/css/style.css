@@ -925,6 +925,7 @@ a.info-badge:hover { opacity: .8; }
   flex-wrap: wrap;
   justify-content: center;
   gap: .25rem;
+  margin-top: 5px;
 }
 
 #races-table-container .race-type-tags .info-badge {
