@@ -651,7 +651,7 @@ function renderRace() {
   if (race.multi_mode) infoBadges.push('<span class="info-badge info-badge-accent">Multi-mode</span>');
   (race.tags || '').split(',').map(t => t.trim()).filter(Boolean).forEach(t => {
     const title = t === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${t}`;
-    const badgeClass = t === 'DW3' ? 'info-badge-dw3' : 'info-badge-inactive';
+    const badgeClass = t === 'DW3' ? 'info-badge-dw3' : t === 'Circuit' ? 'info-badge-circuit' : 'info-badge-inactive';
     infoBadges.push(`<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(t)}</span>`);
   });
   infoEl.innerHTML = infoBadges.join('');
