@@ -736,6 +736,23 @@ function typeBadge(type) {
   return `<span class="badge ${cls}">${esc(type)}</span>`;
 }
 
+function renderTypeTags(tags) {
+  const tagList = (tags || '').split(',').map(t => t.trim()).filter(Boolean);
+  if (!tagList.length) return '';
+
+  const badges = tagList.map((tag) => {
+    const badgeClass = tag === 'DW3'
+      ? 'info-badge-dw3'
+      : tag === 'Circuit'
+        ? 'info-badge-circuit'
+        : 'info-badge-inactive';
+    const title = tag === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${tag}`;
+    return `<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(tag)}</span>`;
+  }).join('');
+
+  return `<div class="race-type-tags">${badges}</div>`;
+}
+
 // ── Autocomplete ─────────────────────────────────────────────────────────────
 const nendySuggEl = document.getElementById('nendy-suggestions');
 let acDebounce = null;
@@ -1062,11 +1079,17 @@ function renderNendy(resolvedName, undone) {
       ? '<span class="muted">\u2014</span>'
       : (r.dist < 1 ? '&lt;1 ly' : `${Math.round(r.dist).toLocaleString()} ly`);
     const daylightEmoji = r.daylight_state === 'day' ? '\u2600\ufe0f' : r.daylight_state === 'night' ? '\ud83c\udf19' : '';
+    const tagsLine = renderTypeTags(r.tags || '');
     return `
       <tr>
         <td class="num muted">${i + 1}</td>
         <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}</a>${daylightEmoji ? `<span style="margin-left:1rem">${daylightEmoji}</span>` : ''}</td>
-        <td>${typeBadge(r.type)}</td>
+        <td class="type-col">
+          <div class="race-type-cell">
+            ${typeBadge(r.type)}
+            ${tagsLine}
+          </div>
+        </td>
         <td class="muted">${esc(r.system)}</td>
         <td class="num">${distStr}</td>
       </tr>`;
@@ -1084,7 +1107,7 @@ function renderNendy(resolvedName, undone) {
     <p class="nendy-origin">From <strong>${esc(resolvedName)}</strong> \u2014 ${undone.length} undone race${undone.length !== 1 ? 's' : ''}${filterNote}</p>
     <table class="results-table">
       <thead><tr>
-        <th class="num">#</th><th>Race</th><th>Type</th><th>System</th><th class="num">Distance</th>
+        <th class="num">#</th><th>Race</th><th class="type-col">Type</th><th>System</th><th class="num">Distance</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
@@ -1148,11 +1171,17 @@ function renderNeidy(resolvedName, done, raceDetails) {
     const daylightEmoji = s.race.daylight_state === 'day' ? '\u2600\ufe0f' : s.race.daylight_state === 'night' ? '\ud83c\udf19' : '';
     const favState = APPLY_FAVOURITES ? getFavState(s.race.key) : null;
     const favMarker = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
+    const tagsLine = renderTypeTags(s.race.tags || '');
     return `
       <tr>
         <td class="num muted">${i + 1}</td>
         <td><a href="/race/${encodeURIComponent(s.race.key)}">${esc(s.race.name)}${favMarker}</a>${daylightEmoji ? `<span style="margin-left:1rem">${daylightEmoji}</span>` : ''}</td>
-        <td>${typeBadge(s.race.type)}</td>
+        <td class="type-col">
+          <div class="race-type-cell">
+            ${typeBadge(s.race.type)}
+            ${tagsLine}
+          </div>
+        </td>
         <td class="num">${ordinal(s.myPos)} / ${s.total}</td>
         <td class="num neidy-gap">${gapStr}</td>
         <td class="num neidy-leap">${leapStr}</td>
@@ -1173,7 +1202,7 @@ function renderNeidy(resolvedName, done, raceDetails) {
     </p>
     <table class="results-table">
       <thead><tr>
-        <th class="num">#</th><th>Race</th><th>Type</th><th class="num">Position</th>
+        <th class="num">#</th><th>Race</th><th class="type-col">Type</th><th class="num">Position</th>
         <th class="num">Gap</th><th class="num">Leap</th><th class="num">Distance</th><th>Catchability</th>
       </tr></thead>
       <tbody>${rows}</tbody>

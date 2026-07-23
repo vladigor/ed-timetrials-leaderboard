@@ -378,6 +378,7 @@ function renderRow(r, _idx, eventWindow) {
   const restrictions = formatConstraintsSummary(r.constraints || []);
   const location = r.station ? `${esc(r.system)} • ${esc(r.station)}` : esc(r.system);
   const { sunrise, sunset } = getSunriseSunset(daynightBulkData && daynightBulkData[r.key], eventWindow);
+  const tagsLine = renderTypeTags(r.tags || '');
 
   const copyBtn = `<button class="copy-btn" data-copy="${esc(r.system)}" title="Copy system name" aria-label="Copy system name">
     <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="12" height="12">
@@ -398,7 +399,12 @@ function renderRow(r, _idx, eventWindow) {
   return `
     <tr>
       <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}${favMarker}</a></td>
-      <td class="num">${typeBadge(r.type)}</td>
+      <td class="num">
+        <div class="race-type-cell">
+          ${typeBadge(r.type)}
+          ${tagsLine}
+        </div>
+      </td>
       <td>${location} ${copyBtn}</td>
       <td class="num">${distance}</td>
       <td class="muted">${activity}</td>
@@ -450,6 +456,23 @@ function typeBadge(type) {
   if (!type) return '';
   const cls = { SHIP: 'badge-ship', SRV: 'badge-srv', FIGHTER: 'badge-fighter', ONFOOT: 'badge-onfoot' }[type] ?? 'badge-onfoot';
   return `<span class="badge ${cls}">${esc(type)}</span>`;
+}
+
+function renderTypeTags(tags) {
+  const tagList = (tags || '').split(',').map(t => t.trim()).filter(Boolean);
+  if (!tagList.length) return '';
+
+  const badges = tagList.map((tag) => {
+    const badgeClass = tag === 'DW3'
+      ? 'info-badge-dw3'
+      : tag === 'Circuit'
+        ? 'info-badge-circuit'
+        : 'info-badge-inactive';
+    const title = tag === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${tag}`;
+    return `<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(tag)}</span>`;
+  }).join('');
+
+  return `<div class="race-type-tags">${badges}</div>`;
 }
 
 function formatConstraintsSummary(constraints) {

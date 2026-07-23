@@ -507,11 +507,17 @@ function renderRow(r, _idx) {
   const favMarker   = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
   const dayEmoji    = r.daylight_state === 'day' ? '☀️' : r.daylight_state === 'night' ? '🌙' : '';
   const dayBadge    = dayEmoji ? `<span style="margin-left:0.5rem">${dayEmoji}</span>` : '';
+  const tagsLine    = renderTypeTags(r.tags || '');
 
   return `
     <tr>
       <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.name)}${favMarker}</a>${dayBadge}</td>
-      <td class="num">${typeBadge(r.type)}</td>
+      <td class="num">
+        <div class="race-type-cell">
+          ${typeBadge(r.type)}
+          ${tagsLine}
+        </div>
+      </td>
       <td>${location} ${copyBtn}</td>
       <td class="num">${distance}</td>
       <td class="num">${positionText}</td>
@@ -527,6 +533,23 @@ function typeBadge(type) {
   if (!type) return '';
   const cls = { SHIP: 'badge-ship', SRV: 'badge-srv', FIGHTER: 'badge-fighter', ONFOOT: 'badge-onfoot' }[type] ?? 'badge-onfoot';
   return `<span class="badge ${cls}">${esc(type)}</span>`;
+}
+
+function renderTypeTags(tags) {
+  const tagList = (tags || '').split(',').map(t => t.trim()).filter(Boolean);
+  if (!tagList.length) return '';
+
+  const badges = tagList.map((tag) => {
+    const badgeClass = tag === 'DW3'
+      ? 'info-badge-dw3'
+      : tag === 'Circuit'
+        ? 'info-badge-circuit'
+        : 'info-badge-inactive';
+    const title = tag === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${tag}`;
+    return `<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(tag)}</span>`;
+  }).join('');
+
+  return `<div class="race-type-tags">${badges}</div>`;
 }
 
 function formatConstraintsSummary(constraints) {

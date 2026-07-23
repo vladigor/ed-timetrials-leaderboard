@@ -906,6 +906,62 @@ a.info-badge:hover { opacity: .8; }
 #races-table-container .results-table td:nth-child(2) {
   width: 80px;
   max-width: 80px;
+  text-align: center;
+}
+
+#races-table-container .race-type-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+}
+
+#races-table-container .race-type-cell .badge {
+  margin-left: 0;
+}
+
+#races-table-container .race-type-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .25rem;
+}
+
+#races-table-container .race-type-tags .info-badge {
+  font-size: .68rem;
+  padding: .1rem .45rem;
+}
+
+#nendy-results .results-table .type-col,
+#neidy-results .results-table .type-col {
+  text-align: center;
+}
+
+#nendy-results .race-type-cell,
+#neidy-results .race-type-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+}
+
+#nendy-results .race-type-cell .badge,
+#neidy-results .race-type-cell .badge {
+  margin-left: 0;
+}
+
+#nendy-results .race-type-tags,
+#neidy-results .race-type-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .25rem;
+}
+
+#nendy-results .race-type-tags .info-badge,
+#neidy-results .race-type-tags .info-badge {
+  font-size: .68rem;
+  padding: .1rem .45rem;
 }
 
 #races-table-container .results-table th:nth-child(3),

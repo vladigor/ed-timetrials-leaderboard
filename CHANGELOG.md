@@ -3,6 +3,7 @@
 ## 2026-07-21
 - General:
     - Added [Cafe Saturday Daylight Planner](/cafe=saturday) page, which lists all the races that are predicted to be in daylight on the next Saturday at 4pm.
+    - Added Circuit tag to SRV circuit races
 
 ## 2026-06-27
 - Index page:
