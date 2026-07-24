@@ -1441,8 +1441,8 @@
       }
     ],
     "map": {
-      "thumbnail": "maps/thumbnails/Alioth-4 a (20260617-200043).png",
-      "target": "maps/Alioth-4 a (20260617-200043).png"
+      "thumbnail": "maps/thumbnails/TurnerMetallicsLowAltitude.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=RICK%20RAZZAFRAG-TURNERSHIP02"
     }
   },
   "SON OF THUNDER-1": {
@@ -1468,8 +1468,8 @@
   },
   "ALEC TURNER-CONTRAIL_GEYSER_HIGH_JUMP": {
     "map": {
-      "thumbnail": "maps/thumbnails/Contrail_Geyser_High_Jump_Challenge.png",
-      "target": "maps/Contrail_Geyser_High_Jump_Challenge.png"
+      "thumbnail": "maps/thumbnails/ContrailGeyser.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEC%20TURNER-CONTRAIL_GEYSER_HIGH_JUMP"
     },
     "links": [
       {
