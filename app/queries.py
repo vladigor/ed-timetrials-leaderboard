@@ -488,7 +488,7 @@ async def get_commander_stats(commander: str) -> dict | None:
         # Fetch all locations the commander has a result in
         async with db.execute(
             """
-            SELECT l.key, l.name AS race_name, l.type, l.system, l.station
+            SELECT l.key, l.name AS race_name, l.type, l.system, l.station, l.tags
             FROM locations l
             WHERE l.key IN (SELECT DISTINCT location FROM results WHERE name = ?)
             ORDER BY l.type, l.sort
@@ -572,6 +572,7 @@ async def get_commander_stats(commander: str) -> dict | None:
                     "type": loc["type"],
                     "system": loc["system"],
                     "station": loc["station"],
+                    "tags": loc.get("tags") or "",
                     "position": position,
                     "total_entries": total,
                     "percentile": percentile,
