@@ -92,6 +92,12 @@
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Showdown"
     }
   },
+  "VR247-Kawasaki Town Showdown _ SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/KawasakiShowdown.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Kawasaki%20Town%20Showdown%20_%20SLF"
+    }
+  },
   "VR247-Kawasaki Town Hoedown": {
     "map": {
       "thumbnail": "maps/thumbnails/KawasakiHoedown.jpg",
