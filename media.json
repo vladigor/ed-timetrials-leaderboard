@@ -1587,8 +1587,8 @@
   },
   "ALEXFIGHTER-_Prick Your Belly": {
     "map": {
-      "thumbnail": "maps/thumbnails/Prick_Your_Belly.png",
-      "target": "maps/Prick_Your_Belly.png"
+      "thumbnail": "maps/thumbnails/PrickYourBelly.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEXFIGHTER-_Prick%20Your%20Belly"
     }
   }
 }
