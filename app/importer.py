@@ -44,6 +44,18 @@ _CREATOR_ALIASES: dict[str, str] = {
     "NKIRSE": "NASTYNATE1",
 }
 
+# Some race entries from the upstream API need local type corrections.
+# Keyed by race key exactly as returned by getTTList/getTTResultsLU.
+_RACE_TYPE_OVERRIDES: dict[str, str] = {
+    "VR247-Kawasaki Town Showdown _ SLF": "FIGHTER",
+}
+
+
+def _normalise_race_type(race_key: str, raw_type: str) -> str:
+    """Return the race type with any known key-based overrides applied."""
+    base = raw_type.upper()
+    return _RACE_TYPE_OVERRIDES.get(race_key, base)
+
 
 def _extract_creator(race_key: str) -> str:
     """Extract potential creator name from race key.
@@ -87,7 +99,7 @@ def _parse_location(row: list[str]) -> dict:
         "system": row[2] if len(row) > 2 else "",
         "station": row[3] if len(row) > 3 else "",
         "coords": row[4] if len(row) > 4 else "",
-        "type": row[5].upper() if len(row) > 5 else "",
+        "type": _normalise_race_type(row[0], row[5] if len(row) > 5 else ""),
         "version": version,
         "address": row[8] if len(row) > 8 else "",
         "sort": sort,
@@ -400,6 +412,11 @@ async def fetch_and_store_results(key: str) -> None:
 
     db = await get_db()
     try:
+        # Keep location type consistent when polling changed-result races.
+        forced_type = _RACE_TYPE_OVERRIDES.get(key)
+        if forced_type:
+            await db.execute("UPDATE locations SET type = ? WHERE key = ?", (forced_type, key))
+
         for result in results:
             await _save_result(db, result)
         await db.commit()
