@@ -1590,5 +1590,18 @@
       "thumbnail": "maps/thumbnails/PrickYourBelly.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEXFIGHTER-_Prick%20Your%20Belly"
     }
+  },
+  "KIRLLU-_NGC 6820 Nebula Canyon SRV race": {
+    "map": {
+      "thumbnail": "maps/thumbnails/NCG_6820_Race.JPG",
+      "target": "maps/NCG_6820_Race.JPG"
+    },
+    "links": [
+      {
+        "label": "Selfie at the start line",
+        "type": "image",
+        "url": "/maps/NGC 6820 Sector GW-W d1-38-5 b a (20260726-205104).png"
+      }
+    ]
   }
 }
