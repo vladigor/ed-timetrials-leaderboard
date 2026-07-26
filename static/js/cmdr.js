@@ -15,6 +15,7 @@ let   sortDir    = 'asc';         // 'asc' | 'desc'
 let   filterRecent = false;
 let   filterDW3    = false;
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+const raceDaylightStateByKey = new Map();
 
 // NEIDY filter state
 let _neidyScoredCache  = null;
@@ -299,11 +300,13 @@ function renderTables() {
       const isOpportunity = typeAvgTop !== undefined && topPct > typeAvgTop;
       const imp = r.improvement_ms != null ? formatImprovement(r.improvement_ms) : null;
       const shipLabel = [r.ship, r.shipname].filter(Boolean).join(' — ');
+      const daylightState = raceDaylightStateByKey.get(r.key);
+      const daylightEmoji = daylightState === 'day' ? '☀️' : daylightState === 'night' ? '🌙' : '';
       const favState = APPLY_FAVOURITES ? getFavState(r.key) : null;
       const favMarker = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
       return `
         <tr class="${isOpportunity ? 'row-opportunity' : ''}">
-          <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.race_name)}${favMarker}</a></td>
+          <td><a href="/race/${encodeURIComponent(r.key)}">${esc(r.race_name)}${favMarker}</a>${daylightEmoji ? `<span style="margin-left:1rem">${daylightEmoji}</span>` : ''}</td>
           <td class="num">${ordinal(r.position)} of ${r.total_entries}</td>
           <td class="num ${percentileClass(topPct)}">${r.position === 1 ? '#1 — top' : `top ${topPct.toFixed(1)}%`}</td>
           <td class="num ${imp ? imp.cls : ''}">${imp ? imp.text : '—'}</td>
@@ -1220,6 +1223,11 @@ async function renderParticipationBars() {
     const res = await fetch('/api/races');
     if (!res.ok) throw new Error(res.status);
     const allRaces = await res.json();
+
+    raceDaylightStateByKey.clear();
+    for (const race of allRaces) {
+      raceDaylightStateByKey.set(race.key, race.daylight_state);
+    }
 
     // Build a set of race keys the commander has participated in
     const cmdrRaceKeys = new Set(stats.races.map(r => r.key));
