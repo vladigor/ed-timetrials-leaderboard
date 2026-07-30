@@ -1,3 +1,19 @@
 #!/bin/bash
+set -euo pipefail
 
-.venv/bin/python3 -c 'import sqlite3; con=sqlite3.connect("leaderboard.sqlite3"); cur=con.cursor(); rows=cur.execute("SELECT key,tags FROM locations WHERE name LIKE ? COLLATE NOCASE OR name LIKE ? COLLATE NOCASE OR name LIKE ? COLLATE NOCASE OR name LIKE ? COLLATE NOCASE", ("DW3%","The Distant Worlds 3%","The DW3%","Khazad-dum Base Camp Biathlon")).fetchall(); norm=lambda s:[x.strip() for x in (s or "").split(",") if x.strip()]; upd=[(", ".join(ts+["DW3"]),k) for k,t in rows for ts in [norm(t)] if "DW3" not in ts]; cur.executemany("UPDATE locations SET tags=? WHERE key=?", upd); con.commit(); print(f"matched={len(rows)} updated={len(upd)}"); con.close()'
+DB_PATH="${1:-leaderboard.sqlite3}"
+DRY_RUN="${2:-0}"
+
+DRY_FLAG=""
+if [[ "$DRY_RUN" == "1" ]]; then
+	DRY_FLAG="--dry-run"
+fi
+
+.venv/bin/python3 scripts/set_tag.py \
+	--db "$DB_PATH" \
+	--tag DW3 \
+	--name-like "DW3%" \
+	--name-like "The Distant Worlds 3%" \
+	--name-like "The DW3%" \
+	--name "Khazad-dum Base Camp Biathlon" \
+	$DRY_FLAG
