@@ -1,11 +1,5 @@
 # Change log
 
-## 2026-07-30
-- General:
-    - Added Remote tag for systems more than 1000ly from Sol
-    - Added Colonia tag for Colonia systems
-    - Updated logic for hiding DW3 races and turned it into Only show Bubble races
-
 ## 2026-07-21
 - General:
     - Added [Cafe Saturday Daylight Planner](/cafe=saturday) page, which lists all the races that are predicted to be in daylight on the next Saturday at 4pm.

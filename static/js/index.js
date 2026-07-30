@@ -247,12 +247,11 @@ async function loadNewRaces() {
 function renderGrid() {
   let races = allRaces;
 
-  // Client-side filter: hide DW3/Remote/Colonia races
+  // Client-side filter: hide DW3 races
   if (filterHideDW3) {
     races = races.filter(r => {
-      const tags = (r.tags || '').split(',').map(t => t.trim());
-      const hasHiddenTag = tags.includes('DW3') || tags.includes('Remote') || tags.includes('Colonia');
-      return !hasHiddenTag;
+      const hasDW3Tag = (r.tags || '').split(',').map(t => t.trim()).includes('DW3');
+      return !hasDW3Tag;
     });
   }
 
