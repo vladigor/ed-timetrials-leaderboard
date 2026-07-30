@@ -251,7 +251,11 @@ function renderTables() {
   }
 
   if (filterDW3) {
-    races = races.filter(r => !(r.tags || '').split(',').map(t => t.trim()).includes('DW3'));
+    races = races.filter(r => {
+      const tags = (r.tags || '').split(',').map(t => t.trim());
+      const hasHiddenTag = tags.includes('DW3') || tags.includes('Remote') || tags.includes('Colonia');
+      return !hasHiddenTag;
+    });
   }
 
   const types = [...new Set(stats.races.map(r => r.type))].sort();
