@@ -1609,5 +1609,29 @@
       "thumbnail": "maps/thumbnails/DR1 Fungoida Ridge Descent.png",
       "target": "maps/DR1 Fungoida Ridge Descent.png"
     }
+  },
+  "ALEXFIGHTER-_SchroederTowerClimb": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Schroeder_Colony_Tower_Climb.png",
+      "target": "maps/Schroeder_Colony_Tower_Climb.png"
+    }
+  },
+  "ALEXFIGHTER-_SchroederAgilityCourse": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Schroeder_Agility_Course.png",
+      "target": "maps/Schroeder_Agility_Course.png"
+    }
+  },
+  "ALEXFIGHTER-_NASRVARSchroederSemispeedway_": {
+    "map": {
+      "thumbnail": "maps/thumbnails/NASRVAR_Schroeder_Semispeedway.png",
+      "target": "maps/NASRVAR_Schroeder_Semispeedway.png"
+    }
+  },
+  "ALEXFIGHTER-_NASRVARSchroeder_Roval": {
+    "map": {
+      "thumbnail": "maps/thumbnails/NASRVAR_Schroeder_Roval.png",
+      "target": "maps/NASRVAR_Schroeder_Roval.png"
+    }
   }
 }
