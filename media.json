@@ -1645,5 +1645,11 @@
       "thumbnail": "maps/thumbnails/DR1 Magic 8 Ball.png",
       "target": "maps/DR1 Magic 8 Ball.png"
     }
+  },
+  "BREAKFASTCEREAL-DR1_SUNDAY_DRIVE": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Unremarkable Sunday Drive.jpg",
+      "target": "maps/DR1 Unremarkable Sunday Drive.jpg"
+    }
   }
 }
