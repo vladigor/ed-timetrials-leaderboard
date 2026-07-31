@@ -1651,5 +1651,17 @@
       "thumbnail": "maps/thumbnails/DR1 Unremarkable Sunday Drive.jpg",
       "target": "maps/DR1 Unremarkable Sunday Drive.jpg"
     }
+  },
+  "BREAKFASTCEREAL-DR1_MT_MAGELLAN": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Ruins of Mt. Magellan.jpg",
+      "target": "maps/DR1 Ruins of Mt. Magellan.jpg"
+    }
+  },
+  "GREAVES-DR1 Stairway to Heaven": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Stairway to Heaven.jpg",
+      "target": "maps/DR1 Stairway to Heaven.jpg"
+    }
   }
 }
