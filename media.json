@@ -1633,5 +1633,17 @@
       "thumbnail": "maps/thumbnails/NASRVAR_Schroeder_Roval.png",
       "target": "maps/NASRVAR_Schroeder_Roval.png"
     }
+  },
+  "VR247-DR1 MAGIC 8 BALL": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Magic 8 Ball.png",
+      "target": "maps/DR1 Magic 8 Ball.png"
+    }
+  },
+  "VR247-DR1 MAGIC 8 BALL _ SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Magic 8 Ball.png",
+      "target": "maps/DR1 Magic 8 Ball.png"
+    }
   }
 }
