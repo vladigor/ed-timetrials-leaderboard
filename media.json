@@ -1603,5 +1603,11 @@
         "url": "/maps/NGC 6820 Sector GW-W d1-38-5 b a (20260726-205104).png"
       }
     ]
+  },
+  "ALEC TURNER-DR1_FUNGOIDA_RIDGE": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Fungoida Ridge Descent.png",
+      "target": "maps/DR1 Fungoida Ridge Descent.png"
+    }
   }
 }
