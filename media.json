@@ -744,7 +744,7 @@
   },
   "ALICE KNIGHT-COLONIASRV01": {
     "map": {
-      "thumbnail": "maps/thumbnails/EliteTimeTrials.jpg",
+      "thumbnail": "maps/thumbnails/HollowayBiological.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-COLONIASRV01"
     }
   },
@@ -897,7 +897,7 @@
   },
   "ALICE KNIGHT-TIRSRV01": {
     "map": {
-      "thumbnail": "maps/thumbnails/EliteTimeTrials.jpg",
+      "thumbnail": "maps/thumbnails/Watchtower.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALICE%20KNIGHT-TIRSRV01"
     }
   },
