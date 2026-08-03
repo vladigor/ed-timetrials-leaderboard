@@ -1669,5 +1669,11 @@
       "thumbnail": "maps/thumbnails/DR1 Yellow Dirt Road.jpg",
       "target": "maps/DR1 Yellow Dirt Road.jpg"
     }
+  },
+  "GREAVES-DR1 The Talon of Ra": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 The Talon of Ra.jpg",
+      "target": "maps/DR1 The Talon of Ra.jpg"
+    }
   }
 }
