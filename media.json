@@ -1675,5 +1675,17 @@
       "thumbnail": "maps/thumbnails/DR1 The Talon of Ra.jpg",
       "target": "maps/DR1 The Talon of Ra.jpg"
     }
+  },
+  "VLADIGOR-DR1 Get Kraken Sugarloaf Edition": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1_Get_Kraken_Sugerloaf_Edition.png",
+      "target": "maps/DR1_Get_Kraken_Sugerloaf_Edition.png"
+    }
+  },
+  "VLADIGOR-DR1 Get Kraken": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1_Get_Kraken.png",
+      "target": "maps/DR1_Get_Kraken.png"
+    }
   }
 }
