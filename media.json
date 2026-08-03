@@ -1663,5 +1663,11 @@
       "thumbnail": "maps/thumbnails/DR1 Stairway to Heaven.jpg",
       "target": "maps/DR1 Stairway to Heaven.jpg"
     }
+  },
+  "GREAVES-DR1 Yellow Dirt Road": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Yellow Dirt Road.jpg",
+      "target": "maps/DR1 Yellow Dirt Road.jpg"
+    }
   }
 }
