@@ -13,6 +13,7 @@ import argparse
 import sqlite3
 import sys
 from pathlib import Path
+from urllib.parse import unquote
 
 
 def parse_args() -> argparse.Namespace:
@@ -21,7 +22,13 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--db", default="leaderboard.sqlite3", help="Path to SQLite database")
     parser.add_argument(
-        "--tag", required=True, help="Tag to add (for example: DW3, Circuit, Remote)"
+        "--tag",
+        action="append",
+        required=True,
+        help=(
+            "Tag to add (for example: DW3, Circuit, Remote). "
+            "Can be provided multiple times and supports comma-separated values."
+        ),
     )
     parser.add_argument(
         "--dry-run", action="store_true", help="Show what would change, but do not update"
@@ -61,9 +68,20 @@ def parse_args() -> argparse.Namespace:
             "Provide at least one selector: --key/--name/--name-like/--keys-file/--names-file"
         )
 
-    args.tag = args.tag.strip()
-    if not args.tag:
+    tags: list[str] = []
+    seen: set[str] = set()
+    for raw in args.tag:
+        for part in (raw or "").split(","):
+            tag = part.strip()
+            if not tag or tag in seen:
+                continue
+            seen.add(tag)
+            tags.append(tag)
+
+    if not tags:
         parser.error("--tag cannot be empty")
+
+    args.tag = tags
 
     return args
 
@@ -81,16 +99,22 @@ def parse_tags(raw: str | None) -> list[str]:
     return [part.strip() for part in (raw or "").split(",") if part.strip()]
 
 
+def decode_selector_values(values: list[str]) -> list[str]:
+    return [unquote(value) for value in values]
+
+
 def main() -> int:
     args = parse_args()
 
-    keys = list(args.key)
+    keys = decode_selector_values(list(args.key))
     keys.extend(read_lines(args.keys_file))
+    keys = decode_selector_values(keys)
 
-    names = list(args.name)
+    names = decode_selector_values(list(args.name))
     names.extend(read_lines(args.names_file))
+    names = decode_selector_values(names)
 
-    like_patterns = list(args.name_like)
+    like_patterns = decode_selector_values(list(args.name_like))
 
     con = sqlite3.connect(args.db)
     cur = con.cursor()
@@ -118,14 +142,23 @@ def main() -> int:
     requested = len(keys) + len(names) + len(like_patterns)
 
     updated = 0
+    tags_added = 0
     already_tagged = 0
 
     for key, (_name, raw_tags) in matches.items():
         parts = parse_tags(raw_tags)
-        if args.tag in parts:
+        changed = False
+        for tag in args.tag:
+            if tag in parts:
+                continue
+            parts.append(tag)
+            tags_added += 1
+            changed = True
+
+        if not changed:
             already_tagged += 1
             continue
-        parts.append(args.tag)
+
         if not args.dry_run:
             cur.execute("UPDATE locations SET tags = ? WHERE key = ?", (", ".join(parts), key))
         updated += 1
@@ -134,7 +167,7 @@ def main() -> int:
         con.commit()
 
     print(
-        f"selectors={requested} matched={len(matches)} updated={updated} "
+        f"selectors={requested} matched={len(matches)} updated={updated} tags_added={tags_added} "
         f"already_tagged={already_tagged} dry_run={int(args.dry_run)}"
     )
 
