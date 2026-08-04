@@ -112,6 +112,7 @@ function buildChallenges(cmdrStats, allRaces) {
   const doneKeySet = new Set(doneRaces.map(r => r.key));
   const doneNames = doneRaces.map(r => r.race_name || '');
   const allDoneNameNormSet = new Set(doneNames.map(normalise));
+  const activeDr1Races = allRaces.filter(r => isActive(r) && hasTag(r, 'DR1'));
 
   const challenges = [
     challengeNamedAndMatchingPercent(
@@ -478,10 +479,10 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeConstraintCountPercent(
       'dr1-ordered',
       'Just what the DR ordered.',
-      'Compete in at least 10 DR1 races',
+      'Compete in every DR1 race',
       allRaces,
       doneKeySet,
-      10,
+      activeDr1Races.length,
       (race) => isActive(race) && hasTag(race, 'DR1')
     ),
 
@@ -772,7 +773,7 @@ function challengeConstraintCountPercent(id, label, description, allRaces, doneK
     type: 'percent',
     count: bounded,
     total: targetCount,
-    percent: Math.round((bounded / targetCount) * 100),
+    percent: targetCount ? Math.round((bounded / targetCount) * 100) : 0,
     detailsItems: toRaceItems(required, doneKeySet),
   };
 }
