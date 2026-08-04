@@ -244,6 +244,11 @@ function renderTable() {
       if (r.station && r.station.toLowerCase().includes(searchLower)) return true;
       if (r.type && r.type.toLowerCase().includes(searchLower)) return true;
       if (r.version && r.version.toLowerCase().includes(searchLower)) return true;
+      if (Array.isArray(r.tags)) {
+        if (r.tags.some(t => String(t).toLowerCase().includes(searchLower))) return true;
+      } else if (r.tags && String(r.tags).toLowerCase().includes(searchLower)) {
+        return true;
+      }
       if (r.multi_mode && 'multi-mode'.includes(searchLower)) return true;
       if (r.multi_planet && 'multi-planet'.includes(searchLower)) return true;
       if (r.multi_system && 'multi-system'.includes(searchLower)) return true;
