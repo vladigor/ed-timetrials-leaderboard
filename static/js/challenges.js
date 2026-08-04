@@ -434,7 +434,15 @@ function buildChallenges(cmdrStats, allRaces) {
     challengeLetterE('eeee', 'eeee', 'Complete 4 races that begin with E', doneRaces),
     challengeAlphabet('alphabeteer', 'Alphabeteer', 'Complete races beginning with each letter of the alphabet', doneRaces),
 
-    challengeSystemAreaPercent('colonial-rush', 'Colonial rush', 'Complete races in Colonia', ['COLONIA', 'TIR'], doneKeySet, allRaces),
+    challengeConstraintCountPercent(
+      'colonial-rush',
+      'Colonial rush',
+      'Complete at least 10 races in the Colonia region',
+      allRaces,
+      doneKeySet,
+      10,
+      (race) => isActive(race) && hasTag(race, 'Colonia')
+    ),
     challengeAnyNInSystems('beagle-landed', 'The beagle has landed', 'Complete any 5 races at Beagle Point', ['BEAGLE POINT'], 5, doneKeySet, allRaces),
     challengeAnyNInSystems('black-hole-sun', 'Black hole sun', 'Complete any 5 races at Sag A*', ['STUEMEAE EG-Y D4548'], 5, doneKeySet, allRaces),
     challengeAnyNInSystems('speak-friend-enter', 'Speak friend and enter', "Complete at least 3 races at Rainbow's End", ['ROEFOO ZE-H D10-0'], 3, doneKeySet, allRaces),
@@ -681,22 +689,6 @@ function challengeTaggedPercent(id, label, description, tag, doneKeySet, allRace
 }
 
 function challengeSystemCoverage(id, label, description, systems, doneKeySet, allRaces) {
-  const required = racesInSystems(allRaces, systems);
-  const done = required.filter(r => doneKeySet.has(r.key)).length;
-  const total = required.length;
-  return {
-    id,
-    label,
-    description,
-    type: 'percent',
-    count: done,
-    total,
-    percent: total ? Math.round((done / total) * 100) : 0,
-    detailsItems: toRaceItems(required, doneKeySet),
-  };
-}
-
-function challengeSystemAreaPercent(id, label, description, systems, doneKeySet, allRaces) {
   const required = racesInSystems(allRaces, systems);
   const done = required.filter(r => doneKeySet.has(r.key)).length;
   const total = required.length;
