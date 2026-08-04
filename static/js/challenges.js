@@ -57,6 +57,17 @@ const MOUNTAIN_GROUPS = [
 
 ];
 
+const HIGH_GRAVITY_RACES = [
+  'DW3 Rendezvous Rally 8',
+  'DR1 Unremarkable Sunday Drive',
+  'DR1 The Talon of Ra',
+  'The DW3 Great Wall Of China',
+  'The Light of the Galaxy',
+  'Kozlov Keep Loop',
+  'Weber Legacy Speedbowl',
+  'DW3 Speedbowl Experiment'
+];
+
 const SNAKE_SHIPS = [
   'Viper Mark III', 'Viper Mark IV', 'Cobra Mark V', 'Cobra Mark IV', 'Cobra Mark III',
   'Sidewinder Mark 1', 'Diamondback Explorer', 'Diamondback Scout', 'Asp Explorer', 'Asp Scout',
@@ -446,6 +457,38 @@ function buildChallenges(cmdrStats, allRaces) {
       allRaces,
       doneKeySet,
       (race) => hasConstraintKey(race, 'NoHullRepair')
+    ),
+
+    challengeBool(
+      'nomads-guy',
+      "Nomad's Guy",
+      'Complete a race in a Nomad',
+      hasAnyEverShip(everShipEntries, ['Nomad'], 'FIGHTER'),
+      racesFromDonePredicate(doneRaces, r => String(r.type || '').toUpperCase() === 'FIGHTER' && containsAny(r.ship, ['Nomad']))
+    ),
+
+    challengeConstraintCountPercent(
+      'dr1-ordered',
+      'Just what the DR ordered.',
+      'Compete in at least 10 DR1 races',
+      allRaces,
+      doneKeySet,
+      10,
+      (race) => isActive(race) && hasTag(race, 'DR1')
+    ),
+
+    challengeConstraintCountPercent(
+      'g-whizz',
+      'G Whizz',
+      'Finish 3 high gravity races',
+      allRaces,
+      doneKeySet,
+      3,
+      (race) => {
+        if (!isActive(race)) return false;
+        const nameText = normalise(race.name || '');
+        return HIGH_GRAVITY_RACES.some(n => nameText.includes(normalise(n)));
+      }
     ),
   ];
 
