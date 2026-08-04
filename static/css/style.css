@@ -710,6 +710,27 @@ a:hover { text-decoration: underline; }
   font-weight: 600;
 }
 
+.info-badge-dr1 {
+  border-color: #4f78ef;
+  color: #9fc2ff;
+  background: rgba(79, 120, 239, .2);
+  font-weight: 600;
+}
+
+.info-badge-colonia {
+  border-color: #5b76da;
+  color: #b6c8ff;
+  background: rgba(91, 118, 218, .2);
+  font-weight: 600;
+}
+
+.info-badge-remote {
+  border-color: #79839a;
+  color: #bcc4d5;
+  background: rgba(121, 131, 154, .2);
+  font-weight: 600;
+}
+
 .info-badge-circuit {
   border-color: #4f7f59;
   color: #7fa889;

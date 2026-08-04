@@ -377,7 +377,12 @@ function raceCard(r) {
     r.multi_mode ? `<span class="info-badge info-badge-accent">Multi-mode</span>` : '',
     r.multi_planet ? `<span class="info-badge info-badge-accent">Multi-planet</span>` : '',
     r.multi_system ? `<span class="info-badge info-badge-accent">Multi-system</span>` : '',
-    (r.tags || '').split(',').map(t => t.trim()).filter(Boolean).map(t => {
+    (r.tags || '')
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+      .map(t => {
       const isCircuit = t === 'Circuit';
       const title = t === 'Inactive'
         ? "It's no longer possible to compete in this time trial"
@@ -386,6 +391,12 @@ function raceCard(r) {
           : `Tagged race: ${t}`;
       const badgeClass = t === 'DW3'
         ? 'info-badge-dw3'
+        : t === 'DR1'
+          ? 'info-badge-dr1'
+          : t === 'Colonia'
+            ? 'info-badge-colonia'
+            : t === 'Remote'
+              ? 'info-badge-remote'
         : isCircuit
           ? 'info-badge-circuit'
           : 'info-badge-inactive';

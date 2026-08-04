@@ -470,6 +470,12 @@ function renderTypeTags(tags) {
   const badges = tagList.map((tag) => {
     const badgeClass = tag === 'DW3'
       ? 'info-badge-dw3'
+      : tag === 'DR1'
+        ? 'info-badge-dr1'
+        : tag === 'Colonia'
+          ? 'info-badge-colonia'
+          : tag === 'Remote'
+            ? 'info-badge-remote'
       : tag === 'Circuit'
         ? 'info-badge-circuit'
         : 'info-badge-inactive';

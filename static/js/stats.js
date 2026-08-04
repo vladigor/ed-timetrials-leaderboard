@@ -392,7 +392,15 @@ function tagsBadges(tags) {
     .filter(Boolean)
     .map(t => {
       const title = t === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${t}`;
-      const badgeClass = t === 'DW3' ? 'info-badge-dw3' : 'info-badge-inactive';
+      const badgeClass = t === 'DW3'
+        ? 'info-badge-dw3'
+        : t === 'DR1'
+          ? 'info-badge-dr1'
+          : t === 'Colonia'
+            ? 'info-badge-colonia'
+            : t === 'Remote'
+              ? 'info-badge-remote'
+              : 'info-badge-inactive';
       return `<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(t)}</span>`;
     })
     .join(' ');
