@@ -1693,5 +1693,17 @@
       "thumbnail": "maps/thumbnails/The Phenomenal NSP Tour.gif",
       "target": "maps/The Phenomenal NSP Tour.gif"
     }
+  },
+  "SO MUCH FOR SUBTLETY-AllAroundSHIP": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1Watchtower.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=SO%20MUCH%20FOR%20SUBTLETY-AllAroundSHIP"
+    }
+  },
+  "SO MUCH FOR SUBTLETY-AllAroundSLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1Watchtower.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=SO%20MUCH%20FOR%20SUBTLETY-AllAroundSLF"
+    }
   }
 }
