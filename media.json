@@ -1687,5 +1687,11 @@
       "thumbnail": "maps/thumbnails/DR1_Get_Kraken.png",
       "target": "maps/DR1_Get_Kraken.png"
     }
+  },
+  "VLADIGOR-The Phenomenal Colonia NSP Tour": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Mobia-C (20260730-113730).png",
+      "target": "maps/Mobia-C (20260730-113730).png"
+    }
   }
 }
