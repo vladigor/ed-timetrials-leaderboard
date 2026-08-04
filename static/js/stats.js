@@ -390,6 +390,7 @@ function tagsBadges(tags) {
     .split(',')
     .map(t => t.trim())
     .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
     .map(t => {
       const title = t === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${t}`;
       const badgeClass = t === 'DW3'

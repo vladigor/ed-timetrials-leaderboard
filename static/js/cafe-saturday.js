@@ -464,7 +464,11 @@ function typeBadge(type) {
 }
 
 function renderTypeTags(tags) {
-  const tagList = (tags || '').split(',').map(t => t.trim()).filter(Boolean);
+  const tagList = (tags || '')
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
   if (!tagList.length) return '';
 
   const badges = tagList.map((tag) => {

@@ -649,7 +649,12 @@ function renderRace() {
   if (race.multi_system) infoBadges.push('<span class="info-badge info-badge-accent">Multi-system</span>');
   if (race.multi_planet) infoBadges.push('<span class="info-badge info-badge-accent">Multi-planet</span>');
   if (race.multi_mode) infoBadges.push('<span class="info-badge info-badge-accent">Multi-mode</span>');
-  (race.tags || '').split(',').map(t => t.trim()).filter(Boolean).forEach(t => {
+  (race.tags || '')
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+    .forEach(t => {
     const title = t === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${t}`;
     const badgeClass = t === 'DW3'
       ? 'info-badge-dw3'
