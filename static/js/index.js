@@ -63,6 +63,12 @@ async function init() {
     return;
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('filter')) {
+    filterSearchText = urlParams.get('filter') || '';
+    searchInput.value = filterSearchText;
+  }
+
   checkHideDW3.checked      = filterHideDW3;
   checkHideHorizons.checked = filterHideHorizons;
   checkDaytimeOnly.checked  = filterDaytimeOnly;
@@ -139,7 +145,6 @@ async function init() {
   modalCloseX.addEventListener('click', hideProfileModal);
 
   // Check if we should show the profile modal
-  const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('changeProfile') || localStorage.getItem('tt_profile_set') !== '1') {
     showProfileModal();
     // Clean up URL if changeProfile param was present
