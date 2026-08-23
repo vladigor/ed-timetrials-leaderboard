@@ -1624,14 +1624,14 @@
   },
   "ALEXFIGHTER-_NASRVARSchroederSemispeedway_": {
     "map": {
-      "thumbnail": "maps/thumbnails/NASRVAR_Schroeder_Semispeedway.png",
-      "target": "maps/NASRVAR_Schroeder_Semispeedway.png"
+      "thumbnail": "maps/thumbnails/SchroederSemispeedway.jpg",
+      "target": "maps/SchroederSemispeedway.jpg"
     }
   },
   "ALEXFIGHTER-_NASRVARSchroeder_Roval": {
     "map": {
-      "thumbnail": "maps/thumbnails/NASRVAR_Schroeder_Roval.png",
-      "target": "maps/NASRVAR_Schroeder_Roval.png"
+      "thumbnail": "maps/thumbnails/SchroederRoval.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=ALEXFIGHTER-_NASRVARSchroeder_Roval"
     }
   },
   "VR247-DR1 MAGIC 8 BALL": {
@@ -1666,26 +1666,26 @@
   },
   "GREAVES-DR1 Yellow Dirt Road": {
     "map": {
-      "thumbnail": "maps/thumbnails/DR1 Yellow Dirt Road.jpg",
-      "target": "maps/DR1 Yellow Dirt Road.jpg"
+      "thumbnail": "maps/thumbnails/YellowDirtRoad.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=GREAVES-DR1%20Yellow%20Dirt%20Road"
     }
   },
   "GREAVES-DR1 The Talon of Ra": {
     "map": {
-      "thumbnail": "maps/thumbnails/DR1 The Talon of Ra.jpg",
-      "target": "maps/DR1 The Talon of Ra.jpg"
+      "thumbnail": "maps/thumbnails/TalonOfRa.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=GREAVES-DR1%20The%20Talon%20of%20Ra"
     }
   },
   "VLADIGOR-DR1 Get Kraken Sugarloaf Edition": {
     "map": {
-      "thumbnail": "maps/thumbnails/DR1_Get_Kraken_Sugerloaf_Edition.png",
-      "target": "maps/DR1_Get_Kraken_Sugerloaf_Edition.png"
+      "thumbnail": "maps/thumbnails/DR1KrakenSugarloaf.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VLADIGOR-DR1%20Get%20Kraken%20Sugarloaf%20Edition"
     }
   },
   "VLADIGOR-DR1 Get Kraken": {
     "map": {
-      "thumbnail": "maps/thumbnails/DR1_Get_Kraken.png",
-      "target": "maps/DR1_Get_Kraken.png"
+      "thumbnail": "maps/thumbnails/DR1GetKraken.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VLADIGOR-DR1%20Get%20Kraken"
     }
   },
   "VLADIGOR-The Phenomenal Colonia NSP Tour": {
@@ -1704,6 +1704,42 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1Watchtower.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=SO%20MUCH%20FOR%20SUBTLETY-AllAroundSLF"
+    }
+  },
+  "SO MUCH FOR SUBTLETY-ColoniaCanyonSHIP": {
+    "map": {
+      "thumbnail": "maps/thumbnails/ColoniaCanyons.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=SO%20MUCH%20FOR%20SUBTLETY-ColoniaCanyonSHIP"
+    }
+  },
+  "SO MUCH FOR SUBTLETY-ColoniaCanyonSLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/ColoniaCanyons.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=SO%20MUCH%20FOR%20SUBTLETY-ColoniaCanyonSLF"
+    }
+  },
+  "VR247-DR1 RISING GREEN GIANT": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Rally of the Rising Green Giant.png",
+      "target": "maps/DR1 Rally of the Rising Green Giant.png"
+    }
+  },
+  "NASTYNATE1-DR1GrinchWhoStoleDR1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Grinch Who Stole Distant Races.png",
+      "target": "maps/DR1 Grinch Who Stole Distant Races.png"
+    }
+  },
+  "NASTYNATE1-DR1GrinchWhoStoleDR1SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Grinch Who Stole Distant Races.png",
+      "target": "maps/DR1 Grinch Who Stole Distant Races.png"
+    }
+  },
+  "VR247-DR1 MOUNTAIN DROP": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1 Mel's Mountain Top Drop.jpg",
+      "target": "maps/DR1 Mel's Mountain Top Drop.jpg"
     }
   }
 }
