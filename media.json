@@ -1728,7 +1728,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1 Grinch Who Stole Distant Races.png",
       "target": "maps/DR1 Grinch Who Stole Distant Races.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/ITcwdNPBF20?is=8y9iIbNP7voMTknq"
+      }
+    ]
   },
   "NASTYNATE1-DR1GrinchWhoStoleDR1SLF": {
     "map": {
