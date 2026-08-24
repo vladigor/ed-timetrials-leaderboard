@@ -1741,6 +1741,11 @@
         "label": "Demo video",
         "type": "video",
         "url": "https://youtu.be/ITcwdNPBF20?is=8y9iIbNP7voMTknq"
+      },
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=WjBg1UO0kZI"
       }
     ]
   },
@@ -1769,6 +1774,24 @@
         "label": "Demo video",
         "type": "video",
         "url": "https://youtu.be/70OPt8ugsuM"
+      }
+    ]
+  },
+  "DUCK0-_DR1_MESA_CHALLENGE": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=EHk1WkVp1aE"
+      }
+    ]
+  },
+  "SO MUCH FOR SUBTLETY-_DR1_MESA_SHIP": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=w7NWNlTaMzk"
       }
     ]
   }
