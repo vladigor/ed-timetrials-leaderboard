@@ -907,7 +907,7 @@ async def api_race_map(key: str):
 
 @app.get("/api/media")
 async def api_media():
-    """Return media data enriched with manually assigned race tags."""
+    """Return media data enriched with race tags and known day/night links."""
     media_file = Path(__file__).parent.parent / "media.json"
     if not media_file.exists():
         return {}
@@ -921,16 +921,26 @@ async def api_media():
         db = await _get_db()
         try:
             async with db.execute(
-                "SELECT key, tags FROM locations WHERE tags IS NOT NULL AND tags != ''"
+                """
+                SELECT l.key, l.tags, b.race_key IS NOT NULL AS has_daynight
+                FROM locations l
+                LEFT JOIN daynight_bulk_cache b ON b.race_key = l.key
+                WHERE l.tags IS NOT NULL AND l.tags != ''
+                   OR b.race_key IS NOT NULL
+                """
             ) as cursor:
-                tagged_races = await cursor.fetchall()
+                races = await cursor.fetchall()
         finally:
             await db.close()
 
-        for race in tagged_races:
-            media_data.setdefault(race["key"], {})["tags"] = [
-                tag.strip() for tag in race["tags"].split(",") if tag.strip()
-            ]
+        for race in races:
+            entry = media_data.setdefault(race["key"], {})
+            if race["tags"]:
+                entry["tags"] = [tag.strip() for tag in race["tags"].split(",") if tag.strip()]
+            if race["has_daynight"]:
+                entry["eddaynight"] = {
+                    "url": f"{DAYLIGHT_API_BASE_URL}/race/{quote(race['key'], safe='')}"
+                }
 
         return media_data
     except Exception as exc:
