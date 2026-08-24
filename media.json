@@ -1674,7 +1674,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/TalonOfRa.jpg",
       "target": "https://frinkbottle.uk/TimeTrials/index.html?map=GREAVES-DR1%20The%20Talon%20of%20Ra"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/KsDLGtUIdD0"
+      }
+    ]
   },
   "VLADIGOR-DR1 Get Kraken Sugarloaf Edition": {
     "map": {
@@ -1747,6 +1754,22 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1 Mel's Mountain Top Drop.jpg",
       "target": "maps/DR1 Mel's Mountain Top Drop.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/I3TB84eCY6A"
+      }
+    ]
+  },
+  "ALEC TURNER-DR1_GODS_WEDDING_BAND": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/70OPt8ugsuM"
+      }
+    ]
   }
 }
