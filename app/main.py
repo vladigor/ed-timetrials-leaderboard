@@ -907,7 +907,7 @@ async def api_race_map(key: str):
 
 @app.get("/api/media")
 async def api_media():
-    """Returns the entire media.json file."""
+    """Return media data enriched with manually assigned race tags."""
     media_file = Path(__file__).parent.parent / "media.json"
     if not media_file.exists():
         return {}
@@ -915,6 +915,23 @@ async def api_media():
     try:
         with open(media_file) as f:
             media_data = json.load(f)
+
+        from .database import get_db as _get_db
+
+        db = await _get_db()
+        try:
+            async with db.execute(
+                "SELECT key, tags FROM locations WHERE tags IS NOT NULL AND tags != ''"
+            ) as cursor:
+                tagged_races = await cursor.fetchall()
+        finally:
+            await db.close()
+
+        for race in tagged_races:
+            media_data.setdefault(race["key"], {})["tags"] = [
+                tag.strip() for tag in race["tags"].split(",") if tag.strip()
+            ]
+
         return media_data
     except Exception as exc:
         log.warning("Failed to load media.json: %s", exc)

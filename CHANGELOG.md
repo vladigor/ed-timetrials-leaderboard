@@ -1,4 +1,7 @@
 # Change log
+## 2026-08-24
+- API:
+    - Added tags to the /api/media endpoint
 
 ## 2026-07-21
 - General:
