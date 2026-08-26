@@ -1699,7 +1699,24 @@
     "map": {
       "thumbnail": "maps/thumbnails/The Phenomenal NSP Tour.gif",
       "target": "maps/The Phenomenal NSP Tour.gif"
-    }
+    },
+    "links": [
+      {
+        "label": "Image",
+        "type": "image",
+        "url": "/maps/The Phenomenal Colonia NSP Tour_Subtlety_Eol_Prou_HQ-N_c7-157_A_2026-08-04_210047.png"
+      },
+      {
+        "label": "Image",
+        "type": "image",
+        "url": "/maps/The Phenomenal Colonia NSP Tour_Subtlety_Mobia_B_A_Belt_2026-08-04_204522.png"
+      },
+      {
+        "label": "Image",
+        "type": "image",
+        "url": "/maps/The Phenomenal Colonia NSP Tour_Greaves_2088401.JPG"
+      }
+    ]
   },
   "SO MUCH FOR SUBTLETY-AllAroundSHIP": {
     "map": {
