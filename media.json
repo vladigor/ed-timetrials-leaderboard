@@ -1811,5 +1811,29 @@
         "url": "https://www.youtube.com/watch?v=w7NWNlTaMzk"
       }
     ]
+  },
+  "VR247-DR1 OVER THE CLOOKU'S NEST": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1_One_Flew_Over_the_Clookus_Nest.jpg",
+      "target": "maps/DR1_One_Flew_Over_the_Clookus_Nest.jpg"
+    }
+  },
+  "SO MUCH FOR SUBTLETY-_DR1_Cloud_Clooku_SHIP": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1_Adventures_in_Cloud_Clooku_Land.jpg",
+      "target": "maps/DR1_Adventures_in_Cloud_Clooku_Land.jpg"
+    }
+  },
+  "SO MUCH FOR SUBTLETY-_DR1_Cloud_Clooku_SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1_Adventures_in_Cloud_Clooku_Land.jpg",
+      "target": "maps/DR1_Adventures_in_Cloud_Clooku_Land.jpg"
+    }
+  },
+  "SON OF THUNDER-DR1SJ": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1_Nebula_Ski_Jump_Challenge.jpg",
+      "target": "maps/DR1_Nebula_Ski_Jump_Challenge.jpg"
+    }
   }
 }
