@@ -1061,6 +1061,11 @@ a.info-badge:hover { opacity: .8; }
   color: var(--accent);
 }
 
+.stats-table .activity-ahead {
+  color: var(--accent);
+  font-weight: 700;
+}
+
 .pos {
   font-weight: 700;
   width: 2rem;

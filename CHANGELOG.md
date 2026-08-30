@@ -2,6 +2,8 @@
 ## 2026-08-24
 - API:
     - Added tags to the /api/media endpoint
+- Activity page
+    - Added colour to Position column for entries where the other cmdr is ahead of you
 
 ## 2026-07-21
 - General:

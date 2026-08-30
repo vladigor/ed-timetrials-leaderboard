@@ -84,7 +84,9 @@ async function loadActivity() {
   isLoading = true;
   removeSentinel();
   try {
-    const url = `/api/activity?limit=${PAGE_SIZE}&offset=${currentOffset}`;
+    const cmdr = localStorage.getItem('tt_filter_cmdr') || '';
+    const commanderParam = cmdr ? `&commander=${encodeURIComponent(cmdr)}` : '';
+    const url = `/api/activity?limit=${PAGE_SIZE}&offset=${currentOffset}${commanderParam}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(res.status);
     const page = await res.json();
@@ -178,6 +180,7 @@ function renderActivityTable(items) {
   if (!items || items.length === 0) return '<p class="empty-state">No data available.</p>';
 
   const isMobile = window.innerWidth <= 768;
+  const selectedCmdr = localStorage.getItem('tt_filter_cmdr') || '';
   const commanderLabel = isMobile ? 'Cmdr' : 'Commander';
   const positionLabel = isMobile ? 'Posn' : 'Position';
   const improvementLabel = isMobile ? 'Impvmnt' : 'Improvement';
@@ -197,6 +200,11 @@ function renderActivityTable(items) {
     const rowClass = isFresh(item.updated) ? ' class="row-fresh"' : '';
     const position = item.position;
     const currentPosition = item.current_position;
+    const isAheadOfSelected = selectedCmdr
+      && item.name !== selectedCmdr
+      && item.current_position != null
+      && item.selected_current_position != null
+      && item.current_position < item.selected_current_position;
 
     // Display historical position with medal emoji for podium
     let positionDisplay = position === 1 ? '🏆' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
@@ -224,7 +232,7 @@ function renderActivityTable(items) {
     html += `<tr${rowClass}>`;
     html += `<td>${renderCmdrLink(item.name)}</td>`;
     html += `<td>${renderRaceLink(item.location, item.race_name)}</td>`;
-    html += `<td class="stats-rank">${positionDisplay}</td>`;
+    html += `<td class="stats-rank${isAheadOfSelected ? ' activity-ahead' : ''}">${positionDisplay}</td>`;
     html += `<td class="stats-rank">${improvementDisplay}</td>`;
     html += `<td class="stats-time activity-time" data-timestamp="${item.updated || ''}">${relativeTime(item.updated)}</td>`;
     html += '</tr>';

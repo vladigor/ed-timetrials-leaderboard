@@ -617,11 +617,12 @@ async def api_visual_stats_extras(
 async def api_activity(
     limit: int = Query(25, ge=1, le=100),
     offset: int = Query(0, ge=0),
+    commander: str | None = None,
 ):
     """Return recent race results with commander, race name, position, and timestamp."""
     from .queries import get_recent_activity
 
-    return await get_recent_activity(limit=limit, offset=offset)
+    return await get_recent_activity(limit=limit, offset=offset, commander=commander)
 
 
 @app.get("/api/active-racers")
