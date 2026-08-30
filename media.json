@@ -1822,7 +1822,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1_Adventures_in_Cloud_Clooku_Land.png",
       "target": "maps/DR1_Adventures_in_Cloud_Clooku_Land.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=WsllAzCalp0"
+      }
+    ]
   },
   "SO MUCH FOR SUBTLETY-_DR1_Cloud_Clooku_SLF": {
     "map": {
@@ -1835,5 +1842,38 @@
       "thumbnail": "maps/thumbnails/DR1_Nebula_Ski_Jump_Challenge.jpg",
       "target": "maps/DR1_Nebula_Ski_Jump_Challenge.jpg"
     }
+  },
+  "ALEC TURNER-CLOOKU_CRATER_MAKER": {
+    "map": {
+      "thumbnail": "maps/thumbnails/2026-08-27_03-56-43_Clooku_NY-V_b8-101_5_b.png",
+      "target": "maps/2026-08-27_03-56-43_Clooku_NY-V_b8-101_5_b.png"
+    },
+    "links": [
+      {
+        "label": "4B",
+        "type": "image",
+        "url": "/maps/2026-08-26_04-19-32_Clooku_NY-V_b8-101_4_b.png"
+      },
+      {
+        "label": "4C",
+        "type": "image",
+        "url": "/maps/2026-08-26_04-22-26_Clooku_NY-V_b8-101_4_c.png"
+      },
+      {
+        "label": "4D",
+        "type": "image",
+        "url": "/maps/2026-08-26_04-25-53_Clooku_NY-V_b8-101_4_d.png"
+      },
+      {
+        "label": "5A",
+        "type": "image",
+        "url": "/maps/2026-08-26_04-29-12_Clooku_NY-V_b8-101_5_a.png"
+      },
+      {
+        "label": "5B",
+        "type": "image",
+        "url": "/maps/2026-08-27_03-56-43_Clooku_NY-V_b8-101_5_b.png"
+      }
+    ]
   }
 }
