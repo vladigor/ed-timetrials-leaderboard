@@ -1841,7 +1841,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1_Nebula_Ski_Jump_Challenge.jpg",
       "target": "maps/DR1_Nebula_Ski_Jump_Challenge.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=DBY9aHYsotA"
+      }
+    ]
   },
   "ALEC TURNER-CLOOKU_CRATER_MAKER": {
     "map": {
@@ -1873,6 +1880,19 @@
         "label": "5B",
         "type": "image",
         "url": "/maps/2026-08-27_03-56-43_Clooku_NY-V_b8-101_5_b.png"
+      }
+    ]
+  },
+  "SO MUCH FOR SUBTLETY-_DR1_Cloud_Clooku_BI": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1_Adventures_in_Cloud_Clooku_Land.png",
+      "target": "maps/DR1_Adventures_in_Cloud_Clooku_Land.png"
+    },
+    "links": [
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://youtu.be/lftFdy2GAqk"
       }
     ]
   }
