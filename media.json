@@ -1816,7 +1816,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1_One_Flew_Over_the_Clookus_Nest.jpg",
       "target": "maps/DR1_One_Flew_Over_the_Clookus_Nest.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=Q21Om5p6Smc"
+      }
+    ]
   },
   "SO MUCH FOR SUBTLETY-_DR1_Cloud_Clooku_SHIP": {
     "map": {
@@ -1835,7 +1842,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1_Adventures_in_Cloud_Clooku_Land.png",
       "target": "maps/DR1_Adventures_in_Cloud_Clooku_Land.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=ewGaW5mdVjs"
+      }
+    ]
   },
   "SON OF THUNDER-DR1SJ": {
     "map": {
