@@ -50,6 +50,11 @@ const DW3_ACTIVE_RACERS_WINDOW = {
   endDay: '2026-05-22',
   label: 'Shaded red area denotes DW3',
 };
+const DR1_ACTIVE_RACERS_WINDOW = {
+  startDay: '2026-07-29',
+  endDay: '2026-09-06',
+  label: 'Shaded blue area denotes DR1',
+};
 const selectedCmdr = localStorage.getItem('tt_filter_cmdr') || '';
 
 let graphContainer = null;
@@ -878,6 +883,17 @@ function renderActiveRacersChartVisual(data) {
     DW3_ACTIVE_RACERS_WINDOW.startDay,
     DW3_ACTIVE_RACERS_WINDOW.endDay,
     DW3_ACTIVE_RACERS_WINDOW.label,
+    'trend-overlay-dw3',
+  );
+  const dr1Overlay = buildTimeRangeOverlayVisual(
+    data,
+    xFor,
+    pad,
+    height,
+    DR1_ACTIVE_RACERS_WINDOW.startDay,
+    DR1_ACTIVE_RACERS_WINDOW.endDay,
+    DR1_ACTIVE_RACERS_WINDOW.label,
+    'trend-overlay-dr1',
   );
   const lastIdx = data.length - 1;
   graphContainer.innerHTML = `
@@ -885,6 +901,7 @@ function renderActiveRacersChartVisual(data) {
       <rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>
       ${yTicks.grid}
       ${dw3Overlay}
+      ${dr1Overlay}
       <path d="${areaPath}" class="trend-area"></path>
       <polyline points="${pointsLine}" class="trend-line"></polyline>
       <circle cx="${xFor(lastIdx)}" cy="${yFor(values[lastIdx] ?? 0)}" r="4" class="trend-dot"></circle>
@@ -894,11 +911,12 @@ function renderActiveRacersChartVisual(data) {
       <text x="${width - pad.right}" y="${height - 16}" class="trend-axis-text" text-anchor="end">${formatDayLabelVisual(data[lastIdx]?.day)}</text>
       <text x="${width - pad.right}" y="${pad.top + 14}" class="trend-axis-text" text-anchor="end">7-day rolling average</text>
       ${dw3Overlay ? `<text x="${pad.left}" y="${pad.top + 14}" class="trend-axis-text">${DW3_ACTIVE_RACERS_WINDOW.label}</text>` : ''}
+      ${dr1Overlay ? `<text x="${pad.left}" y="${pad.top + 28}" class="trend-axis-text">${DR1_ACTIVE_RACERS_WINDOW.label}</text>` : ''}
     </svg>
   `;
 }
 
-function buildTimeRangeOverlayVisual(data, xFor, pad, height, startDay, endDay, label) {
+function buildTimeRangeOverlayVisual(data, xFor, pad, height, startDay, endDay, label, className) {
   if (!Array.isArray(data) || data.length === 0) return '';
   const domainStart = parseUtcDayVisual(data[0]?.day);
   const domainEnd = parseUtcDayVisual(data[data.length - 1]?.day);
@@ -931,7 +949,7 @@ function buildTimeRangeOverlayVisual(data, xFor, pad, height, startDay, endDay, 
   if (overlayWidth <= 0) return '';
 
   const overlayTitle = `${label}: ${startDay} to ${endDay}`;
-  return `<rect x="${xStart.toFixed(2)}" y="${pad.top}" width="${overlayWidth.toFixed(2)}" height="${(height - pad.top - pad.bottom).toFixed(2)}" class="trend-overlay-dw3" aria-label="${esc(overlayTitle)}" title="${esc(overlayTitle)}"></rect>`;
+  return `<rect x="${xStart.toFixed(2)}" y="${pad.top}" width="${overlayWidth.toFixed(2)}" height="${(height - pad.top - pad.bottom).toFixed(2)}" class="${className}" aria-label="${esc(overlayTitle)}" title="${esc(overlayTitle)}"></rect>`;
 }
 
 function parseUtcDayVisual(dayString) {
