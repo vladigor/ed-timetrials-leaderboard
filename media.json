@@ -1909,5 +1909,11 @@
         "url": "https://youtu.be/lftFdy2GAqk"
       }
     ]
+  },
+  "VR247-DR1 MAGIC 8 BALL BIATHLON": {
+    "map": {
+      "thumbnail": "maps/thumbnails/DR1_Magic_8_Ball_Biathlon.jpg",
+      "target": "maps/DR1_Magic_8_Ball_Biathlon.jpg"
+    }
   }
 }
