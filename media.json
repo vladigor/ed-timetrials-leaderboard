@@ -1914,6 +1914,13 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1_Magic_8_Ball_Biathlon.jpg",
       "target": "maps/DR1_Magic_8_Ball_Biathlon.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=-H9HJwZWkzs"
+      }
+    ]
   }
 }
