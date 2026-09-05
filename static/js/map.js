@@ -7,7 +7,12 @@ function galToLatLng(x, z) {
   const lat = -128 - ((25000 - z) / 81920) * 128;
   return [lat, lng];
 }
-
+// Initial view. When FIT_TO_RACES is true the map frames all race markers (capped
+// at FIT_MAX_ZOOM). Set it to false to force a fixed centre + zoom instead.
+const FIT_TO_RACES = false;
+const FIT_MAX_ZOOM = 5;
+const INITIAL_CENTER = [0, 13000]; // galactic [x, z]; [0, 0] = Sol
+const INITIAL_ZOOM = 4;
 const statusDot = document.getElementById('status-dot');
 const statusText = document.getElementById('status-text');
 
@@ -138,10 +143,12 @@ async function load() {
 
     addLegend(map);
 
-    if (bounds.length > 1) {
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 5 });
+    if (!FIT_TO_RACES) {
+      map.setView(galToLatLng(INITIAL_CENTER[0], INITIAL_CENTER[1]), INITIAL_ZOOM);
+    } else if (bounds.length > 1) {
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: FIT_MAX_ZOOM });
     } else {
-      map.setView(bounds[0], 4);
+      map.setView(bounds[0], INITIAL_ZOOM);
     }
 
     const n = races.length;
