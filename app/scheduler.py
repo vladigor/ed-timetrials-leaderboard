@@ -14,6 +14,7 @@ from .importer import (
     fetch_and_store_locations,
     fetch_and_store_race_details,
     fetch_and_store_results,
+    fetch_and_store_system_coords,
     fetch_last_updated,
 )
 
@@ -172,6 +173,13 @@ async def poll() -> None:
         log.error("Failed to fetch race details during poll: %s", exc)
         cycle_errors.append(f"fetch_and_store_race_details: {exc}")
 
+    # Resolve galaxy-map coordinates for any new races
+    try:
+        await fetch_and_store_system_coords()
+    except Exception as exc:
+        log.error("Failed to resolve system coordinates during poll: %s", exc)
+        cycle_errors.append(f"fetch_and_store_system_coords: {exc}")
+
     try:
         fresh = await fetch_last_updated()
     except Exception as exc:
@@ -225,6 +233,11 @@ async def full_refresh() -> None:
         await fetch_and_store_race_details()
     except Exception as exc:
         log.error("Failed to fetch race details: %s", exc)
+
+    try:
+        await fetch_and_store_system_coords()
+    except Exception as exc:
+        log.error("Failed to resolve system coordinates: %s", exc)
 
     global _last_updated_snapshot
     try:

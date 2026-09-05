@@ -124,6 +124,12 @@ async def init_db() -> None:
             "ALTER TABLE locations ADD COLUMN creator TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE locations ADD COLUMN tags TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE results_history ADD COLUMN position INTEGER",
+            # Galaxy-map coordinates for the race's start system (resolved via EDSM).
+            # NULL means not yet resolved; backfilled by scripts/backfill_system_coords.py.
+            "ALTER TABLE locations ADD COLUMN sys_x REAL",
+            "ALTER TABLE locations ADD COLUMN sys_y REAL",
+            "ALTER TABLE locations ADD COLUMN sys_z REAL",
+            "ALTER TABLE locations ADD COLUMN coords_updated TEXT NOT NULL DEFAULT ''",
         ):
             with contextlib.suppress(Exception):
                 await db.execute(col_sql)

@@ -32,6 +32,33 @@ async def get_race_meta(key: str) -> dict | None:
         await db.close()
 
 
+async def list_map_races() -> list[dict]:
+    """Return races that have resolved galaxy coordinates, for the galaxy map page."""
+    db = await get_db()
+    try:
+        async with db.execute(
+            """
+            SELECT
+                l.key,
+                l.name,
+                l.system,
+                l.creator,
+                l.tags,
+                l.sys_x,
+                l.sys_y,
+                l.sys_z,
+                (SELECT COUNT(DISTINCT name) FROM results WHERE location = l.key) AS entry_count
+            FROM locations l
+            WHERE l.sys_x IS NOT NULL AND l.sys_z IS NOT NULL
+            ORDER BY l.sort
+            """
+        ) as cursor:
+            rows = await cursor.fetchall()
+        return [_row_to_dict(r) for r in rows]
+    finally:
+        await db.close()
+
+
 async def list_races(
     active_days: int | None = None,
     commander: str | None = None,

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Galaxy Map — Elite TT Leaderboards{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{% endblock %}
+
+{% block content %}
+  <main class="page-wrapper">
+
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span>Galaxy Map</span>
+    </div>
+
+    <h1 class="page-title">Galaxy Map</h1>
+    <p class="page-intro">Every time trial pinned to its start system. Tiles &amp; galactic
+      imagery by <a href="https://edastro.com/galmap/" target="_blank" rel="noopener">EDAstro.com</a>.</p>
+
+    <div class="status-bar">
+      <div class="dot" id="status-dot"></div>
+      <span id="status-text">Loading…</span>
+    </div>
+
+    <div id="galaxy-map" class="galaxy-map"></div>
+
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="/static/js/map.js?v={{ v }}"></script>
+{% endblock %}

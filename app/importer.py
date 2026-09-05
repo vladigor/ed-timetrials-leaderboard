@@ -496,6 +496,66 @@ async def fetch_and_store_race_details() -> None:
     log.info("Race detail fetch complete for %d races.", len(keys))
 
 
+EDSM_SYSTEM_URL = "https://www.edsm.net/api-v1/system"
+
+
+async def fetch_and_store_system_coords() -> int:
+    """Resolve galaxy coordinates via EDSM for locations missing them.
+
+    Looks up each distinct start system that has no coordinates yet and applies
+    the result to every race sharing that system. Returns the number of systems
+    resolved. Systems that EDSM cannot resolve are left NULL and retried next cycle.
+    """
+    db = await get_db()
+    try:
+        async with db.execute(
+            "SELECT DISTINCT system FROM locations WHERE sys_x IS NULL AND system != ''"
+        ) as cursor:
+            systems = [row["system"] for row in await cursor.fetchall()]
+    finally:
+        await db.close()
+
+    if not systems:
+        return 0
+
+    log.info("Resolving galaxy coordinates for %d system(s) via EDSM…", len(systems))
+    resolved = 0
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        for name in systems:
+            try:
+                resp = await client.get(
+                    EDSM_SYSTEM_URL,
+                    params={"systemName": name, "showCoordinates": "1"},
+                )
+                resp.raise_for_status()
+                data = resp.json()
+            except Exception as exc:
+                log.warning("EDSM lookup failed for %r: %s", name, exc)
+                continue
+            if not data or "coords" not in data:
+                log.warning("No coordinates found for %r", name)
+                continue
+            c = data["coords"]
+            now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            db = await get_db()
+            try:
+                await db.execute(
+                    """
+                    UPDATE locations
+                    SET sys_x = ?, sys_y = ?, sys_z = ?, coords_updated = ?
+                    WHERE system = ?
+                    """,
+                    (c["x"], c["y"], c["z"], now, name),
+                )
+                await db.commit()
+            finally:
+                await db.close()
+            resolved += 1
+
+    log.info("Galaxy coordinate resolution complete: %d system(s) resolved.", resolved)
+    return resolved
+
+
 async def fetch_and_store_daynight_bulk() -> int:
     """Fetch current day/night state for all known races from the bulk endpoint.
 

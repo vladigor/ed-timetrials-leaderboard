@@ -1,4 +1,8 @@
 # Change log
+## 2026-09-05
+- Map page
+    - Added a galmap of the race locations
+
 ## 2026-08-24
 - API:
     - Added tags to the /api/media endpoint
