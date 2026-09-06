@@ -1656,7 +1656,14 @@
     "map": {
       "thumbnail": "maps/thumbnails/DR1 Ruins of Mt. Magellan.jpg",
       "target": "maps/DR1 Ruins of Mt. Magellan.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Vista",
+        "type": "image",
+        "url": "/maps/mt_magellan_vista.png"
+      }
+    ]
   },
   "GREAVES-DR1 Stairway to Heaven": {
     "map": {
