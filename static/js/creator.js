@@ -356,8 +356,8 @@ function renderTables() {
   // Apply filters
   if (filterHideDW3) {
     races = races.filter(r => {
-      const hasDW3Tag = (r.tags || '').split(',').map(t => t.trim()).includes('DW3');
-      return !hasDW3Tag;
+      const hasRemoteTag = (r.tags || '').split(',').map(t => t.trim()).includes('Remote');
+      return !hasRemoteTag;
     });
   }
 

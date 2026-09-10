@@ -2,6 +2,8 @@
 ## 2026-09-05
 - Map page
     - Added a galmap of the race locations
+- Index page and other race listings
+    - Renamed "Hide DW3 races" filter to "Hide Remote races"
 
 ## 2026-08-24
 - API:
