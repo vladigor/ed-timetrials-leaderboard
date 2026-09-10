@@ -202,9 +202,9 @@ function renderActivityTable(items) {
     const currentPosition = item.current_position;
     const isAheadOfSelected = selectedCmdr
       && item.name !== selectedCmdr
-      && item.current_position != null
+      && item.position != null
       && item.selected_current_position != null
-      && item.current_position < item.selected_current_position;
+      && item.position < item.selected_current_position;
 
     // Display historical position with medal emoji for podium
     let positionDisplay = position === 1 ? '🏆' : position === 2 ? '🥈' : position === 3 ? '🥉' : (position || '—');
