@@ -355,9 +355,10 @@ function renderTables() {
 
   // Apply filters
   if (filterHideDW3) {
+    const remoteTags = ['Remote', 'DW1', 'DR1', 'Colonia'];
     races = races.filter(r => {
-      const hasRemoteTag = (r.tags || '').split(',').map(t => t.trim()).includes('Remote');
-      return !hasRemoteTag;
+      const tags = (r.tags || '').split(',').map(t => t.trim());
+      return !tags.some(t => remoteTags.includes(t));
     });
   }
 
