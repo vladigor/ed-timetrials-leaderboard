@@ -252,9 +252,9 @@ async function loadNewRaces() {
 function renderGrid() {
   let races = allRaces;
 
-  // Client-side filter: hide Remote races (Remote/DW1/DR1/Colonia tags)
+  // Client-side filter: hide Remote races (Remote/DW3/DR1/Colonia tags)
   if (filterHideDW3) {
-    const remoteTags = ['Remote', 'DW1', 'DR1', 'Colonia'];
+    const remoteTags = ['Remote', 'DW3', 'DR1', 'Colonia'];
     races = races.filter(r => {
       const tags = (r.tags || '').split(',').map(t => t.trim());
       return !tags.some(t => remoteTags.includes(t));

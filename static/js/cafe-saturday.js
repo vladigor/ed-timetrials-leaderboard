@@ -222,7 +222,7 @@ function renderTable() {
   let races = allRaces;
 
   if (filterHideDW3) {
-    const remoteTags = ['Remote', 'DW1', 'DR1', 'Colonia'];
+    const remoteTags = ['Remote', 'DW3', 'DR1', 'Colonia'];
     races = races.filter(r => {
       const tags = (r.tags || '').split(',').map(t => t.trim());
       return !tags.some(t => remoteTags.includes(t));
