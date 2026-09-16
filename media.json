@@ -1929,5 +1929,17 @@
         "url": "https://www.youtube.com/watch?v=-H9HJwZWkzs"
       }
     ]
+  },
+  "NASTYNATE1-NRCBoontaEveClassic1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BoontaEveGrandArena.png",
+      "target": "maps/BoontaEveGrandArena.png"
+    }
+  },
+  "NASTYNATE1-NRCBoontaEveSLFClassic1": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BoontaEveGrandArena.png",
+      "target": "maps/BoontaEveGrandArena.png"
+    }
   }
 }
