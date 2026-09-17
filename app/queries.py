@@ -1033,7 +1033,7 @@ async def get_active_racers(limit: int = 25, offset: int = 0) -> list[dict]:
 
 async def get_active_racers_timeseries(days: int = 180) -> list[dict]:
     """
-    Return a 7-day rolling average of active racers for the last N days
+    Return a 7-day rolling max of active racers for the last N days
     (inclusive of today).
 
     "active" means a commander has at least one recorded submission on that day.
@@ -1070,12 +1070,9 @@ async def get_active_racers_timeseries(days: int = 180) -> list[dict]:
             )
             SELECT
                 s.day,
-                ROUND(
-                    AVG(s.daily_active_racers) OVER (
-                        ORDER BY s.day
-                        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-                    ),
-                    2
+                MAX(s.daily_active_racers) OVER (
+                    ORDER BY s.day
+                    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
                 ) AS active_racers
             FROM series s
             ORDER BY s.day

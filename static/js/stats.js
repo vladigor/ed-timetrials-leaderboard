@@ -909,7 +909,7 @@ function renderActiveRacersChartVisual(data) {
       ${xTicks}
       <text x="${pad.left}" y="${height - 16}" class="trend-axis-text">${formatDayLabelVisual(data[0]?.day)}</text>
       <text x="${width - pad.right}" y="${height - 16}" class="trend-axis-text" text-anchor="end">${formatDayLabelVisual(data[lastIdx]?.day)}</text>
-      <text x="${width - pad.right}" y="${pad.top + 14}" class="trend-axis-text" text-anchor="end">7-day rolling average</text>
+      <text x="${width - pad.right}" y="${pad.top + 14}" class="trend-axis-text" text-anchor="end">7-day rolling max</text>
       ${dw3Overlay ? `<text x="${pad.left}" y="${pad.top + 14}" class="trend-axis-text">${DW3_ACTIVE_RACERS_WINDOW.label}</text>` : ''}
       ${dr1Overlay ? `<text x="${pad.left}" y="${pad.top + 28}" class="trend-axis-text">${DR1_ACTIVE_RACERS_WINDOW.label}</text>` : ''}
     </svg>

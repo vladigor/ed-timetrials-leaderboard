@@ -1,4 +1,9 @@
 # Change log
+
+## 2026-09-17
+  Stats page
+    - Changed the active racers graph to a 7 day rolling MAX instead of AVG
+
 ## 2026-09-05
 - Map page
     - Added a galmap of the race locations
