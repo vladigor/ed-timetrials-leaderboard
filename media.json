@@ -1954,5 +1954,11 @@
         "url": "https://youtu.be/aicCu6EwKOc"
       }
     ]
+  },
+  "VLADIGOR-SRH The Joustling": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Joustling.png",
+      "target": "maps/Joustling.png"
+    }
   }
 }
