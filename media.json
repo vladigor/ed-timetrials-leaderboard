@@ -1946,6 +1946,13 @@
     "map": {
       "thumbnail": "maps/thumbnails/The_Joust_Layout_Map.jpg",
       "target": "maps/The_Joust_Layout_Map.jpg"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/aicCu6EwKOc"
+      }
+    ]
   }
 }
