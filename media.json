@@ -1941,5 +1941,11 @@
       "thumbnail": "maps/thumbnails/BoontaEveGrandArena.png",
       "target": "maps/BoontaEveGrandArena.png"
     }
+  },
+  "DRODINN-srhTheJoust": {
+    "map": {
+      "thumbnail": "maps/thumbnails/The_Joust_Layout_Map.jpg",
+      "target": "maps/The_Joust_Layout_Map.jpg"
+    }
   }
 }
