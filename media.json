@@ -1960,5 +1960,39 @@
       "thumbnail": "maps/thumbnails/Joustling.png",
       "target": "maps/Joustling.png"
     }
+  },
+  "VLADIGOR-Arms End Three Point Turn": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Arms End Three Point Turn Overview.jpg",
+      "target": "maps/Arms End Three Point Turn Overview.jpg"
+    },
+    "links": [
+      {
+        "label": "B6",
+        "type": "image",
+        "url": "/maps/Arms End Three Point Turn B6.png"
+      },
+      {
+        "label": "B3",
+        "type": "image",
+        "url": "/maps/Arms End Three Point Turn B3.png"
+      },
+      {
+        "label": "B2",
+        "type": "image",
+        "url": "/maps/Arms End Three Point Turn B2.png"
+      },
+      {
+        "label": "B1",
+        "type": "image",
+        "url": "/maps/Arms End Three Point Turn B1.png"
+      }
+    ]
+  },
+  "VLADIGOR-Arms End Last Stop": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Hypau Aec JO-Z d13-0-B 3 (20260923-165809).png",
+      "target": "maps/Hypau Aec JO-Z d13-0-B 3 (20260923-165809).png"
+    }
   }
 }
