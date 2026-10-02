@@ -610,6 +610,12 @@
       }
     ]
   },
+  "VR247-Broo's Views_SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/BroosViews.jpg",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=VR247-Broo%27s%20Views%20"
+    }
+  },
   "DUCK0-BUSTOSCANYON": {
     "map": {
       "thumbnail": "maps/thumbnails/BustosCanyon.jpg",
