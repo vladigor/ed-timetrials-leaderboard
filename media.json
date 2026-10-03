@@ -2000,5 +2000,18 @@
       "thumbnail": "maps/thumbnails/Hypau Aec JO-Z d13-0-B 6 (20260926-165317).png",
       "target": "maps/Hypau Aec JO-Z d13-0-B 6 (20260926-165317).png"
     }
+  },
+  "ALEC TURNER-THARGOID_STRUCTURE_SCRAMBLE": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Thargoid_Structure_Scramble.png",
+      "target": "maps/Thargoid_Structure_Scramble.png"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/oFaweAHLj58"
+      }
+    ]
   }
 }
