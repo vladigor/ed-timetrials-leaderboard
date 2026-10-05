@@ -2013,5 +2013,11 @@
         "url": "https://youtu.be/oFaweAHLj58"
       }
     ]
+  },
+  "VLADIGOR-The Edge of Reason": {
+    "map": {
+      "thumbnail": "maps/thumbnails/The Edge of Reason.png",
+      "target": "maps/The Edge of Reason.png"
+    }
   }
 }
