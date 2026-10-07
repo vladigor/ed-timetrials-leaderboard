@@ -2019,5 +2019,28 @@
       "thumbnail": "maps/thumbnails/The Edge of Reason.png",
       "target": "maps/The Edge of Reason.png"
     }
+  },
+  "VLADIGOR-The Phenomenal Tenebrae Turd Tour": {
+    "map": {
+      "thumbnail": "maps/thumbnails/The Phenomenal Tenebrae Turd Tour.png",
+      "target": "maps/The Phenomenal Tenebrae Turd Tour.png"
+    },
+    "links": [
+      {
+        "label": "Turd 1",
+        "type": "image",
+        "url": "/maps/Hyphaups RM-W d1-1- (20261003-161344).png"
+      },
+      {
+        "label": "Turd 2",
+        "type": "image",
+        "url": "/maps/Hyphaups WS-U d2-0- (20261004-054016).png"
+      },
+      {
+        "label": "Turd third",
+        "type": "image",
+        "url": "/maps/Hyphaups SM-W d1-0-A (20261004-062338).png"
+      }
+    ]
   }
 }
