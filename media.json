@@ -2042,5 +2042,11 @@
         "url": "/maps/Hyphaups SM-W d1-0-A (20261004-062338).png"
       }
     ]
+  },
+  "VLADIGOR-Outer Orion Spur Ridge Runner": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Smojaea SH-Z c27-0-F 7 a (20261008-154942).png",
+      "target": "maps/Smojaea SH-Z c27-0-F 7 a (20261008-154942).png"
+    }
   }
 }
