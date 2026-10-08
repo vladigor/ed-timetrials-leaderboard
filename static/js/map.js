@@ -57,10 +57,12 @@ function raceRowHtml(race) {
 }
 
 function popupHtml(system, races) {
+  const bookmarkUrl = new URL('/map', window.location.origin);
+  bookmarkUrl.searchParams.set('system', system);
   const header =
     races.length > 1
-      ? `<div class="map-popup-sys">${esc(system)} · ${races.length} races</div>`
-      : `<div class="map-popup-sys">${esc(system)}</div>`;
+      ? `<div class="map-popup-sys"><a href="${esc(bookmarkUrl.pathname + bookmarkUrl.search)}">${esc(system)}</a> · ${races.length} races</div>`
+      : `<div class="map-popup-sys"><a href="${esc(bookmarkUrl.pathname + bookmarkUrl.search)}">${esc(system)}</a></div>`;
   return `<div class="map-popup">${header}${races.map(raceRowHtml).join('')}</div>`;
 }
 
@@ -100,6 +102,7 @@ function addLegend(map) {
 
 async function load() {
   const map = initMap();
+  const requestedSystem = new URLSearchParams(window.location.search).get('system')?.trim();
   try {
     const res = await fetch('/api/map-races');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -123,13 +126,14 @@ async function load() {
     }
 
     const bounds = [];
+    let requestedMarker = null;
     for (const g of groups.values()) {
       bounds.push(g.latlng);
       const count = g.races.length;
       const color = groupColor(g.races);
       const tooltip =
         count > 1 ? `${esc(g.system)} — ${count} races` : esc(g.races[0].name);
-      L.circleMarker(g.latlng, {
+      const marker = L.circleMarker(g.latlng, {
         radius: count > 1 ? 7 : 5,
         color,
         weight: 1,
@@ -139,11 +143,18 @@ async function load() {
         .bindPopup(popupHtml(g.system, g.races), { maxHeight: 300 })
         .bindTooltip(tooltip, { direction: 'top', offset: [0, -4] })
         .addTo(map);
+      if (requestedSystem && g.system.localeCompare(requestedSystem, undefined, { sensitivity: 'accent' }) === 0) {
+        requestedMarker = marker;
+      }
     }
 
     addLegend(map);
 
-    if (!FIT_TO_RACES) {
+    if (requestedMarker) {
+      const latlng = requestedMarker.getLatLng();
+      map.setView(latlng, 7);
+      requestedMarker.openPopup();
+    } else if (!FIT_TO_RACES) {
       map.setView(galToLatLng(INITIAL_CENTER[0], INITIAL_CENTER[1]), INITIAL_ZOOM);
     } else if (bounds.length > 1) {
       map.fitBounds(bounds, { padding: [40, 40], maxZoom: FIT_MAX_ZOOM });
