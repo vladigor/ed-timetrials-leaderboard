@@ -73,6 +73,9 @@ Engineering checklist (the “go faster” starter pack):
 - **Enhanced thrusters**
 - **Engine-focused** power distributor + **Super conduits** (so boosts come back faster)
 
+### Racing Ship Comparison site
+NastyNate has compiled a [racing ship comparison](https://eliteracerfacts.pages.dev/#overview) site. He painstakingly analyzed footage of each of his racing ships under various tests and recorded frame-by-frame data to build up their boost profiles and turning curves. The site also contains some sandbox simulations to pit ships against each other.
+
 ## Race Types (Pick Your Poison)
 
 ### SRV Races
@@ -284,6 +287,10 @@ See [graphics settings tips](./graphics-settings) for racing-friendly visuals.
   - Bubble-wide race maps
   - Curated course notes and videos
   - Difficulty indicator
+
+### Time Trial Definer
+
+Once you're ready to build your own time trials, [this tool](https://github.com/LouisH99/EDTT-Definer.git) takes a lot of the work out of the process. I monitors your live position in game and enables easy importing of your position data into waypoint gates.
 
 ### Race Visualizer
 
