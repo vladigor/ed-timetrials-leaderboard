@@ -152,7 +152,7 @@ async function load() {
 
     if (requestedMarker) {
       const latlng = requestedMarker.getLatLng();
-      map.setView(latlng, 7);
+      map.setView(latlng, 8);
       requestedMarker.openPopup();
     } else if (!FIT_TO_RACES) {
       map.setView(galToLatLng(INITIAL_CENTER[0], INITIAL_CENTER[1]), INITIAL_ZOOM);
