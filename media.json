@@ -2045,8 +2045,21 @@
   },
   "VLADIGOR-Outer Orion Spur Ridge Runner": {
     "map": {
-      "thumbnail": "maps/thumbnails/Smojaea SH-Z c27-0-F 7 a (20261008-154942).png",
-      "target": "maps/Smojaea SH-Z c27-0-F 7 a (20261008-154942).png"
+      "thumbnail": "maps/thumbnails/Outer Orion Spur Ridge and River Runners.png",
+      "target": "maps/Outer Orion Spur Ridge and River Runners.png"
+    },
+    "links": [
+      {
+        "label": "Alternative map",
+        "type": "image",
+        "url": "/maps/Smojaea SH-Z c27-0-F 7 a (20261008-154942).png"
+      }
+    ]
+  },
+  "VLADIGOR-Outer Orion Spur River Runner": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Outer Orion Spur Ridge and River Runners.png",
+      "target": "maps/Outer Orion Spur Ridge and River Runners.png"
     }
   }
 }
