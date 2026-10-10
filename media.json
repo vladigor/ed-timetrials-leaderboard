@@ -2061,5 +2061,23 @@
       "thumbnail": "maps/thumbnails/Outer Orion Spur Ridge and River Runners.png",
       "target": "maps/Outer Orion Spur Ridge and River Runners.png"
     }
+  },
+  "ALEC TURNER-MELTING_POINT": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Melting_Point_thumbnail_1.jpg",
+      "target": "maps/Melting_Point_thumbnail_1.jpg"
+    },
+    "links": [
+      {
+        "label": "Map",
+        "type": "image",
+        "url": "/maps/Melting_Point_map.png"
+      },
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=93RRmB0oNLc"
+      }
+    ]
   }
 }
