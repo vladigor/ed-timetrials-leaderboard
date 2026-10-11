@@ -2079,5 +2079,11 @@
         "url": "https://www.youtube.com/watch?v=93RRmB0oNLc"
       }
     ]
+  },
+  "VLADIGOR-Eta Carina Mountain Climb": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Eta Carina Mountain Climb.png",
+      "target": "maps/Eta Carina Mountain Climb.png"
+    }
   }
 }
