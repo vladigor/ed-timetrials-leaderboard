@@ -2074,6 +2074,11 @@
         "url": "/maps/Melting_Point_map.png"
       },
       {
+        "label": "Landing area",
+        "type": "image",
+        "url": "/maps/melting_point_landing_area.png"
+      },
+      {
         "label": "Demo video",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=93RRmB0oNLc"
