@@ -34,6 +34,14 @@ FAVOURITES_ENABLED: bool = os.environ.get("FAVOURITES_ENABLED", "").strip().lowe
 FAVOURITES_ENABLED_FOR: frozenset[str] = frozenset(
     c.strip().lower() for c in os.environ.get("FAVOURITES_ENABLED_FOR", "").split(",") if c.strip()
 )
+POWERPLAY_ENABLED: bool = os.environ.get("POWERPLAY_ENABLED", "").strip().lower() in (
+    "1",
+    "true",
+    "yes",
+)
+POWERPLAY_ENABLED_FOR: frozenset[str] = frozenset(
+    c.strip().lower() for c in os.environ.get("POWERPLAY_ENABLED_FOR", "").split(",") if c.strip()
+)
 # Comma-separated list of commanders who can access the daylight API even when DAYLIGHT_API_ENABLED=false
 DAYLIGHT_API_ENABLED_FOR: frozenset[str] = frozenset(
     c.strip().lower()

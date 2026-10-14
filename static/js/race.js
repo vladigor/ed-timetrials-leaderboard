@@ -4,11 +4,14 @@ import { getFavState, cycleFavState, favDisplay } from './favourites.js';
 
 const _favGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
 const _favFor    = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites_for) || [];
+const _powerplayGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.powerplay);
+const _powerplayFor = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.powerplay_for) || [];
 const FAVOURITES_ENABLED = _favGlobal || (_favFor.length > 0 && !!(localStorage.getItem('tt_filter_cmdr')) && _favFor.includes(localStorage.getItem('tt_filter_cmdr').toLowerCase()));
 
 // ── State ──────────────────────────────────────────────────────────────────
 const raceKey        = decodeURIComponent(location.pathname.split('/race/')[1] || '');
 const selectedCmdr   = localStorage.getItem('tt_filter_cmdr') || '';
+const POWERPLAY_ENABLED = _powerplayGlobal || (_powerplayFor.length > 0 && _powerplayFor.includes(selectedCmdr.trim().toLowerCase()));
 const FRESH_MS       = 60 * 60 * 1000;
 
 function isFresh(ts) {
@@ -171,7 +174,10 @@ async function init() {
 async function loadRace() {
   try {
     activeFilterType = 'NONE';  // Reset filter when loading normal race
-    race = await fetch(`/api/races/${encodeURIComponent(raceKey)}`).then(r => {
+    const commanderParam = POWERPLAY_ENABLED && selectedCmdr
+      ? `?commander=${encodeURIComponent(selectedCmdr)}`
+      : '';
+    race = await fetch(`/api/races/${encodeURIComponent(raceKey)}${commanderParam}`).then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return r.json();
     });
@@ -605,6 +611,11 @@ function renderRace() {
   // Header
   titleEl.textContent      = race.name;
   breadcrumbEl.textContent = race.name;
+
+  const powerplayEl = document.getElementById('race-powerplay');
+  powerplayEl.hidden = !(POWERPLAY_ENABLED && race.powerplay);
+  powerplayEl.setAttribute('aria-label', `PowerPlay: ${race.powerplay || ''}`);
+  document.getElementById('race-powerplay-tooltip').textContent = race.powerplay || '';
 
   // Fav button (favourites feature)
   if (FAVOURITES_ENABLED) {

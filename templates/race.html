@@ -28,9 +28,18 @@
       <div class="race-detail-header">
         <div class="race-title-row">
           <h1 id="race-title">Loading…</h1>
+          <div class="race-title-indicators">
+          <span id="race-powerplay" class="race-powerplay" tabindex="0" aria-describedby="race-powerplay-tooltip" hidden>
+            <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+              <path opacity=".5" transform="translate(7 -3)" d="M4 29V7h10a8 8 0 0 1 0 16h-4v6H4zm6-12h4a2 2 0 0 0 0-4h-4v4z" />
+              <path d="M4 29V7h10a8 8 0 0 1 0 16h-4v6H4zm6-12h4a2 2 0 0 0 0-4h-4v4z" />
+            </svg>
+            <span id="race-powerplay-tooltip" class="race-powerplay-tooltip" role="tooltip"></span>
+          </span>
           {% if favourites_enabled %}
           <div id="race-fav-btn-container"></div>
           {% endif %}
+          </div>
         </div>
         <div class="meta" id="race-meta"></div>
         <div class="constraints-list" id="race-constraints"></div>
@@ -78,7 +87,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
-  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }} };</script>
+  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }}, powerplay: {{ powerplay_flag | tojson }}, powerplay_for: {{ powerplay_enabled_for | tojson }} };</script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script type="module" src="/static/js/race.js?v={{ v }}"></script>
 {% endblock %}

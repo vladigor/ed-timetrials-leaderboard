@@ -27,6 +27,8 @@ from .config import (
     FAVOURITES_ENABLED,
     FAVOURITES_ENABLED_FOR,
     OFFLINE,
+    POWERPLAY_ENABLED,
+    POWERPLAY_ENABLED_FOR,
 )
 from .database import init_db
 from .queries import (
@@ -58,6 +60,41 @@ log = logging.getLogger(__name__)
 STATIC_DIR = Path(__file__).parent.parent / "static"
 TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
 STATIC_VER = datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
+def load_powerplay_systems() -> dict[str, str]:
+    if not (POWERPLAY_ENABLED or POWERPLAY_ENABLED_FOR):
+        return {}
+    try:
+        items = json.loads(
+            (Path(__file__).parent.parent / "powerPlay.json").read_text(encoding="utf-8")
+        )
+        if not isinstance(items, list):
+            raise ValueError("PowerPlay data must be a list")
+        return {
+            item["name"].strip().casefold(): item["power"].strip()
+            for item in items
+            if isinstance(item, dict)
+            and isinstance(item.get("name"), str)
+            and isinstance(item.get("power"), str)
+        }
+    except (OSError, ValueError) as exc:
+        log.warning("PowerPlay data unavailable: %s", exc)
+        return {}
+
+
+POWERPLAY_SYSTEMS = load_powerplay_systems()
+
+
+def add_powerplay_info(race: dict, commander: str | None) -> None:
+    commander_allowed = bool(commander and commander.strip().lower() in POWERPLAY_ENABLED_FOR)
+    if POWERPLAY_ENABLED or commander_allowed:
+        system = race.get("system")
+        if isinstance(system, str):
+            power = POWERPLAY_SYSTEMS.get(system.strip().casefold())
+            if power:
+                race["powerplay"] = power
+
 
 # Register WebP MIME type if not already known
 if not mimetypes.guess_type("test.webp")[0]:
@@ -110,6 +147,9 @@ async def index(request: Request):
             "favourites_enabled": FAVOURITES_ENABLED or bool(FAVOURITES_ENABLED_FOR),
             "favourites_flag": FAVOURITES_ENABLED,
             "favourites_enabled_for": sorted(FAVOURITES_ENABLED_FOR),
+            "powerplay_enabled": POWERPLAY_ENABLED or bool(POWERPLAY_ENABLED_FOR),
+            "powerplay_flag": POWERPLAY_ENABLED,
+            "powerplay_enabled_for": sorted(POWERPLAY_ENABLED_FOR),
         },
     )
 
@@ -138,6 +178,8 @@ async def race_page(request: Request, key: str):
             "favourites_enabled": FAVOURITES_ENABLED or bool(FAVOURITES_ENABLED_FOR),
             "favourites_flag": FAVOURITES_ENABLED,
             "favourites_enabled_for": sorted(FAVOURITES_ENABLED_FOR),
+            "powerplay_flag": POWERPLAY_ENABLED,
+            "powerplay_enabled_for": sorted(POWERPLAY_ENABLED_FOR),
             "race_name": race_name,
             "race_description": race_description,
         },
@@ -445,12 +487,15 @@ async def api_races(
     # rival_pos      → annotate each race with that rival cmdr's position (for rivalry filter)
     effective_cmdr = commander or commander_pos
     filter_cmdr = commander  # only restrict to their races when 'commander' is set
-    return await list_races(
+    races = await list_races(
         active_days=active_days,
         commander=filter_cmdr,
         commander_pos=effective_cmdr,
         rival_pos=rival_pos,
     )
+    for race in races:
+        add_powerplay_info(race, effective_cmdr)
+    return races
 
 
 @app.get("/api/races/new")
@@ -459,10 +504,11 @@ async def api_new_races(days: int = Query(30, ge=1, le=90), commander: str | Non
 
 
 @app.get("/api/races/{key}")
-async def api_race(key: str):
+async def api_race(key: str, commander: str | None = Query(None)):
     race = await get_race(key)
     if race is None:
         raise HTTPException(status_code=404, detail="Race not found")
+    add_powerplay_info(race, commander)
     return race
 
 

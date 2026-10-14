@@ -20,22 +20,28 @@
       <div class="filter-group" style="justify-content:flex-end">
         <label class="filter-toggle">
           <input type="checkbox" id="filter-hide-dw3">
-          Hide Remote races
+          Hide Remote
         </label>
         <label class="filter-toggle">
           <input type="checkbox" id="filter-hide-horizons">
-          Hide Horizons races
+          Hide Horizons
         </label>
         {% if favourites_enabled %}
         <label class="filter-toggle" id="filter-hide-ignored-group" style="display:none">
           <input type="checkbox" id="filter-hide-ignored">
-          Hide 💔 races
+          Hide 💔
         </label>
         {% endif %}
         <label class="filter-toggle">
           <input type="checkbox" id="filter-daytime-only">
           Only Daylight
         </label>
+        {% if powerplay_enabled %}
+        <label class="filter-toggle" id="filter-powerplay-only-group" style="display:none">
+          <input type="checkbox" id="filter-powerplay-only">
+          Only Powerplay
+        </label>
+        {% endif %}
       </div>
 
       <div class="filter-group">
@@ -88,6 +94,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
-  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }} };</script>
+  <script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }}, powerplay: {{ powerplay_flag | tojson }}, powerplay_for: {{ powerplay_enabled_for | tojson }} };</script>
   <script type="module" src="/static/js/index.js?v={{ v }}"></script>
 {% endblock %}

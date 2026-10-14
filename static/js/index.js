@@ -5,6 +5,8 @@ import { getFavState, favDisplay, getAllFavs } from './favourites.js';
 
 const _favGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
 const _favFor    = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites_for) || [];
+const _powerplayGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.powerplay);
+const _powerplayFor = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.powerplay_for) || [];
 const _favCmdr   = (localStorage.getItem('tt_filter_cmdr') || '').toLowerCase();
 const FAVOURITES_ENABLED = _favGlobal || (_favFor.length > 0 && !!_favCmdr && _favFor.includes(_favCmdr));
 // console.debug('[favourites] FEATURE_FLAGS:', window.FEATURE_FLAGS);
@@ -17,6 +19,7 @@ let filterCmdr    = localStorage.getItem('tt_filter_cmdr') || '';
 let filterHideDW3 = localStorage.getItem('tt_filter_hide_dw3') === '1'; // default off
 let filterHideHorizons = localStorage.getItem('tt_filter_hide_horizons') !== '0'; // default on
 let filterDaytimeOnly = localStorage.getItem('tt_filter_daytime_only') === '1'; // default off
+let filterPowerplayOnly = localStorage.getItem('tt_filter_powerplay_only') === '1';
 let filterHideIgnored = localStorage.getItem('tt_filter_hide_ignored') === '1'; // default off
 let filterSearchText = ''; // Not persisted - ephemeral search state
 let sortOrder     = localStorage.getItem('tt_sort_order') || 'activity';
@@ -34,6 +37,8 @@ const searchInput      = document.getElementById('filter-search');
 const checkHideDW3     = document.getElementById('filter-hide-dw3');
 const checkHideHorizons = document.getElementById('filter-hide-horizons');
 const checkDaytimeOnly  = document.getElementById('filter-daytime-only');
+const checkPowerplayOnly = document.getElementById('filter-powerplay-only');
+const powerplayOnlyGroup = document.getElementById('filter-powerplay-only-group');
 const checkHideIgnored  = document.getElementById('filter-hide-ignored');   // may be null if flag off
 const hideIgnoredGroup = document.getElementById('filter-hide-ignored-group'); // may be null if flag off
 const sortSelect       = document.getElementById('sort-select');
@@ -118,6 +123,14 @@ async function init() {
     });
   }
 
+  if (checkPowerplayOnly) {
+    checkPowerplayOnly.addEventListener('change', () => {
+      filterPowerplayOnly = checkPowerplayOnly.checked;
+      localStorage.setItem('tt_filter_powerplay_only', filterPowerplayOnly ? '1' : '0');
+      renderGrid();
+    });
+  }
+
   searchInput.addEventListener('input', () => {
     filterSearchText = searchInput.value;
     renderGrid(); // Client-side only, no need to reload from API
@@ -177,7 +190,18 @@ async function init() {
 }
 
 // ── Data loading ───────────────────────────────────────────────────────────
+function isPowerplayEnabled() {
+  return _powerplayGlobal || _powerplayFor.includes(filterCmdr.trim().toLowerCase());
+}
+
 async function loadRaces() {
+  const powerplayEnabled = isPowerplayEnabled();
+  if (powerplayOnlyGroup) powerplayOnlyGroup.style.display = powerplayEnabled ? '' : 'none';
+  if (!powerplayEnabled) {
+    filterPowerplayOnly = false;
+    localStorage.removeItem('tt_filter_powerplay_only');
+  }
+  if (checkPowerplayOnly) checkPowerplayOnly.checked = filterPowerplayOnly;
   try {
     const url = new URL('/api/races', location.origin);
     if (filterCmdr) url.searchParams.set('commander_pos', filterCmdr);
@@ -269,6 +293,10 @@ function renderGrid() {
   // Client-side filter: daytime only (known current state from cache)
   if (filterDaytimeOnly) {
     races = races.filter(r => r.daylight_state === 'day');
+  }
+
+  if (isPowerplayEnabled() && filterPowerplayOnly) {
+    races = races.filter(r => !!r.powerplay);
   }
 
   // Client-side filter: hide 💔 races (favourites feature)
