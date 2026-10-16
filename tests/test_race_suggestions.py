@@ -95,7 +95,7 @@ class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
         ) as client:
             page = await client.get("/today")
             self.assertEqual(page.status_code, 200)
-            self.assertIn("Where do you want to go today?", page.text)
+            self.assertIn("Where do you want to race today?", page.text)
             self.assertIn('src="/static/js/today.js?v=', page.text)
             self.assertIn('id="filter-search"', page.text)
             self.assertIn('id="filter-hide-dw3"', page.text)
