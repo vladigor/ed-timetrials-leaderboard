@@ -1,5 +1,8 @@
 # Change log
 
+## 2026-10-16
+- Added "Where do you want to go today?" (`/today`), a race picker with vehicle, race type, new / completed, daylight, duration and travel-distance preferences.
+
 ## 2026-09-17
   Stats page
     - Changed the active racers graph to a 7 day rolling MAX instead of AVG

@@ -84,6 +84,17 @@ git commit --no-verify
 - `ruff.toml` - Python linting rules
 - `eslint.config.js` - JavaScript linting rules
 
+## Race Picker Regression Checks
+
+These focused checks use Python's standard-library `unittest` runner and Node's built-in test runner (Node 20.19+). No additional test dependencies are needed.
+
+```bash
+.venv/bin/python3 -m unittest discover -s tests -p 'test_race_suggestions.py' -v
+node --experimental-default-type=module --test tests/race-suggestions.test.mjs
+```
+
+The Python checks use a temporary database, not the application's database. They cover current-finisher medians and the page/API routes. The JavaScript checks cover filter boundaries, personal history, classification, catchability ordering, distance ordering and escaped table output.
+
 ## Updating Hooks
 
 To update to the latest hook versions:

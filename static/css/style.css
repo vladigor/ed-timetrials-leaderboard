@@ -75,6 +75,7 @@ a:hover { text-decoration: underline; }
 
 .header-links {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.85rem;
   font-size: 0.95rem;
@@ -1732,7 +1733,7 @@ a.info-badge:hover { opacity: .8; }
   color: var(--text-muted);
   line-height: 1.6;
   margin: 0 0 1.25rem;
-  max-width: 150ch;
+  max-width: 164ch;
   border: 1px solid var(--border);
   border-radius: .375rem;
   padding: 1rem 1.25rem;
@@ -1872,6 +1873,31 @@ a.info-badge:hover { opacity: .8; }
   gap: .5rem 1.5rem;
 }
 .neidy-legend-item strong { color: var(--text); }
+
+.today-page h1 {
+  margin-bottom: 1rem;
+}
+#today-submit {
+  margin: 2rem 0;
+}
+.today-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+}
+.today-form label, #today-system-question {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.today-form [hidden], #today-system-question[hidden] { display: none; }
+.today-form .nendy-input { width: 100%; box-sizing: border-box; }
+.today-results { overflow-x: auto; }
 
 /* ── Participation Progress Bars ──────────────────────────────── */
 .participation-section {

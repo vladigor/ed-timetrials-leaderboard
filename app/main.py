@@ -42,6 +42,7 @@ from .queries import (
     list_creators,
     list_map_races,
     list_new_races,
+    list_race_suggestions,
     list_races,
 )
 from .scheduler import (
@@ -223,6 +224,23 @@ async def stats_page(request: Request):
 @app.get("/challenges", response_class=HTMLResponse)
 async def challenges_page(request: Request):
     return templates.TemplateResponse("challenges.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/today", response_class=HTMLResponse)
+async def today_page(request: Request):
+    return templates.TemplateResponse(
+        "today.html",
+        {
+            "request": request,
+            "v": STATIC_VER,
+            "favourites_enabled": FAVOURITES_ENABLED or bool(FAVOURITES_ENABLED_FOR),
+            "favourites_flag": FAVOURITES_ENABLED,
+            "favourites_enabled_for": sorted(FAVOURITES_ENABLED_FOR),
+            "powerplay_enabled": POWERPLAY_ENABLED or bool(POWERPLAY_ENABLED_FOR),
+            "powerplay_flag": POWERPLAY_ENABLED,
+            "powerplay_enabled_for": sorted(POWERPLAY_ENABLED_FOR),
+        },
+    )
 
 
 @app.get("/activity", response_class=HTMLResponse)
@@ -501,6 +519,14 @@ async def api_races(
 @app.get("/api/races/new")
 async def api_new_races(days: int = Query(30, ge=1, le=90), commander: str | None = None):
     return await list_new_races(days=days, commander=commander)
+
+
+@app.get("/api/race-suggestions")
+async def api_race_suggestions(commander: str | None = Query(None)):
+    races = await list_race_suggestions()
+    for race in races:
+        add_powerplay_info(race, commander)
+    return races
 
 
 @app.get("/api/races/{key}")

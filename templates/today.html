@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Where do you want to go today? — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+<main class="page-wrapper today-page">
+  <h1>Where do you want to go today?</h1>
+  <p class="section-intro">Find a race to suit your mood. New means a race you haven't completed before.</p>
+  <form id="today-form" class="today-form">
+    <label>What type of vehicle?
+      <select id="today-vehicle" class="nendy-input">
+        <option value="">Any</option>
+        <option value="SRV">SRV</option>
+        <option value="SHIP">Ship</option>
+        <option value="FIGHTER">Fighter</option>
+        <option value="ONFOOT">On foot</option>
+      </select>
+    </label>
+    <label id="today-srv-question" hidden>What type of SRV race?
+      <select id="today-srv" class="nendy-input">
+        <option value="">Don't mind</option>
+        <option value="circuit">Circuit / settlement</option>
+        <option value="offroad">Off road</option>
+      </select>
+    </label>
+    <label id="today-ship-question" hidden>What type of ship race?
+      <select id="today-ship" class="nendy-input">
+        <option value="">Don't mind</option>
+        <option value="planet">Planet based</option>
+        <option value="multi">Between bodies</option>
+      </select>
+    </label>
+    <label>New race or one you've done before?
+      <select id="today-history" class="nendy-input">
+        <option value="">Any</option>
+        <option value="new">New to me</option>
+        <option value="done">Done before</option>
+      </select>
+    </label>
+    <label id="today-daylight-question">Daylight only?
+      <select id="today-daylight" class="nendy-input">
+        <option value="">Don't mind</option>
+        <option value="day">Daylight only</option>
+      </select>
+    </label>
+    <label>How long should the race be?
+      <select id="today-duration" class="nendy-input">
+        <option value="">Any</option>
+        <option value="short">&lt;5 min</option>
+        <option value="medium">5–10 min</option>
+        <option value="long">&gt;10 min</option>
+      </select>
+    </label>
+    <label>How far are you willing to travel?
+      <select id="today-distance" class="nendy-input">
+        <option value="">Any</option>
+        <option value="250">&lt;250 ly</option>
+        <option value="500">&lt;500 ly</option>
+      </select>
+    </label>
+    <div id="today-system-question" hidden>
+      <label for="today-system">Your current system:</label>
+      <div class="nendy-autocomplete">
+        <input type="text" id="today-system" class="nendy-input" placeholder="e.g. Deciat" autocomplete="off" spellcheck="false" maxlength="100" role="combobox" aria-autocomplete="list" aria-controls="today-suggestions" aria-expanded="false">
+        <ul class="nendy-suggestions" id="today-suggestions" role="listbox" hidden></ul>
+      </div>
+      <span id="today-system-status" class="muted" role="status"></span>
+    </div>
+    <div><button type="submit" id="today-submit" class="btn-primary">Submit</button></div>
+  </form>
+  <p class="section-intro">Duration uses the median of each finisher's current leaderboard time. Daylight-only excludes unknown daylight, but does not restrict multi-planet races.</p>
+  <section aria-label="Matching races">
+    <h2 class="cmdr-section-heading">Matching races</h2>
+    {% with today_filters = true %}
+      {% include "race-filter-bar.html" %}
+    {% endwith %}
+    <p id="today-status" role="status" aria-live="polite">Choose your preferences, then submit.</p>
+    <div id="neidy-results" class="today-results"></div>
+  </section>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>window.FEATURE_FLAGS = { favourites: {{ favourites_flag | tojson }}, favourites_for: {{ favourites_enabled_for | tojson }}, powerplay: {{ powerplay_flag | tojson }}, powerplay_for: {{ powerplay_enabled_for | tojson }} };</script>
+<script type="module" src="/static/js/today.js?v={{ v }}"></script>
+{% endblock %}

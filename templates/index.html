@@ -12,51 +12,7 @@
       <ul id="new-races-list" class="new-races-list"></ul>
     </div>
 
-    <section class="filter-bar" aria-label="Filters">
-
-      <div class="filter-group">
-        <input type="text" id="filter-search" placeholder="Filter by name, system, type, tag..." aria-label="Search races" style="min-width:240px">
-      </div>
-      <div class="filter-group" style="justify-content:flex-end">
-        <label class="filter-toggle">
-          <input type="checkbox" id="filter-hide-dw3">
-          Hide Remote
-        </label>
-        <label class="filter-toggle">
-          <input type="checkbox" id="filter-hide-horizons">
-          Hide Horizons
-        </label>
-        {% if favourites_enabled %}
-        <label class="filter-toggle" id="filter-hide-ignored-group" style="display:none">
-          <input type="checkbox" id="filter-hide-ignored">
-          Hide 💔
-        </label>
-        {% endif %}
-        <label class="filter-toggle">
-          <input type="checkbox" id="filter-daytime-only">
-          Only Daylight
-        </label>
-        {% if powerplay_enabled %}
-        <label class="filter-toggle" id="filter-powerplay-only-group" style="display:none">
-          <input type="checkbox" id="filter-powerplay-only">
-          Only Powerplay
-        </label>
-        {% endif %}
-      </div>
-
-      <div class="filter-group">
-        <label for="sort-select" style="white-space:nowrap">Sort by</label>
-        <select id="sort-select">
-          <option value="activity">Recent activity</option>
-          <option value="name">Name</option>
-          <option value="created">Date added</option>
-          {% if favourites_enabled %}
-          <option value="favourites">Favourites first</option>
-          {% endif %}
-        </select>
-      </div>
-
-    </section>
+    {% include "race-filter-bar.html" %}
 
     <div class="status-bar">
       <div class="dot" id="status-dot"></div>

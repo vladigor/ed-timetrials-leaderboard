@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from statistics import median
 from typing import Any
 
 import aiosqlite
@@ -194,6 +195,48 @@ async def list_races(
         return races
     finally:
         await db.close()
+
+
+async def list_race_suggestions() -> list[dict]:
+    """Return race summaries with current finisher times, without per-race detail requests."""
+    races = await list_races()
+    by_key = {race["key"]: race for race in races}
+    for race in races:
+        race["results"] = []
+
+    db = await get_db()
+    try:
+        async with db.execute(
+            """
+            WITH latest AS (
+                SELECT location, name, time,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY location, name ORDER BY updated DESC, id DESC
+                    ) AS recency
+                FROM results
+            )
+            SELECT location, name, time AS time_ms,
+                ROW_NUMBER() OVER (
+                    PARTITION BY location ORDER BY time, name
+                ) AS position
+            FROM latest
+            WHERE recency = 1
+            ORDER BY location, position
+            """
+        ) as cursor:
+            for row in await cursor.fetchall():
+                race = by_key.get(row["location"])
+                if race is not None:
+                    race["results"].append(
+                        {key: row[key] for key in ("name", "time_ms", "position")}
+                    )
+    finally:
+        await db.close()
+
+    for race in races:
+        times = [result["time_ms"] for result in race["results"]]
+        race["median_time_ms"] = median(times) if times else None
+    return races
 
 
 async def get_race(key: str) -> dict | None:

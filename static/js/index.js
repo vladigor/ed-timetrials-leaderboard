@@ -2,6 +2,7 @@ import { formatTime, relativeTime, esc, ordinal, computeDaynightInfo } from './u
 import { ChangePoller } from './poller.js';
 import { updateProfileDisplay } from './profile.js';
 import { getFavState, favDisplay, getAllFavs } from './favourites.js';
+import { matchesRaceFilters, compareRaceOrder } from './race-filters.js';
 
 const _favGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
 const _favFor    = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites_for) || [];
@@ -274,92 +275,16 @@ async function loadNewRaces() {
 
 // ── Render ─────────────────────────────────────────────────────────────────
 function renderGrid() {
-  let races = allRaces;
-
-  // Client-side filter: hide Remote races (Remote/DW3/DR1/Colonia tags)
-  if (filterHideDW3) {
-    const remoteTags = ['Remote', 'DW3', 'DR1', 'Colonia'];
-    races = races.filter(r => {
-      const tags = (r.tags || '').split(',').map(t => t.trim());
-      return !tags.some(t => remoteTags.includes(t));
-    });
-  }
-
-  // Client-side filter: hide Horizons races
-  if (filterHideHorizons) {
-    races = races.filter(r => r.version !== 'HORIZONS');
-  }
-
-  // Client-side filter: daytime only (known current state from cache)
-  if (filterDaytimeOnly) {
-    races = races.filter(r => r.daylight_state === 'day');
-  }
-
-  if (isPowerplayEnabled() && filterPowerplayOnly) {
-    races = races.filter(r => !!r.powerplay);
-  }
-
-  // Client-side filter: hide 💔 races (favourites feature)
-  if (FAVOURITES_ENABLED && filterHideIgnored) {
-    races = races.filter(r => getFavState(r.key) !== 'ignored');
-  }
-
-  // Client-side filter: search text
-  if (filterSearchText.trim()) {
-    const searchLower = filterSearchText.toLowerCase();
-    races = races.filter(r => {
-      // Search in name
-      if (r.name && r.name.toLowerCase().includes(searchLower)) return true;
-      // Search in system
-      if (r.system && r.system.toLowerCase().includes(searchLower)) return true;
-      // Search in station
-      if (r.station && r.station.toLowerCase().includes(searchLower)) return true;
-      // Search in type (SRV, SHIP, FIGHTER, ONFOOT)
-      if (r.type && r.type.toLowerCase().includes(searchLower)) return true;
-      // Search in version (HORIZONS, ODYSSEY)
-      if (r.version && r.version.toLowerCase().includes(searchLower)) return true;
-      // Search in tags (supports comma-separated strings or arrays)
-      if (Array.isArray(r.tags)) {
-        if (r.tags.some(t => String(t).toLowerCase().includes(searchLower))) return true;
-      } else if (r.tags && String(r.tags).toLowerCase().includes(searchLower)) {
-        return true;
-      }
-      // Search for badge keywords
-      if (r.multi_mode && 'multi-mode'.includes(searchLower)) return true;
-      if (r.multi_planet && 'multi-planet'.includes(searchLower)) return true;
-      if (r.multi_system && 'multi-system'.includes(searchLower)) return true;
-      return false;
-    });
-  }
-
-  // Sort
-  const activityMs = ts => ts ? new Date(ts.replace(' ', 'T').replace(/(\..{1,6}).*$/, '$1') + 'Z').getTime() : 0;
-  const sortName = name => (name || '').trimStart().replace(/^The\s+/i, '');
-  if (sortOrder === 'name') {
-    races.sort((a, b) => {
-      const cmp = sortName(a.name).localeCompare(sortName(b.name));
-      return cmp !== 0 ? cmp : activityMs(b.last_activity) - activityMs(a.last_activity);
-    });
-  } else if (sortOrder === 'created') {
-    races.sort((a, b) => {
-      const aMs = activityMs(a.created_at);
-      const bMs = activityMs(b.created_at);
-      if (aMs !== bMs) return bMs - aMs; // newest first; nulls/zeros fall to end
-      return activityMs(b.last_activity) - activityMs(a.last_activity);
-    });
-  } else if (FAVOURITES_ENABLED && sortOrder === 'favourites') {
-    // Favourites first, then activity; ignored races sink to the bottom
-    const order = { fav: 0, null: 1, ignored: 2 };
-    races.sort((a, b) => {
-      const fa = getFavState(a.key);
-      const fb = getFavState(b.key);
-      const cmp = (order[fa] ?? 1) - (order[fb] ?? 1);
-      return cmp !== 0 ? cmp : activityMs(b.last_activity) - activityMs(a.last_activity);
-    });
-  } else {
-    // 'activity' — most recent first, races with no activity at the end
-    races.sort((a, b) => activityMs(b.last_activity) - activityMs(a.last_activity));
-  }
+  const races = allRaces.filter(race => matchesRaceFilters(race, {
+    hideRemote: filterHideDW3,
+    hideHorizons: filterHideHorizons,
+    daytimeOnly: filterDaytimeOnly,
+    powerplayOnly: isPowerplayEnabled() && filterPowerplayOnly,
+    hideIgnored: FAVOURITES_ENABLED && filterHideIgnored,
+    search: filterSearchText,
+  }, getFavState));
+  const order = sortOrder === 'favourites' && !FAVOURITES_ENABLED ? 'activity' : sortOrder;
+  races.sort((a, b) => compareRaceOrder(a, b, order, getFavState));
 
   countLabel.textContent = `${races.length} race${races.length !== 1 ? 's' : ''}`;
 

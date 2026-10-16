@@ -1,5 +1,6 @@
-import { formatTime, formatImprovement, relativeTime, esc, ordinal, computeDaynightInfo } from './utils.js';
+import { formatImprovement, relativeTime, esc, ordinal, computeDaynightInfo } from './utils.js';
 import { getFavState } from './favourites.js';
+import { typeBadge, renderTypeTags, catchabilityScore, renderOpportunityRows, opportunityLegend, opportunityTableHead } from './opportunities.js';
 
 const _favGlobal = !!(window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites);
 const _favFor    = (window.FEATURE_FLAGS && window.FEATURE_FLAGS.favourites_for) || [];
@@ -737,39 +738,6 @@ async function fetchAllRaces() {
   return allRacesCache;
 }
 
-function typeBadge(type) {
-  if (!type) return '';
-  const cls = { SHIP: 'badge-ship', SRV: 'badge-srv', FIGHTER: 'badge-fighter', ONFOOT: 'badge-onfoot' }[type] ?? 'badge-onfoot';
-  return `<span class="badge ${cls}">${esc(type)}</span>`;
-}
-
-function renderTypeTags(tags) {
-  const tagList = (tags || '')
-    .split(',')
-    .map(t => t.trim())
-    .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-  if (!tagList.length) return '';
-
-  const badges = tagList.map((tag) => {
-    const badgeClass = tag === 'DW3'
-      ? 'info-badge-dw3'
-      : tag === 'DR1'
-        ? 'info-badge-dr1'
-        : tag === 'Colonia'
-          ? 'info-badge-colonia'
-          : tag === 'Remote'
-            ? 'info-badge-remote'
-      : tag === 'Circuit'
-        ? 'info-badge-circuit'
-        : 'info-badge-inactive';
-    const title = tag === 'Inactive' ? "It's no longer possible to compete in this time trial" : `Tagged race: ${tag}`;
-    return `<span class="info-badge ${badgeClass}" title="${esc(title)}">${esc(tag)}</span>`;
-  }).join('');
-
-  return `<div class="race-type-tags">${badges}</div>`;
-}
-
 // ── Autocomplete ─────────────────────────────────────────────────────────────
 const nendySuggEl = document.getElementById('nendy-suggestions');
 let acDebounce = null;
@@ -872,26 +840,6 @@ document.getElementById('nendy-dist-btns').addEventListener('click', e => {
   document.querySelectorAll('#nendy-dist-btns .btn-toggle').forEach(b => b.classList.toggle('active', b === btn));
   if (cachedSystemCoords) rerunOpportunities();
 });
-
-// ── Catchability score ────────────────────────────────────────────────────────
-// Lower score = better opportunity.
-// Factors:
-//   gapPct    — gap to the person directly above as % of cmdr's time (lower = closer to beating them)
-//   leapable  — number of positions catchable with a 10% time improvement (more = bigger payoff)
-//   percentile — higher % position = more room to improve (converted from % beaten in backend)
-function catchabilityScore(myTime, myPos, results) {
-  // Gap to person above
-  const above = results.find(r => r.position === myPos - 1);
-  const gapPct = above ? (myTime - above.time_ms) / myTime : 0;
-
-  // How many positions could be gained with a 10% faster time
-  const improved = myTime * 0.90;
-  const leapable = results.filter(r => r.position < myPos && r.time_ms >= improved).length;
-
-  // Weighted score: prioritise small gap but also reward high-leapable races
-  // score = gapPct - (leapable * 0.02) — lower is better catchability
-  return gapPct - leapable * 0.02;
-}
 
 // ── Cached system coordinates for re-running with filters ────────────────────
 let cachedSystemCoords = null;
@@ -1178,34 +1126,7 @@ function renderNeidy(resolvedName, done, raceDetails) {
   _neidyScoredCache  = scored;
   neidyFiltersEl.style.display = '';
 
-  const rows = scored.map((s, i) => {
-    const distStr = s.race.dist === Infinity
-      ? '<span class="muted">—</span>'
-      : (s.race.dist < 1 ? '&lt;1 ly' : `${Math.round(s.race.dist).toLocaleString()} ly`);
-    const gapStr  = s.gapMs != null ? formatTime(s.gapMs) : '—';
-    const leapStr = s.leapable > 0 ? `+${s.leapable}` : '—';
-    const barPct  = Math.max(0, Math.min(100, Math.round((1 - Math.max(0, s.score + 0.1) / 0.6) * 100)));
-    const daylightEmoji = s.race.daylight_state === 'day' ? '\u2600\ufe0f' : s.race.daylight_state === 'night' ? '\ud83c\udf19' : '';
-    const favState = APPLY_FAVOURITES ? getFavState(s.race.key) : null;
-    const favMarker = favState === 'fav' ? ' ❤️' : favState === 'ignored' ? ' 💔' : '';
-    const tagsLine = renderTypeTags(s.race.tags || '');
-    return `
-      <tr>
-        <td class="num muted">${i + 1}</td>
-        <td><a href="/race/${encodeURIComponent(s.race.key)}">${esc(s.race.name)}${favMarker}</a>${daylightEmoji ? `<span style="margin-left:1rem">${daylightEmoji}</span>` : ''}</td>
-        <td class="type-col">
-          <div class="race-type-cell">
-            ${typeBadge(s.race.type)}
-            ${tagsLine}
-          </div>
-        </td>
-        <td class="num">${ordinal(s.myPos)} / ${s.total}</td>
-        <td class="num neidy-gap">${gapStr}</td>
-        <td class="num neidy-leap">${leapStr}</td>
-        <td class="num">${distStr}</td>
-        <td class="neidy-bar-cell"><div class="neidy-bar"><div class="neidy-bar-fill" style="width:${barPct}%"></div></div></td>
-      </tr>`;
-  }).join('');
+  const rows = renderOpportunityRows(scored, key => APPLY_FAVOURITES ? getFavState(key) : null);
 
   const filterNote = (neidyTypeFilter || neidyDistFilter < Infinity)
     ? ` (filtered${neidyTypeFilter ? ` to ${neidyTypeFilter}` : ''}${neidyDistFilter < Infinity ? ` within ${neidyDistFilter} ly` : ''})`
@@ -1213,15 +1134,9 @@ function renderNeidy(resolvedName, done, raceDetails) {
 
   neidyResults.innerHTML = `
     <p class="nendy-origin">From <strong>${esc(resolvedName)}</strong> — ${scored.length} race${scored.length !== 1 ? 's' : ''}${filterNote}, sorted by catchability</p>
-    <p class="neidy-legend">
-      <span class="neidy-legend-item"><strong>Gap</strong> time between you and the position above</span>
-      <span class="neidy-legend-item"><strong>Leap</strong> positions you'd gain with a 10% faster time</span>
-    </p>
+    ${opportunityLegend}
     <table class="results-table">
-      <thead><tr>
-        <th class="num">#</th><th>Race</th><th class="type-col">Type</th><th class="num">Position</th>
-        <th class="num">Gap</th><th class="num">Leap</th><th class="num">Distance</th><th>Catchability</th>
-      </tr></thead>
+      ${opportunityTableHead}
       <tbody>${rows}</tbody>
     </table>`;
 
