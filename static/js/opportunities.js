@@ -74,6 +74,7 @@ export const opportunityLegend = `
   <p class="neidy-legend">
     <span class="neidy-legend-item"><strong>Gap</strong> time between you and the position above</span>
     <span class="neidy-legend-item"><strong>Leap</strong> positions you'd gain with a 10% faster time</span>
+    <span class="neidy-legend-item"><strong>Catchability</strong> combines Gap (as a proportion of your time) and Leap: a smaller gap and more leapable positions mean a better opportunity. A fuller bar means higher catchability, not a probability of winning. N/A means you haven't raced yet or are already first.</span>
   </p>`;
 
 export const opportunityTableHead = `
