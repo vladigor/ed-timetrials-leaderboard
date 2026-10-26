@@ -2382,6 +2382,56 @@ async def get_stats_with_limit(limit: int = 6) -> dict:
         ) as cur:
             stats["top_ship_types"] = [_row_to_dict(r) for r in await cur.fetchall()]
 
+        # Use current leaderboard entries, not retained previous submissions.
+        async with db.execute(
+            """
+            WITH latest AS (
+                SELECT r.location, r.name, r.ship, r.time,
+                    CASE WHEN l.multi_planet = 1 OR l.multi_system = 1
+                        THEN 1 ELSE 0 END AS multi,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY r.location, r.name ORDER BY r.updated DESC, r.id DESC
+                    ) AS submission
+                FROM results r
+                JOIN locations l ON l.key = r.location
+                WHERE l.type = 'SHIP'
+            ),
+            positions AS (
+                SELECT ship, multi,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY location ORDER BY time ASC, name ASC
+                    ) AS position
+                FROM latest
+                WHERE submission = 1
+            ),
+            ranked AS (
+                SELECT ship, multi, COUNT(*) AS count,
+                    DENSE_RANK() OVER (
+                        PARTITION BY multi ORDER BY COUNT(*) DESC
+                    ) AS rank
+                FROM positions
+                WHERE position <= 3
+                  AND TRIM(ship) != ''
+                  AND ship NOT LIKE '%SRV%'
+                  AND ship NOT LIKE '%Scarabée%'
+                  AND ship NOT LIKE '%On Foot%'
+                GROUP BY multi, ship
+            )
+            SELECT ship, multi, count
+            FROM ranked
+            WHERE rank <= ?
+            ORDER BY multi ASC, count DESC, ship ASC
+            """,
+            (limit,),
+        ) as cur:
+            podium_ships = await cur.fetchall()
+        stats["top_podium_ship_types"] = [
+            {"ship": r["ship"], "count": r["count"]} for r in podium_ships if not r["multi"]
+        ]
+        stats["top_podium_ship_types_multi"] = [
+            {"ship": r["ship"], "count": r["count"]} for r in podium_ships if r["multi"]
+        ]
+
         # Most popular fighter type (for FIGHTER races)
         async with db.execute(
             """

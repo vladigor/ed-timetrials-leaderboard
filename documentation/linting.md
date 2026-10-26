@@ -95,6 +95,17 @@ node --experimental-default-type=module --test tests/race-suggestions.test.mjs
 
 The Python checks use a temporary database, not the application's database. They cover current-finisher medians and the page/API routes. The JavaScript checks cover filter boundaries, personal history, classification, catchability ordering, distance ordering and escaped table output.
 
+## Podium Ship Statistics Regression Checks
+
+```bash
+.venv/bin/python3 -m unittest discover -s tests -p 'test_stats.py' -v
+node --experimental-default-type=module --test tests/stats.test.mjs
+```
+
+The Python checks use a temporary database and cover current top-three entries (one per commander/race), ship-only filtering, separate Multi-system / Multi-planet groups, and independent top-N limits including popularity ties. Equal race times are ordered by commander name, matching the race leaderboard and selecting at most three finishers. Blank or non-ship vehicle entries are excluded after podium selection, without promoting fourth place.
+
+The stats API exposes `top_podium_ship_types` for ship races with neither the Multi-system nor Multi-planet badge, and `top_podium_ship_types_multi` for races with either or both badges. These badges use the `multi_system` and `multi_planet` metadata fields. Each set contains `{ship, count}` rows ordered by count descending, then ship name. The JavaScript check verifies that the two horizontal-bar charts appear beneath the ship/fighter popularity graphs, with Planetside Ship Races first, correct counts, escaped names, and empty states.
+
 ## Updating Hooks
 
 To update to the latest hook versions:

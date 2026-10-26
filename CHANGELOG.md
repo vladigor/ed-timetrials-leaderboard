@@ -1,5 +1,8 @@
 # Change log
 
+## 2026-10-26
+- Stats page: Added podium ship popularity charts beneath the ship/fighter popularity graphs for the current top three finishers in ship races, split into Planetside Ship Races first and Multi-system / Multi-planet races second.
+
 ## 2026-10-16
 - Added "Race picker" (`/today`), a race picker with vehicle, race type, new / completed, daylight, duration and travel-distance preferences.
 

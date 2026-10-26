@@ -298,6 +298,13 @@ function render() {
   html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading fighter popularity...</p></div>';
   html += '</div>';
 
+  html += subSectionHeading('Podium Ship Popularity');
+  html += '<p class="stats-section-description">Ships used by the current top 3 finishers in each ship race. Each podium finisher counts once per race, using the ship from their current leaderboard entry. Equal times are ordered by commander name, as on the race leaderboard. Counts show podium finishes. Planetside Ship Races excludes races marked Multi-system or Multi-planet; the second chart includes races marked either or both.</p>';
+  html += '<div id="podium-vehicles-container" class="trend-grid-2">';
+  html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading podium ship popularity...</p></div>';
+  html += '<div class="trend-composition-panel"><p class="loading-placeholder">Loading multi-system / multi-planet podium ship popularity...</p></div>';
+  html += '</div>';
+
 
   // ── Popular Ship Names ─────────────────────────────────────────────────
   if (stats.popular_ship_names && stats.popular_ship_names.length > 0) {
@@ -825,6 +832,13 @@ function renderVehiclePopularityVisual(data) {
   vehiclesContainer.innerHTML = [
     renderHorizontalBarsCardVisual('Top Ship Types', ships, row => row.ship, row => row.count, 'seg-srv'),
     renderHorizontalBarsCardVisual('Top Fighter Types', fighters, row => row.ship, row => row.count, 'seg-fighter'),
+  ].join('');
+
+  const podiumContainer = document.getElementById('podium-vehicles-container');
+  if (!podiumContainer) return;
+  podiumContainer.innerHTML = [
+    renderHorizontalBarsCardVisual('Planetside Ship Races', data.top_podium_ship_types, row => esc(row.ship), row => row.count, 'seg-srv'),
+    renderHorizontalBarsCardVisual('Multi-system / Multi-planet Ship Races', data.top_podium_ship_types_multi, row => esc(row.ship), row => row.count, 'seg-srv'),
   ].join('');
 }
 
