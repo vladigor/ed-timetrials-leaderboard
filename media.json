@@ -2090,5 +2090,39 @@
       "thumbnail": "maps/thumbnails/Eta Carina Mountain Climb.png",
       "target": "maps/Eta Carina Mountain Climb.png"
     }
+  },
+  "DRODINN-VerdantVelocity": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Verdant_Velocity.JPG",
+      "target": "maps/Verdant_Velocity.JPG"
+    }
+  },
+  "SON OF THUNDER-2SHIP": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Thunderpark_figure_skating_map.png",
+      "target": "maps/Thunderpark_figure_skating_map.png"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=53u8mYWDzyE"
+      }
+    ]
+  },
+  "SON OF THUNDER-2SLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Thunderpark_figure_skating_map.png",
+      "target": "maps/Thunderpark_figure_skating_map.png"
+    }
+  },
+  "SON OF THUNDER-2SRV": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=0piHf2CoVdk"
+      }
+    ]
   }
 }
