@@ -2117,6 +2117,10 @@
     }
   },
   "SON OF THUNDER-2SRV": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Thunderpark_figure_skating_map.png",
+      "target": "maps/Thunderpark_figure_skating_map.png"
+    },
     "links": [
       {
         "label": "Demo video",
