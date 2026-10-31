@@ -2124,5 +2124,17 @@
         "url": "https://www.youtube.com/watch?v=0piHf2CoVdk"
       }
     ]
+  },
+  "DRODINN-srhEmeraldGorgeShip": {
+    "map": {
+      "thumbnail": "maps/thumbnails/SRH_-_Emerald_Gorge.jpg",
+      "target": "maps/SRH_-_Emerald_Gorge.jpg"
+    }
+  },
+  "DRODINN-srhEmeraldGorgeSLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/SRH_-_Emerald_Gorge.jpg",
+      "target": "maps/SRH_-_Emerald_Gorge.jpg"
+    }
   }
 }
