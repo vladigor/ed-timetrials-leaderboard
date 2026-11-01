@@ -197,6 +197,142 @@ async def list_races(
         await db.close()
 
 
+async def get_rivals(commander: str, bubble_only: bool = False) -> list[dict]:
+    """Return each race-type category's strongest six current rivalries."""
+    categories = [
+        ("srv_circuit", "SRV - Circuit"),
+        ("srv_non_circuit", "SRV - Non-Circuit"),
+        ("ship_canyon", "Ship - Canyons and Ports"),
+        ("ship_buckyball", "Ship - Buckyball and Crater Makers"),
+        ("fighter", "Fighter"),
+        ("on_foot", "On foot"),
+    ]
+    category_results = {
+        key: {
+            "key": key,
+            "label": label,
+            "rivals": [],
+            "races_competed": 0,
+            "ahead_percentage": 0,
+        }
+        for key, label in categories
+    }
+    bubble_filter = (
+        """
+        AND (',' || replace(lower(COALESCE(l.tags, '')), ' ', '') || ',')
+            NOT LIKE '%,remote,%'
+        AND (',' || replace(lower(COALESCE(l.tags, '')), ' ', '') || ',')
+            NOT LIKE '%,dw3,%'
+    """
+        if bubble_only
+        else ""
+    )
+
+    db = await get_db()
+    try:
+        async with db.execute(
+            f"""
+            WITH best_results AS (
+                SELECT location, name COLLATE NOCASE AS commander_key,
+                    MIN(name) AS commander, MIN(time) AS best_time
+                FROM results
+                GROUP BY location, name COLLATE NOCASE
+            )
+            SELECT
+                CASE
+                    WHEN UPPER(l.type) = 'SHIP' AND (
+                        l.multi_mode = 1 OR l.multi_system = 1 OR l.multi_planet = 1 OR
+                        (',' || replace(lower(COALESCE(l.tags, '')), ' ', '') || ',')
+                            LIKE '%,multi-mode,%' OR
+                        (',' || replace(lower(COALESCE(l.tags, '')), ' ', '') || ',')
+                            LIKE '%,multi-system,%' OR
+                        (',' || replace(lower(COALESCE(l.tags, '')), ' ', '') || ',')
+                            LIKE '%,multi-planet,%'
+                    ) THEN 'ship_buckyball'
+                    WHEN UPPER(l.type) = 'SHIP' THEN 'ship_canyon'
+                    WHEN UPPER(l.type) = 'SRV' AND
+                        (',' || replace(lower(COALESCE(l.tags, '')), ' ', '') || ',')
+                            LIKE '%,circuit,%' THEN 'srv_circuit'
+                    WHEN UPPER(l.type) = 'SRV' THEN 'srv_non_circuit'
+                    WHEN UPPER(l.type) = 'FIGHTER' THEN 'fighter'
+                    WHEN UPPER(l.type) = 'ONFOOT' THEN 'on_foot'
+                END AS category,
+                rival.commander,
+                rival.best_time AS rival_time,
+                mine.best_time AS commander_time,
+                l.key AS race_key,
+                l.name AS race_name
+            FROM best_results mine
+            LEFT JOIN best_results rival
+                ON rival.location = mine.location
+                AND rival.commander_key != mine.commander_key
+            JOIN locations l ON l.key = mine.location
+            WHERE mine.commander_key = ? COLLATE NOCASE
+                AND UPPER(l.type) IN ('SHIP', 'SRV', 'FIGHTER', 'ONFOOT')
+                {bubble_filter}
+            """,
+            (commander,),
+        ) as cursor:
+            rows = await cursor.fetchall()
+    finally:
+        await db.close()
+
+    grouped: dict[str, dict[str, dict]] = {}
+    race_counts: dict[str, set[str]] = {key: set() for key, _ in categories}
+    ahead_counts = {key: 0 for key, _ in categories}
+    matchup_counts = {key: 0 for key, _ in categories}
+    for row in rows:
+        category = row["category"]
+        if category is None:
+            continue
+        race_counts[category].add(row["race_key"])
+        if row["rival_time"] is None:
+            continue
+
+        matchup_counts[category] += 1
+        if row["commander_time"] < row["rival_time"]:
+            ahead_counts[category] += 1
+        elif row["commander_time"] == row["rival_time"]:
+            continue
+
+        rivals = grouped.setdefault(category, {})
+        rival_key = row["commander"].casefold()
+        rival = rivals.setdefault(
+            rival_key,
+            {
+                "commander": row["commander"],
+                "ahead_count": 0,
+                "behind_count": 0,
+                "races_ahead": [],
+            },
+        )
+        if row["rival_time"] < row["commander_time"]:
+            rival["ahead_count"] += 1
+            rival["races_ahead"].append({"key": row["race_key"], "name": row["race_name"]})
+        else:
+            rival["behind_count"] += 1
+
+    for category, rivals in grouped.items():
+        category_results[category]["rivals"] = sorted(
+            (rival for rival in rivals.values() if rival["ahead_count"]),
+            key=lambda rival: (
+                rival["ahead_count"],
+                -rival["behind_count"],
+                rival["commander"].casefold(),
+            ),
+        )[:30]
+
+    for category, _ in categories:
+        category_results[category]["races_competed"] = len(race_counts[category])
+        category_results[category]["ahead_percentage"] = (
+            round(100 * ahead_counts[category] / matchup_counts[category])
+            if matchup_counts[category]
+            else 0
+        )
+
+    return list(category_results.values())
+
+
 async def list_race_suggestions() -> list[dict]:
     """Return race summaries with current finisher times, without per-race detail requests."""
     races = await list_races()

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Rivals — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+  <main class="page-wrapper">
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span>Rivals</span>
+    </div>
+
+    <h1 class="page-title">Rivals</h1>
+
+    <section class="filter-bar" aria-label="Filters">
+      <div class="filter-group">
+        <label class="filter-toggle">
+          <input id="filter-bubble-only" type="checkbox" checked>
+          Bubble only
+        </label>
+      </div>
+    </section>
+
+    <div class="stats-section">
+      <div id="rivals-container" aria-live="polite">
+        <p class="loading-placeholder">Loading rivalries…</p>
+      </div>
+    </div>
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script type="module" src="/static/js/rivals.js?v={{ v }}"></script>
+{% endblock %}

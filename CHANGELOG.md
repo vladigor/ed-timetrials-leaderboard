@@ -1,5 +1,8 @@
 # Change log
 
+## 2026-10-01
+- Added Rivals page (`/rivals`), a page that lists all the commanders who are rivals of the current user. The page acts as another decision maker for choosing your next race as it shows a nother perspective on the races that you can make the most gains on.
+
 ## 2026-10-26
 - Stats page: Added podium ship popularity charts beneath the ship/fighter popularity graphs for the current top three finishers in ship races, split into Planetside Ship Races first and Multi-system / Multi-planet races second.
 

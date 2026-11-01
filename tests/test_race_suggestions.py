@@ -9,7 +9,7 @@ import httpx
 
 from app.database import get_db
 from app.main import app
-from app.queries import get_race, list_race_suggestions
+from app.queries import get_race, get_rivals, list_race_suggestions
 
 
 class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
@@ -89,6 +89,72 @@ class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
             ],
         )
 
+    async def test_rivals_compare_best_times_and_filter_remote_races(self):
+        db = await get_db()
+        try:
+            await db.execute(
+                "UPDATE locations SET type = 'SRV', tags = 'Circuit' WHERE key = 'odd'"
+            )
+            await db.execute(
+                "UPDATE locations SET type = 'SHIP', multi_mode = 1, tags = 'Remote' WHERE key = 'even'"
+            )
+            await db.execute("UPDATE locations SET type = 'ONFOOT' WHERE key = 'empty'")
+            await db.execute(
+                "INSERT INTO locations (key, name, type, tags) VALUES ('dw3-race', 'DW3 Race', 'SHIP', 'DW3')"
+            )
+            await db.execute(
+                "INSERT INTO locations (key, name, type, tags) VALUES ('circuit-extra', 'Circuit Extra', 'SRV', 'Circuit')"
+            )
+            await db.execute(
+                "INSERT INTO locations (key, name, type) VALUES ('solo-race', 'Solo Race', 'SRV')"
+            )
+            await db.executemany(
+                "INSERT INTO results (location, name, time, updated) VALUES (?, ?, ?, ?)",
+                [
+                    ("odd", "B", 50000, "2026-01-03"),
+                    ("odd", "C", 70000, "2026-01-03"),
+                    ("odd", "D", 150000, "2026-01-03"),
+                    ("even", "B", 100000, "2026-01-03"),
+                    ("dw3-race", "A", 200000, "2026-01-03"),
+                    ("dw3-race", "B", 100000, "2026-01-03"),
+                    ("empty", "A", 500000, "2026-01-03"),
+                    ("empty", "D", 400000, "2026-01-03"),
+                    ("circuit-extra", "A", 100000, "2026-01-03"),
+                    ("circuit-extra", "B", 150000, "2026-01-03"),
+                    ("circuit-extra", "C", 50000, "2026-01-03"),
+                    ("circuit-extra", "D", 50000, "2026-01-03"),
+                    ("circuit-extra", "E", 75000, "2026-01-03"),
+                    ("circuit-extra", "F", 100000, "2026-01-03"),
+                    ("solo-race", "A", 100000, "2026-01-03"),
+                ],
+            )
+            await db.commit()
+        finally:
+            await db.close()
+
+        all_categories = {item["key"]: item for item in await get_rivals("A")}
+        all_rivals = {key: item["rivals"] for key, item in all_categories.items()}
+        circuit_rivals = all_rivals["srv_circuit"]
+        self.assertEqual(all_categories["srv_circuit"]["races_competed"], 2)
+        self.assertEqual(all_categories["srv_circuit"]["ahead_percentage"], 25)
+        self.assertEqual([rival["commander"] for rival in circuit_rivals], ["B", "D", "E", "C"])
+        self.assertEqual(circuit_rivals[0]["ahead_count"], 1)
+        self.assertEqual(circuit_rivals[1]["behind_count"], 1)
+        self.assertEqual(circuit_rivals[2]["behind_count"], 0)
+        self.assertEqual(all_categories["srv_circuit"]["ahead_percentage"], 25)
+        self.assertEqual(all_categories["srv_non_circuit"]["races_competed"], 1)
+        self.assertEqual(all_categories["srv_non_circuit"]["ahead_percentage"], 0)
+        self.assertEqual(all_rivals["ship_buckyball"][0]["commander"], "B")
+        self.assertEqual(all_rivals["ship_canyon"][0]["commander"], "B")
+        self.assertEqual(all_rivals["on_foot"][0]["commander"], "D")
+
+        bubble_categories = {item["key"]: item for item in await get_rivals("A", bubble_only=True)}
+        bubble_rivals = {key: item["rivals"] for key, item in bubble_categories.items()}
+        self.assertEqual(bubble_rivals["ship_buckyball"], [])
+        self.assertEqual(bubble_rivals["ship_canyon"], [])
+        self.assertEqual(bubble_rivals["srv_circuit"][0]["commander"], "B")
+        self.assertEqual(bubble_categories["ship_canyon"]["races_competed"], 0)
+
     async def test_page_and_api_routes(self):
         async with httpx.AsyncClient(
             transport=httpx.ASGITransport(app=app), base_url="http://test"
@@ -102,6 +168,10 @@ class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
             self.assertIn('id="filter-hide-horizons"', page.text)
             self.assertNotIn('id="filter-daytime-only"', page.text)
             self.assertIn('value="catchability"', page.text)
+            rivals_page = await client.get("/rivals")
+            self.assertEqual(rivals_page.status_code, 200)
+            self.assertIn('id="filter-bubble-only" type="checkbox" checked', rivals_page.text)
+            self.assertIn('src="/static/js/rivals.js?v=', rivals_page.text)
             index = await client.get("/")
             self.assertIn('id="filter-daytime-only"', index.text)
             self.assertNotIn('value="catchability"', index.text)

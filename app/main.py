@@ -36,6 +36,7 @@ from .queries import (
     get_creator_races,
     get_race,
     get_race_meta,
+    get_rivals,
     get_stats,
     get_stats_with_limit,
     list_commanders,
@@ -214,6 +215,11 @@ async def creators_page(request: Request):
 @app.get("/about", response_class=HTMLResponse)
 async def about_page(request: Request):
     return templates.TemplateResponse("about.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/rivals", response_class=HTMLResponse)
+async def rivals_page(request: Request):
+    return templates.TemplateResponse("rivals.html", {"request": request, "v": STATIC_VER})
 
 
 @app.get("/stats", response_class=HTMLResponse)
@@ -514,6 +520,14 @@ async def api_races(
     for race in races:
         add_powerplay_info(race, effective_cmdr)
     return races
+
+
+@app.get("/api/rivals")
+async def api_rivals(
+    commander: str = Query(..., min_length=1),
+    bubble_only: bool = Query(False),
+):
+    return await get_rivals(commander=commander, bubble_only=bubble_only)
 
 
 @app.get("/api/races/new")

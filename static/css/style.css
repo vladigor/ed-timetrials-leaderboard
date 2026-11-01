@@ -2607,6 +2607,30 @@ a.info-badge:hover { opacity: .8; }
   background: var(--surface2);
 }
 
+.rivals-category + .rivals-category {
+  margin-top: 2rem;
+}
+
+.rivals-summary {
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+}
+
+.rivals-improvement {
+  margin: 1.25rem 0 0;
+  line-height: 1.6;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll .stats-table {
+  min-width: 720px;
+  margin-bottom: 0;
+}
+
 .active-racers-graph-controls {
   display: flex;
   align-items: center;
