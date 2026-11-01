@@ -105,6 +105,14 @@ class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
             await db.execute(
                 "INSERT INTO locations (key, name, type, tags) VALUES ('circuit-extra', 'Circuit Extra', 'SRV', 'Circuit')"
             )
+            await db.executemany(
+                "INSERT INTO locations (key, name, type, tags) VALUES (?, ?, 'SRV', 'Circuit')",
+                [
+                    ("circuit-third", "Circuit Third"),
+                    ("circuit-fourth", "Circuit Fourth"),
+                    ("circuit-fifth", "Circuit Fifth"),
+                ],
+            )
             await db.execute(
                 "INSERT INTO locations (key, name, type) VALUES ('solo-race', 'Solo Race', 'SRV')"
             )
@@ -114,6 +122,9 @@ class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
                     ("odd", "B", 50000, "2026-01-03"),
                     ("odd", "C", 70000, "2026-01-03"),
                     ("odd", "D", 150000, "2026-01-03"),
+                    ("odd", "G", 50000, "2026-01-03"),
+                    ("odd", "H", 50000, "2026-01-03"),
+                    ("odd", "I", 50000, "2026-01-03"),
                     ("even", "B", 100000, "2026-01-03"),
                     ("dw3-race", "A", 200000, "2026-01-03"),
                     ("dw3-race", "B", 100000, "2026-01-03"),
@@ -125,6 +136,19 @@ class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
                     ("circuit-extra", "D", 50000, "2026-01-03"),
                     ("circuit-extra", "E", 75000, "2026-01-03"),
                     ("circuit-extra", "F", 100000, "2026-01-03"),
+                    ("circuit-extra", "G", 50000, "2026-01-03"),
+                    ("circuit-extra", "H", 150000, "2026-01-03"),
+                    ("circuit-extra", "I", 150000, "2026-01-03"),
+                    ("circuit-third", "A", 100000, "2026-01-03"),
+                    ("circuit-third", "B", 50000, "2026-01-03"),
+                    ("circuit-third", "C", 150000, "2026-01-03"),
+                    ("circuit-third", "D", 200000, "2026-01-03"),
+                    ("circuit-third", "G", 50000, "2026-01-03"),
+                    ("circuit-third", "H", 50000, "2026-01-03"),
+                    ("circuit-fourth", "A", 100000, "2026-01-03"),
+                    ("circuit-fourth", "H", 150000, "2026-01-03"),
+                    ("circuit-fifth", "A", 100000, "2026-01-03"),
+                    ("circuit-fifth", "H", 50000, "2026-01-03"),
                     ("solo-race", "A", 100000, "2026-01-03"),
                 ],
             )
@@ -135,24 +159,29 @@ class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
         all_categories = {item["key"]: item for item in await get_rivals("A")}
         all_rivals = {key: item["rivals"] for key, item in all_categories.items()}
         circuit_rivals = all_rivals["srv_circuit"]
-        self.assertEqual(all_categories["srv_circuit"]["races_competed"], 2)
-        self.assertEqual(all_categories["srv_circuit"]["ahead_percentage"], 25)
-        self.assertEqual([rival["commander"] for rival in circuit_rivals], ["B", "D", "E", "C"])
-        self.assertEqual(circuit_rivals[0]["ahead_count"], 1)
-        self.assertEqual(circuit_rivals[1]["behind_count"], 1)
-        self.assertEqual(circuit_rivals[2]["behind_count"], 0)
-        self.assertEqual(all_categories["srv_circuit"]["ahead_percentage"], 25)
+        self.assertEqual(all_categories["srv_circuit"]["races_competed"], 5)
+        self.assertEqual(all_categories["srv_circuit"]["ahead_percentage"], 33)
+        self.assertEqual(
+            [rival["commander"] for rival in circuit_rivals],
+            ["H", "D", "B", "C", "G"],
+        )
+        self.assertEqual(circuit_rivals[0]["ahead_count"], 3)
+        self.assertEqual(circuit_rivals[0]["behind_count"], 2)
+        self.assertEqual(circuit_rivals[1]["ahead_count"], 1)
+        self.assertEqual(circuit_rivals[1]["behind_count"], 2)
+        self.assertNotIn("E", [rival["commander"] for rival in circuit_rivals])
+        self.assertNotIn("I", [rival["commander"] for rival in circuit_rivals])
         self.assertEqual(all_categories["srv_non_circuit"]["races_competed"], 1)
         self.assertEqual(all_categories["srv_non_circuit"]["ahead_percentage"], 0)
-        self.assertEqual(all_rivals["ship_buckyball"][0]["commander"], "B")
-        self.assertEqual(all_rivals["ship_canyon"][0]["commander"], "B")
-        self.assertEqual(all_rivals["on_foot"][0]["commander"], "D")
+        self.assertEqual(all_rivals["ship_buckyball"], [])
+        self.assertEqual(all_rivals["ship_canyon"], [])
+        self.assertEqual(all_rivals["on_foot"], [])
 
         bubble_categories = {item["key"]: item for item in await get_rivals("A", bubble_only=True)}
         bubble_rivals = {key: item["rivals"] for key, item in bubble_categories.items()}
         self.assertEqual(bubble_rivals["ship_buckyball"], [])
         self.assertEqual(bubble_rivals["ship_canyon"], [])
-        self.assertEqual(bubble_rivals["srv_circuit"][0]["commander"], "B")
+        self.assertEqual(bubble_rivals["srv_circuit"][0]["commander"], "H")
         self.assertEqual(bubble_categories["ship_canyon"]["races_competed"], 0)
 
     async def test_page_and_api_routes(self):

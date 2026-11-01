@@ -278,6 +278,7 @@ async def get_rivals(commander: str, bubble_only: bool = False) -> list[dict]:
         await db.close()
 
     grouped: dict[str, dict[str, dict]] = {}
+    shared_counts: dict[str, dict[str, int]] = {}
     race_counts: dict[str, set[str]] = {key: set() for key, _ in categories}
     ahead_counts = {key: 0 for key, _ in categories}
     matchup_counts = {key: 0 for key, _ in categories}
@@ -290,11 +291,6 @@ async def get_rivals(commander: str, bubble_only: bool = False) -> list[dict]:
             continue
 
         matchup_counts[category] += 1
-        if row["commander_time"] < row["rival_time"]:
-            ahead_counts[category] += 1
-        elif row["commander_time"] == row["rival_time"]:
-            continue
-
         rivals = grouped.setdefault(category, {})
         rival_key = row["commander"].casefold()
         rival = rivals.setdefault(
@@ -306,16 +302,28 @@ async def get_rivals(commander: str, bubble_only: bool = False) -> list[dict]:
                 "races_ahead": [],
             },
         )
-        if row["rival_time"] < row["commander_time"]:
+        category_shared_counts = shared_counts.setdefault(category, {})
+        category_shared_counts[rival_key] = category_shared_counts.get(rival_key, 0) + 1
+
+        if row["commander_time"] < row["rival_time"]:
+            ahead_counts[category] += 1
+            rival["behind_count"] += 1
+        elif row["commander_time"] == row["rival_time"]:
+            continue
+        else:
             rival["ahead_count"] += 1
             rival["races_ahead"].append({"key": row["race_key"], "name": row["race_name"]})
-        else:
-            rival["behind_count"] += 1
 
     for category, rivals in grouped.items():
         category_results[category]["rivals"] = sorted(
-            (rival for rival in rivals.values() if rival["ahead_count"]),
+            (
+                rival
+                for rival_key, rival in rivals.items()
+                if rival["ahead_count"] and shared_counts[category][rival_key] >= 3
+            ),
             key=lambda rival: (
+                abs(rival["ahead_count"] - rival["behind_count"]),
+                -(rival["ahead_count"] + rival["behind_count"]),
                 rival["ahead_count"],
                 -rival["behind_count"],
                 rival["commander"].casefold(),
