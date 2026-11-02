@@ -163,12 +163,14 @@ class RaceSuggestionsTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(all_categories["srv_circuit"]["ahead_percentage"], 33)
         self.assertEqual(
             [rival["commander"] for rival in circuit_rivals],
-            ["H", "D", "B", "C", "G"],
+            ["H", "B", "C", "D", "G"],
         )
         self.assertEqual(circuit_rivals[0]["ahead_count"], 3)
         self.assertEqual(circuit_rivals[0]["behind_count"], 2)
-        self.assertEqual(circuit_rivals[1]["ahead_count"], 1)
-        self.assertEqual(circuit_rivals[1]["behind_count"], 2)
+        self.assertEqual(circuit_rivals[1]["ahead_count"], 2)
+        self.assertEqual(circuit_rivals[1]["behind_count"], 1)
+        self.assertEqual(circuit_rivals[-1]["ahead_count"], 3)
+        self.assertEqual(circuit_rivals[-1]["behind_count"], 0)
         self.assertNotIn("E", [rival["commander"] for rival in circuit_rivals])
         self.assertNotIn("I", [rival["commander"] for rival in circuit_rivals])
         self.assertEqual(all_categories["srv_non_circuit"]["races_competed"], 1)

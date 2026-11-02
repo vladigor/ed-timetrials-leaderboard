@@ -315,6 +315,18 @@ async def get_rivals(commander: str, bubble_only: bool = False) -> list[dict]:
             rival["races_ahead"].append({"key": row["race_key"], "name": row["race_name"]})
 
     for category, rivals in grouped.items():
+        scores = {}
+        for rival_key, rival in rivals.items():
+            ahead = rival["ahead_count"]
+            behind = rival["behind_count"]
+            total = ahead + behind
+            scores[rival_key] = (
+                (4 * ahead * behind / total**2)
+                * (total / (total + 6))
+                * (1 + 0.3 * (ahead - behind) / total)
+                if total
+                else 0
+            )
         category_results[category]["rivals"] = sorted(
             (
                 rival
@@ -322,10 +334,8 @@ async def get_rivals(commander: str, bubble_only: bool = False) -> list[dict]:
                 if rival["ahead_count"] and shared_counts[category][rival_key] >= 3
             ),
             key=lambda rival: (
-                abs(rival["ahead_count"] - rival["behind_count"]),
-                -(rival["ahead_count"] + rival["behind_count"]),
-                rival["ahead_count"],
-                -rival["behind_count"],
+                -scores[rival["commander"].casefold()],
+                -shared_counts[category][rival["commander"].casefold()],
                 rival["commander"].casefold(),
             ),
         )[:30]
