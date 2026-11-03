@@ -219,7 +219,7 @@ async def poll() -> None:
 
 async def full_refresh() -> None:
     """
-    On startup: refresh the location list, then fetch results only for TTs whose
+    In the startup background task: refresh locations, then fetch results only for TTs whose
     last-updated timestamp has changed since the previous run (stored in the DB).
     """
     log.info("Running startup refresh…")
@@ -266,7 +266,7 @@ async def full_refresh() -> None:
         changed,
     )
 
-    # Refresh bulk day/night data if missing or stale (runs in background, non-blocking startup)
+    # This entire refresh runs in a background task without blocking application startup.
     try:
         await _maybe_refresh_daynight_bulk()
     except Exception as exc:

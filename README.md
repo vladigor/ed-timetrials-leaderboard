@@ -43,6 +43,12 @@ bash run.sh
 
 Then open http://localhost:8090 in your browser.
 
+On startup, the app initializes the local database and begins serving cached data
+without waiting for external APIs. Race/results synchronization and any missing or
+stale bulk day/night refresh run in the background. The regular polling scheduler
+starts after this initial refresh finishes, avoiding overlapping imports. On a
+first run with an empty database, races appear as the background import completes.
+
 ### Offline mode
 
 To run without making any outbound API calls (serves from the local SQLite cache only):

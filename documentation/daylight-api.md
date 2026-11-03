@@ -19,6 +19,21 @@ All daylight settings live in `.env` and are read once at startup via `app/confi
 
 ---
 
+## Bulk cache and startup
+
+The race list and race picker read persisted day/night data from
+`GET /api/daynight-bulk`. Bulk data is refreshed daily at 05:00 UTC, and during the
+startup background refresh if it is missing or at least 23 hours old.
+
+The app serves cached data as soon as database initialization finishes; neither
+the initial race/results synchronization nor the bulk day/night request blocks
+HTTP startup. Existing bulk data remains available while it refreshes. If no bulk
+data has been fetched yet, the endpoint returns an empty object until the first
+successful refresh. The regular scheduler starts after the startup refresh
+finishes, and shutdown cancels any unfinished startup refresh.
+
+---
+
 ## Internal endpoint
 
 ### `GET /api/daylight/{key}`

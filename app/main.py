@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import mimetypes
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated
@@ -106,12 +107,30 @@ if not mimetypes.guess_type("test.webp")[0]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    refresh_task = None
     if OFFLINE:
         log.warning("OFFLINE MODE — all API calls disabled. Serving from local database only.")
     else:
-        await full_refresh()
-        start_scheduler()
-    yield
+
+        async def refresh_and_schedule():
+            try:
+                await full_refresh()
+            except Exception:
+                log.exception(
+                    "Background startup refresh failed; continuing with scheduled polling."
+                )
+            return start_scheduler()
+
+        refresh_task = asyncio.create_task(refresh_and_schedule(), name="startup-refresh")
+    try:
+        yield
+    finally:
+        if refresh_task is not None:
+            refresh_task.cancel()
+            with suppress(asyncio.CancelledError):
+                scheduler = await refresh_task
+                if scheduler is not None:
+                    scheduler.shutdown(wait=False)
 
 
 app = FastAPI(title="Elite Dangerous Time Trials Leaderboard", lifespan=lifespan)

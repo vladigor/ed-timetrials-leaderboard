@@ -106,6 +106,20 @@ The Python checks use a temporary database and cover current top-three entries (
 
 The stats API exposes `top_podium_ship_types` for ship races with neither the Multi-system nor Multi-planet badge, and `top_podium_ship_types_multi` for races with either or both badges. These badges use the `multi_system` and `multi_planet` metadata fields. Each set contains `{ship, count}` rows ordered by count descending, then ship name. The JavaScript check verifies that the two horizontal-bar charts appear beneath the ship/fighter popularity graphs, with Planetside Ship Races first, correct counts, escaped names, and empty states.
 
+## Startup Regression Checks
+
+```bash
+.venv/bin/python3 -m unittest discover -s tests -p 'test_startup.py' -v
+```
+
+These checks mock database initialization and external refreshes, with an isolated
+temporary database for the bulk day/night endpoint. They verify that cached
+day/night data remains available during a stalled upstream request, a stalled
+refresh does not delay HTTP availability, pending startup work is
+cancelled on shutdown, scheduled polling starts only after the refresh and stops
+on shutdown, refresh errors are logged without preventing polling, and offline
+mode and database initialization failures retain their expected behavior.
+
 ## Updating Hooks
 
 To update to the latest hook versions:
