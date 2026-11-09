@@ -177,6 +177,57 @@ a:hover { text-decoration: underline; }
   cursor: pointer;
 }
 
+.peer-review-checkbox {
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  vertical-align: middle;
+  background: var(--surface);
+  border: 2px solid var(--text-muted);
+  border-radius: .35rem;
+  cursor: pointer;
+}
+
+.peer-review-checkbox::before {
+  content: "";
+  width: .4rem;
+  height: .75rem;
+  border: solid var(--bg);
+  border-width: 0 2px 2px 0;
+  transform: translateY(-.1rem) rotate(45deg);
+  visibility: hidden;
+}
+
+.peer-review-checkbox:hover {
+  border-color: var(--accent);
+}
+
+.peer-review-checkbox:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.peer-review-checkbox:checked::before {
+  visibility: visible;
+}
+
+.peer-review-checkbox:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (forced-colors: active) {
+  .peer-review-checkbox {
+    appearance: auto;
+  }
+
+  .peer-review-checkbox::before {
+    content: none;
+  }
+}
+
 @media (min-width: 769px) {
   .filter-group {
     flex-direction: row;
@@ -928,6 +979,13 @@ a.info-badge:hover { opacity: .8; }
   font-size: .9rem;
 }
 
+.alpha-races-table th:first-child,
+.alpha-races-table td:first-child {
+  width: 15%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 #races-table-container .results-table {
   table-layout: fixed;
 }
@@ -956,6 +1014,48 @@ a.info-badge:hover { opacity: .8; }
   padding: .65rem 1rem;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
+}
+
+.alpha-races-table th:last-child {
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .alpha-races-table {
+    table-layout: fixed;
+  }
+
+  .alpha-races-table th,
+  .alpha-races-table td {
+    padding: .6rem .35rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .alpha-races-table th {
+    font-size: .65rem;
+    letter-spacing: .02em;
+  }
+
+  .alpha-races-table td {
+    font-size: .8rem;
+  }
+
+  .alpha-races-table th:first-child,
+  .alpha-races-table td:first-child {
+    width: 18%;
+  }
+
+  .alpha-races-table th:last-child,
+  .alpha-races-table td:last-child {
+    width: 3.5rem;
+    text-align: center;
+  }
+
+  .alpha-races-table .peer-review-checkbox {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
 }
 
 /* Column width constraints for races-table page */
@@ -2629,6 +2729,45 @@ a.info-badge:hover { opacity: .8; }
 .table-scroll .stats-table {
   min-width: 720px;
   margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  #rivals-container .stats-table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  #rivals-container .stats-table th,
+  #rivals-container .stats-table td {
+    padding: .6rem .35rem;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+  }
+
+  #rivals-container .stats-table th {
+    font-size: .65rem;
+    letter-spacing: .02em;
+  }
+
+  #rivals-container .stats-table td {
+    font-size: .8rem;
+  }
+
+  #rivals-container .stats-table th:first-child {
+    width: 25%;
+  }
+
+  #rivals-container .stats-table th:nth-child(2),
+  #rivals-container .stats-table th:nth-child(3) {
+    width: 3.5rem;
+  }
+
+  #rivals-container .stats-table th:nth-child(2),
+  #rivals-container .stats-table th:nth-child(3),
+  #rivals-container .stats-table td:nth-child(2),
+  #rivals-container .stats-table td:nth-child(3) {
+    text-align: center;
+  }
 }
 
 .active-racers-graph-controls {

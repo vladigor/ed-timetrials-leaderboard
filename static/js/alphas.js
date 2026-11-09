@@ -7,9 +7,25 @@ const enabled = flags.alpha_time_trials || (commander && allowedCommanders.inclu
 const tableContainer = document.getElementById('races-by-type');
 const countLabel = document.getElementById('race-count');
 const searchInput = document.getElementById('filter-search');
+const reviewStatus = document.getElementById('review-status');
+const REVIEW_STORAGE_KEY = 'tt_alpha_peer_reviews';
 let allRaces = [];
 let sortBy = 'creator';
 let sortDir = 'asc';
+
+function readPeerReviews() {
+  const keys = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '[]');
+  if (!Array.isArray(keys) || !keys.every(key => typeof key === 'string')) {
+    throw new Error('Invalid stored Alpha peer reviews');
+  }
+  return new Set(keys);
+}
+
+function showReviewError(error) {
+  console.error('Failed to access Alpha peer reviews:', error);
+  reviewStatus.textContent = 'Unable to load or save Tested checkboxes in this browser. Your changes may not be saved.';
+  reviewStatus.hidden = false;
+}
 
 async function loadAlphaTimeTrials() {
   if (!enabled) {
@@ -31,6 +47,12 @@ async function loadAlphaTimeTrials() {
 }
 
 function renderTables() {
+  let reviewed = new Set();
+  try {
+    reviewed = readPeerReviews();
+  } catch (error) {
+    showReviewError(error);
+  }
   const search = searchInput.value.trim().toLowerCase();
   const races = allRaces.filter(race =>
     [race.name, race.key, race.system, race.station, race.type, race.version]
@@ -59,18 +81,19 @@ function renderTables() {
   });
 
   tableContainer.innerHTML = types.map(type => {
-    const rows = grouped.get(type).slice().sort(compareRaces).map(renderRow).join('');
+    const rows = grouped.get(type).slice().sort(compareRaces).map(race => renderRow(race, reviewed)).join('');
     const typeLabel = { SHIP: 'Ship Races', FIGHTER: 'Fighter Races', SRV: 'SRV Races', ONFOOT: 'On Foot Races' }[type] || type;
 
     return `
       <section style="margin-bottom: 2rem;">
         <h2 class="cmdr-section-heading">${esc(typeLabel)}</h2>
-        <table class="results-table" style="width: 100%">
+        <table class="results-table alpha-races-table" style="width: 100%">
           <thead>
             <tr>
               ${sortHeader('creator', 'CMDR')}
               ${sortHeader('name', 'Race')}
               ${sortHeader('location', 'Location')}
+              <th scope="col" title="Completed the race and provided feedback">Tested</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -94,7 +117,7 @@ function compareRaces(a, b) {
   return sortDir === 'asc' ? comparison : -comparison;
 }
 
-function renderRow(race) {
+function renderRow(race, reviewed) {
   const location = race.station
     ? `${esc(race.system)} • ${esc(race.station)}`
     : esc(race.system);
@@ -109,8 +132,26 @@ function renderRow(race) {
       <td>${esc(race.creator)}</td>
       <td style="max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;">${esc(race.name)}</td>
       <td style="max-width: 250px; overflow-wrap: break-word; word-break: break-word; white-space: normal;">${location} ${copyButton}</td>
+      <td style="text-align: center;"><input type="checkbox" class="peer-review-checkbox" data-race-key="${esc(race.key)}"
+        aria-label="Tested: ${esc(race.name)}" title="Completed the race and provided feedback"${reviewed.has(race.key) ? ' checked' : ''}></td>
     </tr>`;
 }
+
+tableContainer.addEventListener('change', event => {
+  const checkbox = event.target.closest('.peer-review-checkbox');
+  if (!checkbox) return;
+
+  try {
+    const reviewed = readPeerReviews();
+    if (checkbox.checked) reviewed.add(checkbox.dataset.raceKey);
+    else reviewed.delete(checkbox.dataset.raceKey);
+    localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify([...reviewed]));
+    reviewStatus.hidden = true;
+  } catch (error) {
+    checkbox.checked = !checkbox.checked;
+    showReviewError(error);
+  }
+});
 
 tableContainer.addEventListener('click', event => {
   const copyButton = event.target.closest('.copy-btn');
