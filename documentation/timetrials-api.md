@@ -62,7 +62,7 @@ GET https://razzserver.com/razapis/getTTList/LEADERBOARD
 | 6 | `unknown6` | string | `"N/A"` | Purpose unknown. Observed: `"N/A"` or empty |
 | 7 | `version` | string | `"ODY"` | Game version: `"ODY"` (Odyssey) or `"HRZ"` (Horizons) |
 | 8 | `address` | string | `""` | Additional location address/description (often empty) |
-| 9 | `status` | string | `"PROD"` | Race status: `"PROD"` (live), `"WIP"` (work-in-progress) |
+| 9 | `status` | string | `"PROD"` | Race status: `"PROD"` (live), `"ALPHA"` (pre-production), `"AUTHOR"` (author-only), or `"WIP"` (work-in-progress) |
 | 10 | `unknown10` | string | `"216"` | Numeric string. Possibly race ID or sort weight |
 | 11 | `constraint_str` | string | `""` | Ship/vehicle constraint definitions (see constraint format below) |
 | 12 | `global_constraint` | string | `""` | Global constraint value; defaults to `"1"` if empty |

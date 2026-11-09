@@ -74,6 +74,10 @@
       <a href="/creators">Creators</a>
       <span class="sep">&middot;</span>
       <a href="/races-list">Races</a>
+      {% if alpha_time_trials_available %}
+      <span class="sep">&middot;</span>
+      <a href="/alphas">Alphas</a>
+      {% endif %}
       <span class="sep">&middot;</span>
       <a href="/map">Map</a>
       <span class="sep">&middot;</span>
@@ -83,7 +87,7 @@
       <span class="sep">&middot;</span>
       <a href="/about">About</a>
       <span class="sep">&middot;</span>
-      <a href="https://github.com/vladigor/ed-timetrials-leaderboard/issues" target="_blank" rel="noopener">Feedback &amp; bug reports</a>
+      <a href="https://github.com/vladigor/ed-timetrials-leaderboard/issues" target="_blank" rel="noopener">Feedback &amp; bugs</a>
       <span class="sep">&middot;</span>
       <span class="build-ver">Build {{ v }}</span>
     </div>

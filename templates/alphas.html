@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Alpha Time Trials — Elite TT Leaderboards{% endblock %}
+
+{% block content %}
+  <main class="page-wrapper">
+    <div class="breadcrumb">
+      <a href="/">All Time Trials</a>
+      <span class="sep">›</span>
+      <span>Alpha's</span>
+    </div>
+
+    <h1>Alpha Time Trials</h1>
+    <p class="muted">Pre-production races currently in Alpha.</p>
+
+    <section class="filter-bar" aria-label="Filters">
+      <div class="filter-group">
+        <input type="text" id="filter-search" placeholder="Filter by name, system, or race key..."
+               aria-label="Search Alpha time trials" style="min-width:240px">
+      </div>
+    </section>
+
+    <div class="status-bar">
+      <span id="race-count" style="font-weight: bold; color: var(--text)"></span>
+    </div>
+
+    <div id="races-by-type">
+      <p class="loading-placeholder">Loading Alpha time trials…</p>
+    </div>
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    window.FEATURE_FLAGS = {
+      alpha_time_trials: {{ alpha_time_trials_enabled | tojson }},
+      alpha_time_trials_for: {{ alpha_time_trials_enabled_for | tojson }}
+    };
+  </script>
+  <script type="module" src="/static/js/alphas.js?v={{ v }}"></script>
+{% endblock %}

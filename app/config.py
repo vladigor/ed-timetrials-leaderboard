@@ -34,6 +34,15 @@ FAVOURITES_ENABLED: bool = os.environ.get("FAVOURITES_ENABLED", "").strip().lowe
 FAVOURITES_ENABLED_FOR: frozenset[str] = frozenset(
     c.strip().lower() for c in os.environ.get("FAVOURITES_ENABLED_FOR", "").split(",") if c.strip()
 )
+# Alpha time trials feature flag
+ALPHA_TIME_TRIALS_ENABLED: bool = os.environ.get(
+    "ALPHA_TIME_TRIALS_ENABLED", ""
+).strip().lower() in ("1", "true", "yes")
+ALPHA_TIME_TRIALS_ENABLED_FOR: frozenset[str] = frozenset(
+    c.strip().lower()
+    for c in os.environ.get("ALPHA_TIME_TRIALS_ENABLED_FOR", "").split(",")
+    if c.strip()
+)
 POWERPLAY_ENABLED: bool = os.environ.get("POWERPLAY_ENABLED", "").strip().lower() in (
     "1",
     "true",

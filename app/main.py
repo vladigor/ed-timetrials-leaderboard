@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Annotated
 from urllib.parse import quote
 
+import httpx
 import markdown
 from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
@@ -19,6 +20,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from .config import (
+    ALPHA_TIME_TRIALS_ENABLED,
+    ALPHA_TIME_TRIALS_ENABLED_FOR,
     DAYLIGHT_API_BASE_URL,
     DAYLIGHT_API_ENABLED,
     DAYLIGHT_API_ENABLED_FOR,
@@ -151,6 +154,9 @@ async def add_security_headers(request: Request, call_next):
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 app.mount("/maps", StaticFiles(directory=Path(__file__).parent.parent / "maps"), name="maps")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+templates.env.globals["alpha_time_trials_available"] = ALPHA_TIME_TRIALS_ENABLED or bool(
+    ALPHA_TIME_TRIALS_ENABLED_FOR
+)
 
 
 # ---------------------------------------------------------------------------
@@ -224,6 +230,21 @@ async def cmdr_page(request: Request, name: str):
 @app.get("/creator/{name}", response_class=HTMLResponse)
 async def creator_page(request: Request, name: str):
     return templates.TemplateResponse("creator.html", {"request": request, "v": STATIC_VER})
+
+
+@app.get("/alphas", response_class=HTMLResponse)
+async def alpha_time_trials_page(request: Request):
+    if not ALPHA_TIME_TRIALS_ENABLED and not ALPHA_TIME_TRIALS_ENABLED_FOR:
+        raise HTTPException(status_code=404, detail="Alpha time trials are not enabled")
+    return templates.TemplateResponse(
+        "alphas.html",
+        {
+            "request": request,
+            "v": STATIC_VER,
+            "alpha_time_trials_enabled": ALPHA_TIME_TRIALS_ENABLED,
+            "alpha_time_trials_enabled_for": sorted(ALPHA_TIME_TRIALS_ENABLED_FOR),
+        },
+    )
 
 
 @app.get("/creators", response_class=HTMLResponse)
@@ -693,6 +714,70 @@ async def api_creator(name: str, commander_pos: str | None = Query(None)):
     if data is None:
         raise HTTPException(status_code=404, detail="Creator not found or has no races")
     return data
+
+
+def _parse_alpha_time_trials(rows: object) -> list[dict[str, str]]:
+    if not isinstance(rows, list):
+        raise ValueError("Alpha time-trial response must be a list")
+
+    races = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, list) or len(row) <= 9:
+            raise ValueError(f"Invalid Alpha time-trial row at index {index}")
+        if not all(isinstance(row[field], str) for field in (0, 1, 2, 3, 5, 7, 9)):
+            raise ValueError(f"Invalid Alpha time-trial fields at index {index}")
+        if row[9].strip().upper() != "ALPHA":
+            continue
+
+        races.append(
+            {
+                "key": row[0],
+                "creator": row[0].split("-", 1)[0],
+                "name": row[1],
+                "system": row[2],
+                "station": row[3],
+                "type": row[5].strip().upper(),
+                "version": {"ODY": "ODYSSEY", "HRZ": "HORIZONS"}.get(
+                    row[7].strip().upper(), row[7].strip().upper()
+                ),
+            }
+        )
+    return races
+
+
+async def _fetch_alpha_time_trials(commander: str) -> list[dict[str, str]]:
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(
+                f"https://razzserver.com/razapis/getTTList/{quote(commander, safe='')}"
+            )
+            response.raise_for_status()
+            rows = response.json()
+    except httpx.HTTPError as exc:
+        log.warning("Unable to fetch Alpha time trials: %s", exc)
+        raise HTTPException(status_code=502, detail="Alpha time-trial service unavailable") from exc
+    except ValueError as exc:
+        log.warning("Alpha time-trial service returned invalid JSON: %s", exc)
+        raise HTTPException(status_code=502, detail="Invalid Alpha time-trial response") from exc
+
+    try:
+        return _parse_alpha_time_trials(rows)
+    except ValueError as exc:
+        log.warning("Alpha time-trial service returned invalid data: %s", exc)
+        raise HTTPException(status_code=502, detail="Invalid Alpha time-trial response") from exc
+
+
+@app.get("/api/alpha-time-trials")
+async def api_alpha_time_trials(commander: str = Query("")):
+    commander = commander.strip()
+    commander_allowed = commander.casefold() in ALPHA_TIME_TRIALS_ENABLED_FOR
+    if not ALPHA_TIME_TRIALS_ENABLED and not commander_allowed:
+        raise HTTPException(status_code=403, detail="Alpha time trials are not enabled")
+    if not commander:
+        raise HTTPException(status_code=400, detail="A commander must be selected")
+    if OFFLINE:
+        raise HTTPException(status_code=503, detail="Alpha time trials are unavailable offline")
+    return await _fetch_alpha_time_trials(commander)
 
 
 @app.get("/api/cmdr/{name}/inara")
