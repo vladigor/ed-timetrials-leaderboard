@@ -2140,5 +2140,24 @@
       "thumbnail": "maps/thumbnails/SRH_-_Emerald_Gorge.jpg",
       "target": "maps/SRH_-_Emerald_Gorge.jpg"
     }
+  },
+  "NASTYNATE1-CortesRacewayRegular": {
+    "map": {
+      "thumbnail": "maps/thumbnails/CortesRacewayUnicornMap.png",
+      "target": "maps/CortesRacewayUnicornMap.png"
+    },
+    "links": [
+      {
+        "label": "Expert video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=PEs3GHHgE1w"
+      }
+    ]
+  },
+  "NASTYNATE1-CortesRacewayRegularSLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/CortesRacewayUnicornMap.png",
+      "target": "maps/CortesRacewayUnicornMap.png"
+    }
   }
 }
