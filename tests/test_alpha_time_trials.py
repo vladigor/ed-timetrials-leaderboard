@@ -84,3 +84,17 @@ class AlphaTimeTrialTests(unittest.IsolatedAsyncioTestCase):
                 response = await client.get("/alphas")
 
         self.assertEqual(response.status_code, 404)
+
+    async def test_alpha_alias_serves_the_alpha_page(self):
+        with (
+            patch("app.main.ALPHA_TIME_TRIALS_ENABLED", True),
+            patch("app.main.ALPHA_TIME_TRIALS_ENABLED_FOR", set()),
+        ):
+            async with httpx.AsyncClient(
+                transport=httpx.ASGITransport(app=app), base_url="http://test"
+            ) as client:
+                alpha = await client.get("/alpha")
+                alphas = await client.get("/alphas")
+
+        self.assertEqual(alpha.status_code, 200)
+        self.assertEqual(alpha.text, alphas.text)

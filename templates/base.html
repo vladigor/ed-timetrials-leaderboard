@@ -1,3 +1,22 @@
+{% set header_pages = [
+  ('/activity', 'Activity'), ('/stats', 'Stats'), ('/races-list', 'Races'),
+  ('/rivals', 'Rivals'), ('/map', 'Map'), ('/about', 'About')
+] %}
+{% set feedback_url = 'https://github.com/vladigor/ed-timetrials-leaderboard/issues' %}
+{% set footer_pages = [
+  ('/', 'Index'), ('/activity', 'Activity'), ('/stats', 'Stats'),
+  ('/races-list', 'Races'), ('/rivals', 'Rivals')
+] + ([('/alphas', 'Alphas')] if alpha_time_trials_available else []) + [
+  ('/map', 'Map'), ('/about', 'About'),
+  (feedback_url, 'Feedback & bugs')
+] %}
+{% set header_urls = header_pages | map(attribute=0) | list %}
+{% set more_pages = footer_pages + [
+  ('/active-racers', 'Active Racers'), ('/guide', 'Racing Guide'),
+  ('/community', 'Community'), ('/challenges', 'Challenges'),
+  ('/today', 'Race picker'), ('/thefts', 'Thefts'), ('/creators', 'Creators'),
+  ('/cafe-saturday', 'Cafe Saturday')
+] %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,26 +44,19 @@
           </a>
         </div>
         <div class="header-links">
-          <a href="/activity">Activity</a>
-          <span class="sep">&middot;</span>
-          <a href="/stats">Stats</a>
-          <span class="sep">&middot;</span>
-          <a href="/rivals">Rivals</a>
-          <span class="sep">&middot;</span>
-          <a href="/races-list">Races</a>
-          <span class="sep">&middot;</span>
-          <a href="/today">Race picker</a>
-          <span class="sep">&middot;</span>
-          <a href="/map">Map</a>
-          <span class="sep">&middot;</span>
-          <a href="/cafe-saturday">Cafe Sat</a>
-          <span class="sep">&middot;</span>
-          <a href="/thefts">Thefts</a>
-          <!-- <span class="sep">&middot;</span>
-          <a href="/guide">Guide</a> -->
-          <span class="sep">&middot;</span>
-          <a href="/about">About</a>
+          {% for url, label in header_pages %}
+          {% if not loop.first %}<span class="sep">&middot;</span>{% endif %}
+          <a href="{{ url }}">{{ label }}</a>
+          {% endfor %}
         </div>
+        <details class="header-more">
+          <summary aria-label="More pages"><span aria-hidden="true">&#9776;</span></summary>
+          <nav class="header-more-menu" aria-label="More pages">
+            {% for url, label in more_pages | sort(attribute=1) if url not in header_urls and url not in ('/', feedback_url) %}
+            <a href="{{ url }}"{% if url.startswith('https://') %} target="_blank" rel="noopener"{% endif %}>{{ label }}</a>
+            {% endfor %}
+          </nav>
+        </details>
         <div class="header-profile">
           <a id="profile-label" class="btn-primary" href="#">Select Profile</a>
           <button id="btn-change-profile" class="btn-chip" style="display:none">Change</button>
@@ -57,37 +69,10 @@
 
   <footer class="site-footer">
     <div class="page-wrapper">
-      <a href="/">Index</a>
-      <span class="sep">&middot;</span>
-      <a href="/activity">Activity</a>
-      <span class="sep">&middot;</span>
-      <a href="/stats">Stats</a>
-      <span class="sep">&middot;</span>
-      <a href="/rivals">Rivals</a>
-      <span class="sep">&middot;</span>
-      <a href="/challenges">Challenges</a>
-      <span class="sep">&middot;</span>
-      <a href="/today">Race picker</a>
-      <span class="sep">&middot;</span>
-      <a href="/thefts">Thefts</a>
-      <span class="sep">&middot;</span>
-      <a href="/creators">Creators</a>
-      <span class="sep">&middot;</span>
-      <a href="/races-list">Races</a>
-      {% if alpha_time_trials_available %}
-      <span class="sep">&middot;</span>
-      <a href="/alphas">Alphas</a>
-      {% endif %}
-      <span class="sep">&middot;</span>
-      <a href="/map">Map</a>
-      <span class="sep">&middot;</span>
-      <a href="/cafe-saturday">Cafe Sat</a>
-      <!-- <span class="sep">&middot;</span>
-      <a href="/guide">Racing Guide</a> -->
-      <span class="sep">&middot;</span>
-      <a href="/about">About</a>
-      <span class="sep">&middot;</span>
-      <a href="https://github.com/vladigor/ed-timetrials-leaderboard/issues" target="_blank" rel="noopener">Feedback &amp; bugs</a>
+      {% for url, label in footer_pages %}
+      {% if not loop.first %}<span class="sep">&middot;</span>{% endif %}
+      <a href="{{ url }}"{% if url.startswith('https://') %} target="_blank" rel="noopener"{% endif %}>{{ label }}</a>
+      {% endfor %}
       <span class="sep">&middot;</span>
       <span class="build-ver">Build {{ v }}</span>
     </div>
@@ -96,6 +81,17 @@
   <script type="module">
     import { initProfileSelector } from '/static/js/profile.js?v={{ v }}';
     initProfileSelector();
+
+    const moreMenu = document.querySelector('.header-more');
+    document.addEventListener('click', (event) => {
+      if (!moreMenu.contains(event.target)) moreMenu.open = false;
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && moreMenu.open) {
+        moreMenu.open = false;
+        moreMenu.querySelector('summary').focus();
+      }
+    });
   </script>
   {% block extra_scripts %}{% endblock %}
 </body>

@@ -1,5 +1,9 @@
 # Change log
 
+## 2026-11-12
+- Added Alphas page (`/alphas`), to list the races currently in Alpha.
+- Added a hamburger menu to the header and tidied up the header and footer links.
+
 ## 2026-10-01
 - Added Rivals page (`/rivals`), a page that lists all the commanders who are rivals of the current user. The page acts as another decision maker for choosing your next race as it shows a nother perspective on the races that you can make the most gains on.
 

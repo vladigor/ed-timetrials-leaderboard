@@ -232,6 +232,7 @@ async def creator_page(request: Request, name: str):
     return templates.TemplateResponse("creator.html", {"request": request, "v": STATIC_VER})
 
 
+@app.get("/alpha", response_class=HTMLResponse)
 @app.get("/alphas", response_class=HTMLResponse)
 async def alpha_time_trials_page(request: Request):
     if not ALPHA_TIME_TRIALS_ENABLED and not ALPHA_TIME_TRIALS_ENABLED_FOR:

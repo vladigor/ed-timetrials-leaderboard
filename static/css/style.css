@@ -55,13 +55,16 @@ a:hover { text-decoration: underline; }
 }
 
 .site-header .inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "logo links more" "profile profile profile";
   align-items: center;
-  gap: 2.5rem;
-  flex-wrap: wrap;
+  gap: 1rem 2.5rem;
 }
 
 .site-logo {
+  grid-area: logo;
+  align-self: start;
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: .05em;
@@ -74,6 +77,7 @@ a:hover { text-decoration: underline; }
 }
 
 .header-links {
+  grid-area: links;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -95,7 +99,57 @@ a:hover { text-decoration: underline; }
   font-size: 0.9rem;
 }
 
+.header-more {
+  grid-area: more;
+  align-self: start;
+  position: relative;
+}
+
+.header-more summary {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: .35rem;
+  color: var(--text);
+  font-size: 1.4rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.header-more summary::-webkit-details-marker { display: none; }
+.header-more summary:hover { color: var(--accent); border-color: var(--accent-dim); }
+.header-more summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.header-more-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + .4rem);
+  right: 0;
+  min-width: 12rem;
+  max-width: calc(100vw - 2.5rem);
+  padding: .4rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: .35rem;
+  box-shadow: 0 .4rem 1rem #0008;
+}
+
+.header-more-menu a {
+  display: block;
+  padding: .5rem .75rem;
+  color: var(--text);
+}
+
+.header-more-menu a:hover,
+.header-more-menu a:focus-visible {
+  background: var(--surface2);
+  color: var(--accent);
+}
+
 .header-profile {
+  grid-area: profile;
   display: flex;
   align-items: center;
   gap: .6rem;
@@ -2443,6 +2497,12 @@ a.info-badge:hover { opacity: .8; }
 /* ============================================================
    Responsive
    ============================================================ */
+@media (max-width: 1100px) {
+  .site-header .inner { column-gap: 1.25rem; }
+  .site-logo .logo-full { display: none; }
+  .site-logo .logo-short { display: inline; }
+}
+
 /* ── Portrait-mode banner ─────────────────────────────────────────── */
 .portrait-banner {
   display: none;
@@ -2472,7 +2532,11 @@ a.info-badge:hover { opacity: .8; }
 /* ── Mobile styles ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   /* Header: use shorter logo and reduce gap */
-  .site-header .inner { gap: 1.25rem; }
+  .site-header .inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "logo more" "links links" "profile profile";
+    gap: 1.25rem;
+  }
   .site-logo .logo-full { display: none; }
   .site-logo .logo-short { display: inline; }
 
