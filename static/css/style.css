@@ -1332,6 +1332,7 @@ a.info-badge:hover { opacity: .8; }
 
 /* Galaxy map page */
 .galaxy-map {
+  isolation: isolate;
   width: 100vw;
   max-width: 100vw;
   margin-left: calc(50% - 50vw);
