@@ -78,7 +78,7 @@
     </div>
   </footer>
 
-  <script type="module">
+  <script type="module" nonce="{{ request.state.csp_nonce }}">
     import { initProfileSelector } from '/static/js/profile.js?v={{ v }}';
     initProfileSelector();
 

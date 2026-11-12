@@ -66,7 +66,7 @@
 
 </main>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('.media-form');
 

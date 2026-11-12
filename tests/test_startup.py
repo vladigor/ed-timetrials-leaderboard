@@ -1,6 +1,7 @@
 """Regression checks for non-blocking startup and background refresh cleanup."""
 
 import asyncio
+import re
 import tempfile
 import unittest
 from contextlib import ExitStack
@@ -25,6 +26,22 @@ class StartupTests(unittest.IsolatedAsyncioTestCase):
             patch("app.main.start_scheduler", return_value=self.scheduler)
         )
         patches.enter_context(patch("app.main.OFFLINE", False))
+
+    async def test_security_headers_include_a_nonce_based_csp(self):
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            response = await client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        policy = response.headers["content-security-policy"]
+        inline_scripts = re.findall(r"<script\b(?![^>]*\bsrc=)[^>]*>", response.text)
+        self.assertTrue(inline_scripts)
+        nonce = re.search(r'\bnonce="([^"]+)"', inline_scripts[0]).group(1)
+        self.assertTrue(all(f'nonce="{nonce}"' in tag for tag in inline_scripts))
+        self.assertIn(f"'nonce-{nonce}'", policy)
+        self.assertIn("object-src 'none'", policy)
+        self.assertIn("frame-ancestors 'self'", policy)
 
     async def test_slow_refresh_does_not_delay_serving_and_is_cancelled_on_shutdown(self):
         started = asyncio.Event()

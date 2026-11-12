@@ -33,7 +33,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
-  <script>
+  <script nonce="{{ request.state.csp_nonce }}">
     window.FEATURE_FLAGS = {
       alpha_time_trials: {{ alpha_time_trials_enabled | tojson }},
       alpha_time_trials_for: {{ alpha_time_trials_enabled_for | tojson }}

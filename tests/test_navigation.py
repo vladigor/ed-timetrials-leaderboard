@@ -1,5 +1,6 @@
 import unittest
 from html.parser import HTMLParser
+from types import SimpleNamespace
 
 from app.main import templates
 
@@ -44,7 +45,9 @@ class NavigationTests(unittest.TestCase):
         for enabled in (False, True):
             with self.subTest(alpha_time_trials_available=enabled):
                 html = templates.env.get_template("base.html").render(
-                    v="test", alpha_time_trials_available=enabled
+                    v="test",
+                    alpha_time_trials_available=enabled,
+                    request=SimpleNamespace(state=SimpleNamespace(csp_nonce="test-nonce")),
                 )
                 parser = NavigationParser()
                 parser.feed(html)

@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 import mimetypes
+import secrets
 from contextlib import asynccontextmanager, suppress
 from datetime import datetime
 from pathlib import Path
@@ -142,7 +143,25 @@ app = FastAPI(title="Elite Dangerous Time Trials Leaderboard", lifespan=lifespan
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
     """Add security headers for PWA compatibility and modern web standards."""
+    csp_nonce = secrets.token_urlsafe(18)
+    request.state.csp_nonce = csp_nonce
     response = await call_next(request)
+    response.headers["Content-Security-Policy"] = "; ".join(
+        (
+            "default-src 'self'",
+            f"script-src 'self' 'nonce-{csp_nonce}' https://cdn.jsdelivr.net https://unpkg.com",
+            "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com",
+            "img-src 'self' data: blob: https:",
+            "font-src 'self' data: https://cdnjs.cloudflare.com",
+            "connect-src 'self'",
+            "frame-src 'none'",
+            "frame-ancestors 'self'",
+            "object-src 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "manifest-src 'self'",
+        )
+    )
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["X-XSS-Protection"] = "1; mode=block"
