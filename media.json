@@ -2159,5 +2159,18 @@
       "thumbnail": "maps/thumbnails/CortesRacewayUnicornMap.png",
       "target": "maps/CortesRacewayUnicornMap.png"
     }
+  },
+  "ALEC TURNER-RADICOIDA_VALLEY": {
+    "map": {
+      "thumbnail": "maps/thumbnails/radicoida_drive.png",
+      "target": "maps/radicoida_drive.png"
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=fp7vhH9-N0g"
+      }
+    ]
   }
 }
