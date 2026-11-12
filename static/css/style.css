@@ -56,15 +56,14 @@ a:hover { text-decoration: underline; }
 
 .site-header .inner {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas: "logo links more" "profile profile profile";
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, auto) auto;
+  grid-template-areas: "logo links profile more";
   align-items: center;
   gap: 1rem 2.5rem;
 }
 
 .site-logo {
   grid-area: logo;
-  align-self: start;
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: .05em;
@@ -101,7 +100,6 @@ a:hover { text-decoration: underline; }
 
 .header-more {
   grid-area: more;
-  align-self: start;
   position: relative;
 }
 
@@ -153,8 +151,20 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;
   gap: .6rem;
-  margin-left: auto;
+  min-width: 0;
+  max-width: min(20rem, 42vw);
   font-size: 0.9rem;
+}
+
+.header-profile #profile-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-profile #btn-change-profile {
+  flex-shrink: 0;
 }
 
 /* ============================================================
@@ -2533,10 +2543,13 @@ a.info-badge:hover { opacity: .8; }
 @media (max-width: 768px) {
   /* Header: use shorter logo and reduce gap */
   .site-header .inner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "logo more" "links links" "profile profile";
-    gap: 1.25rem;
+    grid-template-columns: minmax(min-content, 1fr) minmax(0, auto) auto;
+    grid-template-areas: "logo profile more" "links links links";
+    gap: 1rem .5rem;
   }
+  .site-logo { white-space: normal; }
+  .header-profile { gap: .3rem; }
+  .header-profile #profile-label { padding-inline: .5rem; }
   .site-logo .logo-full { display: none; }
   .site-logo .logo-short { display: inline; }
 
