@@ -2172,5 +2172,17 @@
         "url": "https://www.youtube.com/watch?v=fp7vhH9-N0g"
       }
     ]
+  },
+  "FOEHAMMERR-NephewOfGrandma": {
+    "map": {
+      "thumbnail": "maps/thumbnails/grandma_got_run_over.png",
+      "target": "maps/grandma_got_run_over.png"
+    }
+  },
+  "FOEHAMMERR-NephewOfGrandmaSLF": {
+    "map": {
+      "thumbnail": "maps/thumbnails/grandma_got_run_over.png",
+      "target": "maps/grandma_got_run_over.png"
+    }
   }
 }
