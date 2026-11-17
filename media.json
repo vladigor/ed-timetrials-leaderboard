@@ -2170,6 +2170,11 @@
         "label": "Demo video",
         "type": "video",
         "url": "https://www.youtube.com/watch?v=fp7vhH9-N0g"
+      },
+      {
+        "label": "Chase cam video",
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=_FLzn2IBzVY"
       }
     ]
   },
