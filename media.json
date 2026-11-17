@@ -2143,8 +2143,8 @@
   },
   "NASTYNATE1-CortesRacewayRegular": {
     "map": {
-      "thumbnail": "maps/thumbnails/CortesRacewayUnicornMap.png",
-      "target": "maps/CortesRacewayUnicornMap.png"
+      "thumbnail": "maps/thumbnails/CortesRacewayShipMap.png",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=NASTYNATE1-CortesRacewayRegular"
     },
     "links": [
       {
@@ -2156,8 +2156,8 @@
   },
   "NASTYNATE1-CortesRacewayRegularSLF": {
     "map": {
-      "thumbnail": "maps/thumbnails/CortesRacewayUnicornMap.png",
-      "target": "maps/CortesRacewayUnicornMap.png"
+      "thumbnail": "maps/thumbnails/CortesRacewaySLFMap.png",
+      "target": "https://frinkbottle.uk/TimeTrials/index.html?map=NASTYNATE1-CortesRacewayRegularSLF"
     }
   },
   "ALEC TURNER-RADICOIDA_VALLEY": {
