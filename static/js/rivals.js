@@ -1,10 +1,12 @@
 import { esc } from './utils.js';
 
 const container = document.getElementById('rivals-container');
+const categoryNav = document.getElementById('rivals-category-nav');
 const bubbleFilter = document.getElementById('filter-bubble-only');
 
 async function loadRivals() {
   const commander = localStorage.getItem('tt_filter_cmdr') || '';
+  categoryNav.innerHTML = '';
   if (!commander) {
     container.innerHTML = '<p class="empty-state">Select a commander profile to view rivalries. <a href="/">Choose profile</a></p>';
     return;
@@ -22,9 +24,12 @@ async function loadRivals() {
 }
 
 function render(categories) {
-  container.innerHTML = categories.map(category => `
+  categoryNav.innerHTML = categories.map((category, index) => `
+    <a href="#rivals-category-${index}">${esc(category.label)}</a>
+  `).join('');
+  container.innerHTML = categories.map((category, index) => `
     <section class="rivals-category">
-      <h2>${esc(category.label)}</h2>
+      <h2 id="rivals-category-${index}">${esc(category.label)}</h2>
       ${category.races_competed === 0
         ? '<p class="rivals-summary cmdr-type-stat">You haven\'t competed in any races in this category yet.</p>'
         : `<p class="rivals-summary cmdr-type-stat">You've competed in <strong class="pct-highlight">${category.races_competed}</strong> races, finishing ahead of <strong class="pct-highlight">${category.ahead_percentage}%</strong> of all cmdrs you've raced against.</p>`}
