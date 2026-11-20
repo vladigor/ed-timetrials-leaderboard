@@ -1476,7 +1476,11 @@
         "type": "video",
         "url": "https://www.youtube.com/watch?v=e1GKZeSNEEM"
       }
-    ]
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/Westerfeld Tower.png",
+      "target": "maps/Westerfeld Tower.png"
+    }
   },
   "ALEC TURNER-CONTRAIL_GEYSER_HIGH_JUMP": {
     "map": {
