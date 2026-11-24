@@ -2193,5 +2193,18 @@
       "thumbnail": "maps/thumbnails/grandma_got_run_over.png",
       "target": "maps/grandma_got_run_over.png"
     }
+  },
+  "ALEC TURNER-CORTES_ROOFTOPS": {
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/jmdlWZ7v3yc"
+      }
+    ],
+    "map": {
+      "thumbnail": "maps/thumbnails/cortes_rooftop_speedway_thumb.png",
+      "target": "maps/cortes_rooftop_speedway_thumb.png"
+    }
   }
 }
