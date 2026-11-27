@@ -2206,5 +2206,11 @@
       "thumbnail": "maps/thumbnails/cortes_rooftop_speedway_thumb.png",
       "target": "maps/cortes_rooftop_speedway_thumb.png"
     }
+  },
+  "VLADIGOR-Blackiron Raised Raceway": {
+    "map": {
+      "thumbnail": "maps/thumbnails/Blackiron Raised Raceway map.png",
+      "target": "maps/Blackiron Raised Raceway map.png"
+    }
   }
 }
