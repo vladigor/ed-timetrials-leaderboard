@@ -2211,6 +2211,13 @@
     "map": {
       "thumbnail": "maps/thumbnails/Blackiron Raised Raceway map.png",
       "target": "maps/Blackiron Raised Raceway map.png"
-    }
+    },
+    "links": [
+      {
+        "label": "Demo video",
+        "type": "video",
+        "url": "https://youtu.be/TwJ43uTTAko?si=h5hUTgrfMRSP1_8X"
+      }
+    ]
   }
 }
